@@ -1,6 +1,7 @@
 node_modules
 .tmp/
 .env
+google-services.json
 package-lock.json
 public/img
 public/document
