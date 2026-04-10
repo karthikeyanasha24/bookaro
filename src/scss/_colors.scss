@@ -1,0 +1,42 @@
+@import './mixins';
+
+.btn-primary {
+  color:#fff !important;
+  background-color: $primaryColor !important;
+  border-color: $primaryColor !important;
+  &:hover {
+    background-color: $primaryColorH !important;
+    border-color: $primaryColorH !important;
+  }
+}
+
+.bg-primary {
+  background-color: $primaryColor !important;
+}
+
+.border-primary {
+  border-color: $primaryColor !important;
+}
+
+.text-primary {
+  color: $primaryColor !important;
+}
+
+
+a.text-primary:hover, a.text-primary:focus{
+  color:$primaryColor !important;
+}
+
+
+.badge{
+  display: inline-block;
+  padding: 6px 10px;
+  &.badge-danger{
+    background-color: #a1002724 !important;
+    color:#A10027 !important;
+  }
+  &.badge-primary{
+    background-color: #D7F5FF !important;
+    color:#197D9F !important;
+  }
+}
