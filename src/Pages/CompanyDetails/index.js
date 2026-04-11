@@ -19,10 +19,12 @@ import {
 } from "../../models/string.model";
 import ContactAgency from "../PropertyDetails/ContactAgency";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 import UpgradePlan from "../../components/common/Modal/UpgradePlan";
 import moment from "moment";
 
 const CompanyDetails = () => {
+  const { t } = useTranslation();
   const params = new URLSearchParams(window.location.search);
   const paramId = params.get("id");
   const user = useSelector((state) => state.user);
@@ -233,7 +235,7 @@ const CompanyDetails = () => {
                 onClick={() => handleProperty()}
                 className="bg-[#976DD0] text-white text-[15px] rounded-[50px] py-2.5 px-6 font-bold md:mt-0 mt-3"
               >
-                {propertyLoader ? "Loading..." : "List a property"}
+                {propertyLoader ? t("common.loading") : t("property.listProperty")}
               </button>
             </div>
           </div>
@@ -466,7 +468,7 @@ const CompanyDetails = () => {
                                 onClick={() => setShowFull(!showFull)}
                                 className="text-[#976DD0] hover:underline cursor-pointer"
                               >
-                                {showFull ? "See Less" : "See More"}
+                                {showFull ? t("buttons.seeLess") : t("buttons.seeMore")}
                               </sapn>
                             )}
                           </div>

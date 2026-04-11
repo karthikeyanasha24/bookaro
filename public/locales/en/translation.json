@@ -110,7 +110,10 @@
     "learnMore": "Learn More",
     "sendRecoveryEmail": "Send Recovery Email",
     "resendCode": "Resend Code",
-    "verifyAndProceed": "Verify & Proceed"
+    "verifyAndProceed": "Verify & Proceed",
+    "seeLess": "See Less",
+    "seeMore": "See More",
+    "clickHere": "Click here"
   },
   "forms": {
     "requiredField": "This field is required",
@@ -448,7 +451,11 @@
     "propertyStatus": "Property Status",
     "videos": "Videos",
     "propertyToSell": "A property to sell",
-    "listDescription": "List it and sell it on your own or with the support of our local partner agencies"
+    "listDescription": "List it and sell it on your own or with the support of our local partner agencies",
+    "sellProperty": "A property to sell?",
+    "sellDescription": "List it and sell it on your own or with the support of our local partner agencies",
+    "quoteProperty": "Quote my property",
+    "helpMeSell": "Help me sell"
   },
   "modals": {
     "confirm": "Confirm",
@@ -513,7 +520,11 @@
     "buyerFile": "Buyer File",
     "sellerFile": "Seller File",
     "propertyToSell": "A property to sell",
-    "listDescription": "List it and sell it on your own or with the support of our local partner agencies"
+    "listDescription": "List it and sell it on your own or with the support of our local partner agencies",
+    "forSale": "Properties for sale",
+    "forRent": "Properties for rent",
+    "offMarket": "Off-Market properties",
+    "inDirectory": "Properties in Directory"
   },
   "profile": {
     "myProfile": "My Profile",
@@ -687,5 +698,22 @@
   "help": {
     "center": "Help center",
     "centerInfo": "Improving your experience is our top priority. Allow us to secure your account with your phone number."
+  },
+  "companyDetails": {
+    "info": "Info",
+    "properties": "Properties",
+    "visitReview": "Visit Review",
+    "agencyInfo": "Agency information",
+    "keyFigures": "Key figures",
+    "about": "About",
+    "agencyTagline": "Here is the Agency Tagline",
+    "servicesOffered": "Services offered",
+    "openingHours": "Opening hours",
+    "teamMembers": "Team members",
+    "reviews": "Reviews",
+    "detailedReviews": "Detailed reviews"
+  },
+  "marketing": {
+    "boostPropertyMessage": "WANT US TO BOOST YOUR PROPERTY VALUE AND ONLINE ATTRACTIVITY"
   }
 }

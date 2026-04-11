@@ -110,7 +110,10 @@
     "learnMore": "En savoir plus",
     "sendRecoveryEmail": "Envoyer l'e-mail de récupération",
     "resendCode": "Renvoyer le code",
-    "verifyAndProceed": "Vérifier et continuer"
+    "verifyAndProceed": "Vérifier et continuer",
+    "seeLess": "Voir moins",
+    "seeMore": "Voir plus",
+    "clickHere": "Cliquez ici"
   },
   "forms": {
     "requiredField": "Ce champ est obligatoire",
@@ -448,7 +451,11 @@
     "propertyStatus": "Statut de la propriété",
     "videos": "Vidéos",
     "propertyToSell": "Une propriété à vendre",
-    "listDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales"
+    "listDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales",
+    "sellProperty": "Une propriété à vendre?",
+    "sellDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales",
+    "quoteProperty": "Obtenir une estimation",
+    "helpMeSell": "Aidez-moi à vendre"
   },
   "modals": {
     "confirm": "Confirmer",
@@ -513,7 +520,11 @@
     "buyerFile": "Dossier acheteur",
     "sellerFile": "Dossier vendeur",
     "propertyToSell": "Une propriété à vendre",
-    "listDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales"
+    "listDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales",
+    "forSale": "Propriétés à vendre",
+    "forRent": "Propriétés à louer",
+    "offMarket": "Propriétés hors marché",
+    "inDirectory": "Propriétés dans l'annuaire"
   },
   "profile": {
     "myProfile": "Mon profil",
@@ -687,5 +698,22 @@
   "help": {
     "center": "Centre d'aide",
     "centerInfo": "Améliorer votre expérience est notre priorité absolue. Permettez-nous de sécuriser votre compte avec votre numéro de téléphone."
+  },
+  "companyDetails": {
+    "info": "Infos",
+    "properties": "Propriétés",
+    "visitReview": "Consulter les avis",
+    "agencyInfo": "Informations de l'agence",
+    "keyFigures": "Chiffres clés",
+    "about": "À propos de",
+    "agencyTagline": "Voici le slogan de l'agence",
+    "servicesOffered": "Services offerts",
+    "openingHours": "Horaires d'ouverture",
+    "teamMembers": "Membres de l'équipe",
+    "reviews": "Avis",
+    "detailedReviews": "Avis détaillés"
+  },
+  "marketing": {
+    "boostPropertyMessage": "VOULEZ-VOUS QUE NOUS BOOSTIONS LA VALEUR ET L'ATTRACTIVITÉ EN LIGNE DE VOTRE PROPRIÉTÉ"
   }
 }
