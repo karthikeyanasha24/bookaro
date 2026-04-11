@@ -117,7 +117,11 @@
     "seeMore": "Voir plus",
     "clickHere": "Cliquez ici",
     "send": "ENVOYER",
-    "preview": "Aperçu"
+    "preview": "Aperçu",
+    "getStarted": "Commencer",
+    "registerFree": "S'inscrire gratuitement",
+    "yes": "Oui",
+    "activateAlerts": "Activer les alertes"
   },
   "forms": {
     "requiredField": "Ce champ est obligatoire",
@@ -205,7 +209,8 @@
     "subSubject": "Sous-sujet",
     "yourMessage": "Votre message",
     "message": "Message",
-    "registrationNumber": "Numéro d'enregistrement"
+    "registrationNumber": "Numéro d'enregistrement",
+    "amount": "Montant"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
@@ -238,7 +243,8 @@
     "agreeTermsRequired": "Veuillez accepter nos Conditions d'utilisation et la Politique de confidentialité",
     "currentPasswordRequired": "Entrez le mot de passe actuel",
     "newPasswordRequired": "Entrez le nouveau mot de passe",
-    "enterValidEmail": "Entrez un email valide"
+    "enterValidEmail": "Entrez un email valide",
+    "validEmail": "Veuillez entrer une adresse email valide"
   },
   "messages": {
     "loading": "Chargement...",
@@ -287,7 +293,12 @@
     "otherWaysReach": "Autres moyens de nous contacter",
     "responseWithin24h": "Réponse dans les 24 heures",
     "noContentAvailable": "Aucun contenu disponible",
-    "messageSentSuccess": "Message envoyé avec succès. L'administrateur vous recontactera dans les 24 heures."
+    "messageSentSuccess": "Message envoyé avec succès. L'administrateur vous recontactera dans les 24 heures.",
+    "noRecordsFound": "Aucun enregistrement trouvé",
+    "propertyShared": "Propriété partagée avec succès",
+    "interestSent": "Intérêt envoyé",
+    "offerMade": "Offre faite",
+    "offerSent": "Offre envoyée"
   },
   "authentication": {
     "login": "Connexion",
@@ -484,7 +495,9 @@
     "alreadyUpgraded": "Déjà mis à niveau vers ce plan",
     "draftExistsMessage": "Un brouillon pour cette propriété existe déjà. Veuillez le supprimer avant d'en créer un nouveau.",
     "removeAndSave": "Supprimer et enregistrer le brouillon",
-    "areYouSure": "Êtes-vous sûr(e) ?"
+    "areYouSure": "Êtes-vous sûr(e) ?",
+    "confirmCancelPlan": "Êtes-vous sûr?",
+    "confirmCancelPlanDesc": "Voulez-vous annuler ce plan"
   },
   "dropdowns": {
     "statusApproved": "Approuvé",
@@ -537,7 +550,10 @@
     "forSale": "Propriétés à vendre",
     "forRent": "Propriétés à louer",
     "offMarket": "Propriétés hors marché",
-    "inDirectory": "Propriétés dans l'annuaire"
+    "inDirectory": "Propriétés dans l'annuaire",
+    "deleteConfirm": "Voulez-vous supprimer cette propriété",
+    "alertNotification": "Soyez informé lorsque de nouvelles propriétés sont annoncées",
+    "showFrom": "Afficher {count} sur {total} propriétés"
   },
   "profile": {
     "myProfile": "Mon profil",
@@ -753,5 +769,44 @@
     "agency": "Agence",
     "agent": "Agent",
     "hunter": "Chasseur"
+  },
+  "plan": {
+    "heroTitle": "Choisissez le plan qui transformera votre projet immobilier en parcours sans stress",
+    "savingText": "Économisez 20% avec le plan annuel payé en une fois.",
+    "freeTrial": "Essai gratuit de 3 jours",
+    "upgradePlan": "Passer à un plan supérieur",
+    "currentPlan": "Plan actuel",
+    "cancelPlan": "Annuler le plan",
+    "noCardRequired": "Aucune carte bancaire requise",
+    "cancelAnytime": "Annulez à tout moment",
+    "yourCurrentPlan": "Votre plan actuel",
+    "detailsTitle": "Voici en détail ce que vous obtenez avec chaque plan.",
+    "seekerFeatures": "Fonctionnalités innovantes pour les chercheurs de propriétés:",
+    "sellerFeatures": "Fonctionnalités innovantes pour les vendeurs de propriétés:",
+    "freeOfferWarning": "Cette offre gratuite n'est valable que pour 3 jours. Après cela, vous devez acheter un plan."
+  },
+  "billing": {
+    "monthly": "Mensuel",
+    "annually": "Annuel",
+    "perMonth": "/ Mois",
+    "perYear": "/ An"
+  },
+  "display": {
+    "show": "Afficher"
+  },
+  "pagination": {
+    "previous": "< Précédent",
+    "next": "Suivant >",
+    "dots": "..."
+  },
+  "propertyDetails": {
+    "shareProperty": "Partager la propriété",
+    "notifyInterest": "Notifier l'intérêt",
+    "makeOffer": "Faire une offre",
+    "manageInterest": "Gérer votre intérêt",
+    "notifyInterestBtn": "Notifier l'intérêt",
+    "offerMade": "Offre faite",
+    "makeOfferBtn": "Faire une offre",
+    "contactAgency": "Contacter l'agence"
   }
 }

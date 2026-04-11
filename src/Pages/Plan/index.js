@@ -8,11 +8,13 @@ import { capLetter, formatCurrency } from "../../models/string.model";
 import { useNavigate } from "react-router-dom";
 import LoginModal from "../../components/common/Modal/LoginModal";
 import { active_plan_success, clear_plan_success } from "../../actions/activePlan";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 
 const Plan = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -33,7 +35,7 @@ const Plan = () => {
         setfreeTrail(true)
       } else {
         setplanId("")
-        return navigate(`/card-detail?id=${plan?._id}&isMonthly=${isMonthly}&upgrade=${text == "Upgrade Plan" ? "yes" : "no"}`);
+        return navigate(`/card-detail?id=${plan?._id}&isMonthly=${isMonthly}&upgrade=${text == t("plan.upgradePlan") ? "yes" : "no"}`);
       }
     } else {
       setloginModal(true);
@@ -143,7 +145,7 @@ const Plan = () => {
   }, []);
 
   const planClick = (plan, text = "") => {
-    if (text == "Upgrade Plan" || text == "Get Started") handleGetStarted(plan, text);
+    if (text == t("plan.upgradePlan") || text == t("buttons.getStarted")) handleGetStarted(plan, text);
   };
 
   const ActivePlan = (itm) => {
@@ -159,13 +161,13 @@ const Plan = () => {
 
   const cancelPlan = (id) => {
     Swal.fire({
-      title: "Are you sure?",
+      title: t("modals.confirmCancelPlan"),
       text: `Do you want to cancel this plan`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#1E5DBC",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonText: t("buttons.yes"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -282,15 +284,15 @@ const Plan = () => {
                   if (i < currentIndex) {
                     isDisable = true
                   }
-                  let buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Get started";
+                  let buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("buttons.getStarted");
                   if (currentIndex === i) {
                     isDisable = false
-                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Current plan";
+                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("plan.currentPlan");
                   } else if (i < currentIndex || currentIndex == -1) {
-                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Get Started"; // Downgrade
+                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("buttons.getStarted"); // Downgrade
                   } else if (i > currentIndex) {
                     isDisable = false
-                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Upgrade Plan";
+                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("plan.upgradePlan");
                   }
                   console.log(isDisable, "isDisable")
 
@@ -379,7 +381,7 @@ const Plan = () => {
                       </div>
                       <div className="mt-auto">
                         <p className="text-[#000] text-[14px] text-center">
-                          {currentIndex === i && "Your current plan"}
+                          {currentIndex === i && t("plan.yourCurrentPlan")}
                         </p>
                         <div className="mx-auto max-w-[150px] my-2">
                           <button
@@ -395,16 +397,16 @@ const Plan = () => {
                             className={`mx-auto w-full bg-[#976DD0] p-2 rounded-[50px] text-white text-[14px] px-5`}
                           >
                             {pln?.planType == "free"
-                              ? ActivePlan(pln) ? "Cancel Plan" : "Register for free"
+                              ? ActivePlan(pln) ? t("plan.cancelPlan") : t("buttons.registerFree")
                               : ActivePlan(pln)
-                                ? "Cancel Plan"
+                                ? t("plan.cancelPlan")
                                 : buttonText}
                           </button>
                         </div>
                         <p className="text-[#5A6978] text-[14px] text-center">
                           {pln?.planType == "free"
-                            ? "No credit card required"
-                            : "Cancel anytime"}
+                            ? t("plan.noCardRequired")
+                            : t("plan.cancelAnytime")}
                         </p>
                       </div>
                     </div>
@@ -487,15 +489,15 @@ const Plan = () => {
                   if (i < currentIndex) {
                     isDisable = true
                   }
-                  let buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Get started";
+                  let buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("buttons.getStarted");
                   if (currentIndex === i) {
                     isDisable = false
-                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Current plan";
+                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("plan.currentPlan");
                   } else if (i < currentIndex || currentIndex == -1) {
-                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Get Started"; // Downgrade
+                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("buttons.getStarted"); // Downgrade
                   } else if (i > currentIndex) {
                     isDisable = false
-                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? "3 Days Free Trial" : "Upgrade Plan";
+                    buttonText = (!user?.trialUserForPlan && user?.freeTrialStatus === "pending") ? t("plan.freeTrial") : t("plan.upgradePlan");
                   }
                   return (
                     <li className="w-[18%]">
@@ -535,14 +537,14 @@ const Plan = () => {
                                   : planClick(pln, buttonText);
                               }}
                               disabled={isDisable}
-                              className={`text-white rounded-[50px] px-5 py-2 text-[14px] mx-auto ${buttonText === "Current plan"
+                              className={`text-white rounded-[50px] px-5 py-2 text-[14px] mx-auto ${buttonText === t("plan.currentPlan")
                                 ? "bg-[#969faa8a]"
                                 : buttonText === "Downgrade"
                                   ? "bg-[#5c5c5b]"
                                   : "bg-[#976DD0]"
                                 }`}
                             >
-                              {ActivePlan(pln) ? "Cancel Plan" : buttonText}
+                              {ActivePlan(pln) ? t("plan.cancelPlan") : buttonText}
                             </button>
                           </div>
                         </li>

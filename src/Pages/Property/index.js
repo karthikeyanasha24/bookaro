@@ -13,6 +13,7 @@ import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { removePropData } from "../../models/string.model";
 import { categorizeData } from "../propertySteps/shared";
+import { useTranslation } from "react-i18next";
 import { CommonCreteria } from "./commonCreteria/commonCreteria";
 import CommonFilter from "./commonFilters/CommonFilters";
 import CustomMap from "./CustomMap";
@@ -21,6 +22,7 @@ import PropertiesGrid from "./Propertygrid";
 import PropertiesList from "./Propertylist";
 
 const PropertyPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const params = new URLSearchParams(window.location.search);
@@ -194,13 +196,13 @@ const PropertyPage = () => {
 
   const deleteItem = (item) => {
     Swal.fire({
-      title: "Are you sure?",
+      title: t("modals.confirmTitle"),
       text: `Do you want to delete this Property`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonText: t("buttons.yes"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -811,9 +813,9 @@ const PropertyPage = () => {
                         Show {data?.length} from {total} Properties
                       </span>
                       <ReactPaginate
-                        previousLabel="<Pre"
-                        nextLabel="Next>"
-                        breakLabel="..."
+                        previousLabel={t("pagination.previous")}
+                        nextLabel={t("pagination.next")}
+                        breakLabel={t("pagination.dots")}
                         pageRangeDisplayed={2}
                         marginPagesDisplayed={1}
                         pageCount={Math.ceil(total / filters.count)}

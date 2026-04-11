@@ -42,7 +42,7 @@ import School from "./Schools";
 import { IoMdClose } from "react-icons/io";
 
 const PropertyDetails = () => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const params = new URLSearchParams(window.location.search);
   const paramId = params.get("id");
   const ScrollId = params.get("scroll");
@@ -102,7 +102,7 @@ const PropertyDetails = () => {
   const [isOfferMade, setIsOfferMade] = useState(false);
   const handleNotifyInterest = () => {
     if (isNotified) return;
-    notifyInterest("interest sent"); // Call your action
+    notifyInterest(t("messages.interestSent")); // Call your action
   };
 
   const openShareModal = (propertyId) => {
@@ -118,7 +118,7 @@ const PropertyDetails = () => {
 
   const handleShare = () => {
     if (!shareEmail || !selectedPropertyId) {
-      toast.error("Please enter a valid email");
+      toast.error(t("validation.validEmail"));
       return;
     }
     const payload = {
@@ -129,7 +129,7 @@ const PropertyDetails = () => {
     loader(true);
     ApiClient.post("property/shareProperty", payload).then((res) => {
       if (res.success) {
-        toast.success("Property shared successfully");
+        toast.success(t("messages.propertyShared"));
         getPropertyDetails()
         closeShareModal();
 
@@ -151,7 +151,7 @@ const PropertyDetails = () => {
     if (!user.loggedIn) return setloginModal(true);
     openModal();
     return;
-    notifyInterest("offer made"); // Call your action for making an offer
+    notifyInterest(t("messages.offerMade")); // Call your action for making an offer
     setIsOfferMade(true); // Update state to reflect offer has been made
   };
   const getGtkData = (propertyType, searchLocation, zipcode) => {
@@ -328,7 +328,7 @@ const PropertyDetails = () => {
   //   if (!ScrollId) return;
   //   setTimeout(() => {
   //     switch (ScrollId) {
-  //       case "Description":
+  //       case t("forms.description"):
   //         scrollFunction(refDescription, 0)
   //         break;
   //       case "Attractivity":
@@ -482,7 +482,7 @@ const PropertyDetails = () => {
 
   const notifyInterest = async (status) => {
     if (!user.loggedIn) return setloginModal(true);
-    // if (status === "offer sent" && !offerForm.description) {
+    // if (status === t("messages.offerSent") && !offerForm.description) {
     //   seterrorDesc("Required");
     //   return;
     // }
@@ -495,7 +495,7 @@ const PropertyDetails = () => {
         makeOfferDescription: offerForm.description,
         // makeOfferMovinDate: offerForm?.makeOfferMovinDate,
       };
-      if (status != "offer sent") {
+      if (status != t("messages.offerSent")) {
         delete payload.makeOfferAmount;
         delete payload.makeOfferDescription;
         // delete payload.makeOfferMovinDate;
@@ -587,7 +587,7 @@ const PropertyDetails = () => {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    notifyInterest("offer sent");
+                    notifyInterest(t("messages.offerSent"));
                   }}
                 >
                   <div className="flex min-h-full items-center justify-center p-4 text-center">
@@ -644,7 +644,7 @@ const PropertyDetails = () => {
                           </label>
                           <textarea
                             className="bg-white rounded-[7px] border-gray-300 border-[1px] outline-none focus:border-[#976DD0] p-2 px-3  md:w-[500px] w-full mb-3 text-[#5A5A5A]"
-                            placeholder="Description"
+                            placeholder=t("forms.description")
                             rows={4}
                             type="text"
                             value={offerForm.description}
@@ -722,7 +722,7 @@ const PropertyDetails = () => {
                         <input
                           type="email"
                           className="w-full border-[1px] border-gray-300 rounded-[4px] p-2 outline-none focus:border-[#976DD0]"
-                          placeholder="Enter email address"
+                          placeholder=t("forms.enterEmail")
                           value={shareEmail}
                           onChange={(e) => setShareEmail(e.target.value)}
                         />
@@ -997,7 +997,7 @@ const PropertyDetails = () => {
                             <h4 className="text-center text-[15px] text-white">
                               {isNotified
                                 ? "Notified Interest"
-                                : "Notify Interest"}
+                                : t("propertyDetails.notifyInterestBtn")}
                             </h4>
                           </div>
 
@@ -1009,7 +1009,7 @@ const PropertyDetails = () => {
                           >
                             <MdLocalOffer className="text-[#fff] me-2 text-[20px]" />
                             <h4 className="text-center text-[15px] text-white">
-                              {isNotified ? "Offer Made" : "Make an Offer"}
+                              {isNotified ? t("propertyDetails.offerMade") : t("propertyDetails.makeOfferBtn")}
                             </h4>
                           </div>
                         </div>
@@ -1059,7 +1059,7 @@ const PropertyDetails = () => {
                                 <h2 className="text-lg  font-semibold mb-6">Manage Your Interest</h2>
 
                                 <div className="flex gap-4 mt-8 mb-6">
-                                  <div onClick={() => notifyInterest("interest sent")} className="bg-[#efefef] px-3 rounded-[5px] cursor-pointer w-1/2 py-4">
+                                  <div onClick={() => notifyInterest(t("messages.interestSent"))} className="bg-[#efefef] px-3 rounded-[5px] cursor-pointer w-1/2 py-4">
                                     <img
                                       src="assets/img/notify-interest.svg"
                                       alt="notify interest"
@@ -1068,7 +1068,7 @@ const PropertyDetails = () => {
                                     <h4 className="text-center">Notify interest</h4>
                                   </div>
                                   <div onClick={() => notifyInterest(
-                                    "interest sent"
+                                    t("messages.interestSent")
                                     // "non binding price received"
                                     )} className="bg-[#efefef] px-3 py-4 rounded-[5px] cursor-pointer w-1/2">
                                     <img
