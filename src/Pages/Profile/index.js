@@ -3,6 +3,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { RxCross2 } from 'react-icons/rx';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { login_success, logout } from "../../actions/user";
@@ -15,7 +16,7 @@ import AcountSidebar from '../Settings/AcountSidebar';
 import "./profile.scss";
 
 const Profile = () => {
-  const user = useSelector((state) => state.user);
+  const { t } = useTranslation();
   const [openEmail, setOpenEmail] = useState(false)
   function closeModal() {
     setOpenEmail(false)
@@ -43,13 +44,13 @@ const Profile = () => {
 
   const deleteItem = () => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: t("modals.confirmDelete"),
+      text: t("modals.confirmDeleteDesc"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#6c757d",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: t("buttons.yesDelete"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -91,7 +92,7 @@ const Profile = () => {
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
     if (!file) return;
     if (!allowedTypes.includes(file?.type)) {
-      return toast.error("Only JPG and PNG images are allowed.");
+      return toast.error(t("messages.onlyJpgPngAllowed"));
     }
     loader(true);
     ApiClient.postFormData("upload/image", { file: file }).then((res) => {
@@ -99,7 +100,7 @@ const Profile = () => {
         setFormData({ ...formData, image: res?.fileName });
       }
     }).catch(error => {
-      console.error("Upload failed:", error);
+      console.error(t("messages.uploadFailed"), error);
     }).finally(() => {
       loader(false);
       e.target.value = "";
@@ -117,7 +118,7 @@ const Profile = () => {
     if (!formData.username?.trim() ||
       (formData?.accountType == "pro" && !formData.companyRole?.trim())
     ) {
-      return toast.error("Enter all mandatory fields");
+      return toast.error(t("messages.enterAllMandatoryFields"));
     }
 
     loader(true);
@@ -139,11 +140,11 @@ const Profile = () => {
   const changeEmail = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!newEmail || newEmail?.trim() === "") {
-      return setError({ ...error, email: "Email address is required" })
+      return setError({ ...error, email: t("validation.emailRequired") })
     } else if (!emailRegex.test(newEmail)) {
-      return setError({ ...error, email: "Enter a valid email address" })
+      return setError({ ...error, email: t("validation.invalidEmail") })
     } else if (user?.email === newEmail) {
-      return setError({ ...error, email: "Current eamil & new email can't be same" })
+      return setError({ ...error, email: t("messages.emailsCannotBeSame") })
     }
     if (error.email) return
     let dto = {
@@ -154,8 +155,7 @@ const Profile = () => {
     ApiClient.put("user/editUserEmail", dto,).then((res) => {
       if (res.success) {
         closeModal()
-        // toast.success(res.message)
-        toast.success("Otp has been sent to your current email")
+        toast.success(t("messages.otpSentToEmail"))
       } else { toast.error(res?.message); }
       loader(false);
     });
@@ -200,7 +200,7 @@ const Profile = () => {
                   <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                     <div className="mt-2 mb-4">
                       <label className="text-md font-medium leading-6 text-gray-900 mb-1 block">
-                        Current Email
+                        {t("forms.currentEmail")}
                       </label>
                       <input
                         disabled
@@ -211,7 +211,7 @@ const Profile = () => {
                     </div>
                     <div className="">
                       <label className="text-md font-medium leading-6 text-gray-900 mb-1 block">
-                        New Email
+                        {t("forms.newEmail")}
                       </label>
                       <input
                         value={newEmail}
@@ -234,7 +234,7 @@ const Profile = () => {
                         className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold "
                         onClick={() => changeEmail()}
                       >
-                        Submit
+                        {t("buttons.submit")}
                       </button>
                     </div>
                   </DialogPanel>
@@ -249,14 +249,14 @@ const Profile = () => {
               <AcountSidebar />
               <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                  Manage your account
+                  {t("authentication.manageAccount")}
                 </h2>
                 <div className="p-6 md:px-14 px-6 border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
                   <h4 className="text-black font-bold text-[19px]  mb-0">
-                    Personal information
+                    {t("profile.personalInformation")}
                   </h4>
                   <p className="text-black text-[18px] mb-14">
-                    Manage your contact details
+                    {t("profile.manageContactDetails")}
                   </p>
                   <div className="flex items-center ">
                     <div className="relative">
@@ -294,20 +294,17 @@ const Profile = () => {
                       onClick={handleEditPictureClick}
                       style={{ cursor: "pointer" }}
                     >
-                      Edit picture
+                      {t("profile.editPicture")}
                     </span>
                   </div>
 
                   <form onSubmit={handleSubmit}>
                     <div>
                       <h3 className="text-[#5A5A5A] font-bold mt-8 text-[20px] mb-2">
-                        Your contact details
+                        {t("profile.yourContactDetails")}
                       </h3>
                       <p className="text-[#5A5A5A] mb-5 md:text-[16px] text-[14px]">
-                        Contact details are only shared with property owners
-                        only when you contact them about a property they own.
-                        this allows us to increase trust on the plateform and
-                        increase chances that you get answers to your questions.
+                        {t("profile.contactDetailsInfo")}
                       </p>
                     </div>
 
@@ -319,7 +316,7 @@ const Profile = () => {
                         value={formData.firstName}
                         onChange={handleInputChange}
                         className="block w-full h-11 px-3 py-2.5 mb-3 border-[1px] bg-[#efefef] border-[#976DD0] rounded-md placeholder-gray-400 text-[#6c6c6c] "
-                        placeholder="First Name"
+                        placeholder={t("forms.firstName")}
                       />
                       <input
                         disabled
@@ -328,14 +325,14 @@ const Profile = () => {
                         value={formData.lastName}
                         onChange={handleInputChange}
                         className="block w-full h-11 px-3 py-2.5 mb-3 border-[1px] bg-[#efefef] border-[#976DD0] rounded-md placeholder-gray-400 text-[#6c6c6c] "
-                        placeholder="Last Name"
+                        placeholder={t("forms.lastName")}
                       />
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         className="cursor-pointer block w-full h-11 px-3 py-2.5 mb-3 border-[1px] border-[#976DD0] rounded-md placeholder-gray-400 text-[#6c6c6c] "
-                        placeholder="Email"
+                        placeholder={t("forms.email")}
                         onClick={openModal}
                       />
                       <input
@@ -344,7 +341,7 @@ const Profile = () => {
                         value={formData.username}
                         onChange={handleInputChange}
                         className="block w-full h-11 px-3 py-2.5 mb-3 border-[1px] border-[#976DD0] rounded-md placeholder-gray-400 text-[#6c6c6c] "
-                        placeholder="username"
+                        placeholder={t("profile.username")}
                       />
                       {user?.accountType === "pro" && (
                         <input
@@ -353,7 +350,7 @@ const Profile = () => {
                           value={formData.companyRole}
                           onChange={handleInputChange}
                           className="block w-full h-11 px-3 py-2.5 mb-3 border-[1px] border-[#976DD0] rounded-md placeholder-gray-400 text-[#6c6c6c] "
-                          placeholder="Role in company"
+                          placeholder={t("profile.roleInCompany")}
                         />
                       )}
                     </div>
@@ -363,21 +360,19 @@ const Profile = () => {
                         onClick={sendPersonalData}
                         className="cursor-pointer underline text-[#47525E] text-[16px] inline-block"
                       >
-                        Send me my personal data
+                        {t("profile.sendPersonalData")}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-[#5A5A5A] text-[16px]">
-                        By authorizing the listing of my property profile, I
-                        accept CGU and diffusion rules of Bookaroo and I
-                        authorize Bookaroo to display my property profile.
+                        {t("profile.agreementText")}
                       </p>
                       <a
                         onClick={() => deleteItem()}
                         className="text-[18px] font-bold text-[#5A5A5A] underline mt-3 block"
                       >
-                        Remove my account
+                        {t("profile.removeAccount")}
                       </a>
                     </div>
 
@@ -386,7 +381,7 @@ const Profile = () => {
                         type="submit"
                         className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                       >
-                        Save
+                        {t("buttons.save")}
                       </button>
                     </div>
                   </form>

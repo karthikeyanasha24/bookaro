@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -9,6 +10,7 @@ import AcountSidebar from "../Settings/AcountSidebar";
 import "./profile.scss";
 
 const ManageNotifications = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [setting, setSetting] = useState({

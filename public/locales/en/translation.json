@@ -190,7 +190,9 @@
     "theme": "Theme",
     "dark": "Dark",
     "light": "Light",
-    "auto": "Auto"
+    "auto": "Auto",
+    "currentEmail": "Current Email",
+    "newEmail": "New Email"
   },
   "validation": {
     "required": "This field is required",
@@ -528,7 +530,16 @@
     "twoFactorAuthentication": "Two Factor Authentication",
     "deleteAccount": "Delete Account",
     "accountSettings": "Account Settings",
-    "preferenceCenter": "Preference Center"
+    "preferenceCenter": "Preference Center",
+    "manageContactDetails": "Manage your contact details",
+    "editPicture": "Edit picture",
+    "yourContactDetails": "Your contact details",
+    "contactDetailsInfo": "Contact details are only shared with property owners only when you contact them about a property they own. This allows us to increase trust on the platform and increase chances that you get answers to your questions.",
+    "username": "Username",
+    "roleInCompany": "Role in company",
+    "sendPersonalData": "Send me my personal data",
+    "agreementText": "By authorizing the listing of my property profile, I accept CGU and diffusion rules of Bookaroo and I authorize Bookaroo to display my property profile.",
+    "removeAccount": "Remove my account"
   },
   "transactions": {
     "transactions": "Transactions",
@@ -606,7 +617,22 @@
     "disableNotifications": "Disable Notifications",
     "emailNotifications": "Email Notifications",
     "pushNotifications": "Push Notifications",
-    "smsNotifications": "SMS Notifications"
+    "smsNotifications": "SMS Notifications",
+    "title": "Notifications",
+    "defineAlerts": "Define when to be alerted",
+    "messageBox": "Message Box",
+    "newMessages": "New messages",
+    "propertyEvents": "My property profile events",
+    "listingProfile": "Listing of my property profile",
+    "newLike": "New Like",
+    "newFollow": "New Follow",
+    "newShare": "New Share",
+    "profileFollow": "Property profile I follow",
+    "newStatusUpdate": "New Status update",
+    "newKeyUpdate": "New key update",
+    "frequency": "Notifications frequency",
+    "sendFrequency": "Send me notifications:",
+    "forEachEvent": "for each event"
   },
   "content": {
     "blogs": "Blogs",

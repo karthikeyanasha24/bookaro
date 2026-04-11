@@ -190,7 +190,9 @@
     "theme": "Thème",
     "dark": "Sombre",
     "light": "Clair",
-    "auto": "Automatique"
+    "auto": "Automatique",
+    "currentEmail": "Email Actuel",
+    "newEmail": "Nouvel Email"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
@@ -528,7 +530,16 @@
     "twoFactorAuthentication": "Authentification à deux facteurs",
     "deleteAccount": "Supprimer le compte",
     "accountSettings": "Paramètres du compte",
-    "preferenceCenter": "Centre de préférences"
+    "preferenceCenter": "Centre de préférences",
+    "manageContactDetails": "Gérez vos détails de contact",
+    "editPicture": "Modifier la photo",
+    "yourContactDetails": "Vos détails de contact",
+    "contactDetailsInfo": "Les détails de contact ne sont partagés avec les propriétaires que lorsque vous les contactez à propos d'une propriété qu'ils possèdent. Cela nous permet d'augmenter la confiance sur la plateforme et d'augmenter vos chances d'obtenir des réponses à vos questions.",
+    "username": "Nom d'utilisateur",
+    "roleInCompany": "Rôle dans l'entreprise",
+    "sendPersonalData": "Envoyez-moi mes données personnelles",
+    "agreementText": "En autorisant l'annonce de mon profil de propriété, j'accepte les CGU et les règles de diffusion de Bookaroo et j'autorise Bookaroo à afficher mon profil de propriété.",
+    "removeAccount": "Supprimer mon compte"
   },
   "transactions": {
     "transactions": "Transactions",
@@ -606,7 +617,22 @@
     "disableNotifications": "Désactiver les notifications",
     "emailNotifications": "Notifications par e-mail",
     "pushNotifications": "Notifications Push",
-    "smsNotifications": "Notifications SMS"
+    "smsNotifications": "Notifications SMS",
+    "title": "Notifications",
+    "defineAlerts": "Définissez quand être alerté",
+    "messageBox": "Boîte de messages",
+    "newMessages": "Nouveaux messages",
+    "propertyEvents": "Événements de mon profil de propriété",
+    "listingProfile": "Annonce de mon profil de propriété",
+    "newLike": "Nouveau Like",
+    "newFollow": "Nouveau suiveur",
+    "newShare": "Nouveau partage",
+    "profileFollow": "Profil de propriété que je suis",
+    "newStatusUpdate": "Nouvelle mise à jour de statut",
+    "newKeyUpdate": "Nouvelle mise à jour clé",
+    "frequency": "Fréquence des notifications",
+    "sendFrequency": "Envoyez-moi des notifications:",
+    "forEachEvent": "pour chaque événement"
   },
   "content": {
     "blogs": "Blogs",
