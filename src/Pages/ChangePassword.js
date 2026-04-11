@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import PageLayout from "../components/global/PageLayout";
 import ApiClient from "../methods/api/apiClient";
@@ -10,6 +11,7 @@ import AcountSidebar from "./Settings/AcountSidebar";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -38,9 +40,9 @@ const ChangePassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
-    if (form.currentPassword?.trim() === "") return toast.error("Enter current password");
-    if (form.newPassword?.trim() === "") return toast.error("Enter new password");
-    if (form.newPassword !== form.confirmPassword) return toast.error("Confirm password must match")
+    if (form.currentPassword?.trim() === "") return toast.error(t("validation.currentPasswordRequired"));
+    if (form.newPassword?.trim() === "") return toast.error(t("validation.newPasswordRequired"));
+    if (form.newPassword !== form.confirmPassword) return toast.error(t("validation.passwordMismatch"))
     let invalid = methodModel.getFormError(formValidation, form);
     if (invalid) return;
     loader(true);
@@ -67,16 +69,15 @@ const ChangePassword = () => {
               <AcountSidebar />
               <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                  Manage your account
+                  {t("authentication.manageAccount")}
                 </h2>
                 <div className="p-10 md:px-14 px-8  flex flex-col justify-between  border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
                   <div>
                     <h4 className="text-black font-bold text-[19px]  mb-0">
-                      Password
+                      {t("authentication.password")}
                     </h4>
                     <p className="text-black text-[18px]  mb-2 ">
-                      Set a new strong password you are using nowhere else
-                      already.
+                      {t("authentication.passwordDescription")}
                     </p>
 
                     <div className="mt-10">
@@ -90,7 +91,7 @@ const ChangePassword = () => {
                             onChange={(e) =>
                               setForm({ ...form, currentPassword: e.target.value })
                             }
-                            placeholder="Current Password"
+                          placeholder={t("forms.currentPassword")}
                             required
                           />
                           {eyes.currentPassword ? (
@@ -126,7 +127,7 @@ const ChangePassword = () => {
                             onChange={(e) =>
                               setForm({ ...form, newPassword: e.target.value })
                             }
-                            placeholder="New Password"
+                            placeholder={t("forms.newPassword")}
                             required
                           />
                           {eyes.newPassword ? (
@@ -155,7 +156,7 @@ const ChangePassword = () => {
                           onChange={(e) =>
                             setForm({ ...form, confirmPassword: e.target.value })
                           }
-                          placeholder="Confirm Password"
+                          placeholder={t("forms.confirmPassword")}
                           required
                         />
                         {eyes.confirmPassword ? (
@@ -176,7 +177,7 @@ const ChangePassword = () => {
                       </div>
                       {submitted && getError("newPassword").invalid && (
                         <div className="d-block text-red-600 text-[13px]">
-                          Min Length must be 8 characters long
+                          {t("validation.passwordMinLength")}
                         </div>
                       )}
 
@@ -187,7 +188,7 @@ const ChangePassword = () => {
                       onClick={handleSubmit}
                       className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                     >
-                      Save
+                      {t("buttons.save")}
                     </button>
                   </div>
                 </div>

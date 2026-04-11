@@ -107,7 +107,10 @@
     "reset": "Réinitialiser",
     "sendMessage": "Envoyer un message",
     "reply": "Répondre",
-    "learnMore": "En savoir plus"
+    "learnMore": "En savoir plus",
+    "sendRecoveryEmail": "Envoyer l'e-mail de récupération",
+    "resendCode": "Renvoyer le code",
+    "verifyAndProceed": "Vérifier et continuer"
   },
   "forms": {
     "requiredField": "Ce champ est obligatoire",
@@ -197,7 +200,7 @@
     "minLength": "Minimum {{count}} caractères requis",
     "maxLength": "Maximum {{count}} caractères autorisés",
     "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
-    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordMismatch": "Le mot de passe de confirmation doit correspondre",
     "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
     "invalidFormat": "Format invalide",
     "invalidPhone": "Numéro de téléphone invalide",
@@ -217,7 +220,9 @@
     "invalidEmail": "Veuillez entrer une adresse e-mail valide",
     "invalidPhoneNumber": "Le numéro de téléphone est invalide",
     "selectPropertyType": "Veuillez choisir comment vous souhaitez gérer votre propriété",
-    "agreeTermsRequired": "Veuillez accepter nos Conditions d'utilisation et la Politique de confidentialité"
+    "agreeTermsRequired": "Veuillez accepter nos Conditions d'utilisation et la Politique de confidentialité",
+    "currentPasswordRequired": "Entrez le mot de passe actuel",
+    "newPasswordRequired": "Entrez le nouveau mot de passe"
   },
   "messages": {
     "loading": "Chargement...",
@@ -333,7 +338,13 @@
     "termsAcceptanceRequired": "Veuillez accepter nos Conditions d'utilisation et Politique de confidentialité",
     "decodingTokenError": "Erreur lors du décodage du jeton",
     "facebookLoginSuccess": "Connexion Facebook réussie",
-    "facebookLoginFailed": "Échec de la connexion Facebook"
+    "facebookLoginFailed": "Échec de la connexion Facebook",
+    "forgotPasswordInfo": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+    "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+    "dontReceiveOTP": "Vous n'avez pas reçu le code ?",
+    "enterOTP": "Entrez le code de vérification",
+    "manageAccount": "Gérer votre compte",
+    "passwordDescription": "Définissez un nouveau mot de passe fort que vous n'utilisez nulle part ailleurs"
   },
   "header": {
     "account": "Compte",

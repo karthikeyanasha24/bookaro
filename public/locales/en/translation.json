@@ -107,7 +107,10 @@
     "reset": "Reset",
     "sendMessage": "Send Message",
     "reply": "Reply",
-    "learnMore": "Learn More"
+    "learnMore": "Learn More",
+    "sendRecoveryEmail": "Send Recovery Email",
+    "resendCode": "Resend Code",
+    "verifyAndProceed": "Verify & Proceed"
   },
   "forms": {
     "requiredField": "This field is required",
@@ -196,8 +199,8 @@
     "passwordRequired": "Password is required",
     "minLength": "Minimum {{count}} characters required",
     "maxLength": "Maximum {{count}} characters allowed",
-    "passwordMinLength": "Password must be at least 8 characters",
-    "passwordMismatch": "Passwords do not match",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordMismatch": "Confirm password must match",
     "confirmPasswordRequired": "Please confirm your password",
     "invalidFormat": "Invalid format",
     "invalidPhone": "Invalid phone number",
@@ -217,7 +220,9 @@
     "invalidEmail": "Please enter a valid email address",
     "invalidPhoneNumber": "Phone number is invalid",
     "selectPropertyType": "Please select how you want to manage your property",
-    "agreeTermsRequired": "Please agree to our Terms of Use and Privacy Policy"
+    "agreeTermsRequired": "Please agree to our Terms of Use and Privacy Policy",
+    "currentPasswordRequired": "Enter current password",
+    "newPasswordRequired": "Enter new password"
   },
   "messages": {
     "loading": "Loading...",
@@ -333,7 +338,13 @@
     "termsAcceptanceRequired": "Please agree to our Terms of Use and Privacy Policy",
     "decodingTokenError": "Error decoding token",
     "facebookLoginSuccess": "Facebook login successful",
-    "facebookLoginFailed": "Facebook login failed"
+    "facebookLoginFailed": "Facebook login failed",
+    "forgotPasswordInfo": "Enter your email address and we'll send you a link to reset your password",
+    "rememberPassword": "Remember your password?",
+    "dontReceiveOTP": "Did not receive the code?",
+    "enterOTP": "Enter Verification Code",
+    "manageAccount": "Manage your account",
+    "passwordDescription": "Set a new strong password you are using nowhere else already"
   },
   "header": {
     "account": "Account",
