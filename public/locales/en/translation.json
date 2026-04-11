@@ -267,7 +267,11 @@
     "facebookLoginSuccess": "Facebook login successful",
     "facebookLoginFailed": "Facebook login failed",
     "googleLoginFailed": "Google Login Failed",
-    "otpVerification": "OTP verification required. Please check your email."
+    "otpVerification": "OTP verification required. Please check your email.",
+    "userDeletedSuccessfully": "User Deleted Successfully",
+    "confirmDeleteAccount": "Are you sure you want to delete your account?",
+    "otherWaysReach": "Other Ways to Reach Us",
+    "responseWithin24h": "Response within 24 hours"
   },
   "authentication": {
     "login": "Login",
@@ -346,7 +350,8 @@
     "dontReceiveOTP": "Did not receive the code?",
     "enterOTP": "Enter Verification Code",
     "manageAccount": "Manage your account",
-    "passwordDescription": "Set a new strong password you are using nowhere else already"
+    "passwordDescription": "Set a new strong password you are using nowhere else already",
+    "deleteAccount": "Delete Account"
   },
   "header": {
     "account": "Account",

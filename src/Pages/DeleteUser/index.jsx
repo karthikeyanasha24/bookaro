@@ -5,9 +5,11 @@ import { MdOutlineWatchLater } from "react-icons/md";
 import ApiClient from '../../methods/api/apiClient';
 import loader from '../../methods/loader';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 const Index = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate()
   const [form, setform] = useState({
     email: "",
@@ -22,7 +24,7 @@ const Index = () => {
     };
         const resp = await ApiClient.delete(`user/delete-by-credentials`,{},payload);
         if (resp?.success) {
-          toast.success("User Deleted Sucessfully")
+          toast.success(t("messages.userDeletedSuccessfully"))
           setform({
             email: "",
             password: "",
@@ -50,7 +52,7 @@ const Index = () => {
                 <FormControl
                   type="text"
                   name="email"
-                  label="Email"
+                  label=t("forms.email")
                   className='bg-[#EEEDED] !rounded-[8px] !h-9'
                   value={form?.email}
                   required
@@ -61,7 +63,7 @@ const Index = () => {
                 <FormControl
                   type="text"
                   name="password"
-                  label="Password"
+                  label=t("forms.password")
                   className='bg-[#EEEDED] !rounded-[8px] !h-9'
                   value={form?.password}
                   required

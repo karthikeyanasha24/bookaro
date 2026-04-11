@@ -267,7 +267,11 @@
     "facebookLoginSuccess": "Connexion Facebook réussie",
     "facebookLoginFailed": "Échec de la connexion Facebook",
     "googleLoginFailed": "Échec de la connexion Google",
-    "otpVerification": "Vérification OTP requise. Veuillez vérifier votre email."
+    "otpVerification": "Vérification OTP requise. Veuillez vérifier votre email.",
+    "userDeletedSuccessfully": "Utilisateur supprimé avec succès",
+    "confirmDeleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte?",
+    "otherWaysReach": "Autres moyens de nous contacter",
+    "responseWithin24h": "Réponse dans les 24 heures"
   },
   "authentication": {
     "login": "Connexion",
@@ -346,7 +350,8 @@
     "dontReceiveOTP": "Vous n'avez pas reçu le code ?",
     "enterOTP": "Entrez le code de vérification",
     "manageAccount": "Gérer votre compte",
-    "passwordDescription": "Définissez un nouveau mot de passe fort que vous n'utilisez nulle part ailleurs"
+    "passwordDescription": "Définissez un nouveau mot de passe fort que vous n'utilisez nulle part ailleurs",
+    "deleteAccount": "Supprimer le compte"
   },
   "header": {
     "account": "Compte",
