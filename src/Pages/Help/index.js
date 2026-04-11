@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import PageLayout from '../../components/global/PageLayout';
 import AcountSidebar from '../Settings/AcountSidebar';
 
 const Help = () => {
+    const { t } = useTranslation();
     return (
         <PageLayout>
             <section className="py-14 lg:py-16 bg-[#f2ecf8]">
