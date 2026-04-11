@@ -539,7 +539,9 @@
     "roleInCompany": "Role in company",
     "sendPersonalData": "Send me my personal data",
     "agreementText": "By authorizing the listing of my property profile, I accept CGU and diffusion rules of Bookaroo and I authorize Bookaroo to display my property profile.",
-    "removeAccount": "Remove my account"
+    "removeAccount": "Remove my account",
+    "phoneNumber": "Phone Number",
+    "phoneNumberInfo": "Improving your experience is our top priority. Allow us to secure your account with your phone number."
   },
   "transactions": {
     "transactions": "Transactions",

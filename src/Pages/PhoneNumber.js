@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import PageLayout from "../components/global/PageLayout";
 import ApiClient from "../methods/api/apiClient";
@@ -8,6 +9,7 @@ import loader from "../methods/loader";
 import AcountSidebar from "./Settings/AcountSidebar";
 
 const PhoneNumber = () => {
+    const { t } = useTranslation();
     const user = useSelector((state) => state.user);
     const [formData, setFormData] = useState({
         mobileNo: "",

@@ -539,7 +539,9 @@
     "roleInCompany": "Rôle dans l'entreprise",
     "sendPersonalData": "Envoyez-moi mes données personnelles",
     "agreementText": "En autorisant l'annonce de mon profil de propriété, j'accepte les CGU et les règles de diffusion de Bookaroo et j'autorise Bookaroo à afficher mon profil de propriété.",
-    "removeAccount": "Supprimer mon compte"
+    "removeAccount": "Supprimer mon compte",
+    "phoneNumber": "Numéro de téléphone",
+    "phoneNumberInfo": "Améliorer votre expérience est notre priorité absolue. Permettez-nous de sécuriser votre compte avec votre numéro de téléphone."
   },
   "transactions": {
     "transactions": "Transactions",
