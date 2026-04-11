@@ -104,6 +104,8 @@
     "ok": "OK",
     "apply": "Apply",
     "clear": "Clear",
+    "filter": "Filter",
+    "sort": "Sort",
     "reset": "Reset",
     "sendMessage": "Send Message",
     "reply": "Reply",
@@ -209,15 +211,7 @@
     "noSpecialCharacters": "No special characters allowed",
     "fileSize": "File size must be less than {{size}}MB",
     "fileType": "File type not allowed",
-    "acceptedFormats": "Accepted formats: {{formats}}",
-    "firstNameRequired": "First name is required",
-    "firstNameMinLength": "First name must be at least 2 characters",
-    "lastNameRequired": "Last name is required",
-    "lastNameMinLength": "Last name must be at least 2 characters",
-    "invalidEmail": "Please enter a valid email address",
-    "invalidPhoneNumber": "Phone number is invalid",
-    "selectPropertyType": "Please select how you want to manage your property",
-    "agreeTermsRequired": "Please agree to our Terms of Use and Privacy Policy"
+    "acceptedFormats": "Accepted formats: {{formats}}"
   },
   "messages": {
     "loading": "Loading...",
@@ -255,12 +249,7 @@
     "created": "Created successfully",
     "operationCompleted": "Operation completed successfully",
     "changesSaved": "Your changes have been saved",
-    "unsavedChanges": "You have unsaved changes",
-    "errorDecodingToken": "Error decoding token",
-    "facebookLoginSuccess": "Facebook login successful",
-    "facebookLoginFailed": "Facebook login failed",
-    "googleLoginFailed": "Google Login Failed",
-    "otpVerification": "OTP verification required. Please check your email."
+    "unsavedChanges": "You have unsaved changes"
   },
   "authentication": {
     "login": "Login",
@@ -316,24 +305,7 @@
     "otpRequired": "OTP is required",
     "checkEmail": "Please check your email for further instructions",
     "socialLogin": "Social Login",
-    "signInWith": "Sign in with {{provider}}",
-    "individual": "Individual",
-    "pro": "Professional",
-    "tellUsMore": "Tell us more",
-    "aboutProject": "Help us understand your project",
-    "lookingForProperty": "What are you looking for?",
-    "ownProperty": "Do you own a property?",
-    "privacyAcceptance": "I accept the privacy policy and terms",
-    "firstNameMinLength": "First name must be at least 2 characters",
-    "emailInvalid": "Email address is invalid",
-    "propertyRequired": "Please select how you want to manage your property",
-    "mobileInvalid": "Mobile number is invalid",
-    "accountCreatedSuccess": "Account created successfully",
-    "emailVerificationSent": "Please verify your email",
-    "termsAcceptanceRequired": "Please agree to our Terms of Use and Privacy Policy",
-    "decodingTokenError": "Error decoding token",
-    "facebookLoginSuccess": "Facebook login successful",
-    "facebookLoginFailed": "Facebook login failed"
+    "signInWith": "Sign in with {{provider}}"
   },
   "header": {
     "account": "Account",
@@ -629,15 +601,5 @@
       "title": "Loading",
       "message": "Please wait while we load your content"
     }
-  },
-  "propertyTypes": {
-    "buy": "Buy",
-    "rent": "Rent",
-    "planMyProject": "Plan my project",
-    "offMarketOpportunities": "Off-market opportunities",
-    "sellMyProperty": "Sell my property",
-    "rentMyProperty": "Rent my property",
-    "quoteMyProperty": "Quote my property",
-    "prepareFutureSale": "Prepare future sale"
   }
 }

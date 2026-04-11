@@ -1,0 +1,21 @@
+═══════════════════════════════════════
+Migration Report: index
+═══════════════════════════════════════
+
+File: src/Pages/Otpverify/index.js
+Lines:      166
+Hardcoded Strings:       49
+Already using t():        4
+
+TRANSLATION KEYS USED:
+─────────────────────
+t("authentication.dontReceiveOTP")
+t("authentication.enterOTP")
+t("buttons.resendCode")
+t("buttons.verifyAndProceed")
+
+NEXT STEPS:
+1. Review hardcoded strings
+2. Add missing keys to translation.json
+3. Replace strings with t() calls
+4. Test in both EN and FR

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import PhoneInput from "react-phone-input-2";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 import AuthLayout from "../../components/AuthLayout";
 import GooglePlaceAutoComplete from "../../components/common/GooglePlaceAutoComplete";
@@ -17,6 +18,7 @@ import methodModel from "../../methods/methods";
 
 const ProLogin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [social, setSocial] = useState({
     google: "", fb: "",
   });
@@ -214,17 +216,17 @@ const ProLogin = () => {
         <div className="xl:w-8/12 lg:w-11/12 w-full p-[24px] login">
           <div className="">
             <h1 className="text-[24px] font-semibold text-[#47525E] text-center tracking-[.67px]">
-              Create an account pro
+              {t("authentication.createAccountPro")}
             </h1>
-            <p className="text-center text-[14px]">Already have an account ? <Link to={`/login${propertyId?`?propertyId=${propertyId}`:''}`} className="text-[#976DD0] font-bold">Sign In</Link> </p>
+            <p className="text-center text-[14px]">{t("authentication.alreadyHaveAccount")} <Link to={`/login${propertyId?`?propertyId=${propertyId}`:''}`} className="text-[#976DD0] font-bold">{t("buttons.login")}</Link> </p>
             <div className="flex items-center justify-center gap-6 mb-10 mt-7">
-              <button onClick={() => { roleType(`/signup`) }} className={`h-9 text-[#47525E] border-[2px] border-[#976DD0] px-6 py-1 rounded-md w-[130px] hover:opacity-[90%] bg-tranparent text-[#47525E] text-[16px]`}>Individual</button>
-              <button onClick={() => { roleType(`/signup/pro`) }} className={`h-9 bg-[#976DD0] text-white border-[2px] border-[#976DD0] px-6 py-1 rounded-md  w-[130px] hover:opacity-[90%] text-[16px]`}>Pro</button>
+              <button onClick={() => { roleType(`/signup`) }} className={`h-9 text-[#47525E] border-[2px] border-[#976DD0] px-6 py-1 rounded-md w-[130px] hover:opacity-[90%] bg-tranparent text-[#47525E] text-[16px]`}>{t("authentication.individual")}</button>
+              <button onClick={() => { roleType(`/signup/pro`) }} className={`h-9 bg-[#976DD0] text-white border-[2px] border-[#976DD0] px-6 py-1 rounded-md  w-[130px] hover:opacity-[90%] text-[16px]`}>{t("authentication.pro")}</button>
             </div>
 
             <div className="mt-8 mb-10">
-              <h2 className="text-[18px] font-[600] text-center ">Your personal information</h2>
-              <p className="mb-8 text-center">We will keep them safe</p>
+              <h2 className="text-[18px] font-[600] text-center ">{t("authentication.yourPersonalInfo")}</h2>
+              <p className="mb-8 text-center">{t("authentication.weKeepThemSafe")}</p>
               <div>
                 {['first Name', 'last Name', 'email', 'company Role'].map((field, index) => {
                   let row = (field == "first Name") ? "firstName" :
@@ -270,8 +272,8 @@ const ProLogin = () => {
             </div>
 
             <div className="text-center mb-8">
-              <h2 className="text-[18px] font-[600]">Company details</h2>
-              <p className="text-[14px]">Will make you searchable in <br /> directory</p>
+              <h2 className="text-[18px] font-[600]">{t("authentication.companyDetails")}</h2>
+              <p className="text-[14px]">{t("authentication.makeSearchableInDirectory")}</p>
             </div>
 
             <div className="grid grid-cols-3 gap-5 text-center mb-5">
@@ -298,7 +300,7 @@ const ProLogin = () => {
                     value={formData.companyName}
                     onChange={handleChange}
                     className={`block w-full h-11 text-[#5A5A5A]  px-3 py-2.5 leading-7 text-[14px] border-[2px] rounded-md ${errors.companyName ? 'border-[#976DD0]' : 'border-[#976DD0]'} `}
-                    placeholder="Company name*"
+                    placeholder={t("forms.companyName")+"*"}
                     required
                   />
                   {errors.companyName && <span className="text-red-500 text-xs">{errors.companyName}</span>}
@@ -313,7 +315,7 @@ const ProLogin = () => {
                     value={formData.registrationNumber}
                     onChange={handleChange}
                     className={`block w-full  h-11 px-3 py-2.5 text-[#5A5A5A]  leading-7  border-[2px] rounded-md ${errors.registrationNumber ? 'border-[#976DD0]' : 'border-[#976DD0]'}`}
-                    placeholder="Registration number*"
+                    placeholder={t("forms.registrationNumber")+"*"}
                     required
                   />
                   {errors.registrationNumber && <span className="text-red-500 text-xs">{errors.registrationNumber}</span>}
@@ -325,7 +327,7 @@ const ProLogin = () => {
                   key={inputKey}
                   value={location}
                   result={addressResult}
-                  placeholder="Address"
+                  placeholder={t("forms.address")}
                   id="address"
                 />
                 {location?.trim() && (
@@ -349,7 +351,7 @@ const ProLogin = () => {
                 </div>
               ))}
 
-              <p className="text-[#5A5A5A] text-[14px] mb-3">*Required field</p>
+              <p className="text-[#5A5A5A] text-[14px] mb-3">{t("forms.requiredField")}</p>
               <div className="flex mt-5">
                 <label className="flex items-start pointer">
                   <input
@@ -359,7 +361,7 @@ const ProLogin = () => {
                     className="mr-2 h-4 w-4 mt-[2px]"
                   />{" "}
                   <span className="text-[12px] text-[#5A5A5A]">
-                    By creating my account I accept privacy policy, CGU and diffusion rules of Bookaroo
+                    {t("authentication.termsAcceptance")}
                   </span>
                 </label>
               </div>
@@ -370,7 +372,7 @@ const ProLogin = () => {
               </div>
               <div className="mt-10 flex items-center justify-center pb-10">
                 <button onClick={handleSubmit} className="h-11 !bg-[#48464a] px-7 rounded-full font-medium text-center text-white hover:opacity-80 transition-all">
-                  Next: update company profile
+                  {t("buttons.nextUpdateProfile")}
                 </button>
               </div>
               {/* <div>

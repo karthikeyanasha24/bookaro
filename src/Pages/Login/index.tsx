@@ -2,6 +2,7 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import FacebookLogin from 'react-facebook-login';
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -18,6 +19,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state: any) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const googleClientId: string = process.env.REACT_APP_CLINT_ID as string;
   const fbAppId: string = process.env.REACT_APP_FACEBOOK_APP_ID as string;
   const [social, setSocial] = useState<any>({
@@ -75,7 +77,7 @@ const Login = () => {
           navigate(url);
         } else {
           setTimeout(() => {
-            toast.success("Verify Otp");
+            toast.success(t("messages.otpVerification"));
           }, 400);
           navigate(`/otpverify?email=${form?.email}&propertyId=${propertyId}`);
         }
@@ -117,16 +119,16 @@ const Login = () => {
         checkEmail(decodedToken.email);
       }
     } catch (error) {
-      console.error("Error decoding token", error);
+      console.error(t("messages.errorDecodingToken"), error);
     }
   };
   const onFacebookSuccess = (res: any) => {
     if (res.status !== 'unknown') {
-      console.log('Facebook login success:', res);
+      console.log(t("messages.facebookLoginSuccess"), res);
       setSocial({ ...social, fb: res });
       checkEmail(res.email)
     } else {
-      console.error('Facebook login failed:', res);
+      console.error(t("messages.facebookLoginFailed"), res);
     }
   };
 
@@ -170,7 +172,7 @@ const Login = () => {
           <div className="2xl:w-7/12 xl:w-9/12 lg:w-11/12 w-full p-[30px] mx-auto border border-[#976DD0] rounded-[8px] bg-white">
             <div className="mt-5">
               <h1 className="text-[22px] font-semibold text-[#47525E] text-center mb-5 tracking-[.67px] ">
-                Sign In
+                {t("authentication.login")}
               </h1>
               <div className="mb-4">
                 <input
@@ -178,7 +180,7 @@ const Login = () => {
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   value={form.email}
                   className="block w-full h-11 px-3 py-2.5 leading-7 text-[14px] border-[2px] rounded-md border-[#976DD0] mb-3"
-                  placeholder="Email address"
+                  placeholder={t("forms.emailAddress")}
                   autoComplete="off"
                   disabled={methodModel.getPrams("attended") ? true : false}
                   required
@@ -187,7 +189,7 @@ const Login = () => {
                   <input
                     type={eyes.password ? "text" : "password"}
                     className="block w-full h-11 px-3 py-2.5 leading-7 text-[14px] border-[2px] rounded-md border-[#976DD0] "
-                    placeholder="Password"
+                    placeholder={t("forms.password")}
                     onChange={(e) =>
                       setForm({ ...form, password: e.target.value })
                     }
@@ -208,7 +210,7 @@ const Login = () => {
                   </div>
                 </div>
                 <Link to="/forgotpassword" className="text-[#976DD0] text-sm text-end ml-auto block mt-[4px]" >
-                  Forgot Password ?
+                  {t("authentication.forgotPassword")}
                 </Link>
               </div>
               <div className="mt-8 flex items-center justify-center">
@@ -216,14 +218,14 @@ const Login = () => {
                   type="submit"
                   className="h-11 !bg-[#48464a] w-[200px] px-7  rounded-full font-medium text-center text-white hover:opacity-80 transition-all"
                 >
-                  Sign In
+                  {t("buttons.login")}
                 </button>
               </div>
             </div>
 
             <div className="flex items-center justify-center my-6">
               <p className="w-[45%] bg-[#ddd] h-[1px] "></p>
-              <p className="mx-3">OR</p>
+              <p className="mx-3">{t("buttons.or")}</p>
               <p className="w-[45%] bg-[#ddd] h-[1px] "></p>
             </div>
             <div className="sm:flex ">
@@ -232,7 +234,7 @@ const Login = () => {
                   <GoogleLogin
                     onSuccess={onGoogleSuccess}
                     onError={() => {
-                      console.log("Google Login Failed");
+                      console.log(t("messages.googleLoginFailed"));
                     }}
                     theme="outline"
                   />
@@ -254,9 +256,9 @@ const Login = () => {
           </div>
 
           <p className="text-sm mt-3 text-center">
-            Don't have an account?{" "}
+            {t("authentication.dontHaveAccount")}{" "}
             <span onClick={() => signup()} className="text-[#976DD0] text-sm cursor-pointer">
-              Sign Up
+              {t("buttons.signup")}
             </span>
           </p>
         </form>

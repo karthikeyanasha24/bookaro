@@ -104,6 +104,8 @@
     "ok": "OK",
     "apply": "Appliquer",
     "clear": "Effacer",
+    "filter": "Filtrer",
+    "sort": "Trier",
     "reset": "Réinitialiser",
     "sendMessage": "Envoyer un message",
     "reply": "Répondre",
@@ -209,15 +211,7 @@
     "noSpecialCharacters": "Aucun caractère spécial autorisé",
     "fileSize": "La taille du fichier doit être inférieure à {{size}}MB",
     "fileType": "Type de fichier non autorisé",
-    "acceptedFormats": "Formats acceptés : {{formats}}",
-    "firstNameRequired": "Le prénom est obligatoire",
-    "firstNameMinLength": "Le prénom doit contenir au moins 2 caractères",
-    "lastNameRequired": "Le nom de famille est obligatoire",
-    "lastNameMinLength": "Le nom de famille doit contenir au moins 2 caractères",
-    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
-    "invalidPhoneNumber": "Le numéro de téléphone est invalide",
-    "selectPropertyType": "Veuillez choisir comment vous souhaitez gérer votre propriété",
-    "agreeTermsRequired": "Veuillez accepter nos Conditions d'utilisation et la Politique de confidentialité"
+    "acceptedFormats": "Formats acceptés : {{formats}}"
   },
   "messages": {
     "loading": "Chargement...",
@@ -255,12 +249,7 @@
     "created": "Créé avec succès",
     "operationCompleted": "Opération terminée avec succès",
     "changesSaved": "Vos modifications ont été enregistrées",
-    "unsavedChanges": "Vous avez des modifications non enregistrées",
-    "errorDecodingToken": "Erreur lors du décodage du token",
-    "facebookLoginSuccess": "Connexion Facebook réussie",
-    "facebookLoginFailed": "Échec de la connexion Facebook",
-    "googleLoginFailed": "Échec de la connexion Google",
-    "otpVerification": "Vérification OTP requise. Veuillez vérifier votre email."
+    "unsavedChanges": "Vous avez des modifications non enregistrées"
   },
   "authentication": {
     "login": "Connexion",
@@ -280,14 +269,14 @@
     "mustLoginFirst": "Vous devez d'abord vous connecter",
     "clickToLogin": "Cliquez ici pour vous connecter",
     "emailAddress": "Adresse e-mail",
-    "emailRequired": "L'adresse e-mail est obligatoire",
+    "emailRequired": "L'adresse e-mail est requise",
     "passwordRequired": "Le mot de passe est requis",
     "passwordPlaceholder": "Entrez votre mot de passe",
     "currentPasswordPlaceholder": "Entrez le mot de passe actuel",
     "newPasswordPlaceholder": "Entrez le nouveau mot de passe",
     "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
-    "firstNameRequired": "Le prénom est obligatoire",
-    "lastNameRequired": "Le nom de famille est obligatoire",
+    "firstNameRequired": "Le prénom est requis",
+    "lastNameRequired": "Le nom de famille est requis",
     "lastNameMinLength": "Le nom de famille doit faire au moins 2 caractères",
     "passwordMinLength": "La longueur minimale doit être de 8 caractères",
     "confirmPasswordMismatch": "Le mot de passe de confirmation ne correspond pas",
@@ -316,24 +305,7 @@
     "otpRequired": "Le code OTP est obligatoire",
     "checkEmail": "Veuillez vérifier votre e-mail pour les instructions supplémentaires",
     "socialLogin": "Connexion sociale",
-    "signInWith": "Se connecter avec {{provider}}",
-    "individual": "Particulier",
-    "pro": "Professionnel",
-    "tellUsMore": "Dites-nous en plus",
-    "aboutProject": "Aidez-nous à comprendre votre projet",
-    "lookingForProperty": "Que recherchez-vous ?",
-    "ownProperty": "Possédez-vous une propriété ?",
-    "privacyAcceptance": "J'accepte la politique de confidentialité et les conditions",
-    "firstNameMinLength": "Le prénom doit faire au moins 2 caractères",
-    "emailInvalid": "L'adresse e-mail n'est pas valide",
-    "propertyRequired": "Veuillez sélectionner comment vous souhaitez gérer votre propriété",
-    "mobileInvalid": "Le numéro de mobile n'est pas valide",
-    "accountCreatedSuccess": "Compte créé avec succès",
-    "emailVerificationSent": "Veuillez vérifier votre e-mail",
-    "termsAcceptanceRequired": "Veuillez accepter nos Conditions d'utilisation et Politique de confidentialité",
-    "decodingTokenError": "Erreur lors du décodage du jeton",
-    "facebookLoginSuccess": "Connexion Facebook réussie",
-    "facebookLoginFailed": "Échec de la connexion Facebook"
+    "signInWith": "Se connecter avec {{provider}}"
   },
   "header": {
     "account": "Compte",
@@ -629,15 +601,5 @@
       "title": "Chargement",
       "message": "Veuillez patienter pendant que nous chargeons votre contenu"
     }
-  },
-  "propertyTypes": {
-    "buy": "Acheter",
-    "rent": "Louer",
-    "planMyProject": "Planifier mon projet",
-    "offMarketOpportunities": "Opportunités hors marché",
-    "sellMyProperty": "Vendre ma propriété",
-    "rentMyProperty": "Louer ma propriété",
-    "quoteMyProperty": "Évaluer ma propriété",
-    "prepareFutureSale": "Préparer une vente future"
   }
 }

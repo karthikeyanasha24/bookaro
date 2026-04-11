@@ -1,28 +1,51 @@
-// // import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import "./LanguageSwitcher.css";
 
-// const LanguageSwitcher = () => {
-//     const { i18n } = useTranslation();
+const LanguageSwitcher = () => {
+    const { i18n } = useTranslation();
+    const [isOpen, setIsOpen] = useState(false);
 
-//     const handleLanguageChange = (event) => {
-//         const language = event.target.value;
-//         i18n.changeLanguage(language);
-//     };
+    const handleLanguageChange = (language) => {
+        i18n.changeLanguage(language);
+        setIsOpen(false);
+    };
 
-//     return (
-//         <div className="language-switcher">
-//             <label htmlFor="language-select" className="mr-2">
-//                 Language:
-//             </label>
-//             <select
-//                 id="language-select"
-//                 onChange={handleLanguageChange}
-//                 defaultValue={i18n.language}
-//             >
-//                 <option value="en">English</option>
-//                 <option value="fr">Français</option>
-//             </select>
-//         </div>
-//     );
-// };
+    const languages = [
+        { code: 'fr', label: 'Français', flag: '🇫🇷' },
+        { code: 'en', label: 'English', flag: '🇬🇧' },
+    ];
 
-// export default LanguageSwitcher;
+    const currentLanguage = languages.find(lang => lang.code === i18n.language);
+
+    return (
+        <div className="language-switcher">
+            <button
+                className="lang-toggle"
+                onClick={() => setIsOpen(!isOpen)}
+                title="Select language"
+                aria-label="Select language"
+            >
+                <span className="lang-flag">{currentLanguage?.flag || '🌐'}</span>
+            </button>
+            
+            {isOpen && (
+                <div className="language-dropdown">
+                    {languages.map((lang) => (
+                        <button
+                            key={lang.code}
+                            className={`lang-option ${i18n.language === lang.code ? 'active' : ''}`}
+                            onClick={() => handleLanguageChange(lang.code)}
+                            title={lang.label}
+                        >
+                            <span className="lang-flag">{lang.flag}</span>
+                            <span className="lang-label">{lang.label}</span>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default LanguageSwitcher;

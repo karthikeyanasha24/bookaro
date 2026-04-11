@@ -5,7 +5,7 @@ import Html from "./Html";
 import environment from "../../../environment";
 import { useSelector } from "react-redux";
 
-const Sidebar = ({ isOpen , menus}) => {
+const Sidebar = ({ isOpen = true, onToggle = () => {}, menus }) => {
   const user = useSelector((state) => state.user);
   const history = useNavigate();
   const [role, setRole] = useState(user.customerRole);
@@ -80,6 +80,7 @@ const Sidebar = ({ isOpen , menus}) => {
         isAllow={isAllow}
         ListItemLink={ListItemLink}
         isOpen={isOpen}
+        onToggle={onToggle}
         menus={menus}
       />
     </>

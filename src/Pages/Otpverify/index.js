@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 import { login_success } from '../../actions/user';
 import AuthLayout from "../../components/AuthLayout";
 import { requestForToken } from '../../config/Firebase/FirebaseAuth';
@@ -12,6 +13,7 @@ import methodModel from '../../methods/methods';
 const OtpVerification = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const { t } = useTranslation();
   const [otp, setOtp] = useState(['', '', '', '']);
   const location = useLocation();
   const propertyType = location.state?.propertyType;
@@ -125,7 +127,7 @@ const OtpVerification = () => {
     <AuthLayout>
       <div className="flex items-center justify-center  w-full">
         <form onSubmit={handleSubmit} className="xl:w-8/12 lg:w-11/12 w-full p-[30px] mx-auto border border-[#976DD0] rounded-[8px] bg-white bg-white p-8 rounded  border border-[#976DD0]">
-          <h2 className="text-2xl font-bold text-center mb-5">Enter OTP</h2>
+          <h2 className="text-2xl font-bold text-center mb-5">{t("authentication.enterOTP")}</h2>
           <div className="flex space-x-2 justify-center ">
             {otp.map((value, index) => (
               <input
@@ -144,15 +146,15 @@ const OtpVerification = () => {
             ))}
           </div>
           <div className="mt-5">
-            <p className="text-center">Don't receive OTP code?</p>
-            <span onClick={handleResend} className="text-[#976DD0] text-center underline block cursor-pointer">Resend Code</span>
+            <p className="text-center">{t("authentication.dontReceiveOTP")}</p>
+            <span onClick={handleResend} className="text-[#976DD0] text-center underline block cursor-pointer">{t("buttons.resendCode")}</span>
           </div>
           <div className="flex items-center justify-center mt-5">
             <button
               type="submit"
               className="h-11 rounded-full w-52 text-center text-[#fff] bg-[#976DD0] font-medium text-[14px] hover:opacity-80 transition-all mx-auto mt-4"
             >
-              Verify & Proceed
+              {t("buttons.verifyAndProceed")}
             </button>
           </div>
         </form>

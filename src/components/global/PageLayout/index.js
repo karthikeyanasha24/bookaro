@@ -1,5 +1,6 @@
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { GoDotFill } from "react-icons/go";
 import { IoMdMenu } from "react-icons/io";
@@ -16,9 +17,14 @@ import ApiClient from "../../../methods/api/apiClient";
 import UpgradePlan from "../../common/Modal/UpgradePlan";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { login_success, logout } from "../../../actions/user";
+import Sidebar from "../sidebar";
+import LanguageSwitcher from "../../../LanguageSwitcher";
 
 const PageLayout = ({ children }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [projectData, setProjectData] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,6 +40,33 @@ const PageLayout = ({ children }) => {
   const [isInChatPage, setIsInChatPage] = useState(false);
   const dispatch = useDispatch();
   const menuRef = useRef("");
+
+  // Check if user is logged in
+  const isLoggedIn = user?.loggedIn;
+
+  // Check if we should exclude sidebar from current route
+  const excludeSidebarRoutes = ["/login", "/signup", "/forgotpassword", "/reset-password", "/otpverify", "/change-password", "/reset-email", "/reset-new-email", "/signup/pro", "/phone-number"];
+  const shouldShowSidebar = isLoggedIn && !excludeSidebarRoutes.some(route => pathname.startsWith(route));
+
+  // Load sidebar state from localStorage
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem("sidebar_open");
+    if (savedSidebarState !== null) {
+      setIsSidebarOpen(JSON.parse(savedSidebarState));
+    }
+  }, []);
+
+  // Toggle sidebar and save state
+  const toggleSidebar = () => {
+    const newState = !isSidebarOpen;
+    setIsSidebarOpen(newState);
+    localStorage.setItem("sidebar_open", JSON.stringify(newState));
+  };
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [pathname]);
 
   function closeModal() {
     setIsOpen(false);
@@ -99,8 +132,8 @@ const PageLayout = ({ children }) => {
 
   const accountMenu = [
     {
-      name: "Account",
-      title: "Account",
+      name: t('header.account'),
+      title: t('header.account'),
       image: (
         <img src="/assets/img/header/account.png" className="w-[20px]" alt="" />
       ),
@@ -117,7 +150,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Personal information
+                {t('header.personalInformation')}
               </li>
               {user?.accountType == "pro" && <li
                 onClick={() => {
@@ -127,7 +160,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Company profile
+                {t('header.companyProfile')}
               </li>}
 
               <li
@@ -139,7 +172,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Notifications
+                {t('header.notifications')}
               </li>
               <li
                 onClick={() => {
@@ -149,7 +182,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Password
+                {t('header.password')}
               </li>
               <li
                 onClick={() => {
@@ -159,7 +192,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Phone Number
+                {t('header.phoneNumber')}
               </li>
               <li
                 onClick={() => {
@@ -169,7 +202,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Help Center
+                {t('header.helpCenter')}
               </li>
               <li
                 onClick={() => {
@@ -179,7 +212,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Logout
+                {t('header.logout')}
               </li>
             </>
           </ul>
@@ -188,205 +221,7 @@ const PageLayout = ({ children }) => {
     },
   ]
 
-  const menus = [
-    {
-      name: "Plans",
-      title: "Plans",
-      image: (
-        <img src="/assets/img/header/bulb.png" className="w-[20px]" alt="" />
-      ),
-      url: "/plan",
-    },
-    {
-      name: "Market Insight",
-      title: "Market Insight",
-      image: (
-        <img src="/assets/img/header/home.png" className="w-[20px]" alt="" />
-      ),
-      url: "/real-estate-pros",
-      menu: (
-        <>
-          <ul className="bg-white py-4 pe-4 ps-2 rounded-[10px] absolute w-[200px] shadow-md border border-[#00000024] z-[99]  ">
-            <>
-              <li
-                onClick={() => {
-                  navigate("/past-transactions");
-                  setProjectData("");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Historical Transaction
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/real-estate-pros");
-                  setProjectData("");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Professional Repository
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/building-permit");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Building Permits
-              </li>
-            </>
-          </ul>
-        </>
-      ),
-    },
-
-    {
-      name: "Learning Center",
-      title: "Learning center",
-      image: (
-        <img src="/assets/img/header/bulb.png" className="w-[20px]" alt="" />
-      ),
-      url: "/blog-detail",
-      menu: (
-        <>
-          <ul className="bg-white py-4 pe-4 ps-2 rounded-[10px] absolute w-[200px] shadow-md border border-[#00000024] z-[99]">
-            <>
-              <li
-                onClick={() => {
-                  navigate("/blog-detail");
-                  setProjectData("");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Written Training
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/training");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Video Training
-              </li>
-            </>
-          </ul>
-        </>
-      ),
-    },
-    {
-      name: "Innovative Services",
-      title: "Innovative Services",
-      image: (
-        <img src="/assets/img/header/hands.png" className="w-[20px]" alt="" />
-      ),
-      url: "/past-transactions",
-      menu: (
-        <>
-          <ul className="bg-white py-4 pe-4 ps-2 rounded-[10px] absolute w-[200px] shadow-md border border-[#00000024] z-[99]">
-            <>
-              <li
-                onClick={() => {
-                  navigate("/directory");
-                  setProjectData("");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Directory
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/offmarket");
-                  setProjectData("");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Off-Market
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/peertopeer");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                P2P Estimation
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/transaction-tool");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Transaction Tool
-              </li>
-            </>
-          </ul>
-        </>
-      ),
-    },
-    ...(user?.loggedIn
-      ? [
-        {
-          name: "My project",
-          title: "My project",
-          image: (
-            <img src="/assets/img/header/home.png" className="w-[20px]" alt="" />
-          ),
-          menu: (
-            <>
-              <ul className="bg-white py-4 pe-4 ps-2 rounded-[10px] absolute w-[200px] shadow-md border border-[#00000024] z-[99] right-0">
-                {projectMenus.map((head, i) => (
-                  <>
-                    {head.head && (
-                      <li
-                        key={i}
-                        className="text-[#47525E] font-[600] border-b pb-1 border-[#dcdcdc] text-left text-[#976DD0] my-2 text-[14px]"
-                      >
-                        {head.head}
-                      </li>
-                    )}
-                    {head.sub.map((itm, ii) => (
-                      <li
-                        key={ii}
-                        onClick={() => {
-                          navigate(itm.url);
-                          setProjectData("");
-                        }}
-                        className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-                      >
-                        <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                        <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                        {itm.name}
-                      </li>
-                    ))}
-                  </>
-                ))}
-              </ul>
-            </>
-          ),
-          url: "/project",
-        },
-      ]
-      : []),
-
-  ];
+  const menus = [];  // Menus supprimés quand sidebar est affiché - À gérer via conditionalité
 
 
   const mobMenus = [
@@ -916,6 +751,9 @@ const PageLayout = ({ children }) => {
                           )}
                         </button>
                       </li>
+                      <li className="xl:px-5 px-3">
+                        <LanguageSwitcher />
+                      </li>
                     </ul>
                   </div>
                 )}
@@ -1033,194 +871,52 @@ const PageLayout = ({ children }) => {
           </nav>
         </header>
 
-        <main className="pageContent pb-24">{children}</main>
+        {/* Sidebar + Main Content Container */}
+        <div className="page-layout-wrapper">
+          {/* Desktop Sidebar */}
+          {shouldShowSidebar && (
+            <aside className={`sidebar-container hidden md:block ${!isSidebarOpen ? 'collapsed' : ''}`}>
+              <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+            </aside>
+          )}
 
-        <footer className="bg-black	xl:py-12 xl:px-20 px-8 py-6">
-          <div className="container items-center mx-auto">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 text-center flex items-center justify-center flex-col">
-                <h4 className="text-white font-[600] mb-5 text-[18px]">
-                  Find us on:
-                </h4>
-                <ul className="flex items-center mb-5">
-                  <li className=" text-center cursor-pointer lg:px-7 px-2">
-                    <a href="#" className="">
-                      <img
-                        src="assets/img/footer/ins.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/fb.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/twitter.png"
-                        alt=""
-                        className="text-white w-[20px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/linkedin.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/youtube.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                </ul>
-                <p className="h-[1px] bg-white w-full block mt-5"></p>
-              </div>
-
-              <div className="col-span-12 mt-3   ">
-                <div className="grid grid-cols-12 gap-2">
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      COMPANY
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Who are we?
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p
-                          onClick={() =>
-                            window.open(
-                              "/contact-us",
-                              "_blank",
-                              "noopener,noreferrer"
-                            )
-                          }
-                          className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
-                        >
-                          Contact us
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          We are hiring
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Press
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      OUR APPS
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Discover our apps
-                        </p>
-                      </li>
-                      <li className="flex items-center">
-                        <a href="#">
-                          <img
-                            src="assets/img/footer/apple.png"
-                            alt=""
-                            className="text-white w-[25px]"
-                          />
-                        </a>
-                        <a href="#" className="ms-5">
-                          <img
-                            src="assets/img/footer/android.png"
-                            alt=""
-                            className="text-white w-[24px]"
-                          />
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      PRO SERVICES
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Services for pros
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Client access
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      MORE SERVICES
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p
-                          onClick={() => navigate("/prolist")}
-                          className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
-                        >
-                          Real estate pro repository
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p
-                          onClick={() => navigate("/past-transation-list")}
-                          className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
-                        >
-                          Past transaction repository
-                        </p>
-                      </li>
-                    </ul>
+          {/* Mobile Sidebar Overlay */}
+          {shouldShowSidebar && (
+            <Transition show={isMobileSidebarOpen} as={Fragment}>
+              <Dialog as="div" className="relative md:hidden z-40" onClose={() => setIsMobileSidebarOpen(false)}>
+                <Transition.Child as={Fragment} enter="ease-in-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in-out duration-300" leaveFrom="opacity-100" leaveTo="opacity-0">
+                  <div className="fixed inset-0 bg-black bg-opacity-50" />
+                </Transition.Child>
+                <div className="fixed inset-0 overflow-hidden">
+                  <div className="absolute inset-0 overflow-hidden">
+                    <Transition.Child as={Fragment} enter="transform transition ease-in-out duration-300" enterFrom="-translate-x-full" enterTo="translate-x-0" leave="transform transition ease-in-out duration-300" leaveFrom="translate-x-0" leaveTo="-translate-x-full">
+                      <Dialog.Panel className="relative w-full max-w-xs h-full bg-white shadow-xl">
+                        <Sidebar isOpen={false} onToggle={() => {}} />
+                      </Dialog.Panel>
+                    </Transition.Child>
                   </div>
                 </div>
-              </div>
-              <div className="col-span-12 ">
-                <p className="h-[1px] bg-white w-full block mt-5"></p>
-                <h5 className="text-white font-normal text-center w-full block font-bold  mt-10">
-                  Bookaroo SAS - 2024
-                </h5>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  Cookies setting
-                </p>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  Terms and conditions of use
-                </p>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  General Data Protection Policy
-                </p>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  How our site works
-                </p>
-              </div>
-            </div>
-          </div>
-        </footer>
+              </Dialog>
+            </Transition>
+          )}
+
+          {/* Main Content Area */}
+          <main className={`page-content-wrapper ${shouldShowSidebar ? 'with-sidebar' : 'full-width'}`}>
+            <div className="pageContent pb-24">{children}</div>
+          </main>
+        </div>
+
+        {/* Mobile Sidebar Toggle Button */}
+        {shouldShowSidebar && (
+          <button 
+            className="md:hidden fixed bottom-6 right-6 z-30 bg-[#976DD0] text-white rounded-full p-3 shadow-lg"
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          >
+            <IoMdMenu className="text-xl" />
+          </button>
+        )}
+
+        {/* Footer suppressed */}
       </div>
     </>
   );

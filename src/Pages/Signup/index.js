@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useRef, useState } from "react";
 import FacebookLogin from 'react-facebook-login';
 import PhoneInput from "react-phone-input-2";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import AuthLayout from "../../components/AuthLayout";
@@ -12,6 +13,7 @@ import methodModel from "../../methods/methods";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const googleClientId = process.env.REACT_APP_CLINT_ID;
   const fbAppId = process.env.REACT_APP_FACEBOOK_APP_ID;
   const propertyId = methodModel.getPrams('propertyId') || ''
@@ -40,26 +42,26 @@ const Signup = () => {
   const validate = () => {
     const newErrors = {};
     if (!form.firstName) {
-      newErrors.firstName = "First name is required.";
+      newErrors.firstName = t("validation.firstNameRequired");
     } else if (form.firstName.length < 2) {
-      newErrors.firstName = "First name must be at least 2 characters.";
+      newErrors.firstName = t("validation.firstNameMinLength");
     }
     if (!form.lastName) {
-      newErrors.lastName = "Last name is required.";
+      newErrors.lastName = t("validation.lastNameRequired");
     } else if (form.lastName.length < 2) {
-      newErrors.lastName = "Last name must be at least 2 characters.";
+      newErrors.lastName = t("validation.lastNameMinLength");
     }
 
     if (!form.email) {
-      newErrors.email = "Email address is required.";
+      newErrors.email = t("validation.emailRequired");
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      newErrors.email = "Email address is required.";
+      newErrors.email = t("validation.invalidEmail");
     }
     if (!/^\+?\d{10,15}$/.test(form.mobileNo) && form.mobileNo) {
-      newErrors.mobileNo = "Mobile No is invalid.";
+      newErrors.mobileNo = t("validation.invalidPhoneNumber");
     }
     if (!form.property) {
-      newErrors.property = "Please select how you want to manage your property.";
+      newErrors.property = t("validation.selectPropertyType");
     }
     setErrors(newErrors);
     if (Object.keys(newErrors).length !== 0) {
@@ -128,7 +130,7 @@ const Signup = () => {
   };
   const onFacebookSuccess = (res) => {
     if (res.status !== 'unknown') {
-      console.log('Facebook login success:', res);
+      console.log(t("messages.facebookLoginSuccess"), res);
       setSocial({ ...social, fb: res });
       setForm({
         ...form,
@@ -137,7 +139,7 @@ const Signup = () => {
       })
       setErrors({ ...errors, email: "", firstName: "", });
     } else {
-      console.error('Facebook login failed:', res);
+      console.error(t("messages.facebookLoginFailed"), res);
     }
   };
 
@@ -154,22 +156,22 @@ const Signup = () => {
     <AuthLayout>
       <div className="xl:w-8/12 lg:w-11/12 w-full p-[24px] login">
         <h1 className="text-[24px] font-semibold text-[#47525E] text-center tracking-[.67px] ">
-          Create an account
+          {t("authentication.createAccount")}
         </h1>
-        <p className="text-center text-[14px]  mb-5">Already have an account ? <Link to={`/login${propertyId ? `?propertyId=${propertyId}` : ''}`} className="text-[#976DD0] font-bold">Sign In</Link> </p>
+        <p className="text-center text-[14px]  mb-5">{t("authentication.alreadyHaveAccount")} <Link to={`/login${propertyId ? `?propertyId=${propertyId}` : ''}`} className="text-[#976DD0] font-bold">{t("buttons.login")}</Link> </p>
         <div ref={scrollRef} className="flex items-center justify-center gap-6 mb-10 mt-7">
-          <button onClick={() => { roleType(`/signup`) }} className={`h-9 bg-[#976DD0] text-white border-[2px] border-[#976DD0] px-6 py-1 rounded-md  w-[130px] hover:opacity-[90%] text-[16px]`}>Individual</button>
-          <button onClick={() => { roleType(`/signup/pro`) }} className={`h-9 text-[#47525E] border-[2px] border-[#976DD0] px-6 py-1 rounded-md w-[130px] hover:opacity-[90%] bg-tranparent text-[#47525E] text-[16px]`}>Pro</button>
+          <button onClick={() => { roleType(`/signup`) }} className={`h-9 bg-[#976DD0] text-white border-[2px] border-[#976DD0] px-6 py-1 rounded-md  w-[130px] hover:opacity-[90%] text-[16px]`}>{t("authentication.individual")}</button>
+          <button onClick={() => { roleType(`/signup/pro`) }} className={`h-9 text-[#47525E] border-[2px] border-[#976DD0] px-6 py-1 rounded-md w-[130px] hover:opacity-[90%] bg-tranparent text-[#47525E] text-[16px]`}>{t("authentication.pro")}</button>
         </div>
 
         <form onSubmit={handleSubmit} >
-          <input type="text" disabled={social.google.email} value={form.firstName} onChange={(e) => handlechange("firstName", e.target.value)} className={`block w-full h-11 px-3 py-2.5 text-[#5A5A5A] mb-3 bg-white border-[2px] ${errors.firstName ? 'border-red-500' : 'border-[#976DD0]'} rounded-md placeholder-gray-400`} placeholder="First Name*" />
+          <input type="text" disabled={social.google.email} value={form.firstName} onChange={(e) => handlechange("firstName", e.target.value)} className={`block w-full h-11 px-3 py-2.5 text-[#5A5A5A] mb-3 bg-white border-[2px] ${errors.firstName ? 'border-red-500' : 'border-[#976DD0]'} rounded-md placeholder-gray-400`} placeholder={t("forms.firstName")} />
           {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
 
-          <input type="text" value={form.lastName} onChange={(e) => handlechange("lastName", e.target.value)} className={`block w-full h-11 px-3 py-2.5 mb-3 bg-white text-[#5A5A5A] border-[2px] ${errors.lastName ? 'border-red-500' : 'border-[#976DD0]'} rounded-md placeholder-gray-400`} placeholder="Last Name*" />
+          <input type="text" value={form.lastName} onChange={(e) => handlechange("lastName", e.target.value)} className={`block w-full h-11 px-3 py-2.5 mb-3 bg-white text-[#5A5A5A] border-[2px] ${errors.lastName ? 'border-red-500' : 'border-[#976DD0]'} rounded-md placeholder-gray-400`} placeholder={t("forms.lastName")} />
           {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
 
-          <input type="email" disabled={social.google.email} value={form.email} onChange={(e) => handlechange("email", e.target.value)} className={`block w-full text-[#5A5A5A] h-11 px-3 py-2.5 mb-3 bg-white border-[2px] ${errors.email ? 'border-red-500' : 'border-[#976DD0]'} rounded-md placeholder-gray-400`} placeholder="Email address*" />
+          <input type="email" disabled={social.google.email} value={form.email} onChange={(e) => handlechange("email", e.target.value)} className={`block w-full text-[#5A5A5A] h-11 px-3 py-2.5 mb-3 bg-white border-[2px] ${errors.email ? 'border-red-500' : 'border-[#976DD0]'} rounded-md placeholder-gray-400`} placeholder={t("forms.emailAddress")} />
           {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
 
           <div className="w-full signup-input">
@@ -186,18 +188,18 @@ const Signup = () => {
 
           <div className="mt-5">
             <div className="text-center mb-8">
-              <h2 className="text-[18px] font-[600] ">Tell us a bit more</h2>
-              <p className="text-[14px]">About your project</p>
+              <h2 className="text-[18px] font-[600] ">{t("authentication.tellUsMore")}</h2>
+              <p className="text-[14px]">{t("authentication.aboutProject")}</p>
             </div>
             <div className="text-center mb-8">
-              <p className="text-[18px] font-[500] mb-5">Looking for a property?</p>
+              <p className="text-[18px] font-[500] mb-5">{t("authentication.lookingForProperty")}</p>
               <div className="grid grid-cols-3 gap-5 text-center mb-8">
                 <div onClick={() => {
                   handlechange("property", 'buy')
                 }} className={`p-5 border-[2px] ${form.property === "buy" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer flex justify-center items-start`}>
                   <div>
                     <img src="/assets/img/img_1.png" className="w-[35px] mx-auto" alt="Buy" />
-                    <p className="text-[16px]">Buy</p>
+                    <p className="text-[16px]">{t("propertyTypes.buy")}</p>
                   </div>
                 </div>
                 <div onClick={() => {
@@ -205,7 +207,7 @@ const Signup = () => {
                 }} className={`p-5 border-[2px] ${form.property === "rent" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer flex justify-center items-start`}>
                   <div>
                     <img src="/assets/img/img_2.png" className="w-[35px] mx-auto" alt="Rent" />
-                    <p className="text-[16px]">Rent</p>
+                    <p className="text-[16px]">{t("propertyTypes.rent")}</p>
                   </div>
                 </div>
                 <div onClick={() => {
@@ -213,7 +215,7 @@ const Signup = () => {
                 }} className={`p-5 border-[2px] ${form.property === "plan" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer flex justify-center items-start`}>
                   <div>
                     <img src="/assets/img/img_6.png" className="w-[35px] mx-auto" alt="Plan my project" />
-                    <p className="text-[16px]">Plan my project</p>
+                    <p className="text-[16px]">{t("propertyTypes.planMyProject")}</p>
                   </div>
                 </div>
                 <div onClick={() => {
@@ -221,7 +223,7 @@ const Signup = () => {
                 }} className={`p-5 border-[2px] ${form.property === "off-market" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer flex justify-center items-start`}>
                   <div>
                     <img src="/assets/img/offmarket.png" className="w-[35px] mx-auto" alt="Off-market opportunities" />
-                    <p className="text-[16px]">Off-market opportunities</p>
+                    <p className="text-[16px]">{t("propertyTypes.offMarketOpportunities")}</p>
                   </div>
                 </div>
               </div>
@@ -229,14 +231,14 @@ const Signup = () => {
           </div>
 
           <div className="text-center mb-5">
-            <p className="text-[18px] font-[500] mb-5">You own a property?</p>
+            <p className="text-[18px] font-[500] mb-5">{t("authentication.ownProperty")}</p>
             <div className="grid grid-cols-2 gap-5 text-center mb-8">
               <div onClick={() => {
                 handlechange("property", 'sell my property')
               }} className={`p-5 border-[2px] ${form.property === "sell my property" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer w-[120px] mx-auto flex justify-center items-center`}>
                 <div>
                   <img src="/assets/img/img_5.png" className="w-[35px] mx-auto" alt="Sell my property" />
-                  <p className="text-[16px]">Sell my property</p>
+                  <p className="text-[16px]">{t("propertyTypes.sellMyProperty")}</p>
                 </div>
               </div>
               <div onClick={() => {
@@ -244,7 +246,7 @@ const Signup = () => {
               }} className={`p-5 border-[2px] ${form.property === "rent my property" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer w-[120px] mx-auto flex justify-center items-center`}>
                 <div>
                   <img src="/assets/img/img_4.png" className="w-[35px] mx-auto" alt="Rent my property" />
-                  <p className="text-[16px]">Rent my property</p>
+                  <p className="text-[16px]">{t("propertyTypes.rentMyProperty")}</p>
                 </div>
               </div>
               <div onClick={() => {
@@ -252,7 +254,7 @@ const Signup = () => {
               }} className={`p-5 border-[2px] ${form.property === "quote my property" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer w-[120px] mx-auto flex justify-center items-center`}>
                 <div>
                   <img src="/assets/img/img_5.png" className="w-[35px] mx-auto" alt="Quote my property" />
-                  <p className="text-[16px]">Quote my property</p>
+                  <p className="text-[16px]">{t("propertyTypes.quoteMyProperty")}</p>
                 </div>
               </div>
               <div onClick={() => {
@@ -260,7 +262,7 @@ const Signup = () => {
               }} className={`p-5 border-[2px] ${form.property === "prepare future sale" ? 'border-[#976DD0]' : 'border-[#fff0]'} hover:border-[#976DD0] rounded-md cursor-pointer w-[120px] mx-auto flex justify-center items-center`}>
                 <div>
                   <img src="/assets/img/img_3.png" className="w-[35px] mx-auto" alt="Prepare future sale" />
-                  <p className="text-[16px]">Prepare future sale</p>
+                  <p className="text-[16px]">{t("propertyTypes.prepareFutureSale")}</p>
                 </div>
               </div>
             </div>
@@ -269,7 +271,7 @@ const Signup = () => {
 
           <div className="mt-10 flex items-center justify-center ">
             <button type="submit" className="h-11 bg-[#48464a] rounded-full w-52 font-medium text-center text-white hover:opacity-80 transition-all signup-btn">
-              Create my account
+              {t("buttons.createAccount")}
             </button>
           </div>
         </form>
@@ -310,7 +312,7 @@ const Signup = () => {
         </div>
         <div className="text-red-500 text-xs pb-10">
           {submitted && !remember &&
-            "Please agree our Terms Of Use And Privacy Policy"
+            t("validation.agreeTermsRequired")
           }
         </div>
       </div>

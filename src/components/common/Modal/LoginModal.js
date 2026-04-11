@@ -1,7 +1,9 @@
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const LoginModal = ({loginModal, setloginModal,propertyId=''}) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const login=()=>{
@@ -23,11 +25,11 @@ const LoginModal = ({loginModal, setloginModal,propertyId=''}) => {
                         <DialogTitle className="p-6">
                             <img src="assets/img/question.png" alt="" className="w-[100px] mx-auto"/>
                             <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-5">
-                                You have to login first
+                                {t('authentication.mustLoginFirst')}
                             </p>
                             <div className="pt-8  flex items-center justify-center">
                                 <Button onClick={()=>login()} className="btn btn-primary">
-                                    Click here to login
+                                    {t('authentication.clickToLogin')}
                                 </Button>
                             </div>
                         </DialogTitle>

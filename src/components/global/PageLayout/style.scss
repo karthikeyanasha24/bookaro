@@ -1,4 +1,71 @@
 @import '../../../scss/mixins';
-.pageContent{
+
+.pageContent {
   min-height: calc(100vh - 350px);
+}
+
+/* Page Layout Wrapper with Sidebar */
+.page-layout-wrapper {
+  display: flex;
+  min-height: calc(100vh - 71px);
+  width: 100%;
+}
+
+/* Sidebar Container */
+.sidebar-container {
+  position: relative;
+  flex-shrink: 1;
+  background: #2d3748;
+  transition: width 0.3s ease-in-out;
+  overflow: visible;
+  padding-right: 16px;
+  
+  /* Default width when expanded */
+  width: 280px;
+  min-width: 280px;
+  
+  &.collapsed {
+    width: 70px;
+    min-width: 70px;
+  }
+}
+
+/* Main Content Wrapper */
+.page-content-wrapper {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  background: #f8f9fa;
+  transition: flex 0.3s ease-in-out;
+  
+  &.with-sidebar {
+    margin-left: 0;
+  }
+  
+  &.full-width {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  &.sidebar-collapsed {
+    margin-left: 0;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .page-layout-wrapper {
+    flex-direction: column;
+  }
+  
+  .sidebar-container {
+    width: 100% !important;
+    order: 2;
+  }
+  
+  .page-content-wrapper {
+    order: 1;
+    margin-left: 0 !important;
+    width: 100%;
+  }
 }

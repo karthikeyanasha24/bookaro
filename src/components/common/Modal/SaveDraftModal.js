@@ -1,4 +1,5 @@
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../../methods/api/apiClient";
 import loader from "../../../methods/loader";
@@ -6,6 +7,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
 const SaveDraftModal = ({ draftModal, setdraftModal, propertyId = '', data ,step}) => {
+    const { t } = useTranslation();
     const user = useSelector((state) => state.user)
     const navigate = useNavigate();
 
@@ -51,12 +53,11 @@ const SaveDraftModal = ({ draftModal, setdraftModal, propertyId = '', data ,step
                         <DialogTitle className="p-6">
                             <img src="assets/img/question.png" alt="" className="w-[100px] mx-auto" />
                             <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-5">
-
-                                A draft for a {data?.propertyType} property already exists. Please delete it before creating a new one.
+                                {t('modals.draftExistsMessage')}
                             </p>
                             <div className="pt-8  flex items-center justify-center">
                                 <Button onClick={deleteDraft} className="btn btn-primary">
-                                    Remove And Save Draft
+                                    {t('modals.removeAndSave')}
                                 </Button>
                             </div>
                         </DialogTitle>
