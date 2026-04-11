@@ -7,8 +7,10 @@ import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import CompanySidebar from "./CompanySidebar";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch()
@@ -38,7 +40,7 @@ const Settings = () => {
       !formData?.city?.trim() ||
       !formData?.country?.trim()
     ) {
-      return toast.error("Enter all mandatory fields")
+      return toast.error(t("messages.enterAllMandatoryFields"))
     }
 
     loader(true);
@@ -108,7 +110,7 @@ const Settings = () => {
                       <div className=" max-w-[100%] mx-auto">
                         {user?.accountType == "pro" && (
                           <div className="grid grid-cols-3 gap-10 text-center mb-10 mt-10">
-                            {["Agency", "Agent", "Hunter"].map(
+                            {[t("accountTypes.agency"), t("accountTypes.agent"), t("accountTypes.hunter")].map(
                               (type, index) => (
                                 <div
                                   key={type}

@@ -55,7 +55,9 @@
     "draft": "Draft",
     "pending": "Pending",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "selectOption": "Select any option",
+    "requiredField": "*Required field"
   },
   "buttons": {
     "submit": "Submit",
@@ -113,7 +115,9 @@
     "verifyAndProceed": "Verify & Proceed",
     "seeLess": "See Less",
     "seeMore": "See More",
-    "clickHere": "Click here"
+    "clickHere": "Click here",
+    "send": "SEND",
+    "preview": "Preview"
   },
   "forms": {
     "requiredField": "This field is required",
@@ -195,7 +199,13 @@
     "light": "Light",
     "auto": "Auto",
     "currentEmail": "Current Email",
-    "newEmail": "New Email"
+    "newEmail": "New Email",
+    "name": "Name",
+    "subject": "Subject",
+    "subSubject": "Sub Subject",
+    "yourMessage": "Your Message",
+    "message": "Message",
+    "registrationNumber": "Registration Number"
   },
   "validation": {
     "required": "This field is required",
@@ -227,7 +237,8 @@
     "selectPropertyType": "Please select how you want to manage your property",
     "agreeTermsRequired": "Please agree to our Terms of Use and Privacy Policy",
     "currentPasswordRequired": "Enter current password",
-    "newPasswordRequired": "Enter new password"
+    "newPasswordRequired": "Enter new password",
+    "enterValidEmail": "Enter Valid Email"
   },
   "messages": {
     "loading": "Loading...",
@@ -274,7 +285,9 @@
     "userDeletedSuccessfully": "User Deleted Successfully",
     "confirmDeleteAccount": "Are you sure you want to delete your account?",
     "otherWaysReach": "Other Ways to Reach Us",
-    "responseWithin24h": "Response within 24 hours"
+    "responseWithin24h": "Response within 24 hours",
+    "noContentAvailable": "No content available",
+    "messageSentSuccess": "Message sent successfully. Admin will get back to you within 24 hours."
   },
   "authentication": {
     "login": "Login",
@@ -715,5 +728,30 @@
   },
   "marketing": {
     "boostPropertyMessage": "WANT US TO BOOST YOUR PROPERTY VALUE AND ONLINE ATTRACTIVITY"
+  },
+  "contactUs": {
+    "helpContact": "Help & Contact",
+    "questionText": "Do you have a question or request regarding the website or application?",
+    "findAnswerText": "Find all the useful information below or contact us if you cannot find the answer to your question.",
+    "individuals": "Individuals",
+    "professionals": "Professionals",
+    "customerService": "Contact customer service",
+    "otherRequestText": "For any other request concerning the website or application...",
+    "useFormText": "Use the following contact form:",
+    "trainingVideo": "Training Video"
+  },
+  "support": {
+    "needHelp": "Need Help?",
+    "assistText": "We're here to assist you! Send us your questions, feedback, or report any issues you're experiencing."
+  },
+  "settings": {
+    "manageCompanyProfile": "Manage your company profile",
+    "companyProfile": "Company Profile",
+    "searchableDirectory": "Will make you searchable in directory"
+  },
+  "accountTypes": {
+    "agency": "Agency",
+    "agent": "Agent",
+    "hunter": "Hunter"
   }
 }

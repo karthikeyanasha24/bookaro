@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import methodModel from '../../methods/methods';
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
+    const { t } = useTranslation();
 
     const [form, setform] = useState({
         name: "",
@@ -21,7 +23,7 @@ const Index = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!inValidEmail) {
-            toast.error("Enter Valid Email")
+            toast.error(t("validation.enterValidEmail"))
             return;
         }
         let payload = { ...form }
@@ -29,7 +31,7 @@ const Index = () => {
         loader(true);
         const res = await ApiClient.post(`support/add`, payload);
         if (res.success) {
-            toast.success("Message sent successfully. Admin will get back to you within 24 hours.");
+            toast.success(t("messages.messageSentSuccess"));
             navigate("/support-page");
             setform({
                 name: "",
@@ -55,7 +57,7 @@ const Index = () => {
                                 <FormControl
                                     type="text"
                                     name="name"
-                                    label="Name"
+                                    label=t("forms.name")
                                     className='bg-[#EEEDED] !rounded-[8px] !h-9'
                                     value={form?.name}
                                     required
@@ -66,7 +68,7 @@ const Index = () => {
                                 <FormControl
                                     type="text"
                                     name="email"
-                                    label="Email"
+                                    label=t("forms.email")
                                     className='bg-[#EEEDED] !rounded-[8px] !h-9'
                                     value={form?.email}
                                     required
@@ -77,7 +79,7 @@ const Index = () => {
                                 <FormControl
                                     type="text"
                                     name="message"
-                                    label="Message"
+                                    label=t("forms.message")
                                     className='bg-[#EEEDED] !rounded-[8px] !h-9  w-full h-20'
                                     value={form?.message}
                                     required

@@ -55,7 +55,9 @@
     "draft": "Brouillon",
     "pending": "En attente",
     "active": "Actif",
-    "inactive": "Inactif"
+    "inactive": "Inactif",
+    "selectOption": "Sélectionnez une option",
+    "requiredField": "*Champ obligatoire"
   },
   "buttons": {
     "submit": "Soumettre",
@@ -113,7 +115,9 @@
     "verifyAndProceed": "Vérifier et continuer",
     "seeLess": "Voir moins",
     "seeMore": "Voir plus",
-    "clickHere": "Cliquez ici"
+    "clickHere": "Cliquez ici",
+    "send": "ENVOYER",
+    "preview": "Aperçu"
   },
   "forms": {
     "requiredField": "Ce champ est obligatoire",
@@ -195,7 +199,13 @@
     "light": "Clair",
     "auto": "Automatique",
     "currentEmail": "Email Actuel",
-    "newEmail": "Nouvel Email"
+    "newEmail": "Nouvel Email",
+    "name": "Nom",
+    "subject": "Sujet",
+    "subSubject": "Sous-sujet",
+    "yourMessage": "Votre message",
+    "message": "Message",
+    "registrationNumber": "Numéro d'enregistrement"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
@@ -227,7 +237,8 @@
     "selectPropertyType": "Veuillez choisir comment vous souhaitez gérer votre propriété",
     "agreeTermsRequired": "Veuillez accepter nos Conditions d'utilisation et la Politique de confidentialité",
     "currentPasswordRequired": "Entrez le mot de passe actuel",
-    "newPasswordRequired": "Entrez le nouveau mot de passe"
+    "newPasswordRequired": "Entrez le nouveau mot de passe",
+    "enterValidEmail": "Entrez un email valide"
   },
   "messages": {
     "loading": "Chargement...",
@@ -274,7 +285,9 @@
     "userDeletedSuccessfully": "Utilisateur supprimé avec succès",
     "confirmDeleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte?",
     "otherWaysReach": "Autres moyens de nous contacter",
-    "responseWithin24h": "Réponse dans les 24 heures"
+    "responseWithin24h": "Réponse dans les 24 heures",
+    "noContentAvailable": "Aucun contenu disponible",
+    "messageSentSuccess": "Message envoyé avec succès. L'administrateur vous recontactera dans les 24 heures."
   },
   "authentication": {
     "login": "Connexion",
@@ -715,5 +728,30 @@
   },
   "marketing": {
     "boostPropertyMessage": "VOULEZ-VOUS QUE NOUS BOOSTIONS LA VALEUR ET L'ATTRACTIVITÉ EN LIGNE DE VOTRE PROPRIÉTÉ"
+  },
+  "contactUs": {
+    "helpContact": "Aide & Contact",
+    "questionText": "Avez-vous une question ou une demande concernant le site web ou l'application?",
+    "findAnswerText": "Trouvez toutes les informations utiles ci-dessous ou contactez-nous si vous ne trouvez pas la réponse à votre question.",
+    "individuals": "Particuliers",
+    "professionals": "Professionnels",
+    "customerService": "Contacter le service client",
+    "otherRequestText": "Pour toute autre demande concernant le site web ou l'application...",
+    "useFormText": "Utilisez le formulaire de contact suivant:",
+    "trainingVideo": "Vidéo de formation"
+  },
+  "support": {
+    "needHelp": "Besoin d'aide?",
+    "assistText": "Nous sommes là pour vous aider! Envoyez-nous vos questions, vos commentaires ou signalez les problèmes que vous rencontrez."
+  },
+  "settings": {
+    "manageCompanyProfile": "Gérez le profil de votre entreprise",
+    "companyProfile": "Profil de l'entreprise",
+    "searchableDirectory": "Vous rendra consultable dans l'annuaire"
+  },
+  "accountTypes": {
+    "agency": "Agence",
+    "agent": "Agent",
+    "hunter": "Chasseur"
   }
 }

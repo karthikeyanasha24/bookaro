@@ -10,8 +10,10 @@ import loader from "../../methods/loader";
 import PageLayout from "../../components/global/PageLayout";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ContactUs = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const [form, setForm] = useState({
@@ -127,7 +129,7 @@ const ContactUs = () => {
                 <AccordionDetails>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: itm?.answer || "No content available",
+                      __html: itm?.answer || t("messages.noContentAvailable"),
                     }}
                   />
                 </AccordionDetails>
@@ -159,7 +161,7 @@ const ContactUs = () => {
               <AccordionDetails>
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: itm?.answer || "No content available",
+                    __html: itm?.answer || t("messages.noContentAvailable"),
                   }}
                 />
               </AccordionDetails>
@@ -184,20 +186,20 @@ const ContactUs = () => {
                       value={form?.name}
                       onChange={(e) => handleChange("name", e.target.value)}
                       type="text"
-                      placeholder="Name*"
+                      placeholder=t("forms.name")
                       className="border border-[#929292] rounded-[4px] h-[40px] px-[12px] block w-full"
                     />
                     <input
                       value={form?.email}
                       onChange={(e) => handleChange("email", e.target.value)}
                       type="email"
-                      placeholder="Email*"
+                      placeholder=t("forms.email")
                       className="border border-[#929292] rounded-[4px] h-[40px] px-[12px] my-4 block w-full"
                     />
                     <SelectDropdown
                       className="border border-[#929292] rounded-[4px]  px-[12px] my-3 block w-full"
                       displayValue="name"
-                      placeholder="Select any option"
+                      placeholder=t("common.selectOption")
                       isClearable={false}
                       intialValue={form?.subject}
                       result={(e) => {
@@ -207,15 +209,15 @@ const ContactUs = () => {
                         });
                       }}
                       options={[
-                        { id: "genric contact form", name: "Subject" },
-                        { id: "traning video", name: "Traning Video" },
+                        { id: "genric contact form", name: t("forms.subject") },
+                        { id: "traning video", name: t("contactUs.trainingVideo") },
                       ]}
                     />
                     <input
                       value={form?.subSubject}
                       onChange={(e) => handleChange("subSubject", e.target.value)}
                       type="text"
-                      placeholder="Sub Subject"
+                      placeholder=t("forms.subSubject")
                       className="border border-[#929292] rounded-[4px] h-[40px] px-[12px] my-4 block w-full"
                     />
                   </div>
@@ -225,7 +227,7 @@ const ContactUs = () => {
                     value={form?.message}
                     onChange={(e) => handleChange("message", e.target.value)}
                     className="border border-[#929292] rounded-[4px] w-full px-[12px] py-4 h-full"
-                    placeholder="Your Message *"
+                    placeholder=t("forms.yourMessage")
                   ></textarea>
                 </div>
                 <div className=" col-span-12 pt-2">
