@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import { MdEdit } from "react-icons/md";
 import { RiDownloadCloud2Line } from "react-icons/ri";
 import { FiEye } from "react-icons/fi";
 
 
 const BillingHistory = () => {
+  const { t } = useTranslation();
   return (
     <PageLayout>
       <div className="bg-[#976dd021]">

@@ -1,5 +1,6 @@
 import { FaChevronDown, FaCircleArrowDown, FaHashtag, FaRegEye, FaRegThumbsUp, FaUser } from "react-icons/fa6";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import { FaRegUserCircle, FaSyncAlt } from "react-icons/fa";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
@@ -15,6 +16,7 @@ import { Tooltip } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const Training = () => {
+  const { t } = useTranslation();
     const [data, setdata] = useState([])
     const [total, settotal] = useState([])
     const user = useSelector((state) => state.user)

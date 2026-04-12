@@ -8,12 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import Table from "../../components/Table";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { shared } from "./shared";
 
 const FollowedProperty = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const [openPopup, setOpenPopup] = useState(false);

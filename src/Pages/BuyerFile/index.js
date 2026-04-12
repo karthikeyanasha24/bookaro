@@ -4,6 +4,7 @@ import { FaCircleInfo } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { login_success } from "../../actions/user";
 import PageLayout from "../../components/global/PageLayout";
 import ApiClient from "../../methods/api/apiClient";
@@ -11,6 +12,7 @@ import loader from "../../methods/loader";
 import { imagePath, stringSeprator } from "../../models/string.model";
 
 const BuyerFile = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const [document, setDocument] = useState("document");
   const [submited, setsubmited] = useState(false);
@@ -57,14 +59,14 @@ const BuyerFile = () => {
     let files = Array.from(e.target.files);
     // validate max limit files
     if (files.length + form[key]?.length > maxLimit) {
-      toast.error(`Maximum ${maxLimit} files allowed to add`);
+      toast.error(t("validation.maxFiles", { max: maxLimit }));
       return (e.target.value = ""); // Clear file input
     }
     // validate max size
     const maxSizeInBytes = maxSize * 1024 * 1024; // 10MB
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error(`Each file must be smaller than ${maxSize}MB`);
+      toast.error(t("validation.fileSizeLimit", { size: maxSize }));
       return (e.target.value = "");
     }
     // // validate extentions
@@ -95,7 +97,7 @@ const BuyerFile = () => {
             };
           });
           if (data?.length + form[key]?.length > maxLimit)
-            return toast.error(`Maximum ${maxLimit} files allowed to add`);
+            return toast.error(t("validation.maxFiles", { max: maxLimit }));
           // setForm((prev) => ({
           //   ...prev,
           //   [key]: [...prev[key], ...data],
@@ -742,7 +744,7 @@ const BuyerFile = () => {
                       <input
                         type="text"
                         value={declartiveForm?.postalCode}
-                        placeholder="City or postal code"
+                        placeholder={t("forms.cityPostalCode")}
                         className="w-full max-w-md rounded-md border border-[#a177d6] px-4 py-2 outline-none"
                         onChange={(e) => setdeclartiveForm({ ...declartiveForm, postalCode: e.target.value })}
                       />

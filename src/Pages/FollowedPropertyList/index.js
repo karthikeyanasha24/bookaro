@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import LoginModal from "../../components/common/Modal/LoginModal";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import CustomMap from "../Property/CustomMap";
@@ -12,6 +13,7 @@ import PropertiesGrid from "./Propertygrid";
 import FlwModal from "../../components/common/Modal/FlwModal";
 
 const FollowedPropertyList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const params = new URLSearchParams(window.location.search);

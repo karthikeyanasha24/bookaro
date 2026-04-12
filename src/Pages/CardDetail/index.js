@@ -6,6 +6,7 @@ import { LuTrash } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { capLetter, formatCurrency } from "../../models/string.model";
@@ -19,6 +20,7 @@ const stripePromise = loadStripe(environment.stripe_public_key);
 // const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const CardDetail = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();

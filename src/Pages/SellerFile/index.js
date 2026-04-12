@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { imagePath, stringSeprator } from "../../models/string.model";
@@ -19,6 +20,7 @@ import methodModel from "../../methods/methods";
 import { getRandomCode } from "../../models/shared.units";
 
 const SellerFile = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();

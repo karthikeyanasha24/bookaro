@@ -7,9 +7,11 @@ import GooglePlaceAutoComplete from "../../components/common/GooglePlaceAutoComp
 import LoginModal from "../../components/common/Modal/LoginModal";
 import SelectDropdown from "../../components/common/SelectDropdown";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import addressModel from "../../models/address.model";
 
 const BuildingPermit = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [loginModal, setloginModal] = useState(false);

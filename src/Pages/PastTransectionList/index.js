@@ -3,6 +3,7 @@ import ReactPaginate from "react-paginate";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoginModal from "../../components/common/Modal/LoginModal";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { capLetter, dateFormate, formatCurrency } from "../../models/string.model";
@@ -13,6 +14,7 @@ import PastTransectionGrid from "./ProListGrid";
 import { useSelector } from "react-redux";
 
 const PastTransectionList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     page: 1,

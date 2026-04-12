@@ -4,11 +4,13 @@ import { MdFolderOpen } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import LeadCards from "./LeadCards";
 
 const RealEstateTransactionSearcher = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
   const [filters, setFilters] = useState({

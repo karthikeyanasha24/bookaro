@@ -568,7 +568,8 @@
     "inDirectory": "Propriétés dans l'annuaire",
     "deleteConfirm": "Voulez-vous supprimer cette propriété",
     "alertNotification": "Soyez informé lorsque de nouvelles propriétés sont annoncées",
-    "showFrom": "Afficher {count} sur {total} propriétés"
+    "showFrom": "Afficher {count} sur {total} propriétés",
+    "list": "Liste des propriétés"
   },
   "profile": {
     "myProfile": "Mon profil",
@@ -601,7 +602,8 @@
     "agreementText": "En autorisant l'annonce de mon profil de propriété, j'accepte les CGU et les règles de diffusion de Bookaroo et j'autorise Bookaroo à afficher mon profil de propriété.",
     "removeAccount": "Supprimer mon compte",
     "phoneNumber": "Numéro de téléphone",
-    "phoneNumberInfo": "Améliorer votre expérience est notre priorité absolue. Permettez-nous de sécuriser votre compte avec votre numéro de téléphone."
+    "phoneNumberInfo": "Améliorer votre expérience est notre priorité absolue. Permettez-nous de sécuriser votre compte avec votre numéro de téléphone.",
+    "userProfile": "Profil utilisateur"
   },
   "transactions": {
     "transactions": "Transactions",
@@ -624,7 +626,10 @@
     "dueDate": "Date d'échéance",
     "invoice": "Facture",
     "receipt": "Reçu",
-    "download": "Télécharger"
+    "download": "Télécharger",
+    "transactionList": "Historique des transactions",
+    "transactionOwner": "Gérer les transactions",
+    "transactionSearcher": "Chercheur de transactions"
   },
   "plans": {
     "plans": "Plans",
@@ -804,7 +809,8 @@
     "monthly": "Mensuel",
     "annually": "Annuel",
     "perMonth": "/ Mois",
-    "perYear": "/ An"
+    "perYear": "/ An",
+    "history": "Historique de facturation"
   },
   "display": {
     "show": "Afficher"
@@ -854,5 +860,23 @@
     "investment": "recherche d'un investissement",
     "priceEvolution": "mise à jour sur l'évolution des prix",
     "deleteConfirm": "Voulez-vous supprimer ceci"
+  },
+  "crm": {
+    "buyerFile": "Dossier d'acheteur",
+    "sellerFile": "Dossier du vendeur"
+  },
+  "building": {
+    "permit": "Permis de construction",
+    "permitList": "Permis de construction"
+  },
+  "learning": {
+    "training": "Formation"
+  },
+  "cards": {
+    "cardDetail": "Détails de la carte"
+  },
+  "favorites": {
+    "followedProperty": "Propriété suivie",
+    "followedList": "Liste suivie"
   }
 }

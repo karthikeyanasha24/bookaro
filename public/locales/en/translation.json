@@ -568,7 +568,8 @@
     "inDirectory": "Properties in Directory",
     "deleteConfirm": "Do you want to delete this Property",
     "alertNotification": "Be informed when new properties are listed",
-    "showFrom": "Show {count} from {total} Properties"
+    "showFrom": "Show {count} from {total} Properties",
+    "list": "Property List"
   },
   "profile": {
     "myProfile": "My Profile",
@@ -601,7 +602,8 @@
     "agreementText": "By authorizing the listing of my property profile, I accept CGU and diffusion rules of Bookaroo and I authorize Bookaroo to display my property profile.",
     "removeAccount": "Remove my account",
     "phoneNumber": "Phone Number",
-    "phoneNumberInfo": "Improving your experience is our top priority. Allow us to secure your account with your phone number."
+    "phoneNumberInfo": "Improving your experience is our top priority. Allow us to secure your account with your phone number.",
+    "userProfile": "User Profile"
   },
   "transactions": {
     "transactions": "Transactions",
@@ -624,7 +626,10 @@
     "dueDate": "Due Date",
     "invoice": "Invoice",
     "receipt": "Receipt",
-    "download": "Download"
+    "download": "Download",
+    "transactionList": "Transaction History",
+    "transactionOwner": "Manage Transactions",
+    "transactionSearcher": "Transaction Searcher"
   },
   "plans": {
     "plans": "Plans",
@@ -804,7 +809,8 @@
     "monthly": "Monthly",
     "annually": "Annually",
     "perMonth": "/ Month",
-    "perYear": "/ Year"
+    "perYear": "/ Year",
+    "history": "Billing History"
   },
   "display": {
     "show": "Show"
@@ -854,5 +860,23 @@
     "investment": "searching for an investment",
     "priceEvolution": "get update on price evolution",
     "deleteConfirm": "Do you want to delete this"
+  },
+  "crm": {
+    "buyerFile": "Buyer File",
+    "sellerFile": "Seller File"
+  },
+  "building": {
+    "permit": "Building Permit",
+    "permitList": "Building Permits"
+  },
+  "learning": {
+    "training": "Training"
+  },
+  "cards": {
+    "cardDetail": "Card Details"
+  },
+  "favorites": {
+    "followedProperty": "Followed Property",
+    "followedList": "Followed List"
   }
 }

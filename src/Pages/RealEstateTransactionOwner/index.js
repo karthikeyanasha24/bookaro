@@ -3,6 +3,7 @@ import { IoMdCheckmark } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import LeadCards from "./LeadCards";
@@ -12,6 +13,7 @@ import datepipeModel from "../../models/datepipemodel";
 import socket from "../../config/ChatSocket/socket";
 
 const RealEstateTransactionOwner = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const activePlan = useSelector((state) => state.activePlan);
   const navigate = useNavigate();
