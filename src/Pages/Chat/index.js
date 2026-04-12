@@ -10,8 +10,10 @@ import loader from "../../methods/loader";
 import { imagePath, stringSeprator } from "../../models/string.model";
 import ChatScreen from "./ChatScreen";
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
 
 const Chat = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const [myProps, setMyProps] = useState([]);
   const [activeProp, setActiveProp] = useState({});
@@ -209,7 +211,7 @@ const Chat = () => {
         scrollBottom();
       });
       socket.on('error', (res) => {
-        const msg = res?.message || "Something went wrong";
+        const msg = res?.message || t("messages.somethingWrong");
 
         Swal.fire({
           icon: 'error',
@@ -361,7 +363,7 @@ const Chat = () => {
                 <input
                   type="search"
                   className="bg-[#F0F0F0] text-[#47525E] rounded-[7px] p-3 w-full"
-                  placeholder="Search property"
+                  placeholder={t("forms.searchProperty")}
                   value={searchProp}
                   onChange={handleSearchProp}
                 />
@@ -405,7 +407,7 @@ const Chat = () => {
                       <input
                         type="search"
                         className="bg-[#F0F0F0] text-[#47525E] rounded-[7px] pe-3 py-3 w-full ps-[40px]"
-                        placeholder="Search contact"
+                        placeholder={t("forms.searchContact")}
                         value={searchUser}
                         onChange={handleSearchUser}
                       />

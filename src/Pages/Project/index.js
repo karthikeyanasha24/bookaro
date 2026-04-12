@@ -6,8 +6,10 @@ import PageLayout from "../../components/global/PageLayout";
 import ApiClient from "../../methods/api/apiClient";
 import { removePropData } from "../../models/string.model";
 import UpgradePlan from "../../components/common/Modal/UpgradePlan";
+import { useTranslation } from "react-i18next";
 
 const ProjectPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const [profile, setProfile] = useState({});
@@ -17,43 +19,43 @@ const ProjectPage = () => {
   const [planModal, setplanModal] = useState(false);
   const sercherSpace = [
     {
-      head: "Search Alert",
+      head: t("project.searchAlert"),
       subhead: `${profile.total_alerts || 0} Search${profile.total_alerts > 1 ? "es" : ""
         }`,
       route: "/serach-alert",
     },
     {
-      head: "Properties Followed",
+      head: t("project.propertiesFollowed"),
       subhead: `${profile.folderCount || 0} Propert${profile.folderCount > 1 ? "ies" : "y"
         }`,
       route: "/followed-properties",
     },
     {
-      head: "Interacted Properties",
+      head: t("project.interactedProperties"),
       subhead: `${profile.total_likes || 0} Propert${profile.total_likes > 1 ? "ies" : "y"
         }`,
       route: "/properties?favourites=true",
     },
     {
-      head: "Renter application file",
+      head: t("project.renterApplicationFile"),
       subhead: `${profile.renterFilesCount || 0} document${profile.renterFilesCount > 1 ? "s" : ""
         }`,
       route: "/renter-file",
     },
     {
-      head: "Buyer file",
+      head: t("project.buyerFile"),
       subhead: `${profile.buyerFilesCount || 0} document${profile.buyerFilesCount > 1 ? "s" : ""
         }`,
       route: "/buyer-file",
     },
     {
-      head: "Manage real estate transaction",
+      head: t("project.manageTransaction"),
       subhead: `${profile.totalInterests || 0} propert${profile.totalInterests > 1 ? "ies" : "y"
         } in funnel`,
       route: "/real-estate-transaction-searcher",
     },
     {
-      head: "P2P estimation",
+      head: t("project.p2pEstimation"),
       subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
         }`,
       route: "/estimation",
@@ -61,32 +63,32 @@ const ProjectPage = () => {
   ];
   const ownerSpace = [
     {
-      head: "My Property",
+      head: t("project.myProperty"),
       subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
         }`,
       route: "/my-properties",
     },
     //  {
-    //   head: "List a property",
+    //   head: t("project.listProperty"),
     //     subhead: `${profile.total_property || 0} propert${
     //     profile.total_property > 1 ? "ies" : "y"
     //   }`,
     //   route: "/property1",
     // },
     {
-      head: "Seller file",
+      head: t("project.sellerFile"),
       subhead: `${profile.sellerFilesCount || 0} Document${profile.sellerFilesCount > 1 ? "s" : ""
         }`,
       route: "/seller-file",
     },
     {
-      head: "Manage real estate transaction",
+      head: t("project.manageTransaction"),
       subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
         }`,
       route: "/real-estate-transaction-owner",
     },
     {
-      head: "Manage P2P estimation",
+      head: t("project.manageP2pEstimation"),
       subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
         }`,
       route: "/social-estimation",
@@ -138,15 +140,15 @@ const ProjectPage = () => {
   };
 
   const service = [
-    { name: "hire a real estate hunter", url: "/hunter-form" },
-    { name: "Find the best intrest rate", url: "/interest-form" },
-    { name: "Find a real estate professional", url: "/real-estate-pros" },
-    { name: "Get help to move", url: "/getmove-form" },
+    { name: t("project.hireHunter"), url: "/hunter-form" },
+    { name: t("project.bestRate"), url: "/interest-form" },
+    { name: t("project.findProfessional"), url: "/real-estate-pros" },
+    { name: t("project.helpMove"), url: "/getmove-form" },
   ]
   const serviceOwner = [
-    { name: "Get help selling", url: "/selling-form" },
-    { name: "Get quote", url: "/getquote-form" },
-    { name: "Get help to move", url: "/getmove-form" },
+    { name: t("project.helpSelling"), url: "/selling-form" },
+    { name: t("project.getQuote"), url: "/getquote-form" },
+    { name: t("project.helpMove"), url: "/getmove-form" },
   ]
 
   return (
@@ -237,7 +239,7 @@ const ProjectPage = () => {
                       onClick={() => handleProperty()}
                       className="py-1 px-4  rounded-[100px] border border-[#976DD0] text-[#31373E]"
                     >
-                      {propertyLoader ? "Loading..." : "List a property"}
+                      {propertyLoader ? t("messages.loading") : t("project.listProperty")}
                     </button>
                   </div>
                   <div className="mt-8">

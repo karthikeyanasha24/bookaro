@@ -1,6 +1,7 @@
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { imagePath, stringSeprator } from "../../models/string.model";
@@ -12,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IoSearchSharp } from "react-icons/io5";
 
 const BlogDetail = () => {
+  const { t } = useTranslation();
   const params = new URLSearchParams(window.location.search);
   const categoryId = params.get("categoryId");
   const history = useNavigate()
@@ -177,7 +179,7 @@ const BlogDetail = () => {
               {/* <div className="relative">
                 <input type='text'
                   className='!border-0 !bg-[#F0F0F0] !ps-9 px-2 py-2 rounded-lg !placeholder-[#7C62A1]'
-                  placeholder='Search pro tips '
+                  placeholder={t("forms.searchProTips")}
                   value={filters.search}
                   onChange={(e) => setFilter({ ...filters, search: e.target.value })}
                 />
@@ -192,7 +194,7 @@ const BlogDetail = () => {
                     value={filters.search}
                     onChange={(e) => setFilter({ ...filters, search: e.target.value })}
                     className="!border-0 !bg-[#F0F0F0] !ps-9 px-2 py-2 rounded-lg !placeholder-[#7C62A1]"
-                    placeholder="Search pro tips"
+                    placeholder={t("forms.searchProTips")}
                   />
                   <IoSearchSharp className="absolute top-1/2 transform-all -translate-y-1/2 left-3" />
                   {filters?.search && (
@@ -218,7 +220,7 @@ const BlogDetail = () => {
                 <div key={item?.id || item?._id}>
 
                   <h2 className="text-xl md:text-2xl font-semibold text-[#47525E] mb-6 leading-tight">
-                    {isCategory ? `${item?.categoryData?.CategoryName} Resources` : " Resources to help you in your real estate journey"}<br></br>
+                    {isCategory ? `${item?.categoryData?.CategoryName} Resources` : t("blogs.resourcesHelp")}<br></br>
 
                   </h2>
 
@@ -348,9 +350,9 @@ const BlogDetail = () => {
                       <div className="grid md:grid-cols-2 gap-4 ">
                         <div>
                           <h2 className="text-[24px] font-semibold mb-1">
-                            {(blogs[0]?.categoryId == "68ec8f8404dfdf28d518676f") && "Get the best interest rate thanks to our partners"}
+                            {(blogs[0]?.categoryId == "68ec8f8404dfdf28d518676f") && t("blogs.bestRate")}
                             {(blogs[0]?.categoryId == "68ec8f9804dfdf28d518678b") && "How much is your home worth as-is?"}
-                            {(blogs[0]?.categoryId == "68ec8f8c04dfdf28d518677d") && "Find your next home in Bookaroo"}
+                            {(blogs[0]?.categoryId == "68ec8f8c04dfdf28d518677d") && t("blogs.findHome")}
                             {(blogs[0]?.categoryId == "68ec8f6e04dfdf28d5186753") && "Ready to sell your home? Do it the right way, easy!"}
                             {(blogs[0]?.categoryId == "68ec8f7504dfdf28d5186761") && "A local property hunter can help you find your dream home and save money."}
                           </h2>
@@ -366,11 +368,11 @@ const BlogDetail = () => {
                               urlNavigation()
                             }
                           >
-                            {(blogs[0]?.categoryId == "68ec8f8404dfdf28d518676f") && "Find best interest rate"}
+                            {(blogs[0]?.categoryId == "68ec8f8404dfdf28d518676f") && t("buttons.findRate")}
                             {(blogs[0]?.categoryId == "68ec8f9804dfdf28d518678b") && "P2P Estimate it!"}
-                            {(blogs[0]?.categoryId == "68ec8f8c04dfdf28d518677d") && "Browse Rentals"}
-                            {(blogs[0]?.categoryId == "68ec8f6e04dfdf28d5186753") && "Talk with local agency"}
-                            {(blogs[0]?.categoryId == "68ec8f7504dfdf28d5186761") && "Talk with a local hunter"}
+                            {(blogs[0]?.categoryId == "68ec8f8c04dfdf28d518677d") && t("buttons.browseRentals")}
+                            {(blogs[0]?.categoryId == "68ec8f6e04dfdf28d5186753") && t("buttons.talkAgency")}
+                            {(blogs[0]?.categoryId == "68ec8f7504dfdf28d5186761") && t("buttons.talkHunter")}
                           </button>
                         </div>
                         <div className="h-[300px]">

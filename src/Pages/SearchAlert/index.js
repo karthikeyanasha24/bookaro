@@ -11,8 +11,10 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/re
 import SelectDropdown from "../../components/common/SelectDropdown";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const SearchAlert = () => {
+  const { t } = useTranslation();
 
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
@@ -35,8 +37,8 @@ const SearchAlert = () => {
     const addAlert = () => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         // if (!alert.reason) return setError({ ...error, alert: "Select reason" })
-        if (!alert.email) return setError({ ...error, alert: "Enter email address" })
-        if (!emailRegex.test(alert.email)) return setError({ ...error, alert: "Enter a valid email address" })
+        if (!alert.email) return setError({ ...error, alert: t("validation.enterEmail") })
+        if (!emailRegex.test(alert.email)) return setError({ ...error, alert: t("validation.validEmail") })
 
         let dto = {
           ...alert,
@@ -63,8 +65,8 @@ const SearchAlert = () => {
 
   const deleteItem = (id) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to delete this ${shared?.title}`,
+      title: t("modals.confirmTitle"),
+      text: t("alerts.deleteConfirm") + " " + (shared?.title || ""),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
@@ -85,20 +87,20 @@ const SearchAlert = () => {
 
     const alertReasons = [
       {
-        id: "searching for principal residence",
-        name: "searching for principal residence",
+        id: t("alerts.principalResidence"),
+        name: t("alerts.principalResidence"),
       },
       {
-        id: "searching for secondary residence",
-        name: "searching for secondary residence",
+        id: t("alerts.secondaryResidence"),
+        name: t("alerts.secondaryResidence"),
       },
       {
-        id: "searching for an investment",
-        name: "searching for an investment",
+        id: t("alerts.investment"),
+        name: t("alerts.investment"),
       },
       {
-        id: "get update on price evolution",
-        name: "get update on price evolution",
+        id: t("alerts.priceEvolution"),
+        name: t("alerts.priceEvolution"),
       },
       { id: "other", name: "other" },
     ];
@@ -149,7 +151,7 @@ const SearchAlert = () => {
                       </h3>
                       <p className="text-[#47525E] my-2 mt-3 ellipses">
                         {generateDynamicString(itm?.filteredData || {}) ||
-                          "No data available"}
+                          t("messages.noDataAvailable")}
                       </p>
                       <h5 className="text-[#47525E] font-[600] text-[17px] ellipses">
                         {/* Search Total Count */}
@@ -207,7 +209,7 @@ const SearchAlert = () => {
                       I'm creating this alert cause
                     </label>
                     <SelectDropdown
-                      placeholder="Select reason"
+                      placeholder={t("forms.selectReason")}
                       displayValue="name"
                       className="capitalize mb-4"
                       intialValue={alert?.reason}
@@ -226,7 +228,7 @@ const SearchAlert = () => {
                         setError({ ...error, alert: "" });
                       }}
                       className={`bg-white rounded-[7px] h-11 border border-[#976DD0] p-2 px-3 xl:max-w-[500px] w-[100%] mb-4`}
-                      placeholder="youremailaddress@gmail.com"
+                      placeholder={t("forms.emailPlaceholder")}
                     />
                     <input
                       type="text"
@@ -236,7 +238,7 @@ const SearchAlert = () => {
                         setError({ ...error, alert: "" });
                       }}
                       className={`bg-white rounded-[7px] h-11 border border-[#976DD0] p-2 px-3 xl:max-w-[500px] w-[100%] mb-4`}
-                      placeholder="Name you search"
+                      placeholder={t("forms.searchName")}
                     />
                     {error?.alert && (
                       <span className="text-[#ff0000] text-sm text-center mx-auto block">

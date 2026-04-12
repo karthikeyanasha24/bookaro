@@ -121,7 +121,11 @@
     "getStarted": "Commencer",
     "registerFree": "S'inscrire gratuitement",
     "yes": "Oui",
-    "activateAlerts": "Activer les alertes"
+    "activateAlerts": "Activer les alertes",
+    "findRate": "Trouver le meilleur taux",
+    "browseRentals": "Parcourir les locations",
+    "talkAgency": "Parler avec une agence locale",
+    "talkHunter": "Parler avec un chasseur immobilier local"
   },
   "forms": {
     "requiredField": "Ce champ est obligatoire",
@@ -210,7 +214,13 @@
     "yourMessage": "Votre message",
     "message": "Message",
     "registrationNumber": "Numéro d'enregistrement",
-    "amount": "Montant"
+    "amount": "Montant",
+    "searchProperty": "Rechercher une propriété",
+    "searchContact": "Rechercher un contact",
+    "searchProTips": "Rechercher les conseils des pros",
+    "selectReason": "Sélectionner une raison",
+    "emailPlaceholder": "votreaddressemail@gmail.com",
+    "searchName": "Nom de votre recherche"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
@@ -298,7 +308,8 @@
     "propertyShared": "Propriété partagée avec succès",
     "interestSent": "Intérêt envoyé",
     "offerMade": "Offre faite",
-    "offerSent": "Offre envoyée"
+    "offerSent": "Offre envoyée",
+    "somethingWrong": "Quelque chose s'est mal passé"
   },
   "authentication": {
     "login": "Connexion",
@@ -808,5 +819,36 @@
     "offerMade": "Offre faite",
     "makeOfferBtn": "Faire une offre",
     "contactAgency": "Contacter l'agence"
+  },
+  "blogs": {
+    "resourcesHelp": "Ressources pour vous aider dans votre parcours immobilier",
+    "bestRate": "Obtenez le meilleur taux d'intérêt grâce à nos partenaires",
+    "findHome": "Trouvez votre prochain logement chez Bookaroo"
+  },
+  "project": {
+    "searchAlert": "Alerte de recherche",
+    "propertiesFollowed": "Propriétés suivies",
+    "interactedProperties": "Propriétés avec lesquelles j'ai interagi",
+    "renterApplicationFile": "Dossier de candidature du locataire",
+    "buyerFile": "Dossier d'acheteur",
+    "manageTransaction": "Gérer la transaction immobilière",
+    "myProperty": "Ma propriété",
+    "sellerFile": "Dossier du vendeur",
+    "p2pEstimation": "Estimation P2P",
+    "manageP2pEstimation": "Gérer l'estimation P2P",
+    "hireHunter": "Embaucher un chasseur immobilier",
+    "bestRate": "Trouver le meilleur taux",
+    "findProfessional": "Trouver un professionnel de l'immobilier",
+    "helpMove": "Obtenir de l'aide pour déménager",
+    "helpSelling": "Obtenir de l'aide pour vendre",
+    "getQuote": "Demander un devis",
+    "listProperty": "Lister une propriété"
+  },
+  "alerts": {
+    "principalResidence": "recherche de résidence principale",
+    "secondaryResidence": "recherche de résidence secondaire",
+    "investment": "recherche d'un investissement",
+    "priceEvolution": "mise à jour sur l'évolution des prix",
+    "deleteConfirm": "Voulez-vous supprimer ceci"
   }
 }

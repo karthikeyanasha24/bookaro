@@ -121,7 +121,11 @@
     "getStarted": "Get Started",
     "registerFree": "Register for free",
     "yes": "Yes",
-    "activateAlerts": "Activate alerts"
+    "activateAlerts": "Activate alerts",
+    "findRate": "Find best interest rate",
+    "browseRentals": "Browse Rentals",
+    "talkAgency": "Talk with local agency",
+    "talkHunter": "Talk with a local hunter"
   },
   "forms": {
     "requiredField": "This field is required",
@@ -210,7 +214,13 @@
     "yourMessage": "Your Message",
     "message": "Message",
     "registrationNumber": "Registration Number",
-    "amount": "Amount"
+    "amount": "Amount",
+    "searchProperty": "Search property",
+    "searchContact": "Search contact",
+    "searchProTips": "Search pro tips",
+    "selectReason": "Select reason",
+    "emailPlaceholder": "youremailaddress@gmail.com",
+    "searchName": "Name you search"
   },
   "validation": {
     "required": "This field is required",
@@ -298,7 +308,8 @@
     "propertyShared": "Property shared successfully",
     "interestSent": "Interest sent",
     "offerMade": "Offer made",
-    "offerSent": "Offer sent"
+    "offerSent": "Offer sent",
+    "somethingWrong": "Something went wrong"
   },
   "authentication": {
     "login": "Login",
@@ -808,5 +819,36 @@
     "offerMade": "Offer Made",
     "makeOfferBtn": "Make an Offer",
     "contactAgency": "Contact the Agency"
+  },
+  "blogs": {
+    "resourcesHelp": "Resources to help you in your real estate journey",
+    "bestRate": "Get the best interest rate thanks to our partners",
+    "findHome": "Find your next home in Bookaroo"
+  },
+  "project": {
+    "searchAlert": "Search Alert",
+    "propertiesFollowed": "Properties Followed",
+    "interactedProperties": "Interacted Properties",
+    "renterApplicationFile": "Renter application file",
+    "buyerFile": "Buyer file",
+    "manageTransaction": "Manage real estate transaction",
+    "myProperty": "My Property",
+    "sellerFile": "Seller file",
+    "p2pEstimation": "P2P estimation",
+    "manageP2pEstimation": "Manage P2P estimation",
+    "hireHunter": "hire a real estate hunter",
+    "bestRate": "Find the best intrest rate",
+    "findProfessional": "Find a real estate professional",
+    "helpMove": "Get help to move",
+    "helpSelling": "Get help selling",
+    "getQuote": "Get quote",
+    "listProperty": "List a property"
+  },
+  "alerts": {
+    "principalResidence": "searching for principal residence",
+    "secondaryResidence": "searching for secondary residence",
+    "investment": "searching for an investment",
+    "priceEvolution": "get update on price evolution",
+    "deleteConfirm": "Do you want to delete this"
   }
 }
