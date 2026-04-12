@@ -7,9 +7,11 @@ import GooglePlaceAutoComplete from "../../components/common/GooglePlaceAutoComp
 import LoginModal from "../../components/common/Modal/LoginModal";
 import SelectDropdown from "../../components/common/SelectDropdown";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import addressModel from "../../models/address.model";
 
 const RealEstatePros = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [loginModal, setloginModal] = useState(false);
@@ -58,7 +60,7 @@ const RealEstatePros = () => {
 
   const navigateToList = () => {
     // if (!user?.loggedIn) return setloginModal(true);
-    if (!form?.location) return setError("Enter location")
+    if (!form?.location) return setError(t("validation.enterLocation"))
     const query = [];
     if (form.city) query.push(`search=${encodeURIComponent(form.city)}`);
     if (form.role) query.push(`role=${encodeURIComponent(form.role?.toLowerCase())}`);
@@ -86,7 +88,7 @@ const RealEstatePros = () => {
                         key={inputKey}
                         value={form?.location}
                         result={addressResult}
-                        placeholder="Enter your location"
+                        placeholder={t("forms.enterLocation")}
                         id="address"
                         className="pe-1"
                       />
@@ -105,7 +107,7 @@ const RealEstatePros = () => {
                   <SelectDropdown
                     className="custom_drop"
                     displayValue="name"
-                    placeholder="Select Role"
+                    placeholder={t("forms.selectRole")}
                     isClearable={false}
                     intialValue={form.role}
                     result={(e) => {

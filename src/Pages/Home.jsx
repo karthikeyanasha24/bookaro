@@ -29,8 +29,10 @@ import BlogSection from "./Blogs/BlogSection";
 import PropertyCardHome from "./Property/PropertyCardHome";
 import { login_success } from "../actions/user";
 import UpgradePlan from "../components/common/Modal/UpgradePlan";
+import { useTranslation } from "react-i18next";
 
 const Home = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const activePlan = useSelector((state) => state.activePlan);
   const [propertyTotal, setpropertyTotal] = useState(0);
@@ -109,11 +111,11 @@ const Home = () => {
     if (building) types.push("Building");
     if (farm) types.push("Farm");
     // validations
-    if (!more && !form.search) return setErrors("Set your search parameters");
+    if (!more && !form.search) return setErrors(t("validation.setSearchParams"));
     if (form.propertyType === "sale" || form.propertyType === "rent") {
       if (form.maxPrice) {
         if (Number(form.minPrice) >= Number(form.maxPrice))
-          return setErrors("Enter correct range");
+          return setErrors(t("validation.correctRange"));
       }
     }
     // add to saved searches
@@ -265,13 +267,13 @@ const Home = () => {
 
   const deleteItem = (item) => {
     Swal.fire({
-      title: "Are you sure?",
+      title: t("modals.confirmTitle"),
       text: `Do you want to delete this Property`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonText: t("buttons.yes"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -404,7 +406,7 @@ const Home = () => {
                     className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit"
                     onClick={() => handleProperty()}
                   >
-                    {propertyLoader ? "Loading..." : "List my property"}
+                    {propertyLoader ? t("messages.loading") : t("buttons.listProperty")}
                   </button>
                 </div>
                 <div className="lg:absolute position-set relative 2xl:w-[700px] xl:w-[650px] lg:w-[500px] w-[100%] lg:col-span-6 col-span-full lg:mt-0 mt-5 ">
@@ -715,7 +717,7 @@ const Home = () => {
                               key={inputKey}
                               value={form.search}
                               result={addressResult}
-                              placeholder="In which city?"
+                              placeholder={t("forms.whichCity")}
                               id="address"
                             />
                             {form.search?.trim() && (
@@ -846,7 +848,7 @@ const Home = () => {
                                 key={inputKey}
                                 value={form.search}
                                 result={addressResult}
-                                placeholder="In which city?"
+                                placeholder={t("forms.whichCity")}
                                 id="address"
                               />
                               {form.search?.trim() && (

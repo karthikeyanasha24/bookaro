@@ -8,8 +8,10 @@ import { RxCross2 } from "react-icons/rx";
 import LoginModal from "../../components/common/Modal/LoginModal";
 import { useSelector } from "react-redux";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 
 const PastTransactions = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -113,7 +115,7 @@ const PastTransactions = () => {
                         key={inputKey}
                         value={form?.location}
                         result={addressResult}
-                        placeholder="Enter your location"
+                        placeholder={t("forms.enterLocation")}
                         id="address"
                         className="pe-1"
                       />
@@ -144,7 +146,7 @@ const PastTransactions = () => {
                         })
                         setError("");
                       }}
-                      placeholder="Min"
+                      placeholder={t("forms.min")}
                       className="bg-[#F0F0F0] w-full p-2 px-3 rounded-[5px] h-[44px]"
                     />
                     <input
@@ -160,7 +162,7 @@ const PastTransactions = () => {
                         })
                         setError("");
                       }}
-                      placeholder="Max"
+                      placeholder={t("forms.max")}
                       className="bg-[#F0F0F0] w-full p-2 px-3 rounded-[5px] h-[44px]"
                     />
                   </div>
@@ -190,7 +192,7 @@ const PastTransactions = () => {
                           ...form, rooms: value
                         })
                       }}
-                      placeholder="Enter rooms"
+                      placeholder={t("forms.enterRooms")}
                       className="bg-[#F0F0F0] w-full "
                     />
                   </div>
@@ -210,7 +212,7 @@ const PastTransactions = () => {
                         })
                         setError("");
                       }}
-                      placeholder="Min"
+                      placeholder={t("forms.min")}
                       className="bg-[#F0F0F0] w-full p-2 px-3 rounded-[5px] h-[44px]"
                     />
                     <input
@@ -226,7 +228,7 @@ const PastTransactions = () => {
                         })
                         setError("");
                       }}
-                      placeholder="Max"
+                      placeholder={t("forms.max")}
                       className="bg-[#F0F0F0] w-full p-2 px-3 rounded-[5px] h-[44px]"
                     />
                   </div>
