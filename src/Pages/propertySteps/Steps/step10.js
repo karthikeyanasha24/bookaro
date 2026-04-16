@@ -1,5 +1,6 @@
 import { Checkbox, Switch } from "@headlessui/react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import PhoneInput from "react-phone-input-2";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -30,6 +31,7 @@ const Step10 = ({
 }) => {
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const scrollRef = useRef(null);
   const user = useSelector((state) => state.user);
   const [draftModal, setdraftModal] = useState(false)
@@ -63,8 +65,7 @@ const Step10 = ({
   const validate = () => {
     const newError = { email: "", username: "", phoneNumber: "" };
     if (!formData.username || formData.username?.trim()?.length < 6) {
-      newError.username =
-        "Username is required and must be at least 6 characters.";
+      newError.username = t("propertySteps.step10.errors.usernameRequired");
     }
     const phoneRegex = /^[0-9]+$/;
     if (
@@ -72,7 +73,7 @@ const Step10 = ({
       (!phoneRegex.test(formData.phoneNumber) ||
         formData.phoneNumber.length < 10)
     ) {
-      newError.phoneNumber = "Enter valid Phone number";
+      newError.phoneNumber = t("propertySteps.step10.errors.invalidPhone");
     }
 
     if (newError.username || newError.phoneNumber) {
@@ -247,7 +248,7 @@ const Step10 = ({
                 alt="bolt"
               />
               <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-5">
-                Property has been created
+                {t("propertySteps.step10.propertyCreated")}
               </p>
               <div className="pt-8  flex items-center justify-center">
                 <Button
@@ -258,7 +259,7 @@ const Step10 = ({
                   }
                   className="btn btn-primary"
                 >
-                  Click here to view
+                  {t("propertySteps.step10.clickHereToView")}
                 </Button>
               </div>
             </DialogTitle>
@@ -270,15 +271,15 @@ const Step10 = ({
         <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
           <div className="flex justify-between items-center gap-3 xl:mb-[50px] lg:mb-[50px] mb-[40px]">
             <h4 className="text-[#47525E] text-[24px] font-[600] ">
-              Complete your preferred contact details
+              {t("propertySteps.step10.heading")}
               <span className="text-[#47525E] font-[400] block text-[14px] mt-1 block">
-                *Mandatory information
+                {t("propertySteps.step10.mandatoryInformation")}
               </span>
             </h4>
           </div>
           <div className="md:w-[500px] w-[100%]">
             <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-              Email address attached to your account
+              {t("propertySteps.step10.emailAttachedLabel")}
             </label>
             <div className="font-[400]  text-[14px] text-[#47525E] mb-7 ">
               {/* <input
@@ -316,21 +317,20 @@ const Step10 = ({
 
             <div className="flex items-start flex-col w-[75%]">
               <h5 className="text-[#47525E] text-[16px] font-[600]  mb-2 border-b border-dashed border-[#47525E]  ">
-                Your email address is not displayed on property profile
+                {t("propertySteps.step10.emailPrivacyTitle")}
               </h5>
               <label className="text-[#47525E] text-[14px] ">
-                Rest assured, we only use your email to send you contact
-                requests for your ad.
+                {t("propertySteps.step10.emailPrivacyInfo")}
               </label>
             </div>
           </div>
 
           <div className="md:max-w-[500px] w-[100%]">
             <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-              Username*
+              {t("propertySteps.step10.usernameLabel")}
             </label>
             <span className="block font-[400] mt-2 mb-2 text-[#47525E] text-[14px]">
-              Username to be displayed on your property profile
+              {t("propertySteps.step10.usernameHint")}
             </span>
             <input
               disabled={!editMode}
@@ -344,7 +344,7 @@ const Step10 = ({
               }}
               className={`bg-white rounded-[7px] h-11 border ${error.username ? "border-red-500" : "border-[#976DD0]"
                 } p-2 px-3 xl:max-w-[500px] w-[100%] mb-4`}
-              placeholder="Enter your username"
+              placeholder={t("propertySteps.step10.placeholders.enterUsername")}
             />
             {error.username && (
               <div className="text-[#ff0000] text-sm">{error.username}</div>
@@ -381,21 +381,19 @@ const Step10 = ({
 
             <div className="flex items-start flex-col w-[75%]">
               <h5 className="text-[#47525E] text-[16px] font-[600]  mb-2 border-b border-dashed border-[#47525E]  ">
-                Don't use your real name unless your are a pro
+                {t("propertySteps.step10.usernamePrivacyTitle")}
               </h5>
               <label className="text-[#47525E] text-[14px] ">
-                We don't share identity of owner of property on Bookaroo. So
-                make sure to use a username to avoid being contacted outside of
-                the platform
+                {t("propertySteps.step10.usernamePrivacyInfo")}
               </label>
             </div>
           </div>
           <div className="md:max-w-[500px] w-[100%]">
             <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-              Phone number
+              {t("propertySteps.step10.phoneLabel")}
             </label>
             <span className="block font-[400] mt-2 mb-2 text-[#47525E] text-[14px]">
-              Let your future buyer contact you directly
+              {t("propertySteps.step10.phoneHint")}
             </span>
             <PhoneInput
               disabled={!editMode}
@@ -407,7 +405,7 @@ const Step10 = ({
                   setError({ ...error, phoneNumber: "" });
                 }
               }}
-              placeholder="Enter your phone number"
+              placeholder={t("propertySteps.step10.placeholders.enterPhone")}
             />
             {error.phoneNumber && (
               <div className="text-[#ff0000] text-sm">{error.phoneNumber}</div>
@@ -440,8 +438,7 @@ const Step10 = ({
                 </svg>
               </Checkbox>
               <label className="text-[#47525E] text-[14px] font-[400] ms-4">
-                I refuse to receive emails or calls from Bookaroo for advice on
-                my sales project and information on the real estate market.
+                {t("propertySteps.step10.refuseMarketingEmails")}
               </label>
             </div>
           </div>
@@ -472,8 +469,7 @@ const Step10 = ({
                 </svg>
               </Checkbox>
               <label className="text-[#47525E] text-[14px] font-[400] ms-4">
-                I refuse to have my telephone number transmitted to a Bookaroo
-                partner agency to assist me in the sale of my property.
+                {t("propertySteps.step10.refusePhoneTransmission")}
               </label>
             </div>
 
@@ -484,23 +480,21 @@ const Step10 = ({
           <div className="mt-10 lg:max-w-[800px] w-[100%]">
             <div className="bg-[#e5d9f2] rounded-[20px] p-8">
               <h2 className="text-[#47525E] font-[600] text-[18px] mb-3">
-                Increase your property value and attractivity*
+                {t("propertySteps.step10.increaseValueTitle")}
               </h2>
 
               <div className="grid grid-cols-12">
                 <div className="lg:col-span-7 col-span-12 pe-14">
                   <p className="text-[#47525E] text-[14px] mb-5">
-                    Share with your audience key information on your property that
-                    will generate more interest for your property: rental revenues,
-                    renovation works, expenses, social platforms rating.
+                    {t("propertySteps.step10.increaseValueInfo")}
                   </p>
                   <h4 className="text-[#47525E] text-[18px] font-[600]">
-                    Ready to increase your property value?
+                    {t("propertySteps.step10.readyToIncrease")}
                   </h4>
                   <ul className="w-full mt-5 flex">
                     <li className="flex items-center me-5">
                       <p className="text-[#47525E] font-[600] text-[15px] me-4   ">
-                        Yes
+                        {t("common.yes")}
                       </p>
                       <Switch
                         checked={formData?.add_more_step}
@@ -508,7 +502,7 @@ const Step10 = ({
                         className={`${addSteps ? "bg-[#986dcd]" : "bg-[#000]"
                           } relative inline-flex h-4 w-8 items-center rounded-full transition-colors`}
                       >
-                        <span className="sr-only">Enable notifications</span>
+                        <span className="sr-only">{t("propertySteps.step10.enableNotifications")}</span>
                         <span
                           className={`${addSteps ? "translate-x-4" : "translate-x-1"
                             } inline-block h-3 w-3 transform rounded-full bg-white transition`}
@@ -517,7 +511,7 @@ const Step10 = ({
                     </li>
                     <li className="flex items-center">
                       <p className="text-[#47525E] font-[600] text-[15px] me-4   ">
-                        Later
+                        {t("propertySteps.step10.later")}
                       </p>
                       <Switch
                         checked={!formData?.add_more_step}
@@ -525,7 +519,7 @@ const Step10 = ({
                         className={`${!addSteps ? "bg-[#986dcd]" : "bg-[#000]"
                           } relative inline-flex h-4 w-8 items-center rounded-full transition-colors`}
                       >
-                        <span className="sr-only">Enable notifications</span>
+                        <span className="sr-only">{t("propertySteps.step10.enableNotifications")}</span>
                         <span
                           className={`${!addSteps ? "translate-x-4" : "translate-x-1"
                             } inline-block h-3 w-3 transform rounded-full bg-white transition`}
@@ -533,7 +527,7 @@ const Step10 = ({
                       </Switch>
                     </li>
                   </ul>
-                  <p className="italic text-[#47525E] text-[14px] mt-9 font-normal">Don't worry, you can add extra information anytime by udpating your property profile </p>
+                  <p className="italic text-[#47525E] text-[14px] mt-9 font-normal">{t("propertySteps.step10.addInfoLater")}</p>
                 </div>
                 <div className="lg:col-span-5 col-span-12 lg:mt-0 mt-8">
                   <img
@@ -546,15 +540,10 @@ const Step10 = ({
           </div>
           <div className="mt-4 rounded-md md:max-w-[500px] w-[100%]">
             <p className="text-[#47525E] text-[14px] my-10 italic" >
-              By validating the distribution of my profile, I accept the general
-              subscription conditions and the distribution rules of the Bookaroo
-              site.
+              {t("propertySteps.step10.legalDistribution")}
             </p>
             <p className="text-[#47525E] text-[14px] italic">
-              A professional seller posing as a consumer or a non-professional
-              is liable to the sanctions provided for in article L.132-2 of the
-              Consumer Code, namely two years' imprisonment and a fine of
-              300,000 euros.
+              {t("propertySteps.step10.legalProfessional")}
             </p>
           </div>
           {/* <div className="mt-4 rounded-md md:max-w-[500px] w-[100%] bg-white p-5 relative shadow_new">
@@ -599,7 +588,7 @@ const Step10 = ({
               onClick={save}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save change
+              {t("propertySteps.step10.saveChange")}
             </button>
           </div>
         ) : (
@@ -608,20 +597,20 @@ const Step10 = ({
               onClick={draftsave}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save As Draft
+              {t("propertySteps.step10.saveAsDraft")}
             </button>
             <button
               onClick={handleBack}
               className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
             >
-              Back
+              {t("common.back")}
             </button>
             {addSteps || page ? (
               <button
                 onClick={handleNext}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
               >
-                Next
+                {t("common.next")}
               </button>
             ) : (
               <>
@@ -629,7 +618,7 @@ const Step10 = ({
                   onClick={handleSubmit}
                   className="btn text-white bg-[#48464a] rounded-full px-10 py-4"
                 >
-                  {id ? "Upadte" : "List"} my property
+                  {id ? t("propertySteps.step10.updateMyProperty") : t("propertySteps.step10.listMyProperty")}
                 </button>
               </>
             )}

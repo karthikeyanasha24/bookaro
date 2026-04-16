@@ -7,6 +7,7 @@ import {
 } from "@headlessui/react";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTranslation } from "react-i18next";
 import { AiOutlineDelete, AiOutlineYoutube } from "react-icons/ai";
 import { BiSolidOffer } from "react-icons/bi";
 import { FaArrowRight, FaCircleArrowDown, FaRegCirclePlay, FaRegEye } from "react-icons/fa6";
@@ -63,6 +64,7 @@ const LeadCards = ({
   type,
   setType,
 }) => {
+  const { t } = useTranslation();
   const history = useNavigate()
   const user = useSelector((state) => state.user);
   const [isOpenMsg, setIsOpenMsg] = useState(false);
@@ -1254,7 +1256,7 @@ const LeadCards = ({
                                     )
                                   }
                                 >
-                                  Request Seller Files
+                                  {t("transactionSearcher.requestSellerFiles")}
                                 </button>
                               </>
                             )}
@@ -2179,8 +2181,7 @@ const LeadCards = ({
             />
           </div>
           <p className="text-black font-[600] text-[20px] text-center my-5 max-w-xs mx-auto">
-            Properties your are targeting either for rental or purchase will be
-            listed here.{" "}
+            {t("transactionSearcher.emptyTargetedProperties")}
           </p>
           <div className="mt-10">
             <p className="bg-white w-full h-[2px] max-w-md mx-auto"></p>
@@ -2188,12 +2189,12 @@ const LeadCards = ({
           <div className="flex items-center justify-center mt-10">
             <GoLightBulb className="text-[24px] me-3" />
             <h3 className="text-[#343F4B] font-[700] text-[20px]">
-              Selling alone training
+              {t("transactionSearcher.sellingAloneTraining")}
             </h3>
           </div>
           <div className="p-3  border-[2px] border-[#976DD0] rounded-[12px] bg-white md:max-w-sm max-w-full mx-auto flex justify-between  my-6">
             <p className="text-[#47525E] md:text-[18px] md:w-[60%] text-[16px] w-[50%]">
-              What to check before signing a sale contract?
+              {t("transactionSearcher.trainingQuestionOne")}
             </p>
             <div className="flex items-center">
               <AiOutlineYoutube className="text-[30px] text-[#8492A6]" />
@@ -2214,7 +2215,7 @@ const LeadCards = ({
           </div>
           <div className="p-3  border-[2px] border-[#976DD0] rounded-[12px] bg-white md:max-w-sm max-w-full mx-auto flex justify-between">
             <p className="text-[#47525E] md:text-[18px] md:w-[60%] text-[16px] w-[50%]">
-              How should this signature happen?
+              {t("transactionSearcher.trainingQuestionTwo")}
             </p>
             <div className="flex items-center">
               <AiOutlineYoutube className="text-[30px] text-[#8492A6]" />

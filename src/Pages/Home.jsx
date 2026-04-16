@@ -268,7 +268,7 @@ const Home = () => {
   const deleteItem = (item) => {
     Swal.fire({
       title: t("modals.confirmTitle"),
-      text: `Do you want to delete this Property`,
+      text: t("home.deletePropertyConfirm"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
@@ -323,10 +323,10 @@ const Home = () => {
   };
 
   const tabs = [
-    { name: "Off-Market", value: true },
-    { name: "Rent now", value: "rent" },
-    { name: "Buy now", value: "sale" },
-    { name: "Directory", value: "directory" },
+    { labelKey: "home.tabs.offMarket", value: true },
+    { labelKey: "home.tabs.rentNow", value: "rent" },
+    { labelKey: "home.tabs.buyNow", value: "sale" },
+    { labelKey: "home.tabs.directory", value: "directory" },
   ];
 
   const saveSearch = (search) => {
@@ -340,17 +340,29 @@ const Home = () => {
   };
 
   const getAllProperty = () => {
+    const userId = user?.id || user?._id;
+    if (!userId) {
+      setpropertyLoader(false);
+      return;
+    }
+
     setpropertyLoader(true);
     ApiClient.get(
-      `property/listing?page=1&count=1000&status=active&addedBy=${user?.id || user?._id
+      `property/listing?page=1&count=1000&status=active&addedBy=${userId
       }&maxDistance=&userLat=&userLng=&propertyType=&userId=${user?.id || user?._id
       }&loggedInUser=${user?.id || user?._id}`
-    ).then((res) => {
-      if (res.success) {
-        setpropertyTotal(res.total);
-      }
-      setpropertyLoader(false);
-    });
+    )
+      .then((res) => {
+        if (res.success) {
+          setpropertyTotal(res.total);
+        }
+      })
+      .catch(() => {
+        setpropertyTotal(0);
+      })
+      .finally(() => {
+        setpropertyLoader(false);
+      });
   };
 
   useEffect(() => {
@@ -394,12 +406,10 @@ const Home = () => {
               <div className="grid grid-cols-12 h-full">
                 <div className="lg:col-span-3 col-span-full justify-center flex  flex-col">
                   <h2 className="text-white 2xl:text-[38px] xl:text-[20px] lg:text-[19px] text-[20px] font-bold mb-0">
-                    The LinkedIn of real estate
+                    {t("home.heroTitle")}
                   </h2>
                   <h4 className="text-white 2xl:text-[28px] lg:text-[14px] text-[16px] font-bold  mb-2 2xl:max-w-[320px] xl:max-w-[240px] max-w-[400px] my-3 mb-4">
-                    The All-in-one real estate marketplace with Offmarket
-                    properties, public opportunities and the largest real estate
-                    properties directory.
+                    {t("home.heroSubtitle")}
                   </h4>
                   <button
                     disabled={propertyLoader}
@@ -417,7 +427,7 @@ const Home = () => {
                           key={i}
                           // title={itm?.name == "Off-Market" && !activePlan?.[0]?.offMarket ? "Pleadse upgrade your plan" : ""}
                           onClick={() => {
-                            if (itm?.name == "Off-Market" && !activePlan?.activePlan?.[0]?.offMarket) {
+                            if (itm?.value === true && !activePlan?.activePlan?.[0]?.offMarket) {
                               setIsOpen(true)
                               changeTab("");
                             } else {
@@ -430,7 +440,7 @@ const Home = () => {
                             : "bg-white text-[#B2B2B2]"
                             } xl:py-3 xl:px-3 px-1  py-3 font-bold sm:w-1/3 w-1/2 text-center sm:rounded-tl-[10px]  rounded-tl-[0px] rounded-tr-[0px] sm:rounded-tr-[10px]  text-[14px] cursor-pointer`}
                         >
-                          {itm.name}
+                          {t(itm.labelKey)}
                         </li>
                       ))}
                     </ul>
@@ -447,8 +457,7 @@ const Home = () => {
                         <DialogPanel className="max-w-md  w-full bg-white rounded-[20px]  ">
                           <DialogTitle className=" p-6 ">
                             <p className="border-b  text-[#389D93] text-[18px] text-center pb-4">
-                              {" "}
-                              Select property type's
+                              {t("home.filters.selectPropertyTypes")}
                             </p>
                             <ul className="flex items-center flex-wrap pt-6 justify-center">
                               <div class="flex items-center  rounded-full ps-1 pe-4 py-[4px] border border-[#976DD0]">
@@ -476,7 +485,7 @@ const Home = () => {
                                 </Checkbox>
                                 <div class="flex flex-col">
                                   <h1 className="text-[#343F4B] font-medium text-[14px]">
-                                    House
+                                    {t("home.propertyTypes.house")}
                                   </h1>
                                 </div>
                               </div>
@@ -506,7 +515,7 @@ const Home = () => {
 
                                 <div class="flex flex-col">
                                   <h1 class="text-[#343F4B] font-medium text-[14px]">
-                                    Apartment
+                                    {t("home.propertyTypes.apartment")}
                                   </h1>
                                 </div>
                               </div>
@@ -535,7 +544,7 @@ const Home = () => {
                                 </Checkbox>
                                 <div class="flex flex-col">
                                   <h1 class="text-[#343F4B] font-medium text-[14px]">
-                                    Castle
+                                    {t("home.propertyTypes.castle")}
                                   </h1>
                                 </div>
                               </div>
@@ -564,7 +573,7 @@ const Home = () => {
                                 </Checkbox>
                                 <div class="flex flex-col">
                                   <h1 class="text-[#343F4B] font-medium text-[14px]">
-                                    Building
+                                    {t("home.propertyTypes.building")}
                                   </h1>
                                 </div>
                               </div>
@@ -593,7 +602,7 @@ const Home = () => {
                                 </Checkbox>
                                 <div class="flex flex-col">
                                   <h1 class="text-[#343F4B] font-medium text-[14px]">
-                                    Farm
+                                    {t("home.propertyTypes.farm")}
                                   </h1>
                                 </div>
                               </div>
@@ -605,14 +614,14 @@ const Home = () => {
                               onClick={closeAdditionalFilter}
                               className="text-[#868389] text-[18px] underline"
                             >
-                              Cancel
+                              {t("buttons.cancel")}
                             </button>
                             <div className="flex items-center">
                               <button
                                 onClick={() => setAdditionalFilter(false)}
                                 className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                               >
-                                Apply
+                                {t("buttons.apply")}
                               </button>
                             </div>
                           </div>
@@ -625,20 +634,16 @@ const Home = () => {
                       <div className="sm:p-10 py-5 2xl:px-8 xl:px-7 px-4  bg-white rounded-bl-[10px] rounded-br-[10px] home_search xl:h-[357px] sm:h-[400px] h-[410px]">
                         <h2 className="text-[#47525E] text-center sm:text-[16px] text-[14px]">
                           {form.propertyType === "directory"
-                            ? `Your real estate project starts here! And your dreamed
-                          home is probably here!`
-                            : `The Off-Market gives you access to exclusive properties
-                           and opportunities`}
+                            ? t("home.search.directoryHeadline")
+                            : t("home.search.offMarketHeadline")}
                         </h2>
                         {form.propertyType === "directory" ? (
                           <p className="text-[#7BBEB8] text-center sm:text-[16px] text-[14px]">
-                            Find now the property you will buy/rent in months or
-                            years and contact owner now
+                            {t("home.search.directorySubheadline")}
                           </p>
                         ) : (
                           <p className="text-[#47525E] font-bold text-center sm:text-[16px] text-[14px]">
-                            while negociating freely purchase or rental
-                            conditions with owner.
+                            {t("home.search.offMarketSubheadline")}
                           </p>
                         )}
 
@@ -671,7 +676,7 @@ const Home = () => {
                             </Checkbox>
                             <label className="text-[#47525E] sm:text-[14px] text-[13px]">
 
-                              {form.propertyType === "directory" ? "Open to rental proposal" : "Rental "
+                              {form.propertyType === "directory" ? t("home.search.openToRentalProposal") : t("home.search.rental")
                               }
                             </label>
                           </div>
@@ -704,7 +709,7 @@ const Home = () => {
                               </svg>
                             </Checkbox>
                             <label className="text-[#47525E] sm:text-[14px] text-[13px]">
-                              {form.propertyType === "directory" ? "Open to purchase proposal" : "Purchase "
+                              {form.propertyType === "directory" ? t("home.search.openToPurchaseProposal") : t("home.search.purchase")
                               }
                               {" "}
 
@@ -756,7 +761,7 @@ const Home = () => {
                                 </Checkbox>
                                 <div class="flex flex-col">
                                   <h1 className="text-[#343F4B] font-medium text-[14px]">
-                                    House
+                                    {t("home.propertyTypes.house")}
                                   </h1>
                                 </div>
                               </div>
@@ -787,7 +792,7 @@ const Home = () => {
 
                                 <div class="flex flex-col">
                                   <h1 class="text-[#343F4B] font-medium text-[14px]">
-                                    Appartment
+                                    {t("home.propertyTypes.apartment")}
                                   </h1>
                                 </div>
                               </div>
@@ -803,7 +808,7 @@ const Home = () => {
                                 className="text-[#7BBEB8] 2xl:text-[14px]  text-[13px] underline text-end 2xl:ms-4 ms-2 cursor-pointer sm:inline-block hidden"
                                 onClick={() => handleSearch(true)}
                               >
-                                More criteria
+                                {t("home.search.moreCriteria")}
                               </p>
                             </div>
                           </div>
@@ -811,7 +816,7 @@ const Home = () => {
                             className="text-[#7BBEB8] text-[14px] underline text-center 2xl:ms-4 md:ms-2 ms-0 cursor-pointer block sm:hidden"
                             onClick={() => handleSearch(true)}
                           >
-                            More criteria
+                            {t("home.search.moreCriteria")}
                           </p>
                         </div>
                         <p
@@ -823,14 +828,14 @@ const Home = () => {
                           }}
                           className="cursor-pointer text-[#986AB8] underline text-center text-[14px] my-5 mt-6"
                         >
-                          Owner? List your property
+                          {t("home.search.ownerListProperty")}
                         </p>
 
                         <button
                           onClick={() => handleSearch()}
                           className="bg-[#986AB8] rounded-[50px] px-8 py-2 text-white text-[14px] flex items-center justify-center mx-auto"
                         >
-                          See results
+                          {t("home.search.seeResults")}
                         </button>
                         {errors && (
                           <span className="text-[#ff0000] text-sm text-center mx-auto block mt-1">
@@ -842,7 +847,7 @@ const Home = () => {
                       <div className="sm:p-10 py-5 2xl:px-8 xl:px-7 px-4  bg-white rounded-bl-[10px] rounded-br-[10px] home_search xl:h-[357px] sm:h-[400px] h-[410px]">
                         <div className="flex sm:items-center sm:flex-row flex-col flex-start gap-2 mt-2">
                           <div className="flex flex-col  sm:w-1/2 w-full">
-                            <label className="mb-1">Location</label>
+                            <label className="mb-1">{t("home.search.location")}</label>
                             <div className="relative">
                               <GooglePlaceAutoComplete
                                 key={inputKey}
@@ -864,8 +869,8 @@ const Home = () => {
                           <div className="flex flex-col  sm:w-1/2 w-full sm:ms-2 sm:mt-0 ms-0 mt-2">
                             <label className="mb-1">
                               {form.propertyType === "rent"
-                                ? "Rental"
-                                : "Price"}{" "}
+                                ? t("home.search.rental")
+                                : t("home.search.price")}{" "}
                               (€)
                             </label>
                             <div className="flex gap-2">
@@ -884,7 +889,7 @@ const Home = () => {
                                   setErrors("");
                                 }}
                                 className="bg-[#F0F0F0] px-4 py-1 rounded-[8px] text-[#47525E] text-[14px]   w-full h-[40px] flex items-center"
-                                placeholder="Min €"
+                                placeholder={t("home.search.minPrice")}
                               />
                               <input
                                 type="text"
@@ -901,7 +906,7 @@ const Home = () => {
                                   setErrors("");
                                 }}
                                 className="bg-[#F0F0F0] px-4 py-1 rounded-[8px] text-[#47525E] text-[14px]   w-full h-[40px] flex items-center"
-                                placeholder="Max €"
+                                placeholder={t("home.search.maxPrice")}
                               />
                             </div>
                           </div>
@@ -933,7 +938,7 @@ const Home = () => {
                               </Checkbox>
                               <div class="flex flex-col">
                                 <h1 className="text-[#343F4B] font-medium text-[14px]">
-                                  House
+                                  {t("home.propertyTypes.house")}
                                 </h1>
                               </div>
                             </div>
@@ -964,7 +969,7 @@ const Home = () => {
 
                               <div class="flex flex-col">
                                 <h1 class="text-[#343F4B] font-medium text-[14px]">
-                                  Apartment
+                                  {t("home.propertyTypes.apartment")}
                                 </h1>
                               </div>
                             </div>
@@ -980,14 +985,14 @@ const Home = () => {
                               className="text-[#7BBEB8] 2xl:text-[14px]  text-[13px] underline text-end 2xl:ms-4 ms-2 cursor-pointer sm:inline-block hidden"
                               onClick={() => handleSearch(true)}
                             >
-                              More criteria
+                              {t("home.search.moreCriteria")}
                             </p>
                           </div>
                           <p
                             className="text-[#7BBEB8] text-[14px] underline text-center 2xl:ms-4 md:ms-2 mt-2 ms-0 cursor-pointer block sm:hidden"
                             onClick={() => handleSearch(true)}
                           >
-                            More criteria
+                            {t("home.search.moreCriteria")}
                           </p>
                         </div>
                         <p
@@ -999,7 +1004,7 @@ const Home = () => {
                           }}
                           className="cursor-pointer text-[#986AB8] underline text-center text-[14px] my-5 mt-6"
                         >
-                          Owner? List your property
+                          {t("home.search.ownerListProperty")}
                         </p>
                         <button
                           onClick={() => {
@@ -1007,7 +1012,7 @@ const Home = () => {
                           }}
                           className="bg-[#986AB8] rounded-[50px] px-8 py-2 text-white text-[14px] flex items-center justify-center mx-auto"
                         >
-                          See results
+                          {t("home.search.seeResults")}
                         </button>
                         {errors && (
                           <span className="text-[#ff0000] text-sm text-center mx-auto block mt-1">
@@ -1028,29 +1033,28 @@ const Home = () => {
                 <div className="grid grid-cols-12 ">
                   <div className="col-span-12  mb-[40px] flex items-center justify-between">
                     <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                      Results of my last search
+                      {t("home.lastSearch.resultsTitle")}
                       <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                     </h2>
                     <p
                       onClick={() => navigate("/serach-alert")}
                       className="underline font-bold text-[#47525E]  text-[18px] cursor-pointer"
                     >
-                      See my saved searches
+                      {t("home.lastSearch.savedSearches")}
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-12 ">
                   <div className="col-span-12 mb-5  ">
                     <h4 className="text-[#47525E] font-bold text-[17px]">
-                      {lastSearchObj?.search || "Search name"}
+                      {lastSearchObj?.search || t("home.lastSearch.searchName")}
                     </h4>
                     <p className="text-[#47525E] capitalize">
                       {`${lastSearchObj?.propertyType}, ${lastSearchObj?.type ? `${lastSearchObj?.type},` : ""
                         } ${lastSearchObj?.search}`}
                     </p>
                     <h5 className="text-[#383A3D] font-bold mt-3 text-[17px]">
-                      {properties?.length} new result
-                      {properties?.length === 1 ? "" : "s"}
+                      {t("home.lastSearch.newResults", { count: properties?.length || 0 })}
                     </h5>
                   </div>
                 </div>
@@ -1138,10 +1142,10 @@ const Home = () => {
                             </ul>
                           </div>
                           <div className="mb-0 p-3 ">
-                            <p className="text-[#6D6E6D] text-[12px] font-[600]">For Sale</p>
+                            <p className="text-[#6D6E6D] text-[12px] font-[600]">{t("property.forSale")}</p>
                             {item?.propertyType == "offmarket" ? (
                               <h5 className="text-[#6D6E6D] text-[20px] font-bold">
-                                Off-Market
+                                {t("home.tabs.offMarket")}
                                 {item?.propertyType === "offmarket" &&
                                   item?.proposal && (
                                     <div className=" flex items-center mb-3">
@@ -1311,7 +1315,7 @@ const Home = () => {
                       onClick={() => seeAllLastSearchRecords()}
                       className="cursor-pointer text-[ #47525E] border border-[#976DD0] rounded-[50px] py-[8px] font-bold px-[45px]  text-center mt-10 mx-auto inline-block hover:bg-[#976DD0] hover:text-white transition delay duration-300 ease-in-out"
                     >
-                      See all Results
+                      {t("home.lastSearch.seeAllResults")}
                     </p>
                   </div>
                 </div>
@@ -1324,13 +1328,11 @@ const Home = () => {
               <div className="grid grid-cols-12 ">
                 <div className="col-span-12  mb-[40px]">
                   <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                    Pourquoi Bookaroo
+                    {t("home.whyBookaroo.title")}
                     <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                   </h2>
                   <p className="text-[#969FAA] max-w-2xl mt-3">
-                    Faire du temps un allié pour acheteur et vendeur dans le
-                    cadre d'un projet immobilier et simplifier le processus de
-                    vente d'un bien de particulier à particulier.
+                    {t("home.whyBookaroo.subtitle")}
                   </p>
                 </div>
               </div>
@@ -1339,24 +1341,21 @@ const Home = () => {
                   <div className="flex gap-10 items-center xl:flex-row flex-col">
                     <div className="xl:w-[20%] w-[100%] ps-0">
                       <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Acheteurs
+                        {t("home.buyers.label")}
                       </p>
                       <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Anticipez votre projet immobilier
+                        {t("home.buyers.title")}
                       </p>
                       <p className="text-[#47525E] font-bold mb-3 text-[16x] xl:max-w-[200px] w-full">
-                        Parce que le temps ne devrait plus être un facteur de
-                        stress dans votre projet immobilier mais un allié.
+                        {t("home.buyers.description")}
                       </p>
                       <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Voir les biens
+                        {t("home.buyers.cta")}
                       </button>
                     </div>
                     <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tl-[400px] md:rounded-bl-[400px] rounded-tl-[100px] rounded-bl-[100px]  xl:pl-[150px] py-[100px] md:pl-[80px] pl-[50px] pe-[40px] md:h-[500px] h-[100%] ">
                       <p className="text-[#47525E] mb-10 font-[600] ms-8">
-                        Votre nouvelle plateforme fait entrer le marché de
-                        l'immobilier dans un nouveau paradigme : celui de
-                        l'anticipation
+                        {t("home.buyers.paradigm")}
                       </p>
                       <ul className=" flex flex-wrap ">
                         <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
@@ -1366,14 +1365,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className=" text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Anticiper votre projet d'achat
+                              {t("home.buyers.cards.planAhead.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] max-w-[300px] ">
-                              N'achetez plus un bien simplement parce qu'il est
-                              disponible et correspond plus ou moins à vos
-                              critères. En anticipant votre projet, vous pourrez
-                              trouver le biens de vos rêves dans notre annuaire
-                              exhaustif.
+                              {t("home.buyers.cards.planAhead.description")}
                             </p>
                           </div>
                         </li>
@@ -1384,13 +1379,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className=" text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Plus de flexibilité dans la transaction
+                              {t("home.buyers.cards.flexibility.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] max-w-[300px] ">
-                              Anticiper vous permet de négocier avec le
-                              propriétaire afin de définir une date et les
-                              conditions de la transaction dans les mois ou
-                              années à venir.
+                              {t("home.buyers.cards.flexibility.description")}
                             </p>
                           </div>
                         </li>
@@ -1402,13 +1394,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className=" text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Préparer sereinement votre financement
+                              {t("home.buyers.cards.financing.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] max-w-[300px] ">
-                              Vous avez maintenant plusieurs mois ou années pour
-                              travailler avec votre banque, pour épargner afin
-                              de sécuriser l'obtention de votre financement à la
-                              date fixée avec le vendeur.
+                              {t("home.buyers.cards.financing.description")}
                             </p>
                           </div>
                         </li>
@@ -1426,8 +1415,7 @@ const Home = () => {
                   <div className="flex gap-10 items-center xl:flex-row flex-col-reverse">
                     <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tr-[400px] md:rounded-br-[400px] rounded-tr-[100px] rounded-br-[100px]  xl:pl-[60px] py-[40px] pl-[50px] pe-[40px] md:md:h-[500px] h-[100%] h-[100%]">
                       <p className="text-[#47525E] mb-10 font-[600] xl:max-w-[100%] max-w-[600px]">
-                        Votre plateforme réinvente et simplifie le cycle de la
-                        possession puis de la mise en vente d'un bien immobilier
+                        {t("home.sellers.timelineIntro")}
                       </p>
                       <div className="flex ">
                         <ul className=" flex flex-col lg:hidden">
@@ -1521,60 +1509,50 @@ const Home = () => {
                             <li className="flex items-start lg:w-1/5 w-full lg:h-unset h-1/5 lg:my-4 my-0 lg:mb-0 mb-2 xl:pe-10 lg:pe-5">
                               <div>
                                 <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Publiez votre bien sur notre annuaire
+                                  {t("home.sellers.steps.publishDirectory.title")}
                                 </h4>
                                 <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Créez le profil Bookaroo de votre bien
-                                  immobilier pour accroitre sa visibilité et
-                                  générer des leads acheteurs.
+                                  {t("home.sellers.steps.publishDirectory.description")}
                                 </p>
                               </div>
                             </li>
                             <li className="flex items-start lg:w-1/5 w-full lg:h-unset h-1/5 lg:my-4 lg:mb-0 mb-2 my-0 xl:pe-10 lg:pe-5">
                               <div>
                                 <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Testez votre bien avec le Off-Market
+                                  {t("home.sellers.steps.testOffMarket.title")}
                                 </h4>
                                 <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Vendez votre bien immobilier au plus offrant
-                                  et sans les conraintes du marché public.
+                                  {t("home.sellers.steps.testOffMarket.description")}
                                 </p>
                               </div>
                             </li>
                             <li className="flex items-start lg:w-1/5 w-full lg:h-unset h-1/5 lg:my-4 lg:mb-0 mb-2 my-0 xl:pe-10 lg:pe-5">
                               <div>
                                 <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Publiez votre bien sur le marché public
+                                  {t("home.sellers.steps.publishPublicMarket.title")}
                                 </h4>
                                 <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Publiez d'un simple clic votre bien sur de
-                                  nombreuses plateformes d'annonces
-                                  immobilières.
+                                  {t("home.sellers.steps.publishPublicMarket.description")}
                                 </p>
                               </div>
                             </li>
                             <li className="flex items-start lg:w-1/5 w-full lg:my-4 lg:h-unset h-1/5 lg:mb-0 mb-2 my-0 xl:pe-10 lg:pe-5">
                               <div>
                                 <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Réalisez la vente grâce à notre outil
-                                  transactionnel
+                                  {t("home.sellers.steps.transactionTool.title")}
                                 </h4>
                                 <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Vendez votre bien immobilier seul et en toute
-                                  simplicité ou accompagné mais sans commission
-                                  onéreuse.
+                                  {t("home.sellers.steps.transactionTool.description")}
                                 </p>
                               </div>
                             </li>
                             <li className="flex items-start lg:w-1/5 w-full lg:my-4 lg:h-unset h-1/5 my-0 lg:mb-0  xl:pe-10 lg:pe-5">
                               <div>
                                 <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Transférez la propriété du profil Bookaroo du
-                                  bien
+                                  {t("home.sellers.steps.transferProfile.title")}
                                 </h4>
                                 <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Transferez la propriété du profil Bookaroo à
-                                  son nouveau propriétaire après la vente.
+                                  {t("home.sellers.steps.transferProfile.description")}
                                 </p>
                               </div>
                             </li>
@@ -1584,18 +1562,16 @@ const Home = () => {
                     </div>
                     <div className="xl:w-[20%] w-[100%] 2xl:ps-[70px] xl:ps-[40px] lg:ps-[40px] ps-[40px] ">
                       <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Vendeurs
+                        {t("home.sellers.label")}
                       </p>
                       <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Vendez votre bien au meilleur prix sans commissions.
+                        {t("home.sellers.title")}
                       </p>
                       <p className="text-[#47525E] font-bold mb-3 text-[16x]  xl:max-w-[200px] w-full">
-                        Parce qu'avec notre plateforme vous disposez de
-                        multiples possibilités pour vendre votre bien par vous
-                        même et sans complexité.
+                        {t("home.sellers.description")}
                       </p>
                       <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Mettre en vente
+                        {t("home.sellers.cta")}
                       </button>
                     </div>
                   </div>
@@ -1608,14 +1584,11 @@ const Home = () => {
               <div className="grid grid-cols-12 ">
                 <div className="col-span-12  mb-[40px]">
                   <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                    Pourquoi Bookaroo est indispensable pour les acheteurs et
-                    les vendeurs
+                    {t("home.whyIndispensable.title")}
                     <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                   </h2>
                   <p className="text-[#969FAA] max-w-2xl mt-3">
-                    Une plateforme unique qui offre une multitude d'outils et de
-                    services pour aider les particuliers à réaliser sereinement
-                    leur transaction immobilière.
+                    {t("home.whyIndispensable.subtitle")}
                   </p>
                 </div>
               </div>
@@ -1624,23 +1597,21 @@ const Home = () => {
                   <div className="flex gap-10 items-center xl:flex-row flex-col">
                     <div className="xl:w-[20%] w-[100%]">
                       <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Un large choix
+                        {t("home.wideChoice.label")}
                       </p>
                       <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Annuaire exhaustif des biens immobiliers
+                        {t("home.wideChoice.title")}
                       </p>
                       <p className="text-[#47525E] font-bold mb-3 text-[16x]  w-full">
-                        Nous avons vocation à référencer 100% des biens
-                        immobiliers existant pour un marché donné.
+                        {t("home.wideChoice.description")}
                       </p>
                       <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Voir les biens
+                        {t("home.buyers.cta")}
                       </button>
                     </div>
                     <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tl-[400px] md:rounded-bl-[400px] rounded-tl-[100px] rounded-bl-[100px]  xl:pl-[150px] py-[60px] md:pl-[80px] pl-[50px] pe-[40px] md:h-[500px] h-[100%] ">
                       <p className="text-[#47525E] mb-10 font-[600] ms-8">
-                        Bookaroo propose la base de données de biens immobiliers
-                        la plus complète du marché
+                        {t("home.wideChoice.intro")}
                       </p>
                       <ul className=" flex flex-wrap ">
                         <li className="flex items-start md:w-1/2 w-full my-4 pe-2">
@@ -1650,13 +1621,10 @@ const Home = () => {
                           />
                           <div className="">
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Profil social d'un bien
+                              {t("home.wideChoice.cards.socialProfile.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full ">
-                              Le profil d'un bien a été pensé pour générer des
-                              interactions entre le propriétaire et les
-                              acheteurs potentiels (messages directs, like,
-                              follow).
+                              {t("home.wideChoice.cards.socialProfile.description")}
                             </p>
                           </div>
                         </li>
@@ -1667,13 +1635,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Une large sélection de biens
+                              {t("home.wideChoice.cards.largeSelection.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              En anticipant votre projet, vous pourrez choisir
-                              le bien qui correspond à l'ensemble de vos
-                              critères dans notre large base de données de
-                              biens.
+                              {t("home.wideChoice.cards.largeSelection.description")}
                             </p>
                           </div>
                         </li>
@@ -1685,13 +1650,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Information accrue
+                              {t("home.wideChoice.cards.richData.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Le contenu partagé sur le profil du bien contribue
-                              à accroitre sa valeur (travaux réalisés, budget
-                              mensuel, attractivité, rating social, revenus
-                              générés…).
+                              {t("home.wideChoice.cards.richData.description")}
                             </p>
                           </div>
                         </li>
@@ -1702,13 +1664,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Information accrue
+                              {t("home.wideChoice.cards.marketSignals.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Le contenu partagé sur le profil du bien contribue
-                              à accroitre sa valeur (travaux réalisés, budget
-                              mensuel, attractivité, rating social, revenus
-                              générés…).
+                              {t("home.wideChoice.cards.marketSignals.description")}
                             </p>
                           </div>
                         </li>
@@ -1726,81 +1685,76 @@ const Home = () => {
                   <div className="flex gap-10 items-center xl:flex-row flex-col-reverse">
                     <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tr-[400px] md:rounded-br-[400px] rounded-tr-[100px] rounded-br-[100px]  xl:pl-[60px] py-[60px] pl-[50px] pe-[40px] lg:h-[500px] h-[100%]">
                       <p className="text-[#47525E] mb-10 font-[600] xl:max-w-[100%] max-w-[600px]">
-                        Un outil de pilotage de votre transaction immobilière
-                        depuis la publication jusqu'à la signature de la vente
+                        {t("home.transactionTool.intro")}
                       </p>
                       <div className="flex lg:gap-4 gap-0 lg:flex-nowrap flex-wrap">
                         <div className="md:w-1/3 w-full">
                           <p className="text-[#47525E] text-[14px] font-[600] mb-4">
-                            Vendez seul, mais bien accompagné grâce à notre
-                            plateforme qui intègre tout ce dont vous avez besoin
-                            pour travailler comme un pro !
+                            {t("home.transactionTool.column1Intro")}
                           </p>
                           <ul>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Contenu éducatif et formation à la vente{" "}
+                              {t("home.transactionTool.column1Items.education")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Parcours de vente orchestré
+                              {t("home.transactionTool.column1Items.orchestratedFlow")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Partage automatique de documents
+                              {t("home.transactionTool.column1Items.documentSharing")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Plannification de visites
+                              {t("home.transactionTool.column1Items.visitScheduling")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Messagerie interne{" "}
+                              {t("home.transactionTool.column1Items.messaging")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Critère de selection des candidats{" "}
+                              {t("home.transactionTool.column1Items.candidateCriteria")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Multi-diffusion de votre annonce
+                              {t("home.transactionTool.column1Items.multichannelPosting")}
                             </li>
                           </ul>
                         </div>
                         <div className="md:w-1/3 w-full">
                           <p className="text-[#47525E] text-[14px] font-[600] mb-4">
-                            Vous voulez vendre sans payer une commission
-                            d'intermédiation tout en bébéficiant des mêmes
-                            services ? Optez pour nos services à la carte.{" "}
+                            {t("home.transactionTool.column2Intro")}
                           </p>
                           <ul>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Estimation gratuite de la valeur de votre bien
+                              {t("home.transactionTool.column2Items.freeValuation")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>{" "}
-                              Rédaction de vos annonces
+                              {t("home.transactionTool.column2Items.adWriting")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Prises de vue professionnelles de votre bien
+                              {t("home.transactionTool.column2Items.professionalPhotos")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Analyse de la solidité financière des candidats
+                              {t("home.transactionTool.column2Items.financialScreening")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Réalisation des visites{" "}
+                              {t("home.transactionTool.column2Items.visitManagement")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Constitution du dossier legal vendeur{" "}
+                              {t("home.transactionTool.column2Items.legalFile")}
                             </li>
                             <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
                               <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Réalisation de l'état des lieux
+                              {t("home.transactionTool.column2Items.inventoryReport")}
                             </li>
                           </ul>
                         </div>
@@ -1814,17 +1768,16 @@ const Home = () => {
                     </div>
                     <div className="xl:w-[20%] w-[100%] 2xl:ps-[70px] xl:ps-[40px] lg:ps-[40px] ps-[40px] ">
                       <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Transaction simplifiée
+                        {t("home.transactionTool.label")}
                       </p>
                       <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Outil de pilotage de transaction immobilière
+                        {t("home.transactionTool.title")}
                       </p>
                       <p className="text-[#47525E] font-bold mb-3 text-[16x]  w-full">
-                        Parce que vendre son bien immobilier seul ne devrait pas
-                        être un parcours du combattant générateur de stress.
+                        {t("home.transactionTool.description")}
                       </p>
                       <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        En savoir plus
+                        {t("home.transactionTool.cta")}
                       </button>
                     </div>
                   </div>
@@ -1839,23 +1792,21 @@ const Home = () => {
                   <div className="flex gap-10 items-center xl:flex-row flex-col">
                     <div className="xl:w-[20%] w-[100%]">
                       <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Définir le prix juste
+                        {t("home.fairPrice.label")}
                       </p>
                       <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Historique des transactions immobilières
+                        {t("home.fairPrice.title")}
                       </p>
                       <p className="text-[#47525E] font-bold mb-3 text-[16x] w-full">
-                        Consulter l'historiques des transactions immobilières
-                        pour définir la meilleure stratégie
+                        {t("home.fairPrice.description")}
                       </p>
                       <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Parcourir les transactions
+                        {t("home.fairPrice.cta")}
                       </button>
                     </div>
                     <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tl-[400px] md:rounded-bl-[400px] rounded-tl-[100px] rounded-bl-[100px]  xl:pl-[150px] py-[60px] md:pl-[80px] pl-[50px] pe-[40px] md:h-[500px] h-[100%]">
                       <p className="text-[#47525E] mb-10 font-[600] ms-8 ">
-                        Retrouvez le prix de toutes les transactions
-                        immobilières des 15 dernières années en France
+                        {t("home.fairPrice.intro")}
                       </p>
                       <ul className=" flex flex-wrap ">
                         <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
@@ -1865,13 +1816,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Définir votre prix de vente
+                              {t("home.fairPrice.cards.sellPrice.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full ">
-                              Vous souhaitez mettre en vente votre bien
-                              immobilier au bon prix ? N'hésitez pas à consulter
-                              l'historique des transactions aux caractéristiques
-                              similaires.
+                              {t("home.fairPrice.cards.sellPrice.description")}
                             </p>
                           </div>
                         </li>
@@ -1882,12 +1830,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Acheter au juste prix
+                              {t("home.fairPrice.cards.buyFairPrice.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              En consultant l'historiques des transactions
-                              similaires vous pourrez mettre en perspective le
-                              prix de vente proposé par le vendeur.
+                              {t("home.fairPrice.cards.buyFairPrice.description")}
                             </p>
                           </div>
                         </li>
@@ -1899,13 +1845,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Recherches multi-critères
+                              {t("home.fairPrice.cards.multiCriteria.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Parcourez les transactions historiques en filtrant
-                              selon l'année de la transaction, la localisation,
-                              la taille et le type de bien, le nombre de pièces
-                              et le prix de vente.
+                              {t("home.fairPrice.cards.multiCriteria.description")}
                             </p>
                           </div>
                         </li>
@@ -1923,8 +1866,7 @@ const Home = () => {
                   <div className="flex gap-10 items-center xl:flex-row flex-col-reverse">
                     <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tr-[400px] md:rounded-br-[400px] rounded-tr-[100px] rounded-br-[100px]  xl:pl-[60px] py-[60px] pl-[50px] pe-[40px] md:h-[500px] h-[100%]">
                       <p className="text-[#47525E] mb-10 font-[600] xl:max-w-[100%] max-w-[600px]">
-                        Votre plateforme réinvente et simplifie le cycle de la
-                        possession puis de la mise en vente d'un bien immobilier
+                        {t("home.proNetwork.intro")}
                       </p>
                       <ul className=" flex flex-wrap ">
                         <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
@@ -1934,11 +1876,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Agence immobilières
+                              {t("home.proNetwork.cards.agency.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full ">
-                              Faites-vous accompagner par une agence locale pour
-                              la vente de votre bien immobilier.
+                              {t("home.proNetwork.cards.agency.description")}
                             </p>
                           </div>
                         </li>
@@ -1949,11 +1890,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Chasseurs d'appartement
+                              {t("home.proNetwork.cards.hunter.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Gagnez du temps en confiant la recherche de votre
-                              bien à un professionnel de la chasse immobilière.
+                              {t("home.proNetwork.cards.hunter.description")}
                             </p>
                           </div>
                         </li>
@@ -1965,12 +1905,10 @@ const Home = () => {
                           />
                           <div>
                             <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Courtier
+                              {t("home.proNetwork.cards.broker.title")}
                             </h4>
                             <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Grâce à nos partenaires courtier, trouver les
-                              meilleurs taux pour financer votre projet
-                              immobilier.
+                              {t("home.proNetwork.cards.broker.description")}
                             </p>
                           </div>
                         </li>
@@ -1978,17 +1916,16 @@ const Home = () => {
                     </div>
                     <div className="xl:w-[20%] w-[100%] 2xl:ps-[70px] xl:ps-[40px] lg:ps-[40px] ps-[40px] ">
                       <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Se faire accompagner
+                        {t("home.proNetwork.label")}
                       </p>
                       <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Annuaire des professionnels de l'immo
+                        {t("home.proNetwork.title")}
                       </p>
                       <p className="text-[#47525E] font-bold mb-3 text-[16x]  w-full">
-                        Retrouvez des partenaires de confiance pour vous
-                        accompagner dans votre projet immobilier.
+                        {t("home.proNetwork.description")}
                       </p>
                       <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Trouver un professionnel
+                        {t("home.proNetwork.cta")}
                       </button>
                     </div>
                   </div>
@@ -1999,7 +1936,7 @@ const Home = () => {
           <section className="bg-[#976DD0] py-14 lg:py-16">
             <div className="container-fluid  2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px]">
               <h2 className="text-white lg:text-[23px] text-[20px] font-[600] mx-auto  max-w-[600px] w-full">
-                Pourquoi devrais-je référencer mon bien sur Bookaroo ?
+                {t("home.whyList.title")}
                 <span className="bg-white w-[35px] h-[6px] rounded-[10px] block "></span>
               </h2>
               <div className="grid grid-cols-12 md:gap-10 gap-0 mt-20">
@@ -2009,13 +1946,9 @@ const Home = () => {
                     className="w-[20px] me-2 mt-[2px]"
                   />
                   <div className="text-white">
-                    <h4 className="font-[600] mb-1">Gagner en visibilité</h4>
+                    <h4 className="font-[600] mb-1">{t("home.whyList.cards.visibility.title")}</h4>
                     <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      En étant référencé sur Bookaroo, votre bien immobilier
-                      sera reconnu et répertorié par les algorithmes des moteurs
-                      de recherche. Ainsi votre bien sera plus facilement
-                      trouvable par les personnes recherchant un bien
-                      correspondnat au votre
+                      {t("home.whyList.cards.visibility.description")}
                     </p>
                   </div>
                 </div>
@@ -2025,12 +1958,9 @@ const Home = () => {
                     className="w-[20px] me-2 mt-[2px]"
                   />
                   <div className="text-white">
-                    <h4 className="font-[600] mb-1">Générer des leads</h4>
+                    <h4 className="font-[600] mb-1">{t("home.whyList.cards.leads.title")}</h4>
                     <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      A travers le profil Bookaroo de votre bien, vous recevrez
-                      de nombreuses sollicitations de la part de personne
-                      interessées par votre bien. Vous constituerez ainsi une
-                      base d'acheteurs potentiels pour une vente future.
+                      {t("home.whyList.cards.leads.description")}
                     </p>
                   </div>
                 </div>
@@ -2041,13 +1971,10 @@ const Home = () => {
                   />
                   <div className="text-white">
                     <h4 className="font-[600] mb-1">
-                      Accroitre la valeur de votre bien
+                      {t("home.whyList.cards.value.title")}
                     </h4>
                     <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      Les informations que vous partagerez sur le profil de
-                      votre bien ainsi que les données de traffic sur le profil
-                      (like, visites, follower, messages) vont accroitre la
-                      désirabilité de votre bien et donc sa valeur.
+                      {t("home.whyList.cards.value.description")}
                     </p>
                   </div>
                 </div>
@@ -2058,13 +1985,10 @@ const Home = () => {
                   />
                   <div className="text-white">
                     <h4 className="font-[600] mb-1">
-                      Mise en vente/location simplifiée
+                      {t("home.whyList.cards.simplifiedListing.title")}
                     </h4>
                     <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      En créant le profil Bookaroo de votre bien immobilier vous
-                      pourrez par la suite publier en un clic une annonce d
-                      emise en vente ou location sur des centaines de
-                      plateformes de petites annonces.
+                      {t("home.whyList.cards.simplifiedListing.description")}
                     </p>
                   </div>
                 </div>
@@ -2074,11 +1998,9 @@ const Home = () => {
                     className="w-[20px] me-2 mt-[2px]"
                   />
                   <div className="text-white">
-                    <h4 className="font-[600] mb-1">Tester le Off-market</h4>
+                    <h4 className="font-[600] mb-1">{t("home.whyList.cards.testOffMarket.title")}</h4>
                     <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      Avoir un profil Bookaroo pour votre bien vous donne la
-                      possibilité de tester le Off-Market et ainsi recevoir des
-                      propositions spontanées d'achat de votre bien.
+                      {t("home.whyList.cards.testOffMarket.description")}
                     </p>
                   </div>
                 </div>
@@ -2088,21 +2010,19 @@ const Home = () => {
                     className="w-[20px] me-2 mt-[2px]"
                   />
                   <div className="text-white">
-                    <h4 className="font-[600] mb-1">Vendre plus vite</h4>
+                    <h4 className="font-[600] mb-1">{t("home.whyList.cards.sellFaster.title")}</h4>
                     <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      Un bien référencé sur Bookaroo se vend plus vite car sa
-                      présence sur la plateforme à permis de générer une demande
-                      continue dans le temps et non satisfaite.
+                      {t("home.whyList.cards.sellFaster.description")}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="mx-auto mt-14">
                 <p className="text-white text-center font-[600]">
-                  C'est 100% gratuit et ça le restera !
+                  {t("home.whyList.freeForever")}
                 </p>
                 <button className="bg-[#343F4B] text-white px-4 py-2 rounded-[50px] mx-auto flex items-center justify-center mt-3">
-                  Référencer mon bien
+                  {t("home.whyList.listCta")}
                 </button>
               </div>
             </div>
@@ -2112,12 +2032,12 @@ const Home = () => {
           <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
             <div className="fixed inset-0 bg-black/50 z-[9] flex w-screen items-center justify-center p-4">
               <DialogPanel className="max-w-lg rounded-[12px] space-y-4 text-center border bg-white p-12">
-                <DialogTitle className="xl:text-[26px] lg:text-[24px] md:text-[22px] sm:text-[20px] text-[18px] text-[#000] font-semibold text-center">Upgrade your plan</DialogTitle>
+                <DialogTitle className="xl:text-[26px] lg:text-[24px] md:text-[22px] sm:text-[20px] text-[18px] text-[#000] font-semibold text-center">{t("home.upgrade.title")}</DialogTitle>
                 <Description></Description>
-                <p>This feature is not available on your current plan. Please upgrade your plan to access it.</p>
+                <p>{t("home.upgrade.description")}</p>
                 <div className="flex gap-2 justify-center items-center ">
-                  <button onClick={() => setIsOpen(false)} className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">Cancel</button>
-                  <button onClick={() => navigate("/plan")} className="bg-[#986AB8] rounded-full px-8 py-2 text-white text-[14px] flex items-center justify-center">Upgrade plan</button>
+                  <button onClick={() => setIsOpen(false)} className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">{t("buttons.cancel")}</button>
+                  <button onClick={() => navigate("/plan")} className="bg-[#986AB8] rounded-full px-8 py-2 text-white text-[14px] flex items-center justify-center">{t("home.upgrade.cta")}</button>
                 </div>
               </DialogPanel>
             </div>

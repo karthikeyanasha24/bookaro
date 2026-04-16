@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import PageLayout from "../components/global/PageLayout";
 import ApiClient from '../methods/api/apiClient';
 import { CardElement, useStripe, useElements, Elements } from '@stripe/react-stripe-js';
@@ -7,6 +8,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import environment from "../environment";
 const stripePromise = loadStripe(environment.stripe_public_key);
 const PaymentForm = () => {
+    const { t } = useTranslation();
     const user = useSelector((state) => state.user);
     const stripe = useStripe();
     const elements = useElements();
@@ -35,12 +37,12 @@ const PaymentForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2 className="text-xl font-bold mb-4">Save Your Card</h2>
+            <h2 className="text-xl font-bold mb-4">{t("payment.saveYourCard")}</h2>
             <div className="border p-4 rounded mb-4">
                 <CardElement />
             </div>
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded disabled:opacity-50" disabled={!stripe}>
-                Save Card
+                {t("payment.saveCard")}
             </button>
             {message && <p className="mt-4 text-red-500">{message}</p>}
         </form>

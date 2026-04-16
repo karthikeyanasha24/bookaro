@@ -12,6 +12,7 @@ import { MdFolderOpen } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import VisitSlotModal from "./VisitSlotModal";
@@ -28,6 +29,7 @@ const ManageVisitSlot = ({
   getCards,
   getData,
 }) => {
+  const { t } = useTranslation();
 
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
@@ -105,9 +107,9 @@ const ManageVisitSlot = ({
   const [invite, setInvite] = useState("");
   const applyInvite = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!invite) return setError({ ...error, email: "Enter email address." });
+    if (!invite) return setError({ ...error, email: t("validation.emailRequired") });
     if (!emailRegex.test(invite))
-      return setError({ ...error, email: "Enter valid email address." });
+      return setError({ ...error, email: t("validation.invalidEmail") });
 
     const dto = {
       userId: user?._id,
@@ -137,7 +139,7 @@ const ManageVisitSlot = ({
         id={selectedProperty?._id}
       />
       <h4 className="text-black text-center mb-10 font-[600] text-[18px]">
-        Manage your leads
+        {t("transactionOwner.manageLeads")}
       </h4>
       <div className="grid xl:grid-cols-5 lg:grid-cols-3  md:grid-cols-2 md:gap-3 gap-0 mb-16">
         {/* visit slots */}
@@ -161,12 +163,13 @@ const ManageVisitSlot = ({
             </div>
             <div className="text-center">
               <h5 className="text-[#47525E] text-sm font-semibold">
-                Manage visit slots
+                {t("transactionOwner.manageVisitSlots")}
               </h5>
               <p className="text-[12px] text-[#47525E]">
-                {slotsKey?.visitSlots?.length || 0} slot
-                {slotsKey?.visitSlots?.length > 1 ? "s" : ""} opened | Automatic
-                invites {selectedProperty?.autoInvite ? "ON" : "OFF"}
+                {t("transactionOwner.slotOpened", {
+                  count: slotsKey?.visitSlots?.length || 0,
+                })}{" "}
+                | {t("transactionOwner.automaticInvites")} {selectedProperty?.autoInvite ? "ON" : "OFF"}
               </p>
             </div>
           </div>
@@ -198,10 +201,12 @@ const ManageVisitSlot = ({
             </div>
             <div className="text-center">
               <h5 className="text-[#47525E] text-sm font-semibold">
-                Seller files
+                {t("transactionOwner.sellerFiles")}
               </h5>
               <p className="text-[12px] text-[#47525E]">
-                {selectedProperty?.sellerFilesCount || 0} documents added
+                {t("transactionOwner.documentsAdded", {
+                  count: selectedProperty?.sellerFilesCount || 0,
+                })}
               </p>
             </div>
           </div>
@@ -233,7 +238,7 @@ const ManageVisitSlot = ({
             <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
               <DialogTitle className="p-6">
                 <p className="border-b text-[#389D93] text-[18px] text-center pb-5">
-                  Enter email address you want to invite
+                  {t("transactionOwner.inviteEmailTitle")}
                 </p>
                 <div className="mt-6">
                   <div className="flex justify-center my-8 mx-6 flex-col ">
@@ -249,7 +254,7 @@ const ManageVisitSlot = ({
                           setError({ ...error, email: "" });
                         }}
                         className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                        placeholder="Email address"
+                        placeholder={t("forms.emailAddress")}
                       />
                       {error?.email && (
                         <p className="text-red-500 text-center mt-3">
@@ -268,13 +273,13 @@ const ManageVisitSlot = ({
                   }}
                   className="text-[#868389] text-[18px] underline"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button
                   onClick={() => applyInvite()}
                   className="bg-primary text-white px-3 py-2  rounded-[7px]"
                 >
-                  Save
+                  {t("common.save")}
                 </button>
               </div>
             </DialogPanel>
@@ -293,7 +298,7 @@ const ManageVisitSlot = ({
             </div>
             <div className="text-center">
               <h5 className="text-[#47525E] text-sm font-semibold">
-                Invite a lead
+                {t("transactionOwner.inviteLead")}
               </h5>
             </div>
           </div>
@@ -318,10 +323,12 @@ const ManageVisitSlot = ({
             </div>
             <div className="text-center">
               <h5 className="text-[#47525E] text-sm font-semibold">
-                Set signing dates
+                {t("transactionOwner.setSigningDates")}
               </h5>
               <p className="text-[12px] text-[#47525E]">
-                {slotsKey.signingSlots?.length || 0} slot opened
+                {t("transactionOwner.slotOpened", {
+                  count: slotsKey.signingSlots?.length || 0,
+                })}
               </p>
             </div>
           </div>
@@ -359,14 +366,12 @@ const ManageVisitSlot = ({
                 </div>
                 <div className="text-center">
                   <h5 className="text-[#47525E] text-sm font-semibold">
-                    Home inventory dates
+                    {t("transactionOwner.homeInventoryDates")}
                   </h5>
                   <p className="text-[12px] text-[#47525E]">
-                    {selectedProperty?.homeInventorySlots?.length || 0} slot
-                    {selectedProperty?.homeInventorySlots?.length > 1
-                      ? "s"
-                      : ""}{" "}
-                    opened
+                    {t("transactionOwner.slotOpened", {
+                      count: selectedProperty?.homeInventorySlots?.length || 0,
+                    })}
                   </p>
                 </div>
               </div>
@@ -409,7 +414,7 @@ const ManageVisitSlot = ({
                 </div>
                 <div className="text-center">
                   <h5 className="text-[#47525E] text-sm font-semibold">
-                    Transfer ownership
+                    {t("transactionOwner.transferOwnership")}
                   </h5>
                 </div>
               </div>

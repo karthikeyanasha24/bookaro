@@ -1,119 +1,117 @@
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const TransactionTool = () => {
+    const { t } = useTranslation();
 
     const Navigate = useNavigate()
     const { user } = useSelector((state) => state);
     const data = [
         {
             icon: '/assets/img/tool-icon-1.png',
-            title: 'Lead financial background check',
-            text: 'Each lead financial background is check so that you increase your chance of seilling the first time.'
+            titleKey: 'transactionToolPage.features.bookaroo.f1.title',
+            textKey: 'transactionToolPage.features.bookaroo.f1.text'
         },
         {
             icon: '/assets/img/tool-icon-2.png',
-            title: 'Limit the number of leads who can apply',
-            text: "Don't get overwelmed with lead sollicitations with the lead limit."
+            titleKey: 'transactionToolPage.features.bookaroo.f2.title',
+            textKey: 'transactionToolPage.features.bookaroo.f2.text'
         },
         {
             icon: '/assets/img/tool-icon-3.png',
-            title: 'Shared calendar to arrange visits',
-            text: 'Open visit slots and send individual or automated invite to leads so that they can book a slot.'
+            titleKey: 'transactionToolPage.features.bookaroo.f3.title',
+            textKey: 'transactionToolPage.features.bookaroo.f3.text'
         },
         {
             icon: '/assets/img/tool-icon-4.png',
-            title: 'Share ID card to secure the visit',
-            text: 'Both owner and lead can share their ID so that both parties go safely to the visit.'
+            titleKey: 'transactionToolPage.features.bookaroo.f4.title',
+            textKey: 'transactionToolPage.features.bookaroo.f4.text'
         },
         {
             icon: '/assets/img/tool-icon-5.png',
-            title: 'Visit reviews to help owner',
-            text: 'After a visit lead can review the visit. Reviews are shared with owner to improve next visits.'
+            titleKey: 'transactionToolPage.features.bookaroo.f5.title',
+            textKey: 'transactionToolPage.features.bookaroo.f5.text'
         },
         {
             icon: '/assets/img/tool-icon-6.png',
-            title: 'Request or share property documents',
-            text: 'Lead can request property document before to make an offer or apply. Owner can share them through App.'
+            titleKey: 'transactionToolPage.features.bookaroo.f6.title',
+            textKey: 'transactionToolPage.features.bookaroo.f6.text'
         },
         {
             icon: '/assets/img/tool-icon-7.png',
-            title: 'Buyer or renter file',
-            text: 'Both renter or buyer can create their file in App so that it can be shared easily with owner when applying for a property.'
+            titleKey: 'transactionToolPage.features.bookaroo.f7.title',
+            textKey: 'transactionToolPage.features.bookaroo.f7.text'
         },
         {
             icon: '/assets/img/tool-icon-8.png',
-            title: 'Apply or make an offer for a property',
-            text: 'Through App lead can apply or make an official offer for a property purchase.'
+            titleKey: 'transactionToolPage.features.bookaroo.f8.title',
+            textKey: 'transactionToolPage.features.bookaroo.f8.text'
         },
         {
             icon: '/assets/img/tool-icon-9.png',
-            title: 'Answer a lead proposal',
-            text: 'Through App owner can answer a offer or an application for a property purchase.'
+            titleKey: 'transactionToolPage.features.bookaroo.f9.title',
+            textKey: 'transactionToolPage.features.bookaroo.f9.text'
         },
         {
             icon: '/assets/img/tool-icon-10.png',
-            title: 'Chat with lead during the transaction',
-            text: 'Discuss through the App to speed up your transaction and get to the closing.'
+            titleKey: 'transactionToolPage.features.bookaroo.f10.title',
+            textKey: 'transactionToolPage.features.bookaroo.f10.text'
         },
         {
             icon: '/assets/img/tool-icon-11.png',
-            title: 'Shared calendar for signing the contract',
-            text: 'Open signing slots and let the buyer book a suitable slot directly in your agenda.'
+            titleKey: 'transactionToolPage.features.bookaroo.f11.title',
+            textKey: 'transactionToolPage.features.bookaroo.f11.text'
         },
         {
             icon: '/assets/img/tool-icon-12.png',
-            title: 'Transaction historical',
-            text: 'Keep track of all stages of your transaction.'
+            titleKey: 'transactionToolPage.features.bookaroo.f12.title',
+            textKey: 'transactionToolPage.features.bookaroo.f12.text'
         },
         {
             icon: '/assets/img/tool-icon-13.png',
-            title: 'Transfer property profile ownership',
-            text: 'After completing your property sale, transfer the ownership of the property profile to the new owner.'
+            titleKey: 'transactionToolPage.features.bookaroo.f13.title',
+            textKey: 'transactionToolPage.features.bookaroo.f13.text'
         }
     ]
     const data2 = [
         {
             icon: '/assets/img/tool-icon-14.png',
-            title: 'Need help on any step of the process?',
-            text: 'To secure your transaction, ask your AI assistant any question or doubt.'
+            titleKey: 'transactionToolPage.features.support.f1.title',
+            textKey: 'transactionToolPage.features.support.f1.text'
         },
         {
             icon: '/assets/img/tool-icon-15.png',
-            title: 'Video training content',
-            text: 'At each step of your transaction get trining video to help you sell alone.'
+            titleKey: 'transactionToolPage.features.support.f2.title',
+            textKey: 'transactionToolPage.features.support.f2.text'
         },
         {
             icon: '/assets/img/tool-icon-16.png',
-            title: 'Neep support on specific actions?',
-            text: 'Our partner real estates agents can help you with a fix fee  per action (host visit, seller file...)'
+            titleKey: 'transactionToolPage.features.support.f3.title',
+            textKey: 'transactionToolPage.features.support.f3.text'
         }
     ]
     return (
         <PageLayout>
             <section className="bg-[#976DD0]/30 py-12 md:py-16">
                 <div className="container px-5 mx-auto">
-                    <div class="w-full">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center">
+                    <div className="w-full">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center">
                             <div className="order-2 md:order-1 text-center md:!text-start">
-                                <p class="text font-semibold text-[#976DD0] font-medium mb-2">
-                                    AI Transaction managing tool
+                                <p className="text font-semibold text-[#976DD0] font-medium mb-2">
+                                    {t("transactionToolPage.heroTag")}
                                 </p>
 
-                                <h1 class="md:max-w-md text-xl md:text-2xl lg:text-3xl font-semibold text-gray-900 leading-snug mb-4">
-                                    The only AI Boosted tool to secure
-                                    and ease the transaction process
-                                    both for seller and buyer
+                                <h1 className="md:max-w-md text-xl md:text-2xl lg:text-3xl font-semibold text-gray-900 leading-snug mb-4">
+                                    {t("transactionToolPage.heroTitle")}
                                 </h1>
 
-                                <p class="mb-4 md:max-w-md font-[400]">
-                                    The transaction monitoring tool guides you through all steps of your
-                                    transaction from lead selection to contract signing with customized
-                                    guidance and automated actions to save you time.
+                                <p className="mb-4 md:max-w-md font-[400]">
+                                    {t("transactionToolPage.heroDescription")}
                                 </p>
 
-                                <button class="px-9 py-1 bg-transparent text-[#976DD0] rounded-full  border border-[#976DD0] transition"
+                                <button className="px-9 py-1 bg-transparent text-[#976DD0] rounded-full  border border-[#976DD0] transition"
                                     onClick={(e) => {
                                         if (user?.loggedIn) {
                                             Navigate("/real-estate-transaction-owner")
@@ -122,14 +120,14 @@ const TransactionTool = () => {
                                         }
                                     }}
                                 >
-                                    {user?.loggedIn ? " Go To Transcation Tool" : "Sell My Property"}
+                                    {user?.loggedIn ? t("transactionToolPage.ctaGoToTool") : t("transactionToolPage.ctaSellMyProperty")}
                                 </button>
                             </div>
-                            <div class="flex justify-center order-1 md:order-2">
+                            <div className="flex justify-center order-1 md:order-2">
                                 <img
                                     src="/assets/img/transaction-tool.png"
                                     alt="Dashboard mockup"
-                                    class="w-[380px] "
+                                    className="w-[380px] "
                                 />
                             </div>
 
@@ -141,36 +139,36 @@ const TransactionTool = () => {
             <section className="py-12">
                 <div className="container px-5 mx-auto">
                     <div className="text-center max-w-xl mx-auto">
-                        <h2 className="text-2xl font-semibold mb-2">Main Features</h2>
-                        <p className="text-[#5A6978]">Our unique tool offer a various set of features to empower individual to sell their property with more ease and less stress.</p>
+                        <h2 className="text-2xl font-semibold mb-2">{t("transactionToolPage.mainFeaturesTitle")}</h2>
+                        <p className="text-[#5A6978]">{t("transactionToolPage.mainFeaturesDescription")}</p>
                     </div>
-                    <h5 className="text-center font-semibold mt-12 mb-8">Features only on Bookaroo</h5>
-                    <p className="text-[16px] font-[400] border-b-[2px] border-[#7E55F3]/30 pb-2">Secure and speed-up you transaction</p>
+                    <h5 className="text-center font-semibold mt-12 mb-8">{t("transactionToolPage.featuresOnlyBookaroo")}</h5>
+                    <p className="text-[16px] font-[400] border-b-[2px] border-[#7E55F3]/30 pb-2">{t("transactionToolPage.sectionSecureSpeed")}</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-12 my-12">
                         {data.map((item, i) =>
                             <div key={i} className="max-w-[180px] sm:max-w-[150px] mx-auto">
                                 <div className="text-center mb-2">
                                     <img src={item.icon} alt="img" className="max-w-[35px] mx-auto" />
                                 </div>
-                                <h5 className="text-[16px] font-semibold leading-tight mb-1">{item.title}</h5>
-                                <p className="text-[#5A6978] text-[14px]">{item.text}</p>
+                                <h5 className="text-[16px] font-semibold leading-tight mb-1">{t(item.titleKey)}</h5>
+                                <p className="text-[#5A6978] text-[14px]">{t(item.textKey)}</p>
                             </div>
                         )}
                     </div>
-                    <p className="text-[16px] font-[400] border-b-[2px] border-[#7E55F3]/30 pb-2">Get external help at each step of your transaction</p>
+                    <p className="text-[16px] font-[400] border-b-[2px] border-[#7E55F3]/30 pb-2">{t("transactionToolPage.sectionExternalHelp")}</p>
                     <div className="grid grid-cols-4 gap-6 gap-y-12 mt-12">
                         {data2.map((item, i) =>
                             <div key={i} className="max-w-[180px] sm:max-w-[150px] mx-auto">
                                 <div className="text-center mb-2">
                                     <img src={item.icon} alt="img" className="max-w-[35px] mx-auto" />
                                 </div>
-                                <h5 className="text-[16px] font-semibold leading-tight mb-1">{item.title}</h5>
-                                <p className="text-[#5A6978] text-[14px]">{item.text}</p>
+                                <h5 className="text-[16px] font-semibold leading-tight mb-1">{t(item.titleKey)}</h5>
+                                <p className="text-[#5A6978] text-[14px]">{t(item.textKey)}</p>
                             </div>
                         )}
                     </div>
                     <div className="text-center mt-16">
-                        <button class="px-8 py-1 bg-primary hover:opacity-80 text-[#fff] rounded-full  border border-[#976DD0] transition"
+                        <button className="px-8 py-1 bg-primary hover:opacity-80 text-[#fff] rounded-full  border border-[#976DD0] transition"
                             onClick={(e) => {
                                 if (user?.loggedIn) {
                                     Navigate("/real-estate-transaction-owner")
@@ -180,7 +178,7 @@ const TransactionTool = () => {
                             }
                             }
                         >
-                            {user?.loggedIn ? " Go To Transcation Tool" : "Sell My Property"}
+                            {user?.loggedIn ? t("transactionToolPage.ctaGoToTool") : t("transactionToolPage.ctaSellMyProperty")}
                         </button>
                     </div>
                 </div>

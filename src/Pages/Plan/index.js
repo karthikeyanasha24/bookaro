@@ -206,15 +206,14 @@ const Plan = () => {
       <div className="bg-[#976dd021]">
         <div className="container mx-auto py-14 px-8 h-full">
           <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center">
-            Choose the plan that will turn your real estate project into a
-            stress-free journey
+            {t("plan.heroTitle")}
           </h2>
           <div className="flex items-center space-x-3 justify-center mt-16 mb-1">
             <span
               className={`text-sm text-[#5A6978] ${isMonthly ? "font-bold" : "font-normal"
                 }`}
             >
-              Monthly
+              {t("billing.monthly")}
             </span>
             <div
               className={`w-10 h-5 flex items-center  rounded-full p-1 cursor-pointer transition-all duration-300 ${isMonthly ? "bg-black" : "bg-gray-400"
@@ -230,11 +229,11 @@ const Plan = () => {
               className={`text-sm text-[#5A6978] ${!isMonthly ? "font-bold" : "font-normal"
                 }`}
             >
-              Annually
+              {t("billing.annually")}
             </span>
           </div>
           <p className="text-[#5A6978] text-center mb-8">
-            Save 20% with annual plan paid in one go.
+            {t("plan.savingText")}
           </p>
           <div className="p-[20px] bg-[#976dd091] rounded-[40px]">
             <div className="grid grid-cols-12 plan-sect ">
@@ -336,7 +335,7 @@ const Plan = () => {
                             pln?.pricing?.[isMonthly ? 0 : 1]?.unit_amount
                           ) || 0}{" "}
                           €{" "}
-                          <span className="text-[12px]">{` / ${isMonthly ? "Month" : "Year"
+                          <span className="text-[12px]">{` / ${isMonthly ? t("billing.monthly") : t("billing.annually")
                             }`}</span>
                         </h4>
                         <p className="text-[#5A6978] text-[14px]">
@@ -345,13 +344,13 @@ const Plan = () => {
                         {featureTypes?.map((featureType) => {
                           let name = "";
                           if (featureType === "home")
-                            name = "Home seeker innovative features";
+                            name = t("plan.seekerFeatures");
                           else if (featureType === "owner")
-                            name = "Owner unique features";
+                            name = t("plan.ownerFeatures");
                           else if (featureType === "sales-mandats")
-                            name = "Sales mandats acquisition";
+                            name = t("plan.salesMandatsAcquisition");
                           else if (featureType === "real-estate")
-                            name = "Real-estate services";
+                            name = t("plan.realEstateServices");
                           return (
                             <>
                               <h5 className="text-[#5A6978] text-[14px] font-[600] my-2">
@@ -415,7 +414,7 @@ const Plan = () => {
             </div>
           </div>
           <h2 className="text-black max-w-xs mx-auto font-bold text-2xl text-center my-14">
-            Here is in detail what you get with each plan.
+            {t("plan.detailsTitle")}
           </h2>
           <div className="bg-white rounded-[15px] p-5  overflow-x-auto">
             <div className="xl:w-[100%] max-xl:w-[1000px] overflow-auto ">
@@ -423,7 +422,7 @@ const Plan = () => {
                 <li className="w-[30%]">
                   <ul>
                     <li className="text-[#343F4B] font-[600]  border-b-[2px] pb-[3px]  border-[#C6C9CC] h-[168px] flex  items-end pe-5 ">
-                      Property seeker innovative features:
+                      {t("plan.seekerFeatures")}
                     </li>
                     <li className="py-3 border-b border-[#DEDEDE] min-h-[103px] pe-5">
                       <h3 className="text-[#343F4B] text-[14px]">
@@ -522,7 +521,7 @@ const Plan = () => {
                               ) || 0}{" "}
                               €
                             </span>
-                            {` /${isMonthly ? "Month" : "Year"}`}
+                            {isMonthly ? t("billing.perMonth") : t("billing.perYear")}
                           </p>
                           {/* <div className="flex items-center justify-center">
                             <button className="bg-[#976DD0] text-white rounded-[50px] px-5 py-2 text-[14px] mx-auto">
@@ -602,7 +601,7 @@ const Plan = () => {
 
             <div className="mt-20 xl:w-[100%] w-[900px]">
               <h4 className="text-[#343F4B] font-[600]  border-b-[2px] pb-[3px]  border-[#C6C9CC] flex  items-end pe-5">
-                Property seller innovative features:
+                {t("plan.sellerFeatures")}
               </h4>
               <ul className="flex ">
                 <li className="w-[30%]">
@@ -755,8 +754,7 @@ const Plan = () => {
             </div>
             <div className="mt-20 xl:w-[100%] w-[900px]">
               <h4 className="text-[#343F4B] font-[600]  border-b-[2px] pb-[3px]  border-[#C6C9CC] flex  items-end pe-5">
-                Sale your property with real-estate professional services suport
-                but without the commision
+                {t("plan.professionalServicesTitle")}
               </h4>
               <ul className="flex ">
                 <li className="w-[30%]">
@@ -849,7 +847,7 @@ const Plan = () => {
             <DialogTitle className="p-6">
               <img src="assets/img/question.png" alt="" className="w-[100px] mx-auto" />
               <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-5">
-                This free offer is only valid for 3 days. After that, you need to purchase a plan.
+                {t("plan.freeOfferWarning")}
               </p>
               <div className="pt-8  flex items-center justify-center">
                 <Button onClick={() => freeTrailFunc()} className="btn btn-primary">

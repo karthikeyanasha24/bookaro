@@ -6,6 +6,7 @@ import {
     DialogTitle
 } from "@headlessui/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ApiClient from "../../../methods/api/apiClient";
@@ -13,6 +14,7 @@ import loader from "../../../methods/loader";
 import SelectDropdown from "../SelectDropdown";
 
 const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existData, keyData, data, setData }) => {
+    const { t } = useTranslation();
     const { user } = useSelector((state) => state);
     const [exist, setExist] = useState(false);
     const [name, setName] = useState("");
@@ -24,12 +26,12 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
     const validate = () => {
         if (exist) {
             if (!name || name?.trim() === "") {
-                toast.error("Enter folder name");
+                toast.error(t("followedProperty.enterFolderName"));
                 return false;
             }
         } else {
             if (!form.id) {
-                toast.error("Select folder");
+                toast.error(t("followedProperty.selectFolder"));
                 return false;
             }
         }
@@ -140,7 +142,7 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
                     <DialogPanel className="max-w-md w-full bg-white rounded-[20px] mx-5">
                         <DialogTitle className="p-6">
                             <p className="border-b  text-[#389D93] text-[18px] text-center pb-4">
-                                Want to follow this Property?
+                                {t("followedProperty.wantToFollowProperty")}
                             </p>
                             <div className="flex justify-center h-[200px] flex-col">
                                 <div className="flex  items-center mt-3">
@@ -164,7 +166,7 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
                                             </svg>
                                         </Checkbox>
                                         <p className="text-[#47525E] ms-2 text-[15px] mr-4">
-                                            Existing Folder
+                                            {t("followedProperty.existingFolder")}
                                         </p>
                                     </div>
                                     <div className="flex items-center border border-[#dcdcdc] p-2 rounded-[8px] w-1/2 ms-3 cursor-pointer" onClick={() => setExist(!exist)}>
@@ -187,7 +189,7 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
                                             </svg>
                                         </Checkbox>
                                         <p className="text-[#47525E] ms-2 text-[15px] mr-4">
-                                            Create New Folder
+                                            {t("followedProperty.createNewFolder")}
                                         </p>
                                     </div>
                                 </div>
@@ -195,7 +197,7 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
                                 {exist ? (
                                     <div>
                                         <label className="  py-3 px-4  text-black text-center text-[20px] w-full flex items-center justify-center">
-                                            Select Folder
+                                            {t("followedProperty.enterFolderName")}
                                         </label>
                                         <input
                                             value={name}
@@ -210,19 +212,19 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
                                             }}
                                             type="text"
                                             className="bg-[#efefef] px-4 py-4  text-[#47525E] text-[14px] w-full"
-                                            placeholder="Enter Folder Name"
+                                            placeholder={t("followedProperty.enterFolderName")}
                                         />
                                         <span className="text-end text-[12px] mt-1 text-[#c10707] ml-auto h-[20px]">
-                                            Maximum {name.length}/200 words
+                                            {t("followedProperty.maxWords", { current: name.length })}
                                         </span>
                                     </div>
                                 ) : (
                                     <div>
                                         <label className="  py-3 px-4  text-black text-center text-[20px] w-full flex items-center justify-center">
-                                            Enter Folder Name
+                                            {t("followedProperty.selectFolder")}
                                         </label>
                                         <SelectDropdown
-                                            placeholder="Select Folder"
+                                            placeholder={t("followedProperty.selectFolder")}
                                             displayValue="name"
                                             className="mt-2 capitalize"
                                             intialValue={form.id}
@@ -244,9 +246,9 @@ const FlwModal = ({ flwModal, setflwModal, flwItem, refetch, allfilters, existDa
                         </DialogTitle>
                         <div className="flex border-t p-4 justify-between">
                             <button className="text-[#868389] text-[18px] underline"
-                                onClick={() => reset()}>Cancel</button>
+                                onClick={() => reset()}>{t("common.cancel")}</button>
                             <button className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
-                                onClick={() => isFollow()}>Save</button>
+                                onClick={() => isFollow()}>{t("common.save")}</button>
                         </div>
                     </DialogPanel>
                 </div>

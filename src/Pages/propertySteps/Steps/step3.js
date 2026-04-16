@@ -1,5 +1,6 @@
 import { Checkbox } from "@headlessui/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IoLocationOutline } from "react-icons/io5";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import GooglePlaceAutoComplete from "../../../components/common/GooglePlaceAutoComplete";
@@ -16,6 +17,7 @@ import PropertyCheck from "../PropertyCheck";
 const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [Error, setError] = useState("");
   const [draftModal, setdraftModal] = useState(false);
 
@@ -27,7 +29,7 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
 
   const validate = () => {
     if (!formData?.address) {
-      setError("Select Location First .");
+      setError(t("propertySteps.step3.errors.selectLocationFirst"));
       return false;
     }
     return true;
@@ -40,7 +42,7 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
       !formData.state ||
       !formData.zipcode
     ) {
-      setError("City, State, Zipcode and Country is required");
+      setError(t("propertySteps.step3.errors.cityStateZipCountryRequired"));
       return;
     }
     if (!validate()) return;
@@ -153,24 +155,22 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
         <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
           <div className="flex justify-between gap-5 flex-wrap items-center mb-8">
             <h4 className="text-[#47525E] text-[24px] font-[600] ">
-              Where is your property located?
+              {t("propertySteps.step3.whereLocated")}
             </h4>
           </div>
           <div>
             <div>
               <h4 className="text-[#47525E] font-[600] text-[20px] mb-[4px]">
-                {" "}
-                Your property exact location is hidden
+                {t("propertySteps.step3.exactLocationHidden")}
               </h4>
               <p className="text-[#47525E]">
-                No worries, we only use it to place your property on our map in
-                the right neigborhood.
+                {t("propertySteps.step3.locationPrivacyInfo")}
               </p>
             </div>
 
             <div className="my-9 md:max-w-[500px] w-[100%]">
               <label className="mb-1 block text-[16px] text-[#47525E] mb-[4px]">
-                Address*
+                {t("propertySteps.step3.address")}
               </label>
               <div className="relative bg-white border border-[#ccc] google_location flex items-center rounded-[5px]">
                 <span className="text-gray-500 border-r border-[#ccc] p-2 px-3">
@@ -180,7 +180,7 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                 <GooglePlaceAutoComplete
                   value={formData.address}
                   result={addressResult}
-                  placeholder="Enter address..."
+                  placeholder={t("propertySteps.step3.placeholders.enterAddress")}
                   id="address"
                   disabled={id}
                 />
@@ -214,14 +214,13 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                   </Checkbox>
                 </div>
                 <label className=" block text-[16px] text-[#47525E] mt-[2px]">
-                  Show exact location
+                  {t("propertySteps.step3.showExactLocation")}
                 </label>
               </div>
             </div>
           </div>
           <p className="text-[#47525E] text-[14px] xl:mt-16 lg:mt-8 mb-3 mt-5 text-start">
-            Once the property profile is published you won't be able to edit
-            this.
+            {t("propertySteps.step3.publishedWarning")}
           </p>
         </div>
         {id ? (
@@ -230,7 +229,7 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
               onClick={save}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save change
+              {t("propertySteps.step3.saveChange")}
             </button>
           </div>
         ) : (
@@ -239,19 +238,19 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
               onClick={draftsave}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save As Draft
+              {t("propertySteps.step3.saveAsDraft")}
             </button>
             <button
               onClick={handleBackNext}
               className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4"
             >
-              Back
+              {t("common.back")}
             </button>
             <button
               onClick={handleNext}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 "
             >
-              Next
+              {t("common.next")}
             </button>
           </div>
         )}

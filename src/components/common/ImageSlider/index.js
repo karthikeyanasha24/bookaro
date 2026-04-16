@@ -1,8 +1,11 @@
 import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
+import { useTranslation } from "react-i18next";
 import methodModel from '../../../methods/methods';
 
 const ImageSlider = ({ images, setActiveImg = () => { },slideClick=()=>{}}) => {
+    const { t } = useTranslation();
+
     const handleTransition = (currentIndex) => {
         setActiveImg(currentIndex + 1);
     };
@@ -12,7 +15,7 @@ const ImageSlider = ({ images, setActiveImg = () => { },slideClick=()=>{}}) => {
                 images.map((img, index) => (
                     <div key={index} data-src={methodModel.noImg(img?.file || img)} onClick={()=>slideClick(img?.file || img)} />
                 ))
-            ) : (<div>No Images Available</div>)}
+            ) : (<div>{t("messages.noImagesAvailable")}</div>)}
         </AwesomeSlider>
     );
 };

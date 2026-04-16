@@ -2,9 +2,12 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange, acrArr }) => {
+    const { t } = useTranslation();
+
     return (
         <Accordion
             expanded={acrArr?.includes(1)}
@@ -19,15 +22,14 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
             >
                 <Typography>
                 <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                        Property attractivity
+                        {t("propertyTimeline.tabs.attractivity")}
                     </span>
                 </Typography>
             </AccordionSummary>
             <AccordionDetails className="text-gray-500 p-4">
                 <div>
                     <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                        {" "}
-                        Online visibility
+                        {t("propertyDetails.onlineVisibility")}
                     </h4>
                     <div className="">
                         <ul className="flex  flex-wrap">
@@ -42,7 +44,7 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
                                         <h4 className="text-[#976DD0] font-[600] text-[21px] leading-[24px]">
                                             {detail?.likeCount}
                                         </h4>
-                                        <p className="text-[#47525E]">Likes</p>
+                                        <p className="text-[#47525E]">{t("propertyDetails.likes")}</p>
                                     </div>
                                 </li>)}
                             {detail?.followerCount && (
@@ -56,7 +58,7 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
                                         <h4 className="text-[#976DD0] font-[600] text-[21px] leading-[24px]">
                                             {detail?.followerCount}
                                         </h4>
-                                        <p className="text-[#47525E]">Followers</p>
+                                        <p className="text-[#47525E]">{t("propertyDetails.followers")}</p>
                                     </div>
                                 </li>)}
                             <li className="flex items-start w-1/3 my-5">
@@ -69,7 +71,7 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
                                     <h4 className="text-[#976DD0] font-[600] text-[21px] leading-[24px]">
                                         {detail?.propertyDetail?.propertyViewerCount || 0}
                                     </h4>
-                                    <p className="text-[#47525E]">Views</p>
+                                    <p className="text-[#47525E]">{t("propertyDetails.views")}</p>
                                 </div>
                             </li>
                             <li className="flex items-start w-1/3 my-5">
@@ -82,7 +84,7 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
                                     <h4 className="text-[#976DD0] font-[600] text-[21px] leading-[24px]">
                                        {data?.propertyDetail?.shareCount || 0}
                                     </h4>
-                                    <p className="text-[#47525E]">Shares</p>
+                                    <p className="text-[#47525E]">{t("propertyDetails.shares")}</p>
                                 </div>
                             </li>
                             <li className="flex items-start w-1/3 my-5">
@@ -95,7 +97,7 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
                                     <h4 className="text-[#976DD0] font-[600] text-[21px] leading-[24px]">
                                         {data?.totalInquries || 0}
                                     </h4>
-                                    <p className="text-[#47525E]">Enquiries</p>
+                                    <p className="text-[#47525E]">{t("propertyDetails.enquiries")}</p>
                                 </div>
                             </li>
                         </ul>
@@ -103,13 +105,12 @@ const PropAttractivity = ({ detail,data, dropdownOptions, handleAccordionChange,
                 </div>
                 <div className="mt-7">
                     <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                        {" "}
-                        Property rating on social platforms
+                        {t("propertyDetails.socialPlatformRating")}
                     </h4>
                     <div className="">
                         <ul className="flex  flex-wrap">
                             {detail?.rating?.map((rat, i) => (
-                                <li className="flex items-start w-1/3 my-5">
+                                <li key={`${rat?.type || 'rating'}-${i}`} className="flex items-start w-1/3 my-5">
                                     <img
                                         src="assets/img/icons/star.png"
                                         className="w-[20px] me-2 mt-[1px]"

@@ -15,6 +15,7 @@ import { FaStar } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 
 const Prolist = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const [filters, setFilters] = useState({
@@ -444,7 +445,7 @@ const Prolist = () => {
                                       {item?.rentCount || 0}
                                     </p>
                                     <span className="text-[#47525E] text-center  block">
-                                      Properties for rent
+                                      {t("prolist.propertiesForRent")}
                                     </span>
                                   </li>
                                   <li className="flex sm:flex-col flex-row items-center">
@@ -452,7 +453,7 @@ const Prolist = () => {
                                       {item?.saleCount || 0}
                                     </p>
                                     <span className="text-[#47525E] text-center block">
-                                      Properties for sale
+                                      {t("prolist.propertiesForSale")}
                                     </span>
                                   </li>
                                   <li className="flex sm:flex-col flex-row items-center">
@@ -460,7 +461,7 @@ const Prolist = () => {
                                       {item?.offMarketCount || 0}
                                     </p>
                                     <span className="text-[#47525E] text-center  block">
-                                      Properties Off-Market
+                                      {t("prolist.propertiesOffMarket")}
                                     </span>
                                   </li>
                                   <li className="flex sm:flex-col flex-row items-center">
@@ -468,7 +469,7 @@ const Prolist = () => {
                                       {item?.directoryCount || 0}
                                     </p>
                                     <span className="text-[#47525E] text-center  block">
-                                      Properties Directory
+                                      {t("prolist.propertiesDirectory")}
                                     </span>
                                   </li>
                                 </ul>
@@ -483,12 +484,12 @@ const Prolist = () => {
                           src="assets/img/no-data.svg"
                           className="w-[400px] mx-auto "
                         />
-                        No Records Found
+                        {t("messages.noRecordsFound")}
                       </div>
                     )}
                     {!user?.loggedIn && <p className="text-center col-span-12 my-8">
                       {/* <img src="/assets/img/no-data.png" className="w-[100px] mx-auto" /> */}
-                      Want to see more pro list? <spna onClick={(e) => navigate("/login")} className="text-bold text-[#976DD0] cursor-pointer">Just log in first!</spna>
+                      {t("prolist.wantToSeeMore")} <span onClick={() => navigate("/login")} className="text-bold text-[#976DD0] cursor-pointer">{t("prolist.loginFirst")}</span>
                     </p>}
                   </div>
                   <div
@@ -496,11 +497,11 @@ const Prolist = () => {
                       }`}
                   >
                     <span>
-                      Show {data?.length} from {total} Properties
+                      {t("notifications.showFromProperties", { count: data?.length, total })}
                     </span>
                     {user?.loggedIn && <ReactPaginate
-                      previousLabel="<Pre"
-                      nextLabel="Next>"
+                      previousLabel={t("pagination.previous")}
+                      nextLabel={t("pagination.next")}
                       breakLabel="..."
                       pageRangeDisplayed={2}
                       marginPagesDisplayed={1}

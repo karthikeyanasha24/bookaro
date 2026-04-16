@@ -16,8 +16,10 @@ import { Tooltip } from "antd";
 import { useSelector } from "react-redux";
 import UpgradePlan from "../../../components/common/Modal/UpgradePlan";
 import { FaInfoCircle } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const Step0 = ({ step1, formData, setFormData, id }) => {
+  const { t } = useTranslation();
   const [timeline, setTimeline] = useState({ propertyId: id });
   const [error, setError] = useState({ type: "", price: "" });
   const activePlan = useSelector((state) => state.activePlan);
@@ -186,7 +188,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
     const missingFields = requiredFields.filter((field) => !formData[field]);
     console.log(missingFields, "missingFields")
     if (missingFields.length > 0) {
-      setError({ ...error, price: "Enter mandetory fields.." });
+      setError({ ...error, price: t("propertySteps.step0.errors.enterMandatoryFields") });
       return false;
     }
     setError({ price: "" });
@@ -210,7 +212,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
     ) {
       return setError({
         type: "",
-        price: "Property price must be greater than agency fees",
+        price: t("propertySteps.step0.errors.priceGreaterThanAgencyFees"),
       });
     }
     if (
@@ -219,7 +221,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
     ) {
       return setError({
         type: "",
-        price: "Agency fees must be less than the property price",
+        price: t("propertySteps.step0.errors.agencyFeesLessThanPrice"),
       });
     }
     setFormData(updatedFormData);
@@ -359,18 +361,17 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
         {/* <PropertyCheck setplanModal={newsetplanModal} planModal={newplanModal} /> */}
         <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
           <h4 className="text-[#47525E] md:text-[24px] text-[21px] font-[600] text-left xl:mb-[50px] lg:mb-[50px] mb-[40px]">
-            Property Status and price
+            {t("propertySteps.step0.propertyStatusAndPrice")}
             <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left  ">
-              *Mandatories information
+              {t("propertySteps.step0.mandatoryInformation")}
             </span>
           </h4>
 
           <h2 className="text-[#47525E] font-[600] text-[20px] mb-2">
-            What is the current status of your property?*
+            {t("propertySteps.step0.currentStatusQuestion")}
           </h2>
           <p className="text-[#47525E] mb-5">
-            People following your property will be informed instantanately of
-            any change
+            {t("propertySteps.step0.followersInformed")}
           </p>
           <ul className="flex md:flex-nowrap flex-wrap items-center">
             {goalTypes.map((property) => (
@@ -469,11 +470,10 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
             <div className="mt-10 lg:max-w-[700px] w-[100%]">
               <div className="bg-[#e5d9f2] rounded-[20px] p-8">
                 <h2 className="text-[#47525E] font-[600] text-[18px] mb-3">
-                  Open to discussion, relax and let proposals pop-out in
-                  your mailbox.
+                  {t("propertySteps.step0.directoryOpenToDiscussion")}
                 </h2>
                 <p className="text-[#47525E] text-[14px] font-[600]">
-                  Let Bookaroo users know you are open to proposals *
+                  {t("propertySteps.step0.directoryOpenToProposals")}
                 </p>
                 <div className="grid grid-cols-12">
                   <div className="lg:col-span-7 col-span-12">
@@ -556,7 +556,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                 <div className="bg-[#976DD0]/30 mt-4 rounded-lg p-4 grid lg:grid-cols-5 items-center gap-3">
                   <div className="text-center lg:col-span-2">
                     <div className="flex items-center justify-center gap-2">
-                      <h5 className="text-[20px]">Activate Off-Market</h5>
+                      <h5 className="text-[20px]">{t("propertySteps.step1.activateOffMarket")}</h5>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
@@ -582,27 +582,27 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                     </div>
                     <UpgradePlan planModal={newplanModal} setplanModal={newsetplanModal} />
                     <Link className="text-primary text-[18px]" to={"/plan"}>
-                      Upgrade plan
+                      {t("propertySteps.step1.upgradePlan")}
                     </Link>
                   </div>
                   <div className="lg:col-span-3">
-                    <p className="text-[16px]">Define Who can see your property</p>
-                    <p className="text-[16px]">Target best funding profile first</p>
+                    <p className="text-[16px]">{t("propertySteps.step1.defineWhoCanSee")}</p>
+                    <p className="text-[16px]">{t("propertySteps.step1.targetBestFunding")}</p>
                     <p className="text-[16px]">
-                      Release progressively your property to the market
+                      {t("propertySteps.step1.releaseProgressively")}
                     </p>
-                    <p className="text-[16px]">No obsolescence for your ad</p>
+                    <p className="text-[16px]">{t("propertySteps.step1.noObsolescence")}</p>
                   </div>
                 </div>
 
                 <div className="px-5 mt-8">
                   <h4 className="text-[20px] mb-3">
-                    Make sure to get only qualified leads
+                    {t("propertySteps.step1.onlyQualifiedLeads")}
                   </h4>
                   <h5 className="text-[18px] mb-3 flex items-center gap-2">
-                    Only following user can see my property under Off-market:
+                    {t("propertySteps.step1.onlyFollowingUsers")}
 
-                    <Tooltip title="Among people interested in your property many of them will still be in tourism mode, not ready enough in their purchase project. Target leads with financial profile check will increase your chance to sell quickly and efficiently.">
+                    <Tooltip title={t("propertySteps.step1.tooltips.financialBackground")}>
                       <span className=""><FaInfoCircle /></span>
                     </Tooltip>
                   </h5>
@@ -621,7 +621,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                             })
                           }
                         />{" "}
-                        <p>Document based financial background checked.</p>
+                        <p>{t("propertySteps.step1.documentBasedChecked")}</p>
                       </div>
                     </li>
                     <li>
@@ -638,7 +638,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                             })
                           }
                         />{" "}
-                        <p>Declarative based financial background checked.</p>
+                        <p>{t("propertySteps.step1.declarativeBasedChecked")}</p>
                       </div>
                     </li>
                     <li>
@@ -650,14 +650,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                           disabled={checkDisabled("Any")}
                           onChange={() => handleCheckboxChange("Any")}
                         />{" "}
-                        <p>Any user with access to off-market can see it</p>
+                        <p>{t("propertySteps.step1.anyUserCanSee")}</p>
                       </div>
                     </li>
                   </ul>
 
                   <h5 className="text-[18px] mb-3 flex items-center gap-2">
-                    Only following rates will see my property
-                    <Tooltip title="Preserve the exclusivity of your property by gradually revealing it only to potential buyers with the best financial profile. You can adjust these criteria at any time.">
+                    {t("propertySteps.step1.onlyFollowingRates")}
+                    <Tooltip title={t("propertySteps.step1.tooltips.preserveExclusivity")}>
                       <span className=""><FaInfoCircle /></span>
                     </Tooltip>
                   </h5>
@@ -682,11 +682,10 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                 </div>
                 <div className="px-5 mb-5">
                   <h4 className="text-[20px] mb-1">
-                    Don't get overwelmed by requests
+                    {t("propertySteps.step1.dontGetOverwhelmed")}
                   </h4>
                   <p className="text-[16px] text-[#47525E]">
-                    Once we react that maximum number of leads we will block
-                    ability to contact you.
+                    {t("propertySteps.step1.maximumLeadsInfo")}
                   </p>
                   <div className="inline-flex gap-3 items-center bg-[#fff] p-2 rounded-md border border-[#976DD0] mt-4">
                     <input
@@ -703,17 +702,17 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
 
                       }
                     />
-                    <h5 className="text-[16px] font-[500]">Maximum Leads</h5>
+                    <h5 className="text-[16px] font-[500]">{t("propertySteps.step1.maximumLeads")}</h5>
                   </div>
                 </div>
                 {formData?.handleBy === "real-estate-pro" && (
                   <>
                     <div className="xl:w-[500px] w-[100%]">
                       <label className="mb-1 mt-8 block text-[15px] text-[#47525E] font-[600]">
-                        Select in the list or type Real esate pro name (Optional)
+                        {t("propertySteps.step0.selectRealEstatePro")}
                       </label>
                       <SelectDropdown
-                        placeholder="Select agency"
+                        placeholder={t("propertySteps.step0.selectAgency")}
                         displayValue="name"
                         className="mt-2 capitalize mb-8"
                         intialValue={formData?.agencyType}
@@ -742,18 +741,16 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
 
                       <div className="flex items-start flex-col w-[75%]">
                         <h5 className="text-[#47525E] text-[16px] font-[600]  mb-2 border-b border-dashed border-[#47525E]  ">
-                          Find your best local partner
+                          {t("propertySteps.step0.findBestLocalPartner")}
                         </h5>
                         <label className="text-[#47525E] text-[14px] ">
-                          Browse our Real estate pro repository to find the local
-                          partner that specializes on your local market. This will
-                          increase your chance to sell at the right price.
+                          {t("propertySteps.step0.localPartnerInfo")}
                         </label>
                         <Link
                           to={"/real-estate-pros"}
                           className="text-[#976DD0] underline font-[600] mt-2"
                         >
-                          Real estate pro directory
+                          {t("propertySteps.step0.realEstateProDirectory")}
                         </Link>
                       </div>
                     </div>
@@ -766,10 +763,10 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
             <div className="mt-4 lg:max-w-[500px] w-[100%] ">
               <p className="text-[#47525E] font-[600] text-[20px] mb-[30px]">
                 {" "}
-                What is your property price?
+                {t("propertySteps.step0.whatIsYourPropertyPrice")}
               </p>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Property price without fees*
+                {t("propertyDetails.priceWithoutAgencyFees")}*
               </label>
               <div className="relative  w-[100%] mb-8">
                 <input
@@ -778,14 +775,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.price)}
                   onChange={handleChange("price")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter price"
+                  placeholder={t("propertySteps.step0.placeholders.enterPrice")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Property agency fees (included in buyer price)
+                {t("propertySteps.step0.propertyAgencyFeesIncluded")}
               </label>
               <div className="relative  w-[100%] mb-8">
                 <input
@@ -794,14 +791,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.propertyAgencyFees)}
                   onChange={handleChange("propertyAgencyFees")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter agency fees"
+                  placeholder={t("propertySteps.step0.placeholders.enterAgencyFees")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Property total price for buyer
+                {t("propertyDetails.priceForBuyer")}
               </label>
               <div className="relative lg:w-[500px] w-[100%] mb-8">
                 <input
@@ -811,14 +808,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                     (+formData.price || 0) + (+formData.propertyAgencyFees || 0)
                   )}
                   className="bg-gray-200 rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Total price for buyer"
+                  placeholder={t("propertySteps.step0.placeholders.totalPriceForBuyer")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Property annual building charges*
+                {t("propertyDetails.propertyAnnualBuildingCharges")}*
               </label>
               <div className="relative lg:w-[500px] w-[100%] mb-8">
                 <input
@@ -827,7 +824,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.propertyCharges)}
                   onChange={handleChange("propertyCharges")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter annual building charges"
+                  placeholder={t("propertySteps.step0.placeholders.enterAnnualBuildingCharges")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
@@ -839,7 +836,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
           {formData?.propertyType === "rent" && (
             <div className="mt-4 lg:max-w-[500px] w-[100%]">
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Monthly rent*
+                {t("propertyDetails.monthlyRent")}*
               </label>
               <div className="relative  w-[100%] mb-4">
                 <input
@@ -848,14 +845,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData?.propertyMonthlyCharges)}
                   onChange={handleChange("propertyMonthlyCharges")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter monthly rent"
+                  placeholder={t("propertySteps.step0.placeholders.enterMonthlyRent")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Building provisional charges*
+                {t("propertyDetails.buildingProvisionalCharges")}*
               </label>
               <div className="relative  w-[100%] mb-4">
                 <input
@@ -864,14 +861,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.propertyCharges)}
                   onChange={handleChange("propertyCharges")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter Building charges"
+                  placeholder={t("propertySteps.step0.placeholders.enterBuildingCharges")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Total monthly rent including charges
+                {t("propertyDetails.totalMonthlyRentIncludingCharges")}
               </label>
               <div className="relative lg:w-[500px] w-[100%] mb-4">
                 <input
@@ -882,7 +879,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                     (+formData?.propertyMonthlyCharges || 0)
                   )}
                   className="bg-gray-200 rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Total monthly charges"
+                  placeholder={t("propertySteps.step0.placeholders.totalMonthlyCharges")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
@@ -890,7 +887,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
               </div>
 
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Agency fees
+                {t("propertyDetails.agencyFees")}
               </label>
               <div className="relative  w-[100%] mb-4">
                 <input
@@ -899,14 +896,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.propertyAgencyFees)}
                   onChange={handleChange("propertyAgencyFees")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter Agency fees"
+                  placeholder={t("propertySteps.step0.placeholders.enterAgencyFees")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Inventory of property
+                {t("propertyDetails.inventoryOfProperty")}
               </label>
               <div className="relative  w-[100%] mb-4">
                 <input
@@ -915,14 +912,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.propertyInventory)}
                   onChange={handleChange("propertyInventory")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter Inventory of property"
+                  placeholder={t("propertySteps.step0.placeholders.enterInventoryOfProperty")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                One time fees paid by renter
+                {t("propertyDetails.oneTimeFeesPaidByRenter")}
               </label>
               <div className="relative lg:w-[500px] w-[100%] mb-4">
                 <input
@@ -933,14 +930,14 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                     (+formData?.propertyInventory || 0)
                   )}
                   className="bg-gray-200 rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="One time fees"
+                  placeholder={t("propertySteps.step0.placeholders.oneTimeFees")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
                 </span>
               </div>
               <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-                Guarantee deposit*
+                {t("propertyDetails.guaranteeDeposit")}*
               </label>
               <div className="relative lg:w-[500px] w-[100%] mb-4">
                 <input
@@ -949,7 +946,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
                   value={formatCurrency(formData.guaranteeDeposit)}
                   onChange={handleChange("guaranteeDeposit")}
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                  placeholder="Enter Inventory of property"
+                  placeholder={t("propertySteps.step0.placeholders.enterGuaranteeDeposit")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
@@ -964,7 +961,7 @@ const Step0 = ({ step1, formData, setFormData, id }) => {
             onClick={save}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save change
+            {t("propertySteps.step1.saveChange")}
           </button>
         </div>
       </div>

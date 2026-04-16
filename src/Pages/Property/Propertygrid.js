@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick.css";
 import ImageSlider from "../../components/common/ImageSlider";
 import { removeHTMLTags } from "../../models/string.model";
 import { CommonCreteria } from "./commonCreteria/commonCreteria";
+import { useTranslation } from "react-i18next";
 
 const PropertiesGrid = ({
   data,
@@ -31,6 +32,7 @@ const PropertiesGrid = ({
 }) => {
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <>
       <div className="">
@@ -39,11 +41,11 @@ const PropertiesGrid = ({
             {favourites && (
               <ul className="flex items-center pb-[30px]">
                 <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-                  My Project
+                  {t("project.myProject")}
                   <span className="mx-[4px]">|</span></li>
 
                 <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-                  Interacted Properties</li>
+                  {t("project.interactedProperties")}</li>
               </ul>
             )}
             <div className="grid grid-cols-12 gap-8">
@@ -75,15 +77,15 @@ const PropertiesGrid = ({
                                 <div className=" mb-0 ">
                                   {(item?.propertyType === "offmarket" || item?.propertyType === "directory") ? (
                                     <h5 className="text-[#6D6E6D] text-[20px] font-bold capitalize">
-                                      {item?.propertyType === "offmarket" ? "Off-Market" : `${item?.propertyType}`}
+                                      {item?.propertyType === "offmarket" ? t("home.tabs.offMarket") : t("home.tabs.directory")}
                                       <span className="text-[#47525E] font-normal text-[13px]  capitalize block">
-                                        {item?.proposal === "both" ? "Rental/Purchase" : `${item?.proposal}`} compliance
+                                        {item?.proposal === "both" ? t("propertyTimeline.events.rentalPurchase") : `${item?.proposal}`} {t("property.compliance")}
                                       </span>
                                     </h5>
                                   ) : (item?.propertyType == "rent" && item?.propertyMonthlyCharges) ? (
                                     <h5 className="text-[#6D6E6D] text-[20px] font-bold">
                                       {item?.propertyMonthlyCharges} €
-                                      <span className="text-[#47525E] text-[13px] "> / month</span>
+                                      <span className="text-[#47525E] text-[13px] "> {t("billing.perMonth")}</span>
                                     </h5>
                                   ) : (
                                     <>
@@ -220,11 +222,11 @@ const PropertiesGrid = ({
                                       <ul>
                                         <li onClick={() => editItem(item)} className="p-2 px-4 cursor-pointer hover:bg-gray-100 flex items-center"> <FiEdit className="me-2 text-[15px]" />
                                           <span className="text-[14px] text-[#333]">
-                                            Edit
+                                            {t("buttons.edit")}
                                           </span></li>
                                         <li onClick={() => deleteItem(item)} className="p-2 px-4 cursor-pointer hover:bg-gray-100 flex items-center"> <AiOutlineDelete className="me-2" />
                                           <span className="text-[14px] text-[#333]">
-                                            Delete
+                                            {t("buttons.delete")}
                                           </span></li>
                                       </ul>
                                     </div>
@@ -238,14 +240,14 @@ const PropertiesGrid = ({
                     )
                   }) :   <div className="text-center col-span-12 my-8">
                   <img src="assets/img/no-data.svg" className="w-[400px] mx-auto "/>
-                  No Records Found
+                  {t("messages.noRecordsFound")}
                 </div>}
                 </div>
                 <div className={`paginationWrapper ${total > filters?.count ? '' : 'd-none'}`}>
-                  <span>Show {data?.length} from {total} Properties</span>
+                  <span>{t("manageNotifications.showFromProperties", { count: data?.length, total })}</span>
                   <ReactPaginate
-                    previousLabel="< Previous"
-                    nextLabel="Next >"
+                    previousLabel={t("pagination.previous")}
+                    nextLabel={t("pagination.next")}
                     breakLabel="..."
                     pageRangeDisplayed={2}
                     marginPagesDisplayed={1}

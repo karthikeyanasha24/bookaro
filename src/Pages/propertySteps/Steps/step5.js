@@ -1,5 +1,6 @@
 import { Checkbox } from "@headlessui/react";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import methodModel from "../../../methods/methods";
 import {
@@ -26,6 +27,7 @@ const Step5 = ({
   amenity,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const user = useSelector((state) => state.user);
   const [draftModal, setdraftModal] = useState(false);
@@ -39,13 +41,13 @@ const Step5 = ({
   const validate = () => {
     const newErrors = {};
     if (!formData.diagnosisType)
-      newErrors.diagnosisType = "Diagnosis Type is required.";
+      newErrors.diagnosisType = t("propertySteps.step5.errors.diagnosisTypeRequired");
     if (formData?.diagnosisType?.toLowerCase()?.includes("yes")) {
       if (!formData.energyConsumption)
-        newErrors.energyConsumption = "Energy Consumption is required.";
-      if (!formData.emissions) newErrors.emissions = "Emissions is required.";
+        newErrors.energyConsumption = t("propertySteps.step5.errors.energyConsumptionRequired");
+      if (!formData.emissions) newErrors.emissions = t("propertySteps.step5.errors.emissionsRequired");
       if (!formData.dateOfDiagnosis)
-        newErrors.dateOfDiagnosis = "Date of Diagnosis is required.";
+        newErrors.dateOfDiagnosis = t("propertySteps.step5.errors.dateOfDiagnosisRequired");
     }
     setErrors(newErrors);
     if (Object.keys(newErrors).length !== 0) {
@@ -156,22 +158,21 @@ const Step5 = ({
       <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
         <div className="flex justify-between items-center gap-3 xl:mb-[50px] lg:mb-[50px] mb-[40px]">
           <h4 className="text-[#47525E] text-[24px] font-[600] text-left ">
-            Indicates the results of your energy performance diagnosis
+            {t("propertySteps.step5.energyDiagnosisResults")}
             <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left ">
-              *Mandatory information
+              {t("propertySteps.step5.mandatoryInformation")}
             </span>
           </h4>
         </div>
         <div>
           <h4 className="text-[#47525E] font-[600] text-[20px] mb-[4px]">
-            {" "}
-            Tell us more about your heating system
+            {t("propertySteps.step5.heatingSystemTitle")}
           </h4>
         </div>
 
         <div className="my-9">
           <label className="block text-[16px] text-[#47525E] font-[600] mt-4">
-            Consumption mode <span className="font-[400] ms-1">(Optional)</span>
+            {t("propertySteps.step5.consumptionMode")} <span className="font-[400] ms-1">{t("propertySteps.step5.optional")}</span>
           </label>
           <ul className="flex gap-4 w-full items-center flex-wrap my-5">
             {consumptionMode.map((option) => (
@@ -210,7 +211,7 @@ const Step5 = ({
         {/* Equipment Options */}
         <div ref={scrollRef}>
           <label className="block text-[16px] text-[#47525E] font-[600] ">
-            Heating type <span className="font-[400] ms-1">(Optional)</span>
+            {t("propertySteps.step5.heatingType")} <span className="font-[400] ms-1">{t("propertySteps.step5.optional")}</span>
           </label>
           <ul className="flex gap-4 w-full items-center flex-wrap my-5">
             {heatingType.map((option) => (
@@ -249,11 +250,10 @@ const Step5 = ({
         {/* Diagnosis Result */}
         <div>
           <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-            Do you have the results of your diagnosis?
+            {t("propertySteps.step5.haveDiagnosisResults")}
           </label>
           <div className="font-[400]  text-[16px] text-[#47525E] mb-7 xl:w-[500px] w-[100%]">
-            No worries, we only use it to place your property on our map in the
-            right neighborhood.
+            {t("propertySteps.step5.diagnosisInfo")}
           </div>
           <div className="flex items-start mb-4 flex-col">
             {diagnosisType.map((option) => (
@@ -312,11 +312,10 @@ const Step5 = ({
 
             <div className="flex items-start flex-col w-[75%]">
               <h5 className="text-[#47525E] text-[16px] font-[600]  mb-2 border-b border-dashed border-[#47525E]  ">
-                Are you sure it does not apply to your property?
+                {t("propertySteps.step5.doesNotApplyTitle")}
               </h5>
               <label className="text-[#47525E] text-[14px] ">
-                To ensure that this regulation does not apply to your property,
-                please visit the website set by the government.
+                {t("propertySteps.step5.doesNotApplyInfo")}
               </label>
               <button
                 className="btn text-white bg-[#48464a] rounded-[5px] mt-3 px-4 py-1.5"
@@ -327,7 +326,7 @@ const Step5 = ({
                   )
                 }
               >
-                Learn More
+                {t("propertySteps.step5.learnMore")}
               </button>
             </div>
           </div>
@@ -344,28 +343,26 @@ const Step5 = ({
 
               <div className="flex items-start flex-col w-[80%]">
                 <h5 className="text-[#47525E] text-[16px] font-[600]  mb-2 border-b border-dashed border-[#47525E]  ">
-                  Communicate your DPE for greater transparency
+                  {t("propertySteps.step5.communicateDpeTitle")}
                 </h5>
                 <label className="text-[#47525E] text-[14px] ">
-                  Since January 2022, it has been compulsory to display your EPD
-                  on your ad to sell a property. This information also plays a
-                  key role in buyers' decision-making.
+                  {t("propertySteps.step5.communicateDpeInfo")}
                 </label>
               </div>
             </div>
             <div className="my-10">
               <div>
                 <h4 className="text-[#47525E] text-[24px] font-[600] text-left xl:mb-[50px] lg:mb-[50px] mb-[40px] ">
-                  Diagnosis results
+                  {t("propertySteps.step5.diagnosisResults")}
                   <span className="font-[400]  text-[16px] text-[#47525E] block text-left mt-5 ">
-                    DPE Vierge: my diagnostis does not show any ranking
+                    {t("propertySteps.step5.dpeViergeInfo")}
                   </span>
                 </h4>
               </div>
               {/* Energy Consumption */}
               <div className="mt-4">
                 <label className="mb-1 block text-[16px] text-[#47525E] mb-2 font-[600]">
-                  Energy consumption
+                  {t("propertySteps.step5.energyConsumption")}
                 </label>
                 <div className="relative lg:w-[500px] w-[100%]">
                   <input
@@ -435,10 +432,10 @@ const Step5 = ({
               </div>
               <div className="flex items-center justify-between  lg:w-[500px] w-[100%]">
                 <p className="text-[#878889] text-[12px] ">
-                  Energy-efficient home
+                  {t("propertySteps.step5.energyEfficientHome")}
                 </p>
                 <p className="text-[#878889] text-[12px] ">
-                  Energy-intensive housing
+                  {t("propertySteps.step5.energyIntensiveHousing")}
                 </p>
               </div>
             </div>
@@ -446,7 +443,7 @@ const Step5 = ({
               {/* Greenhouse Gas Emissions */}
               <div className="mt-4">
                 <label className="mb-1 block text-[16px] text-[#47525E] mb-2 font-[600]">
-                  Greenhouse gas emissions
+                  {t("propertySteps.step5.greenhouseGasEmissions")}
                 </label>
                 <div className="relative lg:w-[500px] w-[100%]">
                   <input
@@ -515,14 +512,14 @@ const Step5 = ({
                 </div>
               </div>
               <div className="flex items-center justify-between  lg:w-[500px] w-[100%]">
-                <p className="text-[#878889] text-[12px] ">Low emissions</p>
-                <p className="text-[#878889] text-[12px] ">High emisisons</p>
+                <p className="text-[#878889] text-[12px] ">{t("propertySteps.step5.lowEmissions")}</p>
+                <p className="text-[#878889] text-[12px] ">{t("propertySteps.step5.highEmissions")}</p>
               </div>
             </div>
             {/* Diagnosis Date */}
             <div className="mt-4">
               <label className="mb-3 block text-[16px] text-[#47525E] mb-2 font-[600]">
-                Date of diagnosis
+                {t("propertySteps.step5.dateOfDiagnosis")}
               </label>
               <div className="flex items-start mb-4 flex-col">
                 {dateOfDiagnosis.map((option) => (
@@ -579,7 +576,7 @@ const Step5 = ({
 
               <div className="flex items-start flex-col w-[80%]">
                 <h5 className="text-[#47525E] text-[16px] font-[600]  mb-2 border-b border-dashed border-[#47525E]  ">
-                  A good DPE increases your property value
+                  {t("propertySteps.step5.goodDpeValue")}
                 </h5>
                 <div className="flex items-start">
                   <input
@@ -595,9 +592,7 @@ const Step5 = ({
                     }}
                   />
                   <label className="text-[#47525E] text-[14px] ">
-                    I would like to be contacted by email or telephone by one of
-                    our renovation partners to provide a quote for the
-                    renovation of my property.
+                    {t("propertySteps.step5.contactRenovationPartner")}
                   </label>
                 </div>
               </div>
@@ -612,7 +607,7 @@ const Step5 = ({
             onClick={save}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save change
+            {t("propertySteps.step5.saveChange")}
           </button>
         </div>
       ) : (
@@ -621,19 +616,19 @@ const Step5 = ({
             onClick={draftsave}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save As Draft
+            {t("propertySteps.step5.saveAsDraft")}
           </button>
           <button
             onClick={handleBack}
             className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
           >
-            Back
+            {t("common.back")}
           </button>
           <button
             onClick={handleNext}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4"
           >
-            Next
+            {t("common.next")}
           </button>
         </div>
       )}

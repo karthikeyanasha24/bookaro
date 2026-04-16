@@ -16,7 +16,7 @@ import {
 } from "@headlessui/react";
 import Slider from "@mui/material/Slider";
 import Stack from "@mui/material/Stack";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiOutlineBars3BottomLeft } from "react-icons/hi2";
 import { IoLocationOutline } from "react-icons/io5";
 import { TbRulerMeasure } from "react-icons/tb";
@@ -34,6 +34,7 @@ import {
 import { all } from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 
 const CommonFilter = ({
@@ -105,6 +106,7 @@ const CommonFilter = ({
   setcitySearch,
   setZipcodeSearch,
 }) => {
+  const { t } = useTranslation();
   const ancilliaryAreas =
     categorizedData["Ancilliary areas".toLowerCase()] || [];
   const cookingOptions = categorizedData["cooking".toLowerCase()] || [];
@@ -128,16 +130,16 @@ const CommonFilter = ({
     { type: "G", unit: "de + 411KWh+", color: "#f71a32", size: "70px" },
   ];
   const schoolType = [
-    { id: "elementarySchool", name: "Elementary School" },
-    { id: "college", name: "College" },
-    { id: "kindergarten", name: "Kindergarten" },
-    { id: "elementaryPrimary", name: "Elementary Primary" },
-    { id: "highschool", name: "High School" },
+    { id: "elementarySchool", name: t("filtersCommon.elementarySchool") },
+    { id: "college", name: t("filtersCommon.college") },
+    { id: "kindergarten", name: t("filtersCommon.kindergarten") },
+    { id: "elementaryPrimary", name: t("filtersCommon.elementaryPrimary") },
+    { id: "highschool", name: t("filtersCommon.highSchool") },
   ];
 
   const schoolStatus = [
-    { id: "Private", name: "Private" },
-    { id: "Public", name: "Public" },
+    { id: "Private", name: t("filtersCommon.private") },
+    { id: "Public", name: t("filtersCommon.public") },
   ];
   const [inputKey, setInputKey] = useState(0);
   const [rating, setRating] = useState(0);
@@ -147,21 +149,21 @@ const CommonFilter = ({
   const [selectedValue, setSelectedValue] = useState(0);
 
   const tabValues = {
-    sale: "Buy",
-    rent: "Rent",
-    offmarket: "Off-Market",
-    directory: "Directory",
+    sale: t("propertyTypes.buy", { defaultValue: "Buy" }),
+    rent: t("propertyTypes.rent", { defaultValue: "Rent" }),
+    offmarket: t("propertyTypes.offMarket", { defaultValue: "Off-Market" }),
+    directory: t("propertyTypes.directory", { defaultValue: "Directory" }),
   };
   const propertyTypes = [
     {
       id: "Apartment",
-      name: "Apartment",
+      name: t("home.propertyTypes.apartment"),
       icon: "/assets/img/prop/apartment.png",
     },
-    { id: "House", name: "House", icon: "/assets/img/prop/home.png" },
-    { id: "Castle", name: "Castle", icon: "/assets/img/prop/castle.png" },
-    { id: "Building", name: "Building", icon: "/assets/img/prop/building.png" },
-    { id: "Farm", name: "Farm", icon: "/assets/img/prop/farm.png" },
+    { id: "House", name: t("home.propertyTypes.house"), icon: "/assets/img/prop/home.png" },
+    { id: "Castle", name: t("home.propertyTypes.castle"), icon: "/assets/img/prop/castle.png" },
+    { id: "Building", name: t("home.propertyTypes.building"), icon: "/assets/img/prop/building.png" },
+    { id: "Farm", name: t("home.propertyTypes.farm"), icon: "/assets/img/prop/farm.png" },
   ];
 
   const handleRating = (rate) => {
@@ -171,10 +173,46 @@ const CommonFilter = ({
   };
 
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isFilterBarVisible, setIsFilterBarVisible] = useState(true);
+  const filterBarRef = useRef(null);
+  const lastScrollTopRef = useRef(0);
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  useEffect(() => {
+    const contentScrollContainer =
+      filterBarRef.current?.closest(".page-content-wrapper") || window;
+
+    const handleScroll = () => {
+      const currentScrollTop =
+        contentScrollContainer === window
+          ? window.scrollY || document.documentElement.scrollTop
+          : contentScrollContainer.scrollTop;
+
+      const delta = currentScrollTop - lastScrollTopRef.current;
+      if (Math.abs(delta) < 4) return;
+
+      if (currentScrollTop <= 20) {
+        setIsFilterBarVisible(true);
+      } else if (delta > 0) {
+        setIsFilterBarVisible(false);
+      } else {
+        setIsFilterBarVisible(true);
+      }
+
+      lastScrollTopRef.current = currentScrollTop;
+    };
+
+    contentScrollContainer.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      contentScrollContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (allfilters?.rating) {
@@ -272,18 +310,18 @@ const CommonFilter = ({
   const alertReasons = [
     {
       id: "searching for principal residence",
-      name: "searching for principal residence",
+      name: t("alerts.principalResidence"),
     },
     {
       id: "searching for secondary residence",
-      name: "searching for secondary residence",
+      name: t("alerts.secondaryResidence"),
     },
-    { id: "searching for an investment", name: "searching for an investment" },
+    { id: "searching for an investment", name: t("alerts.investment") },
     {
       id: "get update on price evolution",
-      name: "get update on price evolution",
+      name: t("alerts.priceEvolution"),
     },
-    { id: "other", name: "other" },
+    { id: "other", name: t("common.other") },
   ];
 
   const toggleRoomSelection = (key, value) => {
@@ -307,7 +345,17 @@ const CommonFilter = ({
 
   return (
     <>
-      <div className="bg-white sticky top-[59px] xl:top-[68px] z-[9] border-b">
+      <div
+        ref={filterBarRef}
+        className="bg-white sticky top-0 z-[9] border-b transition-all duration-300"
+        style={{
+          transform: isFilterBarVisible
+            ? "translateY(0)"
+            : "translateY(calc(-100% - 10px))",
+          opacity: isFilterBarVisible ? 1 : 0,
+          pointerEvents: isFilterBarVisible ? "auto" : "none",
+        }}
+      >
         <div className=" items-center  mx-auto  lg:px-10 px-6">
           <div className="grid grid-cols-12 py-4 ">
             <div className="col-span-12 flex xl:items-center items-center lg:items-start xl:flex-row lg:flex-col md:flex-row flex-col justify-between">
@@ -318,7 +366,7 @@ const CommonFilter = ({
                     <MenuButton>
                       <button className="border  mb-2 capitalize border-[#976DD0] rounded-[50px] py-[6px] text-[12px] text-[#343F4B] px-3 font-[600] flex items-center">
                         <HiOutlineBars3BottomLeft className="me-2 text-[16px]" />
-                        Filters
+                        {t("filtersCommon.filters")}
                       </button>
                     </MenuButton>
                     {isMenuOpen && (
@@ -358,7 +406,7 @@ const CommonFilter = ({
                                       ? "Buy"
                                       : allfilters?.propertyType
                                   }`
-                                  : (allfilters?.offMarket == "true" || allfilters?.offMarket == true) ? "Off-Market" : "Property Type"}
+                                  : (allfilters?.offMarket == "true" || allfilters?.offMarket == true) ? t("propertyTypes.offMarket", { defaultValue: "Off-Market" }) : t("filtersCommon.propertyType")}
                             </p>
                           </MenuItem>
                           <MenuItem>
@@ -379,7 +427,7 @@ const CommonFilter = ({
                                   })`
                                   : ""
                                 }`
-                                : "Location"}
+                                : t("filtersCommon.location")}
                             </p>
                           </MenuItem>
                           <MenuItem>
@@ -392,14 +440,14 @@ const CommonFilter = ({
                               {allfilters?.propertyType === "offmarket" ? (
                                 <>
                                   {allfilters?.proposal
-                                    ? `${allfilters?.proposal} proposals`
-                                    : "Off Market Status"}
+                                    ? `${allfilters?.proposal} ${t("filtersCommon.proposals")}`
+                                    : t("filtersCommon.offMarketStatus")}
                                 </>
                               ) : allfilters?.propertyType === "directory" ? (
                                 <>
                                   {allfilters?.proposal
-                                    ? `${allfilters?.proposal} proposals`
-                                    : "Directory Status"}
+                                    ? `${allfilters?.proposal} ${t("filtersCommon.proposals")}`
+                                    : t("filtersCommon.directoryStatus")}
                                 </>
                               ) : (
                                 <>
@@ -408,7 +456,7 @@ const CommonFilter = ({
                                     " € - " +
                                     allfilters?.price?.split("-")[1] +
                                     " € "
-                                    : "Budget"}
+                                    : t("filtersCommon.budget")}
                                 </>
                               )}
                             </p>
@@ -426,7 +474,7 @@ const CommonFilter = ({
                                 " - " +
                                 allfilters?.surface?.split("-")[1] +
                                 " m2"
-                                : "Surface"}
+                                : t("filtersCommon.surface")}
                             </p>
                           </MenuItem>
                           <MenuItem>
@@ -436,7 +484,7 @@ const CommonFilter = ({
                                 setIsOpen5(true);
                               }}
                             >
-                              Rooms{" "}
+                              {t("filtersCommon.rooms")}{" "}
                               {allfilters.rooms && `(${allfilters.rooms})`}
                             </p>
                           </MenuItem>
@@ -452,7 +500,7 @@ const CommonFilter = ({
                                   ? `(${allfilters?.rating})`
                                   : ""
                                 }`
-                                : "Attractivity"}
+                                : t("filtersCommon.attractivity")}
                             </p>
                           </MenuItem>
                           <MenuItem>
@@ -463,7 +511,7 @@ const CommonFilter = ({
                               }}
                             >
                               {otherFilterCount > 0 && `${otherFilterCount}`}{" "}
-                              Extra filters
+                              {t("filtersCommon.extraFilters")}
                             </p>
                           </MenuItem>
                         </MenuItems>
@@ -512,7 +560,7 @@ const CommonFilter = ({
                             })`
                             : `${allfilters?.type}`
                           }`
-                          : allfilters?.offMarket == "true" || allfilters?.offMarket == true ? "Off-Market" : "Property Type"}
+                            : allfilters?.offMarket == "true" || allfilters?.offMarket == true ? t("propertyTypes.offMarket", { defaultValue: "Off-Market" }) : t("filtersCommon.propertyType")}
                   </button>
                   <Dialog
                     open={isOpen}
@@ -699,7 +747,7 @@ const CommonFilter = ({
                         })`
                         : ""
                       }`
-                      : "Location"}
+                        : t("filtersCommon.location")}
                   </button>
                   <Dialog
                     open={isOpen1}
@@ -713,14 +761,14 @@ const CommonFilter = ({
                       <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                         <DialogTitle className="p-6">
                           <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                            Where are you looking?
+                            {t("filtersCommon.whereAreYouLooking")}
                           </p>
                           <div className="pt-10 flex items-center google_address">
                             <GooglePlaceAutoComplete
                               key={inputKey}
                               value={currentLocation}
                               result={addressResult}
-                              placeholder="Enter location you want to search..."
+                              placeholder={t("filtersCommon.enterLocationSearch")}
                               id="address"
                             />
                           </div>
@@ -818,7 +866,7 @@ const CommonFilter = ({
                             <SelectDropdown
                               id="statusDropdown"
                               displayValue="name"
-                              placeholder="All School Types"
+                              placeholder={t("filtersCommon.allSchoolTypes")}
                               className="capitalize w-full"
                               theme="search"
                               isClearable={false}
@@ -834,7 +882,7 @@ const CommonFilter = ({
                             <SelectDropdown
                               id="statusDropdown"
                               displayValue="name"
-                              placeholder="All School Status"
+                              placeholder={t("filtersCommon.allSchoolStatus")}
                               theme="search"
                               className='w-full'
                               isClearable={false}
@@ -903,7 +951,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {allfilters?.search && (
                               <button
@@ -936,7 +984,7 @@ const CommonFilter = ({
                                   setZipcodeSearch("")
                                 }}
                               >
-                                Reset
+                                {t("common.reset")}
                               </button>
                             )}
                             <button
@@ -944,7 +992,7 @@ const CommonFilter = ({
                                 if (locations?.length === 0)
                                   return setError({
                                     ...error,
-                                    location: "Enter atleast a location",
+                                    location: t("filtersCommon.enterAtLeastOneLocation"),
                                   });
                                 let locs = locations?.filter(
                                   (itm) => itm?.added
@@ -953,7 +1001,7 @@ const CommonFilter = ({
                                 if (locs?.length === 0)
                                   return setError({
                                     ...error,
-                                    location: "Select atleast a location",
+                                    location: t("filtersCommon.selectAtLeastOneLocation"),
                                   });
                                 setIsOpen1(false);
                                 let data = { ...allfilters };
@@ -986,7 +1034,7 @@ const CommonFilter = ({
                               }}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -1015,14 +1063,14 @@ const CommonFilter = ({
                     {allfilters?.propertyType === "offmarket" ? (
                       <>
                         {allfilters?.proposal
-                          ? `${allfilters?.proposal} proposals`
-                          : "Off Market Status"}
+                          ? `${allfilters?.proposal} ${t("filtersCommon.proposals")}`
+                          : t("filtersCommon.offMarketStatus")}
                       </>
                     ) : allfilters?.propertyType === "directory" ? (
                       <>
                         {allfilters?.proposal
-                          ? `${allfilters?.proposal} proposals`
-                          : "Directory Status"}
+                          ? `${allfilters?.proposal} ${t("filtersCommon.proposals")}`
+                          : t("filtersCommon.directoryStatus")}
                       </>
                     ) : (
                       <>
@@ -1034,7 +1082,7 @@ const CommonFilter = ({
                             ? `max ${formatCurrency(allfilters?.maxPrice)} €`
                             : allfilters?.minPrice
                               ? `min ${formatCurrency(allfilters?.minPrice)} €`
-                              : "Budget"}
+                              : t("filtersCommon.budget")}
                       </>
                     )}
                   </button>
@@ -1052,16 +1100,16 @@ const CommonFilter = ({
                         <DialogTitle className="p-6">
                           <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
                             {allfilters?.propertyType === "offmarket"
-                              ? "Off Market Status"
+                              ? t("filtersCommon.offMarketStatus")
                               : allfilters?.propertyType === "directory"
-                                ? "Directory Status"
-                                : "What is your budget?"}
+                                ? t("filtersCommon.directoryStatus")
+                                : t("pastTransactionsGrid.whatIsYourBudget")}
                           </p>
                           {allfilters?.propertyType === "offmarket" ||
                             allfilters?.propertyType === "directory" ? (
                             <>
                               <h2 className="mb-2 text-[#47525E] pt-4">
-                                Show properties that are:
+                                {t("filtersCommon.showPropertiesThatAre")}
                               </h2>
                               <div className="flex items-center  justify-between py-1 rounded-[5px] mb-3">
                                 <div className="flex items-center">
@@ -1105,7 +1153,7 @@ const CommonFilter = ({
                                     </svg>
                                   </Checkbox>
                                   <label className="text-[#47525E]">
-                                    Open to purchase proposals
+                                    {t("filtersCommon.openToPurchaseProposals")}
                                   </label>
                                 </div>
                               </div>
@@ -1149,7 +1197,7 @@ const CommonFilter = ({
                                     </svg>
                                   </Checkbox>
                                   <label className="text-[#47525E]">
-                                    Open to rental proposals
+                                    {t("filtersCommon.openToRentalProposals")}
                                   </label>
                                 </div>
                               </div>
@@ -1191,7 +1239,7 @@ const CommonFilter = ({
                                     setProposal("");
                                   }}
                                   className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                                  placeholder="min"
+                                  placeholder={t("filtersCommon.min")}
                                 />
                                 <p className="mx-3">-</p>
                                 <input
@@ -1222,7 +1270,7 @@ const CommonFilter = ({
                                     setProposal("");
                                   }}
                                   className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                                  placeholder="max"
+                                  placeholder={t("filtersCommon.max")}
                                 />
                                 <p className="text-[#5A5A5A] ms-3">€</p>
                               </div>
@@ -1249,7 +1297,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {(allfilters?.proposal ||
                               allfilters?.minPrice ||
@@ -1276,14 +1324,14 @@ const CommonFilter = ({
                                     });
                                   }}
                                 >
-                                  Reset
+                                  {t("common.reset")}
                                 </button>
                               )}
                             <button
                               onClick={handleApply}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -1315,7 +1363,7 @@ const CommonFilter = ({
                         ? `max ${formatCurrency(allfilters?.maxRevenues)} €`
                         : allfilters?.minRevenues
                           ? `min ${formatCurrency(allfilters?.minRevenues)} €`
-                          : "Revenue"}
+                            : t("filtersCommon.revenue")}
                   </button>
                   <Dialog
                     open={isOpen3}
@@ -1327,7 +1375,7 @@ const CommonFilter = ({
                       <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                         <DialogTitle className="p-6">
                           <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                            What amount of yearly revenues?
+                            {t("filtersCommon.yearlyRevenueQuestion")}
                           </p>
                           <div className="flex items-center justify-center pt-12 py-6">
                             <input
@@ -1349,7 +1397,7 @@ const CommonFilter = ({
                                 // }
                               }}
                               className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                              placeholder="min"
+                              placeholder={t("filtersCommon.min")}
                             />
                             <p className="mx-3">-</p>
                             <input
@@ -1371,7 +1419,7 @@ const CommonFilter = ({
                                 // }
                               }}
                               className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                              placeholder="max"
+                              placeholder={t("filtersCommon.max")}
                             />
                             <p className="text-[#5A5A5A] ms-3">€</p>
                           </div>
@@ -1393,7 +1441,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {(allfilters?.minRevenues ||
                               allfilters?.maxRevenues) && (
@@ -1413,14 +1461,14 @@ const CommonFilter = ({
                                     });
                                   }}
                                 >
-                                  Reset
+                                  {t("common.reset")}
                                 </button>
                               )}
                             <button
                               onClick={handleApplyRevenues}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -1448,7 +1496,7 @@ const CommonFilter = ({
                         ? `max ${formatCurrency(allfilters?.maxSurface)} m2`
                         : allfilters?.minSurface
                           ? `min ${formatCurrency(allfilters?.minSurface)} m2`
-                          : "Surface"}
+                            : t("filtersCommon.surface")}
                   </button>
                   <Dialog
                     open={isOpen4}
@@ -1460,7 +1508,7 @@ const CommonFilter = ({
                       <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                         <DialogTitle className="p-6 ">
                           <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                            What surface?
+                            {t("pastTransactionsGrid.whatSurface")}
                           </p>
                           <div className="flex items-center justify-center p-6 py-14">
                             <input
@@ -1480,7 +1528,7 @@ const CommonFilter = ({
                                 });
                               }}
                               className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                              placeholder="Surface min"
+                              placeholder={t("filtersCommon.surfaceMin")}
                             />
                             <p className="mx-3">-</p>
                             <input
@@ -1500,7 +1548,7 @@ const CommonFilter = ({
                                 });
                               }}
                               className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                              placeholder="Surface max"
+                              placeholder={t("filtersCommon.surfaceMax")}
                             />
                             <p className="text-[#5A5A5A] ms-3">m2</p>
                           </div>
@@ -1522,7 +1570,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {(allfilters?.minSurface ||
                               allfilters?.maxSurface) && (
@@ -1542,14 +1590,14 @@ const CommonFilter = ({
                                     });
                                   }}
                                 >
-                                  Reset
+                                  {t("common.reset")}
                                 </button>
                               )}
                             <button
                               onClick={handleApplySurface}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -1570,7 +1618,7 @@ const CommonFilter = ({
                       alt=""
                       className="w-[15px] me-1"
                     />
-                    Rooms {allfilters.rooms && `(${allfilters.rooms})`}
+                    {t("filtersCommon.rooms")} {allfilters.rooms && `(${allfilters.rooms})`}
                   </button>
                   <Dialog
                     open={isOpen5}
@@ -1587,7 +1635,7 @@ const CommonFilter = ({
                         <DialogTitle className=" p-6 ">
                           <p className="border-b  text-[#389D93] text-[18px] text-center pb-4">
                             {" "}
-                            What number of rooms?
+                            {t("pastTransactionsGrid.whatNumberOfRooms")}
                           </p>
                           <ul className="flex items-center flex-wrap  justify-center py-14">
                             {[
@@ -1651,7 +1699,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {allfilters?.rooms && (
                               <button
@@ -1662,7 +1710,7 @@ const CommonFilter = ({
                                   setIndFilter({ ...allfilters, rooms: "" });
                                 }}
                               >
-                                Reset
+                                  {t("common.reset")}
                               </button>
                             )}
                             <button
@@ -1670,13 +1718,13 @@ const CommonFilter = ({
                                 if (selectedRooms.length === 0)
                                   return setError({
                                     ...error,
-                                    rooms: "Select atleast a room",
+                                    rooms: t("pastTransactionsGrid.selectAtLeastOneRoom"),
                                   });
                                 applyRoomsFilters();
                               }}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -1700,7 +1748,7 @@ const CommonFilter = ({
                     {allfilters?.rating
                       ? `Rating ${allfilters?.rating ? `(${allfilters?.rating})` : ""
                       }`
-                      : "Attractivity"}
+                        : t("filtersCommon.attractivity")}
                   </button>
                   <Dialog
                     open={isOpen6}
@@ -1715,7 +1763,7 @@ const CommonFilter = ({
                       <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                         <DialogTitle className="p-6">
                           <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                            What level of attractivity?
+                            {t("filtersCommon.attractivityLevelQuestion")}
                           </p>
                           <div className="pt-10  pb-10">
                             <div className="flex items-center justify-center">
@@ -1752,7 +1800,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {allfilters?.rating && (
                               <button
@@ -1763,7 +1811,7 @@ const CommonFilter = ({
                                   setIndFilter({ ...allfilters, rating: "" });
                                 }}
                               >
-                                Reset
+                                  {t("common.reset")}
                               </button>
                             )}
                             <button
@@ -1771,14 +1819,14 @@ const CommonFilter = ({
                                 if (!rating)
                                   return setError({
                                     ...error,
-                                    rating: "Select rating",
+                                    rating: t("filtersCommon.selectRating"),
                                   });
                                 setAllFilters({ ...allfilters, rating });
                                 setIsOpen6(false);
                               }}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -1794,8 +1842,7 @@ const CommonFilter = ({
                     className={`${otherFilterCount > 0 ? "bg-[#986dcd1f]" : ""}
                                         border capitalize border-[#976DD0] rounded-[50px] py-[6px] text-[12px] text-[#343F4B] px-3 font-[600] flex items-center`}
                   >
-                    {otherFilterCount > 0 && `${otherFilterCount}`} Extra
-                    filters
+                    {otherFilterCount > 0 && `${otherFilterCount}`} {t("filtersCommon.extraFilters")}
                   </button>
                   <Dialog
                     open={isOpen7}
@@ -1807,13 +1854,13 @@ const CommonFilter = ({
                       <DialogPanel className="max-w-md w-full  bg-white rounded-tr-[20px] rounded-br-[20px] h-full">
                         <DialogTitle className=" p-6 h-[90%] ">
                           <p className="border-b  text-[#389D93] text-[18px] text-center pb-4 h-[7%]">
-                            More criteria
+                            {t("filtersCommon.moreCriteria")}
                           </p>
                           <div className="h-[93%] overflow-auto">
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Bedrooms
+                                  {t("property.bedrooms")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -1918,7 +1965,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Floors
+                                  {t("filtersCommon.floors")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2023,7 +2070,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Cooking
+                                  {t("filtersCommon.cooking")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2120,7 +2167,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Equipment
+                                  {t("filtersCommon.equipment")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2217,7 +2264,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Outside
+                                  {t("filtersCommon.outside")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2314,7 +2361,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Services and accessibility
+                                  {t("filtersCommon.servicesAndAccessibility")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2414,7 +2461,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Ancilliary areas
+                                  {t("filtersCommon.ancilliaryAreas")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2511,7 +2558,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Environment
+                                  {t("filtersCommon.environment")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2608,7 +2655,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Leisure
+                                  {t("filtersCommon.leisure")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2705,7 +2752,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Investment
+                                  {t("filtersCommon.investment")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex flex-wrap">
@@ -2802,7 +2849,7 @@ const CommonFilter = ({
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
-                                  Energy performance diagnostics
+                                  {t("filtersCommon.energyPerformanceDiagnostics")}
                                   <span className="bg-[#976DD0] block h-[5px] w-[30px] rounded-[8px] mt-1"></span>
                                 </h4>
                                 <ul className="flex-wrap">
@@ -2949,7 +2996,7 @@ const CommonFilter = ({
                               <span className="text-[#976DD0] font-[600]">
                                 {upcomingCount}
                               </span>{" "}
-                              results
+                              {t("filtersCommon.results")}
                             </button>
                             {otherFilterCount > 0 && (
                               <button
@@ -3001,7 +3048,7 @@ const CommonFilter = ({
                                   });
                                 }}
                               >
-                                Reset
+                                {t("common.reset")}
                               </button>
                             )}
                             <button
@@ -3011,7 +3058,7 @@ const CommonFilter = ({
                               }}
                               className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                             >
-                              Apply
+                              {t("common.apply")}
                             </button>
                           </div>
                         </div>
@@ -3025,7 +3072,7 @@ const CommonFilter = ({
                     onClick={() => setIsOpen9(true)}
                     className="bg-[#976DD0]  mb-2 border border-[#976DD0] rounded-[50px] py-[6px] text-[12px] text-white px-3 font-[600] flex items-center"
                   >
-                    Activate alerts
+                    {t("buttons.activateAlerts")}
                   </button>
                   <Dialog
                     open={isOpen9}
@@ -3037,19 +3084,19 @@ const CommonFilter = ({
                       <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                         <DialogTitle className="p-6">
                           <p className="border-b text-[#976DD0] font-[600] text-[18px] text-center pb-4">
-                            Don't miss a property
+                            {t("searchAlert.dontMiss")}
                             <span className="text-[#47525E] text-center font-[400] text-[16px] block">
-                              That meet your requirements
+                              {t("searchAlert.meetRequirements")}
                             </span>
                           </p>
                           <p className="text-[#47525E] my-3">
                             {generateDynamicString(allfilters)}
                           </p>
                           <label className="text-[#47525E] text-[16px] font-[400] mb-1 block">
-                            I'm creating this alert cause
+                            {t("searchAlert.creatingAlertCause")}
                           </label>
                           <SelectDropdown
-                            placeholder="Select reason"
+                            placeholder={t("filtersCommon.selectReason")}
                             displayValue="name"
                             className="capitalize mb-4"
                             intialValue={alert?.reason}
@@ -3090,13 +3137,11 @@ const CommonFilter = ({
                               onClick={addAlert}
                               className="bg-[#48464a] px-4 text-[14px] py-2 rounded-[50px] text-white"
                             >
-                              Receive alerts
+                              {t("searchAlert.receiveAlerts")}
                             </button>
                           </div>
                           <p className="text-[#47525E] font-[400] text-center text-[14px]">
-                            Bookaroo processes your data in order to manage your
-                            request for new real estate ad alerts by e-mail. To
-                            find out more and exercise your rights, click here.
+                            {t("searchAlert.dataPrivacyNote")}
                           </p>
                         </DialogTitle>
                       </DialogPanel>
@@ -3110,7 +3155,7 @@ const CommonFilter = ({
                       onClick={resetData}
                       className="bg-[#48464a]  border border-[#48464a] rounded-[50px] py-[6px] text-[12px] text-white px-3 font-[600] flex items-center"
                     >
-                      Reset Filters
+                      {t("filtersCommon.resetFilters")}
                     </button>
                   </li>
                 )}
@@ -3122,7 +3167,7 @@ const CommonFilter = ({
                       className={`${view === "map" ? "font-[600]" : ""
                         } text-[#47525E] text-[14px] px-3`}
                     >
-                      Map
+                      {t("filtersCommon.map")}
                     </a>
                   </li>
                   <li onClick={() => setView("list")}>
@@ -3130,7 +3175,7 @@ const CommonFilter = ({
                       className={`${view === "list" ? "font-[600]" : ""
                         } text-[#47525E] text-[14px] px-3`}
                     >
-                      List
+                      {t("filtersCommon.list")}
                     </a>
                   </li>
                   <li onClick={() => setView("grid")}>
@@ -3138,7 +3183,7 @@ const CommonFilter = ({
                       className={`${view === "grid" ? "font-[600]" : ""
                         } text-[#47525E] text-[14px] px-3`}
                     >
-                      Grid
+                      {t("filtersCommon.grid")}
                     </a>
                   </li>
                 </ul>
@@ -3147,11 +3192,11 @@ const CommonFilter = ({
               <Dialog open={isOpenn} onClose={() => setIsOpenn(false)} className="relative z-50">
                 <div className="fixed inset-0 bg-black/50 z-[9] flex w-screen items-center justify-center p-4">
                   <DialogPanel className="max-w-lg rounded-[12px] space-y-4 text-center border bg-white p-12">
-                    <DialogTitle className="xl:text-[26px] lg:text-[24px] md:text-[22px] sm:text-[20px] text-[18px] text-[#000] font-semibold text-center">Upgrade your plan</DialogTitle>
-                    <p>This feature is not available on your current plan. Please upgrade your plan to access it.</p>
+                    <DialogTitle className="xl:text-[26px] lg:text-[24px] md:text-[22px] sm:text-[20px] text-[18px] text-[#000] font-semibold text-center">{t("home.upgrade.title")}</DialogTitle>
+                    <p>{t("home.upgrade.description")}</p>
                     <div className="flex gap-2 justify-center items-center ">
-                      <button onClick={() => setIsOpenn(false)} className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">Cancel</button>
-                      <button onClick={() => navigate("/plan")} className="bg-[#986AB8] rounded-full px-8 py-2 text-white text-[14px] flex items-center justify-center">Upgrade plan</button>
+                      <button onClick={() => setIsOpenn(false)} className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">{t("common.cancel")}</button>
+                      <button onClick={() => navigate("/plan")} className="bg-[#986AB8] rounded-full px-8 py-2 text-white text-[14px] flex items-center justify-center">{t("home.upgrade.cta")}</button>
                     </div>
                   </DialogPanel>
                 </div>

@@ -7,10 +7,12 @@ import ReactECharts from 'echarts-for-react';
 import moment from "moment";
 import { useEffect, useState } from 'react';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+import { useTranslation } from "react-i18next";
 import ImageSlider from "../../components/common/ImageSlider";
 import { formatCurrency } from "../../models/string.model";
 
 const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange, }) => {
+    const { t } = useTranslation();
     // renovation graph data
     const [xRenoData, setxRenoData] = useState([])
     const [yRenoData, setyRenoData] = useState([])
@@ -22,7 +24,7 @@ const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange
             let priceOfAll = 0;
 
             data.forEach(item => {
-                const title = dropdownOptions?.find(dd => dd._id === item?.title)?.name || "Unknown"
+                const title = dropdownOptions?.find(dd => dd._id === item?.title)?.name || t("messages.noData")
                 const price = parseFloat(item.price);
                 priceOfAll += price;
                 if (titleMap[title]) {
@@ -96,7 +98,7 @@ const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange
         },
     };
 
-    const graphTabsReno = ["All", ...dropdownOptions?.filter(itm => itm?.type === "Renovation")?.map(sman => sman?.name) || []];
+    const graphTabsReno = [t("buttons.all"), ...dropdownOptions?.filter(itm => itm?.type === "Renovation")?.map(sman => sman?.name) || []];
     const [TabIndexReno, setTabIndexReno] = useState(0);
     const [filteredData, setFilteredData] = useState(detail?.renovation_work || []);
     const tabChangeReno = (index) => {
@@ -129,7 +131,7 @@ const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange
             >
                 <Typography>
                 <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                        Renovation works
+                        {t("propertyTimeline.tabs.renovationWorks")}
                     </span>
                 </Typography>
             </AccordionSummary>
@@ -140,7 +142,7 @@ const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange
                             <span className="text-[#5A5A5A] font-[600] ms-1">
                                 {formatCurrency(totalReno)} €{" "}
                             </span>
-                            of investment made for the property
+                            {t("propertyDetails.investmentMadeForProperty")}
                         </p>
                         <div className="bg-[#F9F9F9] p-4">
                             <ReactECharts
@@ -185,9 +187,9 @@ const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange
                                                                             {itm?.description}
                                                                         </p>
                                                                         <h5 className="mb-2">
-                                                                            Status: <span className="font-[600] ms-2 font-italic capitalize">
+                                                                            {t("propertyDetails.status")}: <span className="font-[600] ms-2 font-italic capitalize">
                                                                                 {detail?.request_status === "accepted" ?
-                                                                                    `Invoice Bookaroo verified` : `${detail?.request_status}`}
+                                                                                    t("propertyDetails.invoiceBookarooVerified") : `${detail?.request_status}`}
                                                                             </span>
                                                                         </h5>
                                                                         <h5>
@@ -208,7 +210,7 @@ const PropRenovation = ({ detail, dropdownOptions, acrArr, handleAccordionChange
                                                                 className="w-[100px]"
                                                                 alt=""
                                                             />
-                                                            <p className="mt-1">No Data Yet</p>
+                                                            <p className="mt-1">{t("messages.noData")}</p>
                                                         </div>
                                                         </div>
                                                     )

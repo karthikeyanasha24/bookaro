@@ -3,6 +3,7 @@ import { dateFormate } from "../../models/string.model";
 import CommonCreteria from "./CommonCreteria";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 
 const BuildingPermitGrid = ({
@@ -14,14 +15,15 @@ const BuildingPermitGrid = ({
   calculateNo,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const findType = (itm) => {
     if (itm == "demolitionPermit") {
-      return "Demolition Permit"
+      return t("buildingPermit.types.demolitionPermit")
     } else if (itm == "nonResdential") {
-      return "Non Resdential"
+      return t("buildingPermit.types.nonResidential")
     } else {
-      return "Resdential"
+      return t("buildingPermit.types.residential")
     }
   }
   return (
@@ -31,8 +33,8 @@ const BuildingPermitGrid = ({
           <div className="grid grid-cols-12 gap-8 ">
             <div className="col-span-12">    <p className="text-[#47525E]">
               <span className="text-[#47525E] font-bold text-[20px]">
-                {total} results </span>
-              for building permits
+                {total} {t("filtersCommon.results")} </span>
+              {t("buildingPermitGrid.forBuildingPermits")}
             </p></div>
 
             <div className="col-span-12 lg:mb-0 mb-4  ">
@@ -42,37 +44,37 @@ const BuildingPermitGrid = ({
                     return (
                       <div className=" xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 border border-[#D2D2D2] bg-white p-5 rounded-xl" >
                         <h4 className="text-[#47525E] font-[600] mb-3 text-[18px]">
-                          {findType(itm?.type)} building
+                          {findType(itm?.type)} {t("buildingPermitGrid.building")}
                         </h4>
                         <ul className="">
                           <li className="mb-1">
                             <p className="text-[#47525E] flex items-center">
                               <span className="bg-[#46A49B] w-[8px] h-[8px] rounded-full inline-block me-2 shrink-0"></span>
-                              Request date: {itm?.authorizationDate || "--"}
+                              {t("buildingPermitGrid.requestDate")}: {itm?.authorizationDate || "--"}
                             </p>
                           </li>
                           <li className="mb-1">
                             <p className="text-[#47525E] flex items-center">
                               <span className="bg-[#46A49B] w-[8px] h-[8px] rounded-full inline-block me-2 shrink-0"></span>
-                              Request Status: {itm?.statusLabel || "--"}
+                              {t("buildingPermitGrid.requestStatus")}: {itm?.statusLabel || "--"}
                             </p>
                           </li>
                           <li className="mb-1">
                             <p className="text-[#47525E] flex items-center">
                               <span className="bg-[#46A49B] w-[8px] h-[8px] rounded-full inline-block me-2 shrink-0"></span>
-                              Start Date: {itm?.worksStartDate || "--"}
+                              {t("buildingPermitGrid.startDate")}: {itm?.worksStartDate || "--"}
                             </p>
                           </li>
                           <li className="mb-1">
                             <p className="text-[#47525E] flex items-center">
                               <span className="bg-[#46A49B] w-[8px] h-[8px] rounded-full inline-block me-2 shrink-0"></span>
-                              Requester Name: {itm?.requesterName || "--"}
+                              {t("buildingPermitGrid.requesterName")}: {itm?.requesterName || "--"}
                             </p>
                           </li>
                           <li className="mb-1">
                             <p className="text-[#47525E] flex items-center">
                               <span className="bg-[#46A49B] w-[8px] h-[8px] rounded-full inline-block me-2 shrink-0"></span>
-                              Address: {itm?.address || "--"}
+                              {t("buildingPermitGrid.address")}: {itm?.address || "--"}
                             </p>
                           </li>
 
@@ -96,12 +98,12 @@ const BuildingPermitGrid = ({
                 ) : (
                   <div className="text-center col-span-12 my-8">
                     <img src="assets/img/no-data.svg" className="w-[400px] mx-auto " />
-                    No Records Found
+                    {t("common.noRecordsFound")}
                   </div>
                 )}
                 {!user?.loggedIn && <p className="text-center col-span-12 my-8">
                   {/* <img src="/assets/img/no-data.png" className="w-[100px] mx-auto" /> */}
-                  Want to see more building permit? <spna onClick={(e) => navigate("/login")} className="text-bold text-[#976DD0] cursor-pointer">Just log in first!</spna>
+                  {t("buildingPermitGrid.wantToSeeMoreBuildingPermit")} <spna onClick={(e) => navigate("/login")} className="text-bold text-[#976DD0] cursor-pointer">{t("prolist.loginFirst")}</spna>
                 </p>}
               </div>
               <div
@@ -109,11 +111,11 @@ const BuildingPermitGrid = ({
                   }`}
               >
                 <span className="md:mb-0 mb-2">
-                  Show {data?.length} from {total} Properties
+                  {t("filtersCommon.showCountFromTotalProperties", { shown: data?.length, total })}
                 </span>
                 {user?.loggedIn && <ReactPaginate
-                  previousLabel="< Previous"
-                  nextLabel="Next >"
+                  previousLabel={t("filtersCommon.previous")}
+                  nextLabel={t("filtersCommon.next")}
                   breakLabel="..."
                   pageRangeDisplayed={2}
                   marginPagesDisplayed={1}

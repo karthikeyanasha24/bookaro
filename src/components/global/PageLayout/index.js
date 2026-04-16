@@ -92,38 +92,38 @@ const PageLayout = ({ children }) => {
   const projectMenus = [
     {
       head: "",
-      sub: [{ name: "My project", url: "/project" }],
+      sub: [{ name: t("project.myProject"), url: "/project" }],
     },
     {
-      head: "Home Seeker",
+      head: t("project.searcherSpace"),
       sub: [
-        { name: "Search alerts", url: "/serach-alert" },
-        { name: "Properties Followed", url: "/followed-properties" },
-        { name: "Interacted Properties", url: "/properties?favourites=true" },
-        { name: "Renter application file", url: "/renter-file" },
-        { name: "Buyer File", url: "/buyer-file" },
+        { name: t("project.searchAlert"), url: "/serach-alert" },
+        { name: t("project.propertiesFollowed"), url: "/followed-properties" },
+        { name: t("project.interactedProperties"), url: "/properties?favourites=true" },
+        { name: t("project.renterApplicationFile"), url: "/renter-file" },
+        { name: t("project.buyerFile"), url: "/buyer-file" },
         {
-          name: "Manage real estate transaction",
+          name: t("project.manageTransaction"),
           url: "/real-estate-transaction-searcher",
         },
         {
-          name: "P2P Estimation",
+          name: t("project.p2pEstimation"),
           url: "/estimation",
         },
       ],
     },
     {
-      head: "Owner space",
+      head: t("project.ownerSpace"),
       sub: [
-        { name: "My property", url: "/my-properties" },
-        { name: "List a property", url: "/property1" },
-        { name: "Seller file", url: "/seller-file" },
+        { name: t("project.myProperty"), url: "/my-properties" },
+        { name: t("buttons.listProperty"), url: "/property1" },
+        { name: t("project.sellerFile"), url: "/seller-file" },
         {
-          name: "Manage real estate transaction",
+          name: t("project.manageTransaction"),
           url: "/real-estate-transaction-owner",
         },
         {
-          name: "Manage P2P Estimation",
+          name: t("project.manageP2pEstimation"),
           url: "/social-estimation",
         },
       ],
@@ -226,89 +226,90 @@ const PageLayout = ({ children }) => {
 
   const mobMenus = [
     {
-      name: "Plans",
+      name: t("header.plans"),
       link: "/plan",
       img: "/assets/img/header/bulb.png",
     },
     {
-      name: "Market Insights",
+      name: t("header.marketInsights"),
       img: "/assets/img/header/home.png",
       menu: [
         {
-          name: "Historical Transaction",
+          name: t("header.transactions"),
           link: "/past-transactions",
         },
         {
-          name: "Professional Repository",
+          name: t("header.realEstatePros"),
           link: "/real-estate-pros",
         },
         {
-          name: "Building Permits",
+          name: t("header.buildingPermits"),
           link: "/building-permit",
         },
       ],
     },
     {
-      name: "Innovative Services",
+      name: t("header.innovativeServices"),
       link: "/real-estate-pros",
       img: "/assets/img/header/hands.png",
       menu: [
         {
-          name: "Directory",
+          name: t("home.tabs.directory"),
           link: "/real-estate-transaction-owner",
         },
         {
-          name: "Off-Market",
+          name: t("home.tabs.offMarket"),
           link: "/real-estate-transaction-owner",
         },
         {
-          name: "P2P Estimation",
+          name: t("project.p2pEstimation"),
           link: "/real-estate-transaction-owner",
         },
         {
-          name: "Transaction Tool",
+          name: t("header.transactionTool"),
           link: "/real-estate-transaction-owner",
         },
       ],
     },
     {
-      name: "Real Estate pros",
+      name: t("header.realEstatePros"),
       link: "/real-estate-pros",
       img: "/assets/img/header/home.png",
     },
     {
-      name: "My project",
+      key: "myProject",
+      name: t("project.myProject"),
       img: "/assets/img/header/home.png",
       menu: [
         {
           head: "",
-          sub: [{ name: "My project", url: "/project" }],
+          sub: [{ name: t("project.myProject"), url: "/project" }],
         },
         {
-          head: "Home Seeker",
+          head: t("project.searcherSpace"),
           sub: [
-            { name: "Search alerts", url: "/serach-alert" },
-            { name: "Properties Followed", url: "/followed-properties" },
+            { name: t("project.searchAlert"), url: "/serach-alert" },
+            { name: t("project.propertiesFollowed"), url: "/followed-properties" },
             {
-              name: "Interacted Properties",
+              name: t("project.interactedProperties"),
               url: "/properties?favourites=true",
             },
-            { name: "Renter application file", url: "/renter-file" },
-            { name: "Buyer File", url: "/buyer-file" },
+            { name: t("project.renterApplicationFile"), url: "/renter-file" },
+            { name: t("project.buyerFile"), url: "/buyer-file" },
             {
-              name: "Manage real estate transaction",
+              name: t("project.manageTransaction"),
               url: "/real-estate-transaction-searcher",
             },
           ],
         },
         {
-          head: "Owner space",
+          head: t("project.ownerSpace"),
           sub: [
-            { name: "My property", url: "/my-properties" },
-            { name: "List a property", url: "/property1" },
-            { name: "Seller file", url: "/seller-file" },
+            { name: t("project.myProperty"), url: "/my-properties" },
+            { name: t("buttons.listProperty"), url: "/property1" },
+            { name: t("project.sellerFile"), url: "/seller-file" },
             {
-              name: "Manage real estate transaction",
+              name: t("project.manageTransaction"),
               url: "/real-estate-transaction-owner",
             },
           ],
@@ -392,17 +393,29 @@ const PageLayout = ({ children }) => {
   }, []);
 
   const getAllProperty = () => {
+    const userId = user?.id || user?._id;
+    if (!userId) {
+      setpropertyLoader(false);
+      return;
+    }
+
     setpropertyLoader(true);
     ApiClient.get(
-      `property/listing?page=1&count=1000&status=active&addedBy=${user?.id || user?._id
+      `property/listing?page=1&count=1000&status=active&addedBy=${userId
       }&maxDistance=&userLat=&userLng=&propertyType=&userId=${user?.id || user?._id
       }&loggedInUser=${user?.id || user?._id}`
-    ).then((res) => {
-      if (res.success) {
-        setpropertyTotal(res.total);
-      }
-      setpropertyLoader(false);
-    });
+    )
+      .then((res) => {
+        if (res.success) {
+          setpropertyTotal(res.total);
+        }
+      })
+      .catch(() => {
+        setpropertyTotal(0);
+      })
+      .finally(() => {
+        setpropertyLoader(false);
+      });
   };
 
   useEffect(() => {
@@ -450,7 +463,7 @@ const PageLayout = ({ children }) => {
                   }}
                   className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold md:block hidden"
                 >
-                  {propertyLoader ? "Loading..." : "List a property"}
+                  {propertyLoader ? t("messages.loading") : t("buttons.listProperty")}
                 </button>
               </div>
 
@@ -527,7 +540,7 @@ const PageLayout = ({ children }) => {
                                         : "text-[#47525E]"
                                         }`}
                                     >
-                                      List a property
+                                      {t("buttons.listProperty")}
                                     </p>
                                   </li>
                                   {/* {mobMenus.map((itm, i) => (
@@ -581,7 +594,7 @@ const PageLayout = ({ children }) => {
                                             />
                                           </Disclosure.Button>
                                           <Disclosure.Panel className="px-2 text-sm text-gray-500">
-                                            {itm.name === "My project" ? (
+                                            {itm.key === "myProject" ? (
                                               <ul>
                                                 {itm.menu.map((res, index) => (
                                                   <li
@@ -690,14 +703,14 @@ const PageLayout = ({ children }) => {
                       to="/login"
                       className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold ms-2 inline-block"
                     >
-                      Login
+                      {t("buttons.login")}
                     </Link>
 
                     <Link
                       to="/Signup"
                       className="bg-white border border-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-[#47525E] font-bold ms-2 inline-block"
                     >
-                      Sign Up
+                      {t("buttons.signup")}
                     </Link>
                   </div>
                 )}
@@ -854,14 +867,14 @@ const PageLayout = ({ children }) => {
                         to="/login"
                         className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold ms-2 inline-block"
                       >
-                        Login
+                          {t("buttons.login")}
                       </Link>
 
                       <Link
                         to="/Signup"
                         className="bg-white border border-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-[#47525E] font-bold ms-2 inline-block"
                       >
-                        Sign Up
+                          {t("buttons.signup")}
                       </Link>
                     </li>
                   )}
@@ -901,7 +914,11 @@ const PageLayout = ({ children }) => {
           )}
 
           {/* Main Content Area */}
-          <main className={`page-content-wrapper ${shouldShowSidebar ? 'with-sidebar' : 'full-width'}`}>
+          <main
+            className={`page-content-wrapper ${shouldShowSidebar ? "with-sidebar" : "full-width"} ${
+              shouldShowSidebar ? (isSidebarOpen ? "sidebar-expanded" : "sidebar-collapsed") : ""
+            }`}
+          >
             <div className="pageContent pb-24">{children}</div>
           </main>
         </div>

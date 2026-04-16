@@ -19,6 +19,7 @@ import MultiSelectDropdown from "../../components/common/MultiSelectDropdown";
 import addressModel from "../../models/address.model";
 import { formatCurrency, stringSeprator } from "../../models/string.model";
 import { generateYears } from "../propertySteps/shared";
+import { useTranslation } from "react-i18next";
 
 import { Fragment} from 'react'
 const CommonFilter = ({
@@ -60,6 +61,7 @@ const CommonFilter = ({
     applyRoomsFilters,
     resetIndividual
 }) => {
+    const { t } = useTranslation();
     const [inputKey, setInputKey] = useState(0);
     const locBtnStr = allfilters?.search?.split(",")?.slice(0, 1)[0];
     const yearBtnStr = allfilters?.year?.split(",")?.slice(0, 1)[0];
@@ -160,7 +162,7 @@ const CommonFilter = ({
           onClick={openModal}
           className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
         >
-         Filter
+         {t("common.filter")}
         </button>
       </div>
 
@@ -230,7 +232,7 @@ const CommonFilter = ({
                                     {allfilters?.search ? `${stringSeprator(locBtnStr, 20)}
                                      ${allfilters?.search?.split(",")?.length > 1
                                             ? `(+${allfilters?.search?.split(",")?.length - 1})`
-                                            : ""}` : "Location"}
+                                            : ""}` : t("filtersCommon.location")}
                                 </button>
                                 <Dialog open={isOpen2}
                                     onClose={() => {
@@ -244,14 +246,14 @@ const CommonFilter = ({
                                         <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                             <DialogTitle className="p-6">
                                                 <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                                                    Where are you looking?
+                                                    {t("filtersCommon.whereAreYouLooking")}
                                                 </p>
                                                 <div className="pt-10 flex items-center google_address">
                                                     <GooglePlaceAutoComplete
                                                         key={inputKey}
                                                         value={currentLocation}
                                                         result={addressResult}
-                                                        placeholder="Enter location you want to search..."
+                                                        placeholder={t("filtersCommon.enterLocationSearch")}
                                                         id="address"
                                                     />
                                                 </div>
@@ -310,10 +312,10 @@ const CommonFilter = ({
                                                 </div>
                                                 {trueLocs?.length < 2 && (
                                                     <>
-                                                        <label className="mb-1 text-[14px] text-[#656565] mt-3 block">Select maximum range radius to find the property</label>
+                                                        <label className="mb-1 text-[14px] text-[#656565] mt-3 block">{t("filtersCommon.selectMaximumRangeRadius")}</label>
                                                         <div className="mb-4 range_slider  border bg-[#986dcd0f">
                                                             <div className="flex justify-between bg-[#986dcd]  px-3 py-2 text-white">
-                                                                <label className="text-white">Range</label>
+                                                                <label className="text-white">{t("filtersCommon.range")}</label>
                                                                 <p> {selectedValue} Km</p>
                                                             </div>
                                                             <div className="px-4 py-2">
@@ -345,11 +347,11 @@ const CommonFilter = ({
                                                     setIsOpen2(false)
                                                     setError({ ...error, location: "" })
                                                 }} className="text-[#868389] text-[18px] underline">
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
-                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> results
+                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> {t("filtersCommon.results")}
                                                     </button>
                                                     {(allfilters?.city) && (
                                                         <button className="text-[#868389] me-3"
@@ -370,14 +372,14 @@ const CommonFilter = ({
                                                                 setError({ ...error, location: "" })
                                                             }}
                                                         >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={() => {
-                                                            if (location?.length === 0) return setError({ ...error, location: "Enter atleast a location" })
+                                                            if (location?.length === 0) return setError({ ...error, location: t("filtersCommon.enterAtLeastOneLocation") })
                                                             let locs = location?.filter(itm => itm?.added);
-                                                            if (locs?.length === 0) return setError({ ...error, location: "Select atleast a location" })
+                                                            if (locs?.length === 0) return setError({ ...error, location: t("filtersCommon.selectAtLeastOneLocation") })
                                                             setIsOpen2(false);
                                                             let data = { ...allfilters };
                                                             data = {
@@ -391,7 +393,7 @@ const CommonFilter = ({
                                                         }}
                                                         className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                     >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -413,7 +415,7 @@ const CommonFilter = ({
                                             ? `max ${formatCurrency(allfilters?.maxPrice)} €`
                                             : allfilters?.minPrice
                                                 ? `min ${formatCurrency(allfilters?.minPrice)} €`
-                                                : "Budget"
+                                                : t("pastTransactionsGrid.budget")
                                     }
                                 </button>
                                 <Dialog
@@ -429,7 +431,7 @@ const CommonFilter = ({
                                         <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                             <DialogTitle className="p-6">
                                                 <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                                                    What is your budget?
+                                                    {t("pastTransactionsGrid.whatIsYourBudget")}
                                                 </p>
                                                 <div className="flex items-center justify-center pt-12 py-6">
                                                     <input
@@ -455,7 +457,7 @@ const CommonFilter = ({
                                                             });
                                                         }}
                                                         className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                                                        placeholder="min"
+                                                        placeholder={t("filtersCommon.min")}
                                                     />
                                                     <p className="mx-3">-</p>
                                                     <input
@@ -481,7 +483,7 @@ const CommonFilter = ({
                                                             });
                                                         }}
                                                         className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                                                        placeholder="max"
+                                                        placeholder={t("filtersCommon.max")}
                                                     />
                                                     <p className="text-[#5A5A5A] ms-3">€</p>
                                                 </div>
@@ -497,11 +499,11 @@ const CommonFilter = ({
                                                     setError({ ...error, price: "" })
                                                 }} className="text-[#868389] text-[18px] underline"
                                                 >
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
-                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> results
+                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> {t("filtersCommon.results")}
                                                     </button>
                                                     {(allfilters?.minPrice || allfilters?.maxPrice) && (
                                                         <button
@@ -515,14 +517,14 @@ const CommonFilter = ({
                                                                 setIndFilter({ ...allfilters, minPrice: "", maxPrice: "" })
                                                             }}
                                                         >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={() => { applyBudget() }}
                                                         className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                     >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -544,7 +546,7 @@ const CommonFilter = ({
                                             ? `max ${formatCurrency(allfilters?.maxSurface)} m2`
                                             : allfilters?.minSurface
                                                 ? `min ${formatCurrency(allfilters?.minSurface)} m2`
-                                                : "Surface"}
+                                                : t("pastTransactions.surface")}
                                 </button>
                                 <Dialog open={isOpen4}
                                     onClose={() => {
@@ -558,7 +560,7 @@ const CommonFilter = ({
                                         <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                             <DialogTitle className="p-6">
                                                 <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                                                    What surface?
+                                                    {t("pastTransactionsGrid.whatSurface")}
                                                 </p>
                                                 <div className="flex items-center justify-center pt-12 py-6">
                                                     <input
@@ -578,7 +580,7 @@ const CommonFilter = ({
                                                             });
                                                         }}
                                                         className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                                                        placeholder="min"
+                                                        placeholder={t("filtersCommon.min")}
                                                     />
                                                     <p className="mx-3">-</p>
                                                     <input
@@ -598,7 +600,7 @@ const CommonFilter = ({
                                                             });
                                                         }}
                                                         className="border border-[#976DD0] rounded-[7px] p-2 w-[130px]"
-                                                        placeholder="max"
+                                                        placeholder={t("filtersCommon.max")}
                                                     />
                                                     <p className="text-[#5A5A5A] ms-3">€</p>
                                                 </div>
@@ -616,11 +618,11 @@ const CommonFilter = ({
                                                     }}
                                                     className="text-[#868389] text-[18px] underline"
                                                 >
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
-                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> results
+                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> {t("filtersCommon.results")}
                                                     </button>
                                                     {(allfilters?.minSurface || allfilters?.maxSurface) && (
                                                         <button
@@ -633,14 +635,14 @@ const CommonFilter = ({
                                                                 setIndFilter({ ...allfilters, minSurface: "", maxSurface: "", });
                                                             }}
                                                         >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={() => { applySurface() }}
                                                         className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                     >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -661,7 +663,7 @@ const CommonFilter = ({
                                         alt=""
                                         className="w-[15px] me-1"
                                     />
-                                    Rooms {allfilters.number_of_main_pieces && `(${allfilters.number_of_main_pieces})`}
+                                    {t("pastTransactions.rooms")} {allfilters.number_of_main_pieces && `(${allfilters.number_of_main_pieces})`}
                                 </button>
                                 <Dialog
                                     open={isOpen5}
@@ -678,7 +680,7 @@ const CommonFilter = ({
                                             <DialogTitle className=" p-6 ">
                                                 <p className="border-b  text-[#389D93] text-[18px] text-center pb-4">
                                                     {" "}
-                                                    What number of rooms?
+                                                    {t("pastTransactionsGrid.whatNumberOfRooms")}
                                                 </p>
                                                 <ul className="flex items-center flex-wrap  justify-center py-14">
                                                     {[
@@ -725,14 +727,14 @@ const CommonFilter = ({
                                                     }}
                                                     className="text-[#868389] text-[18px] underline"
                                                 >
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
                                                         <span className="text-[#976DD0] font-[600]">
                                                             {upcomingCount}
                                                         </span>{" "}
-                                                        results
+                                                        {t("filtersCommon.results")}
                                                     </button>
                                                     {allfilters?.number_of_main_pieces && (
                                                         <button
@@ -743,17 +745,17 @@ const CommonFilter = ({
                                                                 setIndFilter({ ...allfilters, number_of_main_pieces: "" });
                                                             }}
                                                         >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={() => {
-                                                            if (selectedRooms.length === 0) return setError({ ...error, number_of_main_pieces: "Select atleast a room" });
+                                                            if (selectedRooms.length === 0) return setError({ ...error, number_of_main_pieces: t("pastTransactionsGrid.selectAtLeastOneRoom") });
                                                             applyRoomsFilters()
                                                         }}
                                                         className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                     >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -779,7 +781,7 @@ const CommonFilter = ({
                                     {allfilters?.year ? `Year ${yearBtnStr}
                                      ${allfilters?.year?.split(",")?.length > 1
                                             ? `(+${allfilters?.year?.split(",")?.length - 1})`
-                                            : ""}` : "Year"}
+                                            : ""}` : t("pastTransactionsGrid.year")}
                                 </button>
                                 <Dialog
                                     open={isOpen6}
@@ -796,9 +798,9 @@ const CommonFilter = ({
                                             <DialogTitle className=" p-6 ">
                                                 <p className="border-b  text-[#389D93] text-[18px] text-center pb-4">
                                                     {" "}
-                                                    Which year?
+                                                    {t("pastTransactionsGrid.whichYear")}
                                                 </p>
-                                                <div class="xl:max-w-[500px] w-[100%] mb-3">
+                                                <div className="xl:max-w-[500px] w-[100%] mb-3">
                                                     {/* <SelectDropdown
                                                         displayValue="name"
                                                         placeholder="Select year"
@@ -871,14 +873,14 @@ const CommonFilter = ({
                                                     }}
                                                     className="text-[#868389] text-[18px] underline"
                                                 >
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
                                                         <span className="text-[#976DD0] font-[600]">
                                                             {upcomingCount}
                                                         </span>{" "}
-                                                        results
+                                                        {t("filtersCommon.results")}
                                                     </button>
                                                     {allfilters?.year && (
                                                         <button
@@ -890,18 +892,18 @@ const CommonFilter = ({
                                                                 setIndFilter({ ...allfilters, year: "" });
                                                             }}
                                                         >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={() => {
-                                                            if (selectedYears?.length === 0) return setError({ ...error, year: "Select atleast a year" });
+                                                            if (selectedYears?.length === 0) return setError({ ...error, year: t("pastTransactionsGrid.selectAtLeastOneYear") });
                                                             setAllFilters({ ...allfilters, year: selectedYears?.join() });
                                                             setIsOpen6(false);
                                                         }}
                                                         className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                     >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -915,7 +917,7 @@ const CommonFilter = ({
                                     <button onClick={resetData}
                                         className="bg-[#48464a]  border border-[#48464a] rounded-[50px] py-[6px] text-[12px] text-white px-3 font-[600] flex items-center"
                                     >
-                                        Reset Filters
+                                        {t("filtersCommon.resetFilters")}
                                     </button>
 
                                 </li>
@@ -925,12 +927,12 @@ const CommonFilter = ({
                             <ul className="flex items-center">
                                 <li onClick={() => setView("map")}>
                                     <a className={`${view === "map" ? "font-[600]" : ""} text-[#47525E] text-[14px] px-3`}>
-                                        Map
+                                        {t("filtersCommon.map")}
                                     </a>
                                 </li>
                                 <li onClick={() => setView("grid")}>
                                     <a className={`${view === "grid" ? "font-[600]" : ""} text-[#47525E] text-[14px] px-3`}>
-                                        Grid
+                                        {t("filtersCommon.grid")}
                                     </a>
                                 </li>
                             </ul>

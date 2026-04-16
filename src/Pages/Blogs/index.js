@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
 import environment from "../../environment";
@@ -8,6 +9,7 @@ import loader from "../../methods/loader";
 import { stringSeprator } from "../../models/string.model";
 
 const Blogs = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([])
   const [total, setTotal] = useState(0)
@@ -50,7 +52,7 @@ const Blogs = () => {
           <div className="grid grid-cols-12 ">
             <div className="col-span-12  mb-[40px]">
               <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                Real estate news
+                {t("blogs.realEstateNews")}
                 <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
               </h2>
             </div>
@@ -59,6 +61,7 @@ const Blogs = () => {
                 {blogs?.length > 0 ?
                   blogs?.map((itm, i) => (
                     <div
+                      key={itm?._id || itm?.id || i}
                       onClick={() => navigateToDetail(itm)}
                       className="lg:col-span-3 md:col-span-6 col-span-12 bg-white h-[380px] rounded-[10px] cursor-pointer">
                       <img
@@ -79,17 +82,17 @@ const Blogs = () => {
                   )) : (
                     <div className="text-center col-span-12  text-[#47525E] tracking-[.95px]">
                       <img src="assets/img/no-data.png" alt="no-data" className="w-[130px] mx-auto mb-3" />
-                      No Blogs Found
+                      {t("blogs.noBlogsFound")}
                     </div>
                   )}
               </div>
             </div>
             <div className="col-span-12 flex items-center justify-center mt-5">
               <div className={`paginationWrapper flex justify-between w-full ${total > filters?.count ? '' : 'd-none'}`}>
-                <span>Show {blogs?.length} from {total} Blogs</span>
+                <span>{t("blogs.showFromBlogs", { count: blogs?.length, total })}</span>
                 <ReactPaginate
-                  previousLabel="<<"
-                  nextLabel=">>"
+                  previousLabel={t("pagination.previous")}
+                  nextLabel={t("pagination.next")}
                   breakLabel="..."
                   pageRangeDisplayed={2}
                   marginPagesDisplayed={1}

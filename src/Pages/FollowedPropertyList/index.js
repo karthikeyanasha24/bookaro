@@ -123,11 +123,11 @@ const FollowedPropertyList = () => {
   };
 
   const propTypes = [
-    { name: "All", value: "" },
-    { name: "For sale", value: "sale" },
-    { name: "For rent", value: "rent" },
-    { name: "Off-Market", value: "offmarket" },
-    { name: "Directory", value: "directory" },
+    { name: t("buttons.all"), value: "" },
+    { name: t("property.forSale"), value: "sale" },
+    { name: t("property.forRent"), value: "rent" },
+    { name: t("home.tabs.offMarket"), value: "offmarket" },
+    { name: t("home.tabs.directory"), value: "directory" },
   ]
   const [flwModal, setflwModal] = useState(false);
   const [flwItem, setflwItem] = useState(null);
@@ -173,7 +173,7 @@ const FollowedPropertyList = () => {
                         className={`${view === "map" ? "font-[600]" : ""
                           } cursor-pointer text-[#47525E] text-[14px] px-3`}
                       >
-                        Map
+                        {t("propertyTimeline.tabs.map")}
                       </p>
                     </li>
                     {/* <li onClick={() => setView("list")}>
@@ -189,7 +189,7 @@ const FollowedPropertyList = () => {
                         className={`${view === "grid" ? "font-[600]" : ""
                           } cursor-pointer text-[#47525E] text-[14px] px-3`}
                       >
-                        Grid
+                        {t("property.grid")}
                       </p>
                     </li>
                   </ul>
@@ -204,10 +204,10 @@ const FollowedPropertyList = () => {
             <div className=" items-center  mx-auto container lg:px-10 px-6">
               <ul className="flex items-center pb-[30px]">
                 <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-                  My Project
+                  {t("project.myProject")}
                   <span className="mx-[4px]">|</span></li>
                 <li onClick={() => navigate("/followed-properties")} className="text-[#47525E] cursor-pointer capitalize">
-                  Followed properties
+                  {t("followedProperty.title")}
                   <span className="mx-[4px]">|</span></li>
                 <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
                   {detail?.folder?.name}</li>
@@ -216,10 +216,9 @@ const FollowedPropertyList = () => {
                 <div className="col-span-12">
                   <p className="text-[#47525E]">
                     <span className="text-[#47525E] font-bold text-[20px]">
-                      {data?.length}
-                      {` Propert${data?.length > 1 ? "ies" : "y"}`}
+                      {t("property.propertyCount", { count: data?.length })}
                     </span>
-                    {` followed for ${detail?.folder?.name || ""} search`}
+                    {` ${t("followedProperty.followedForSearch", { name: detail?.folder?.name || "" })}`}
                   </p>
                 </div>
                 <div className="xl:col-span-8 lg:col-span-8 md:col-span-6  col-span-12 lg:mb-0 mb-4 h-[700px] overflow-auto pe-3 md:mt-0 mt-5 ">
@@ -258,7 +257,7 @@ const FollowedPropertyList = () => {
                     ) : (
                       <div className="text-center col-span-12 my-8">
                         <img src="assets/img/no-data.svg" className="w-[400px] mx-auto " />
-                        No Records Found
+                        {t("messages.noRecordsFound")}
                       </div>
                     )}
                   </div>

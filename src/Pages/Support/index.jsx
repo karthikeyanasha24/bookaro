@@ -57,7 +57,7 @@ const Index = () => {
                                 <FormControl
                                     type="text"
                                     name="name"
-                                    label=t("forms.name")
+                                        label={t("forms.name")}
                                     className='bg-[#EEEDED] !rounded-[8px] !h-9'
                                     value={form?.name}
                                     required
@@ -68,7 +68,7 @@ const Index = () => {
                                 <FormControl
                                     type="text"
                                     name="email"
-                                    label=t("forms.email")
+                                        label={t("forms.email")}
                                     className='bg-[#EEEDED] !rounded-[8px] !h-9'
                                     value={form?.email}
                                     required
@@ -79,7 +79,7 @@ const Index = () => {
                                 <FormControl
                                     type="text"
                                     name="message"
-                                    label=t("forms.message")
+                                        label={t("forms.message")}
                                     className='bg-[#EEEDED] !rounded-[8px] !h-9  w-full h-20'
                                     value={form?.message}
                                     required

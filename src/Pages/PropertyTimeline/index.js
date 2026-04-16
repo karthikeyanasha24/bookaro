@@ -14,8 +14,22 @@ import ReactPaginate from "react-paginate";
 import { dateFormate, formatCurrency, getOrdinal, imagePath } from "../../models/string.model";
 import { BiLike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
+import { useTranslation } from "react-i18next";
 
 const PropertyTimeline = () => {
+  const { t } = useTranslation();
+  const relatedSearchCities = [
+    "Paris",
+    "Lille",
+    "Marseille",
+    "Lyon",
+    "Rennes",
+    "Nancy",
+    "Bordeaux",
+    "Dieppe",
+    "Toulouse",
+    "Annecy",
+  ];
   const user = useSelector((state) => state.user);
   const navigate = useNavigate()
   const params = new URLSearchParams(window.location.search);
@@ -140,7 +154,7 @@ const PropertyTimeline = () => {
                         onClick={() => navigate(`/property-details?id=${data?.propertyDetail?.id || data?.propertyDetail?._id}&scroll=Picture`)}
                         className={`cursor-pointer text-[16px] pe-4`}
                       >
-                        Pictures
+                        {t("propertyTimeline.tabs.pictures")}
                       </p>
                     </li>
                     <li>
@@ -148,7 +162,7 @@ const PropertyTimeline = () => {
                         onClick={() => navigate(`/property-details?id=${data?.propertyDetail?.id || data?.propertyDetail?._id}&scroll=Description`)}
                         className={`cursor-pointer text-[16px] pe-4`}
                       >
-                        Description
+                        {t("propertyTimeline.tabs.description")}
                       </p>
                     </li>
 
@@ -162,7 +176,7 @@ const PropertyTimeline = () => {
                         className={`text-[16px] pe-4 ${detail?.rating?.length > 0 &&
                           detail?.revenue_detail?.length > 0 ? "cursor-pointer " : "text-gray-400 cursor-not-allowed pointer-events-none"}`}
                       >
-                        Attractivity
+                        {t("propertyTimeline.tabs.attractivity")}
                       </p>
                     </li>
                     {/* )} */}
@@ -175,7 +189,7 @@ const PropertyTimeline = () => {
                         }}
                         className={`cursor-pointer text-[16px] pe-4 ${detail?.revenue_detail?.length > 0 ? "cursor-pointer " : "text-gray-400 cursor-not-allowed pointer-events-none"}`}
                       >
-                        Revenues
+                        {t("propertyTimeline.tabs.revenues")}
                       </p>
                     </li>
                     {/* )} */}
@@ -188,7 +202,7 @@ const PropertyTimeline = () => {
                           }}
                           className={`cursor-pointer text-[16px] pe-4 ${detail?.Expenses?.length > 0 ? "cursor-pointer " : "text-gray-400 cursor-not-allowed pointer-events-none"}`}
                         >
-                          Expenses
+                          {t("propertyTimeline.tabs.expenses")}
                         </p>
                       </li>
                     )}
@@ -201,7 +215,7 @@ const PropertyTimeline = () => {
                           }}
                           className={`cursor-pointer text-[16px] pe-4 ${detail?.renovation_work?.length > 0 ? "cursor-pointer " : "text-gray-400 cursor-not-allowed pointer-events-none"}`}
                         >
-                          Renovation works
+                          {t("propertyTimeline.tabs.renovationWorks")}
                         </p>
                       </li>
                     )}
@@ -215,7 +229,7 @@ const PropertyTimeline = () => {
                         }
                         className={`cursor-pointer text-[16px] pe-4 ${detail?.linkedSchools?.length > 0 ? "cursor-pointer " : "text-gray-400 cursor-not-allowed pointer-events-none"}`}
                       >
-                        Schools
+                        {t("propertyTimeline.tabs.schools")}
                       </p>
                     </li>
                     <li>
@@ -223,7 +237,7 @@ const PropertyTimeline = () => {
                         onClick={() => navigate(`/property-details?id=${data?.propertyDetail?.id || data?.propertyDetail?._id}&scroll=Map`)}
                         className={`cursor-pointer text-[16px] pe-4`}
                       >
-                        Map
+                        {t("propertyTimeline.tabs.map")}
                       </p>
                     </li>
                     <li>
@@ -231,7 +245,7 @@ const PropertyTimeline = () => {
                         onClick={() => navigate(`/property-details?id=${data?.propertyDetail?.id || data?.propertyDetail?._id}&scroll=Good to know`)}
                         className={`cursor-pointer text-[16px] pe-4`}
                       >
-                        Good to know
+                        {t("propertyTimeline.tabs.goodToKnow")}
                       </p>
                     </li>
                   </ul>
@@ -243,7 +257,7 @@ const PropertyTimeline = () => {
                         className="text-[16px] me-4 text-[#969FAA] font-bold flex items-center mb-0"
                       >
                         <span className="w-[8px] h-[8px] bg-[#ACABAA] block rounded-full me-3 "></span>
-                        Timeline
+                        {t("propertyTimeline.timeline")}
                       </Link>
                     </li>
                     {!data?.propertyDetail?.sale_my_property && data?.propertyDetail?.phoneNumber && (
@@ -251,7 +265,7 @@ const PropertyTimeline = () => {
                         <button
                           onClick={() => setshowNumber(true)}
                           className="text-[14px] me-4  font-bold  text-[#787878] border-[1.5px] border-[#976DD0] text-center py-1 px-4 rounded-[20px]">
-                          Show phone number
+                          {t("propertyTimeline.showPhoneNumber")}
                         </button>
                       </li>
                     )}
@@ -265,7 +279,7 @@ const PropertyTimeline = () => {
                             }
                           }}
                           className="text-[14px] pe-4  font-bold bg-[#976DD0] text-white border-[1.5px] border-[#976DD0] text-center py-1 px-4 rounded-[20px]">
-                          Direct message
+                          {t("propertyTimeline.directMessage")}
                         </button>
                       </li>
                     )}
@@ -279,16 +293,16 @@ const PropertyTimeline = () => {
                   <div className="xl:col-span-9 lg:col-span-8 col-span-12">
                     <div className="mb-5">
                       <h2 className="text-[#47525E] text-[24px] font-bold capitalize">
-                        Property key events
+                        {t("propertyTimeline.propertyKeyEvents")}
                       </h2>
                       {user?._id !== data?.propertyDetail?.addedBy && (
                         <>
                           <p className="text-[#5A6978] text-[16px]">
-                            Follow this property to be informed of key events
+                            {t("propertyTimeline.followForKeyEvents")}
                           </p>
                           <button onClick={() => isFollow()} className="bg-[#13CEA7] text-white rounded-[4px] py-1 px-6 font-[600] mt-2">
                             {data?.followunfollows_details ?
-                              "Followed" : "Follow"}
+                              t("propertyTimeline.followed") : t("propertyTimeline.follow")}
                           </button>
                         </>)}
                     </div>
@@ -301,10 +315,10 @@ const PropertyTimeline = () => {
                           if (itm?.type === "newPrice") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Price change</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.priceChange")}</p>
                                 <div className="flex items-center">
                                   <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                    The property new price is {formatCurrency(itm?.newPrice)} €
+                                    {t("propertyTimeline.events.newPrice", { price: formatCurrency(itm?.newPrice) })} €
                                   </h4>
                                   {/* <span className="text-[#31373E] ms-1 text-[14px]">(-5%)</span> */}
                                 </div>
@@ -323,10 +337,10 @@ const PropertyTimeline = () => {
                           } else if (itm?.type === "propertyMonthlyCharges") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Rent change</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.rentChange")}</p>
                                 <div className="flex items-center">
                                   <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                    The property new rent is {formatCurrency(itm?.propertyMonthlyCharges)} €
+                                    {t("propertyTimeline.events.newRent", { rent: formatCurrency(itm?.propertyMonthlyCharges) })} €
                                   </h4>
                                   {/* <span className="text-[#31373E] ms-1 text-[14px]">(-5%)</span> */}
                                 </div>
@@ -345,7 +359,7 @@ const PropertyTimeline = () => {
                           } else if (itm?.type === "interestStatus") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Interest Status</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.interestStatus")}</p>
                                 <div className="flex items-center">
                                   <h4 className="text-[#31373E] font-[700] text-[18px]">
                                     {itm.funnelStatus}
@@ -366,10 +380,13 @@ const PropertyTimeline = () => {
                           } else if (itm?.type === "ownerChange") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Property Transfer</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.propertyTransfer")}</p>
                                 <div className="flex items-center">
                                   <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                    The property has been transferred by <span className="capitalize">{itm.oldOwner}</span> to <span className="capitalize">{itm.newOwner}</span>.
+                                    {t("propertyTimeline.events.propertyTransferredBy")}
+                                    <span className="capitalize"> {itm.oldOwner}</span>
+                                    {t("propertyTimeline.events.to")}
+                                    <span className="capitalize"> {itm.newOwner}</span>.
                                   </h4>
                                 </div>
                                 <div className="flex justify-between mt-2">
@@ -387,10 +404,14 @@ const PropertyTimeline = () => {
                           } else if (itm?.type === "proposal") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Proposal change</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.proposalChange")}</p>
                                 <div className="flex items-center">
                                   <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                    This property is now open for {itm?.proposal === "both" ? "Rental/Purchase" : `${itm?.proposal}`} proposal
+                                    {t("propertyTimeline.events.openForProposal")}
+                                    {" "}
+                                    {itm?.proposal === "both" ? t("propertyTimeline.events.rentalPurchase") : `${itm?.proposal}`}
+                                    {" "}
+                                    {t("propertyTimeline.events.proposal")}
                                   </h4>
                                 </div>
                                 <div className="flex justify-between mt-2">
@@ -408,10 +429,10 @@ const PropertyTimeline = () => {
                           } else if (itm?.type === "propertyType") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Status change</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.statusChange")}</p>
                                 <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                  The property is now for {" "}
-                                  {itm?.propertyType === "offmarket" ? "Off-Market" : itm?.propertyType}
+                                  {t("propertyTimeline.events.propertyNowFor")}{" "}
+                                  {itm?.propertyType === "offmarket" ? t("propertyTimeline.events.offMarket") : itm?.propertyType}
                                 </h4>
                                 {/* <div className="flex items-center">
                                 <p className="text-[#31373E] ">Price :</p>
@@ -449,11 +470,11 @@ const PropertyTimeline = () => {
                           } else if (itm?.type === "revenue_detail") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Status change</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.statusChange")}</p>
                                 {itm?.revenue_detail?.map((revenue) => {
                                   return (
                                     <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                      Revenue for this property has been updated to price {revenue?.price} for {revenue?.year}
+                                      {t("propertyTimeline.events.revenueUpdated", { price: revenue?.price, year: revenue?.year })}
 
                                     </h4>
                                   )
@@ -474,10 +495,10 @@ const PropertyTimeline = () => {
                           } if (itm?.type === "propertyCreated") {
                             return (
                               <li key={i} className="bg-white border border-[#D2D2D2] rounded-[5px] p-2 max-w-[500px] w-[100%] my-5">
-                                <p className="text-[#31373E] ">Property Profile</p>
+                                <p className="text-[#31373E] ">{t("propertyTimeline.events.propertyProfile")}</p>
                                 <div className="flex items-center">
                                   <h4 className="text-[#31373E] font-[700] text-[18px]">
-                                    Property profile created {dateFormate(itm?.createddAt, "MMMM Do YYYY")} €
+                                    {t("propertyTimeline.events.propertyProfileCreated")} {dateFormate(itm?.createddAt, "MMMM Do YYYY")} €
                                   </h4>
                                   {/* <span className="text-[#31373E] ms-1 text-[14px]">(-5%)</span> */}
                                 </div>
@@ -498,7 +519,7 @@ const PropertyTimeline = () => {
                       ) : (
                         <div className="text-center col-span-12 my-8">
                           <img src="assets/img/no-data.svg" className="w-[400px] mx-auto " />
-                          No Records Found
+                          {t("messages.noRecordsFound")}
                         </div>
                       )}
 
@@ -655,11 +676,11 @@ const PropertyTimeline = () => {
                       </li> */}
                       <div className={`paginationWrapper xl:flex-row flex-col ${total > filters?.count ? "" : "d-none"}`} >
                         <span className="xl:mb-0 mb-2 block">
-                          Show {time?.length} from {total} Properties
+                          {t("notifications.showFromProperties", { count: time?.length, total })}
                         </span>
                         <ReactPaginate
-                          previousLabel="<Pre"
-                          nextLabel="Next>"
+                          previousLabel={`<${t("common.previous")}`}
+                          nextLabel={`${t("common.next")}>`}
                           breakLabel="..."
                           pageRangeDisplayed={2}
                           marginPagesDisplayed={1}
@@ -689,28 +710,28 @@ const PropertyTimeline = () => {
                             </li>}
                           {+data?.propertyDetail?.rooms > 0 &&
                             <li className="#47525E me-4 flex items-center">
-                              {data?.propertyDetail?.rooms} room
+                              {data?.propertyDetail?.rooms} {t("propertyTimeline.room")}
                               {`${Number(data?.propertyDetail?.rooms) > 1 ? "s" : ""}`}
                             </li>}
                         </ul>
                         <ul className="flex flex-wrap mt-2 ">
                           {+data?.propertyDetail?.bedrooms > 0 &&
                             <li className="#47525E me-4 flex items-center">
-                              {data?.propertyDetail?.bedrooms} bedroom
+                              {data?.propertyDetail?.bedrooms} {t("propertyTimeline.bedroom")}
                               {`${Number(data?.propertyDetail?.bedrooms) > 1 ? "s" : ""}`}
                             </li>}
                           {+data?.propertyDetail?.propertyFloor > 0 &&
                             <li className="#47525E me-2">
                               {(+data?.propertyDetail?.propertyFloor > 0 && +data?.propertyDetail?.totalFloorBuilding > 0)
                                 ? `${getOrdinal(+data?.propertyDetail?.propertyFloor)}/${data?.propertyDetail?.totalFloorBuilding}`
-                                : `${getOrdinal(+data?.propertyDetail?.propertyFloor)}`} floor
+                                : `${getOrdinal(+data?.propertyDetail?.propertyFloor)}`} {t("propertyTimeline.floor")}
                             </li>}
                         </ul>
                         {(data?.propertyDetail?.propertyType === "sale" || data?.propertyDetail?.propertyType === "rent") && (
                           <p className="bg-white text-[#47525E] inline-block px-6 py-1 rounded-[7px] absolute top-[10px] left-[10px] font-[600]">
                             {data?.propertyDetail?.propertyType === "sale"
                               ? `${formatCurrency(data?.propertyDetail?.price)} €`
-                              : `${formatCurrency(data?.propertyDetail?.propertyMonthlyCharges)} €/month`}
+                              : `${formatCurrency(data?.propertyDetail?.propertyMonthlyCharges)} €/${t("propertyTimeline.month")}`}
                           </p>
                         )}
 
@@ -730,7 +751,7 @@ const PropertyTimeline = () => {
                 <div className="grid grid-cols-12 py-20">
                   <div className="col-span-12  mb-[40px]">
                     <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                      Real estate property profile
+                      {t("propertyTimeline.realEstatePropertyProfile")}
                       <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                     </h2>
                   </div>
@@ -738,355 +759,74 @@ const PropertyTimeline = () => {
                     <div className="grid grid-cols-12 gap-4">
                       <div className="lg:col-span-3 md:col-span-6 col-span-12 ">
                         <h3 className="text-[#47525E] font-bold mb-4">
-                          House for sale
+                          {t("propertyDetails.relatedSearches.houseForSale")}
                         </h3>
 
                         <ul>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Paris
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Lille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Marseille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Lyon
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Rennes
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Nancy
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Bordeaux
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Dieppe
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Toulouse
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              House for sale Annecy
-                            </a>
-                          </li>
+                          {relatedSearchCities.map((city) => (
+                            <li key={`house-sale-${city}`}>
+                              <a
+                                href="#"
+                                className="text-[#47525E] underline lg:text-[16px] text-[14px]"
+                              >
+                                {t("propertyDetails.relatedSearches.houseForSaleCity", { city })}
+                              </a>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                       <div className="lg:col-span-3 md:col-span-6 col-span-12 ">
                         <h3 className="text-[#47525E] font-bold mb-4">
-                          Flat for sale
+                          {t("propertyDetails.relatedSearches.flatForSale")}
                         </h3>
 
                         <ul>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale in Paris
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale in Lille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale in Marseille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Lyon
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Rennes
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Nancy
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Bordeaux
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Dieppe
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Toulouse
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for sale Annecy
-                            </a>
-                          </li>
+                          {relatedSearchCities.map((city) => (
+                            <li key={`flat-sale-${city}`}>
+                              <a
+                                href="#"
+                                className="text-[#47525E] underline lg:text-[16px] text-[14px]"
+                              >
+                                {t("propertyDetails.relatedSearches.flatForSaleCity", { city })}
+                              </a>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                       <div className="lg:col-span-3 md:col-span-6 col-span-12 ">
                         <h3 className="text-[#47525E] font-bold mb-4">
-                          Discover price of historical transactions in your
-                          interest area.
+                          {t("propertyDetails.relatedSearches.discoverHistoricalPrices")}
                         </h3>
 
                         <ul>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Paris
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Lille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Marseille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Lyon
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Rennes
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Nancy
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Bordeaux
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Dieppe
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Toulouse
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Properties sold in Annecy
-                            </a>
-                          </li>
+                          {relatedSearchCities.map((city) => (
+                            <li key={`sold-${city}`}>
+                              <a
+                                href="#"
+                                className="text-[#47525E] underline lg:text-[16px] text-[14px]"
+                              >
+                                {t("propertyDetails.relatedSearches.propertiesSoldCity", { city })}
+                              </a>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                       <div className="lg:col-span-3 md:col-span-6 col-span-12 ">
                         <h3 className="text-[#47525E] font-bold mb-4">
-                          Flat for rent
+                          {t("propertyDetails.relatedSearches.flatForRent")}
                         </h3>
 
                         <ul>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Paris
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Lille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Marseille
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Lyon
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Rennes
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Nancy
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Bordeaux
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Dieppe
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Toulouse
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="#"
-                              className="text-[#47525E] underline lg:text-[16px] text-[14px]"
-                            >
-                              Flat for rent in Annecy
-                            </a>
-                          </li>
+                          {relatedSearchCities.map((city) => (
+                            <li key={`flat-rent-${city}`}>
+                              <a
+                                href="#"
+                                className="text-[#47525E] underline lg:text-[16px] text-[14px]"
+                              >
+                                {t("propertyDetails.relatedSearches.flatForRentCity", { city })}
+                              </a>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                     </div>

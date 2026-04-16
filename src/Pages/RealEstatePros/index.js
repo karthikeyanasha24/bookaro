@@ -75,10 +75,10 @@ const RealEstatePros = () => {
         <div className="py-14   lg:py-16  bg-img bg-img-new relative">
           <div className="container px-8 mx-auto xl:px-5">
             <h1 className="text-white font-[600] text-[30px] text-center mb-8">
-              Find your real estate professional
+              {t("realEstatePros.findProfessionalTitle")}
             </h1>
             <div className="border border-[#8492A6] rounded-[12px] bg-white p-5  lg:max-w-[800px] md:max-w-[600px] w-[80%] mx-auto absolute md:-bottom-10 md:bottom-0 left-set ">
-              <label className="text-[#8492A6] mb-1 block">Location</label>
+              <label className="text-[#8492A6] mb-1 block">{t("realEstatePros.location")}</label>
               <div className="flex flex-wrap justify-between md:flex-row flex-col">
                 <div className="md:w-[40%] w-[100%]">
                   <div className="flex items-center w-full custom-loc relative">
@@ -117,9 +117,9 @@ const RealEstatePros = () => {
                       });
                     }}
                     options={[
-                      { id: "Agency", name: "Agency" },
-                      { id: "Agent", name: "Agent" },
-                      { id: "Hunter", name: "Hunter" },
+                      { id: "Agency", name: t("accountTypes.agency") },
+                      { id: "Agent", name: t("accountTypes.agent") },
+                      { id: "Hunter", name: t("accountTypes.hunter") },
                     ]}
                   />
                 </div>
@@ -128,7 +128,7 @@ const RealEstatePros = () => {
                     className="bg-[#976DD0] text-[14px] rounded-[50px] py-[8px] px-[18px] text-white font-bold w-full h-[40px] flex items-center justify-center"
                     onClick={() => navigateToList()}
                   >
-                    See results
+                    {t("realEstatePros.seeResults")}
                   </button>
                 </div>
                 {error && (
@@ -144,21 +144,21 @@ const RealEstatePros = () => {
           <div className="container px-8 mx-auto xl:px-5 ">
             <div className="max-w-[800px] w-[100%]  mx-auto">
               <h2 className="text-[#47525E] font-[600] md:text-[24px] text-[20px] mb-0 mt-0 md:mt-5 pb-0 flex flex-col">
-                Real Estate professionals in few words
+                {t("realEstatePros.fewWordsTitle")}
                 <span className="bg-[#976DD0] w-[40px] h-[7px] rounded-[20px] inline-block"></span>
               </h2>
               <ul className="mt-8">
                 <li className="text-[#47525E] mb-4 text-[16px]">
-                  Why work with a real estate agency to sell my property ?
+                  {t("realEstatePros.qAgencySell")}
                 </li>
                 <li className="text-[#47525E]  mb-4 text-[16px]">
-                  Why work with a real estate hunter to find my dream home ?
+                  {t("realEstatePros.qHunterDreamHome")}
                 </li>
                 <li className="text-[#47525E]  mb-4 text-[16px]">
-                  Why work with an architect to renew my property ?
+                  {t("realEstatePros.qArchitectRenew")}
                 </li>
                 <li className="text-[#47525E]  mb-4 text-[16px]">
-                  Why list my property on Bookaroo ?
+                  {t("realEstatePros.qListOnBookaroo")}
                 </li>
               </ul>
             </div>
@@ -169,13 +169,13 @@ const RealEstatePros = () => {
           <div className="container px-8 mx-auto xl:px-5 ">
             <div className="max-w-[800px] w-[100%]  mx-auto">
               <h2 className="text-[#47525E] text-[28px] mb-0 pb-0  text-center">
-                You own a property?
+                {t("realEstatePros.youOwnProperty")}
               </h2>
               <div className="flex items-center justify-center mt-4">
                 <button className="bg-[#976DD0] text-[14px] rounded-[50px] py-[8px] px-[20px] text-white font-bold "
                   onClick={(e) => navigate("/getquote-form?type=Professional Repository")}
                 >
-                  Get a free quote
+                  {t("realEstatePros.getFreeQuote")}
                 </button>
               </div>
             </div>
@@ -186,7 +186,7 @@ const RealEstatePros = () => {
             <div className="grid grid-cols-12 max-w-[800px] w-[100%]  mx-auto">
               <div className="col-span-12  mb-[40px]">
                 <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                  Historical transactions in biggest French cities
+                  {t("realEstatePros.historicalTransactionsTitle")}
                   <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                 </h2>
               </div>
@@ -378,7 +378,7 @@ const RealEstatePros = () => {
             <div className="grid grid-cols-12 max-w-[800px] w-[100%]  mx-auto">
               <div className="col-span-12  mb-[40px]">
                 <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                  Historical transactions in biggest French regions{" "}
+                  {t("buildingPermit.historicalRegionsTitle")}
                   <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                 </h2>
               </div>

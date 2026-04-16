@@ -1,6 +1,7 @@
 import { AiOutlineDelete } from 'react-icons/ai';
 import { FiEdit } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ImageSlider from '../../components/common/ImageSlider';
 import { capLetter, formatCurrency, imagePath } from '../../models/string.model';
 
@@ -20,6 +21,7 @@ const PropertyCardHome = ({
     dropdownIndex,
 }) => {
     const { user } = useSelector((state) => state);
+    const { t } = useTranslation();
     return (
         <>
             <ImageSlider images={item?.images} />
@@ -83,7 +85,7 @@ const PropertyCardHome = ({
                     {(item?.propertyType === "directory") ? (
                         <>
                             <h5 className="text-[#6D6E6D] text-[17px] font-bold capitalize flex justify-between items-center">
-                                Directory
+                                {t("home.tabs.directory")}
                             </h5>
                             <span className="text-[#47525E] text-[13px] capitalize font-[400]">
                                 {capLetter(item?.usedAs)}
@@ -91,16 +93,16 @@ const PropertyCardHome = ({
                         </>
                     ) : (item?.propertyType === "offmarket") ? (
                         <h5 className="text-[#6D6E6D] text-[17px] font-bold capitalize flex justify-between items-center">
-                            Off-Market
+                            {t("home.tabs.offMarket")}
                         </h5>
                     ) : item?.propertyType === "rent" ? (
                         <>
-                            <p className="text-[#6D6E6D] text-[12px] font-[600]">Rental</p>
+                            <p className="text-[#6D6E6D] text-[12px] font-[600]">{t("property.forRent")}</p>
                             {item?.propertyMonthlyCharges && <h5 className="text-[#6D6E6D] text-[20px] font-bold">
                                 {formatCurrency(item?.propertyMonthlyCharges)} €
                                 <span className="text-[#47525E] text-[13px] ">
                                     {" "}
-                                    / month
+                                    {t("billing.perMonth")}
                                 </span>
                             </h5>}
                         </>
@@ -108,7 +110,7 @@ const PropertyCardHome = ({
                         <>
                             {+price > 0 ? (
                                 <>
-                                    <p className="text-[#6D6E6D] text-[12px] font-[600]">For Sale</p>
+                                    <p className="text-[#6D6E6D] text-[12px] font-[600]">{t("property.forSale")}</p>
                                     <h5 className="text-[#6D6E6D] text-[17px] font-bold flex justify-between items-center">
                                         {formatCurrency(price)} €
                                         {+perSqr > 0 && (
@@ -132,7 +134,7 @@ const PropertyCardHome = ({
             </div>
             <div className="bg-black p-3">
                 <p className="text-white text-center text-[14px] mb-1">
-                    Property Attractivity
+                    {t("property.attractivity")}
                 </p>
                 <ul className="flex items-center mt-3 justify-center">
                     <li className="flex items-center mx-5">

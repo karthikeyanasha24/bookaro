@@ -13,11 +13,11 @@ const BillingHistory = () => {
       <div className="bg-[#976dd021]">
         <div className="container mx-auto py-14 px-8">
           <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
-            Plan and billing
+            {t("billing.title")}
           </h2>
           <div className="mt-14">
             <h3 className="text-black text-[18px] mb-8">
-              Plan and billing method
+              {t("billing.planAndBillingMethod")}
             </h3>
             <div className="grid grid-cols-12 gap-5">
               <div className="xl:col-span-4 lg:col-span-6 col-span-full">
@@ -32,29 +32,29 @@ const BillingHistory = () => {
                           />
                         </div>
                         <h4 className="text-[#5A6978] font-[600] ms-3">
-                          Smart starter
+                          {t("billing.smartStarter")}
                         </h4>
                         <p className="bg-[#EAEAEA] text-[#5A6978] rounded-[7px] text-[14px] px-3 py-1 ms-4">
-                          Monthly
+                          {t("billing.monthly")}
                         </p>
                       </div>
                       <div>
                         <h4 className="text-[#5A6978] font-[600] text-[18px]">
                           9,99 €{" "}
-                          <span className="font-[400] text-[13px]">/Month</span>
+                          <span className="font-[400] text-[13px]">{t("billing.perMonth")}</span>
                         </h4>
                       </div>
                     </div>
                     <p className="text-[#5A6978] text-[14px] mt-5 mb-1">
-                      1 out of 3 properties listed{" "}
+                      {t("billing.propertiesListedProgress", { used: 1, total: 3 })}
                     </p>
-                    <div class="w-[80%] bg-[#CECECE] rounded-full h-[8px] dark:bg-gray-700 mb-2">
-                      <div class="bg-[#976DD0] h-[8px] rounded-full w-[45%]"></div>
+                    <div className="w-[80%] bg-[#CECECE] rounded-full h-[8px] dark:bg-gray-700 mb-2">
+                      <div className="bg-[#976DD0] h-[8px] rounded-full w-[45%]"></div>
                     </div>
                   </div>
                   <div className="border-t border-[#C5C5C5] px-5 py-4 text-end">
                     <Link className="text-[#976DD0] font-[600] text-end">
-                      Upgrade plan
+                      {t("billing.upgradePlan")}
                     </Link>
                   </div>
                 </div>
@@ -63,10 +63,10 @@ const BillingHistory = () => {
                 <div className="bg-white  rounded-[12px]  ">
                   <div className="p-5">
                     <h4 className="text-[#5A6978] font-[600]">
-                      Payment method
+                      {t("billing.paymentMethod")}
                     </h4>
                     <p className="text-[#5A6978] text-[14px] mt-2">
-                      You can edit your payment method here.
+                      {t("billing.editPaymentMethod")}
                     </p>
                     <div className="border border-[#B8B9BB] flex justify-between items-center p-3 rounded-[8px] mt-6 mb-3">
                       <div className="flex items-center">
@@ -78,10 +78,10 @@ const BillingHistory = () => {
                         </div>
                         <div>
                           <h4 className="text-[#5A6978] font-[600] text-[13px]">
-                            Card ending in 1234
+                            {t("billing.cardEndingIn", { last4: "1234" })}
                           </h4>
                           <p className="text-[#5A6978] font-[400] text-[13px]">
-                            Expiring in 07/25
+                            {t("billing.expiringIn", { date: "07/25" })}
                           </p>
                         </div>
                       </div>
@@ -95,9 +95,9 @@ const BillingHistory = () => {
             </div>
             <div className="mt-16">
              <div className="flex items-center mb-7 justify-between">
-             <h3 className="text-black text-[18px]  ">Billing history</h3>
+             <h3 className="text-black text-[18px]  ">{t("billing.history")}</h3>
               <div className="border border-[#B1B1B1] rounded-[50px] px-4 py-2">
-                <button className="text-[14px] text-[#343F4B]">Download invoices</button>
+                <button className="text-[14px] text-[#343F4B]">{t("billing.downloadInvoices")}</button>
               </div>
              </div>
              <div className="relative table-responsive overflow-x-auto border border-[#eee] sm:rounded-lg ">
@@ -105,30 +105,30 @@ const BillingHistory = () => {
                     <thead className="text-sm text-[#986dcd] font-[600] capitalize bg-white dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                           <th className="px-2 py-3   cursor-pointer whitespace-nowrap text-[#343F4B] font-[600]">
-                          Invoice
+                          {t("chat.invoice")}
                           </th>
                           <th className="px-2 py-3   cursor-pointer whitespace-nowrap text-[#343F4B] font-[600]">
-                          Date
+                          {t("billing.date")}
                           </th>
                           <th className="px-2 py-3   cursor-pointer whitespace-nowrap text-[#343F4B] font-[600]">
-                          Amount
+                          {t("forms.amount")}
                           </th>
                           <th className="px-2 py-3   cursor-pointer whitespace-nowrap text-[#343F4B] font-[600]">
-                          Currency
+                          {t("forms.currency")}
                           </th>
                           <th className="px-2 py-3   cursor-pointer whitespace-nowrap text-[#343F4B] font-[600]">
-                          Status
+                          {t("common.status")}
                           </th>
                           <th className="px-2 py-3   cursor-pointer whitespace-nowrap text-[#343F4B] font-[600]">
-                         Actions
+                         {t("billing.actions")}
                           </th>
                         </tr>
                     </thead>
                     <tbody>
                       <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td className="px-2 py-4 whitespace-nowrap">
-                        <p className="text-[#343F4B]">Invoice #001</p>
-                        <span className="text-[#969FAA] text-[14px]">Smart starter plan</span>
+                        <p className="text-[#343F4B]">{t("billing.invoiceNumber", { number: "001" })}</p>
+                        <span className="text-[#969FAA] text-[14px]">{t("billing.smartStarterPlan")}</span>
                         </td>
                         <td className="px-2 py-4 whitespace-nowrap">
                         <p className="text-[#343F4B]">12/02/2025</p>
@@ -140,7 +140,7 @@ const BillingHistory = () => {
                         <p className="text-[#343F4B]">€</p>
                         </td>
                         <td className="px-2 py-4 whitespace-nowrap">
-                        <p className="text-[#343F4B]">Paid</p>
+                        <p className="text-[#343F4B]">{t("billing.paid")}</p>
                         </td>
                         <td className="px-2 py-4 whitespace-nowrap">
                             <ul className="flex items-center">

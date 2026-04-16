@@ -191,14 +191,14 @@ console.log(offerStatus, "offerStatus")
                 onClick={() => navigate("/project")}
                 className="text-[#47525E] cursor-pointer after"
               >
-                My Project<span className="mx-[4px]">|</span>
+                {t("project.myProject")}<span className="mx-[4px]">|</span>
               </li>
               <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-                Owner transaction management
+                {t("transactionOwner.ownerTransactionManagement")}
               </li>
             </ul>
             <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
-              Monitor your real-estate transactions
+              {t("transactionOwner.monitorTransactions")}
             </h2>
 
             <div className="grid grid-cols-12 gap-5 mt-10 mb-16">
@@ -206,12 +206,10 @@ console.log(offerStatus, "offerStatus")
                 <div className="bg-[#976dd03b] p-4 rounded-[12px] flex md:items-center items-start md:flex-row flex-col md:gap-8 gap-4">
                   <div>
                     <h4 className="text-black font-[600] mb-1">
-                      Close external real-estate transaction here
+                      {t("transactionOwner.closeExternalTitle")}
                     </h4>
                     <p className="text-[#525252] text-[14px] xl:h-[100%] lg:h-[105px] h-[100%]">
-                      You found a buyer somewhere else than in Bookaroo add your
-                      property profile here to secure or close your deal thanks
-                      to our guided funnel.
+                      {t("transactionOwner.closeExternalDescription")}
                     </p>
                   </div>
                   <div>
@@ -219,7 +217,7 @@ console.log(offerStatus, "offerStatus")
                       to={`/property1`}
                       className="inline-flex justify-center text-white bg-[#976DD0] rounded-[35px] px-2 py-2 w-[140px] text-[14px]"
                     >
-                      Import property
+                      {t("transactionOwner.importProperty")}
                     </Link>
                   </div>
                 </div>
@@ -228,18 +226,15 @@ console.log(offerStatus, "offerStatus")
                 <div className="bg-[#976dd03b] p-4 rounded-[12px] flex md:items-center items-start md:flex-row flex-col md:gap-8 gap-4">
                   <div>
                     <h4 className="text-black font-[600] mb-1">
-                      Sell alone with real estate profesional services
+                      {t("transactionOwner.sellAloneTitle")}
                     </h4>
                     <p className="text-[#525252] text-[14px] xl:h-[100%] lg:h-[105px] h-[100%]">
-                      Selling your property without a real estate agency does
-                      not mean you have to do it alone. Our partner can provide
-                      you same services than a real estate agency but at a
-                      reasonable price.
+                      {t("transactionOwner.sellAloneDescription")}
                     </p>
                   </div>
                   <div>
                     <button className="text-white bg-[#976DD0] rounded-[35px] px-2 py-2 w-[140px] text-[14px]">
-                      See services
+                      {t("transactionOwner.seeServices")}
                     </button>
                   </div>
                 </div>
@@ -269,11 +264,11 @@ console.log(offerStatus, "offerStatus")
                     <>
                       <div className="col-span-full py-6">
                         <div className="text-center mb-3 font-[600] text-[18px]">
-                          Congratulatulations! You found a{" "}
+                            {t("transactionOwner.congratulations")}{" "}
                           {selectedProperty?.propertyType == "rent"
-                            ? "Renter"
-                            : "Buyer"}
-                          !
+                              ? t("transactionOwner.renter")
+                              : t("transactionOwner.buyer")}
+                            {"!"}
                         </div>
                         {/* <div className="text-center">
                     <button type="button" className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold" onClick={()=>informApplicant()}>Inform All applicants</button>
@@ -323,19 +318,19 @@ console.log(offerStatus, "offerStatus")
                     />
                   </div>
                   <p className="text-black font-[600] text-[20px] text-center my-5">
-                    Unlock real-estate transaction monitoring tool{" "}
+                    {t("transactionOwner.unlockTool")}
                   </p>
                   <div className="mx-auto w-[170px] mb-10">
                     <button
                       onClick={() => navigate("/plan")}
                       className="text-white bg-[#976DD0] rounded-[50px] px-5 py-2 mx-auto"
                     >
-                      Choose your plan
+                      {t("transactionOwner.choosePlan")}
                     </button>
                   </div>
                   <div className="flex flex-col justify-center mx-auto w-[60%]">
                     <h5 className="text-[#47525E] font-[600] mb-5">
-                      Key native features of our monitoring tool
+                      {t("transactionOwner.nativeFeaturesTitle")}
                     </h5>
                     <ul>
                       <li className="flex items-start my-2">
@@ -344,7 +339,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Educational content to help you sell on your own
+                          {t("transactionOwner.nativeFeatures.educationalContent")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -353,7 +348,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Filter candidates according to your criterion
+                          {t("transactionOwner.nativeFeatures.filterCandidates")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -362,7 +357,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Financial background check and rating of candidates
+                          {t("transactionOwner.nativeFeatures.financialBackground")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -371,7 +366,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Automatic invite of good candidates
+                          {t("transactionOwner.nativeFeatures.autoInvite")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -380,7 +375,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Manage your visits calendar
+                          {t("transactionOwner.nativeFeatures.manageVisits")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -389,7 +384,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Automatic sending of property file
+                          {t("transactionOwner.nativeFeatures.autoSendPropertyFile")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -398,7 +393,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Reception of candidates files
+                          {t("transactionOwner.nativeFeatures.receiveCandidatesFiles")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -407,14 +402,14 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Reception of purchase offer
+                          {t("transactionOwner.nativeFeatures.receivePurchaseOffer")}
                         </p>
                       </li>
                     </ul>
                   </div>
                   <div className="flex flex-col justify-center mx-auto w-[60%]">
                     <h5 className="text-[#47525E] font-[600] my-8">
-                      Game changing services offered by our partners
+                      {t("transactionOwner.partnerServicesTitle")}
                     </h5>
                     <ul>
                       <li className="flex items-start my-2">
@@ -423,7 +418,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Writting of your property profile
+                          {t("transactionOwner.partnerServices.writingProfile")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -432,7 +427,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Profesional pictures of your property
+                          {t("transactionOwner.partnerServices.professionalPictures")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -441,8 +436,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Financial background check of potential buyer or
-                          renter
+                          {t("transactionOwner.partnerServices.financialCheck")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -451,8 +445,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Hosting the visits of your property for potential
-                          candidates
+                          {t("transactionOwner.partnerServices.hostVisits")}
                         </p>
                       </li>
                       <li className="flex items-start my-2">
@@ -461,8 +454,7 @@ console.log(offerStatus, "offerStatus")
                         </div>
 
                         <p className="text-[#47525E] text-[15px]">
-                          Undertake legal administrative tasks for selling your
-                          property (legal document collection...)
+                          {t("transactionOwner.partnerServices.legalTasks")}
                         </p>
                       </li>
                     </ul>

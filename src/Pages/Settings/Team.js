@@ -9,9 +9,11 @@ import PageLayout from "../../components/global/PageLayout";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { imagePath } from "../../models/string.model";
+import { useTranslation } from "react-i18next";
 import CompanySidebar from "./CompanySidebar";
 
 const Team = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [team, setTeam] = useState([]);
@@ -32,7 +34,7 @@ const Team = () => {
     const maxSizeInBytes = maxSize * 1024 * 1024; // 10MB
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error(`Size must be smaller than ${maxSize}MB`);
+      toast.error(t("validation.fileSize", { size: maxSize }));
       return (e.target.value = "");
     }
     const acceptedTypes = [
@@ -46,7 +48,7 @@ const Team = () => {
       (file) => !acceptedTypes.includes(file.type)
     );
     if (invalidFiles.length > 0) {
-      toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
+      toast.error(t("propertyDetails.allowedImageTypes"));
       return (e.target.value = "");
     }
     loader(true);
@@ -99,10 +101,10 @@ const Team = () => {
   };
   const validateMember = (member) => {
     let error = {};
-    if (!member.image?.trim()) error[member.id] = "Image is required.";
-    else if (!member.name?.trim()) error[member.id] = "Name is required.";
+    if (!member.image?.trim()) error[member.id] = t("settings.team.imageRequired");
+    else if (!member.name?.trim()) error[member.id] = t("settings.team.nameRequired");
     else if (!member.designation?.trim())
-      error[member.id] = "Designation is required.";
+      error[member.id] = t("settings.team.designationRequired");
     return error;
   };
   const validate = () => {
@@ -118,7 +120,7 @@ const Team = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (team?.length === 0) return toast.error("Enter atleast a Team member");
+    if (team?.length === 0) return toast.error(t("settings.team.atLeastOneMember"));
     if (!validate()) return;
     const payload = {
       userId: user?.id || user?._id,
@@ -157,32 +159,32 @@ const Team = () => {
               <CompanySidebar />
               <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8 ">
                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                  Manage your company profile
+                  {t("settings.manageCompanyProfile")}
                 </h2>
                 <div className="p-10 xl:px-14 lg:px-8 px-8 h-[92%] border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0  ">
                   <form
                     onSubmit={handleSubmit}
                     className="flex  flex-col h-full"
                   >
-                    <div class="mb-8 flex sm:items-center items-start justify-between sm:flex-row flex-col">
+                    <div className="mb-8 flex sm:items-center items-start justify-between sm:flex-row flex-col">
                       <div>
-                        <h4 class="text-black font-bold text-[19px]  mb-0">
-                          Add Team Member
+                        <h4 className="text-black font-bold text-[19px]  mb-0">
+                          {t("settings.team.addTitle")}
                         </h4>
-                        <p class="text-black text-[18px]  mb-2 ">
-                          Tell us about your Team and their roles
+                        <p className="text-black text-[18px]  mb-2 ">
+                          {t("settings.team.addDescription")}
                         </p>
                       </div>
                       <button
                         className="flex items-center justify-center bg-[#986dcd] border border-transparent text-white p-3 rounded-lg shadow-md hover:bg-white w-fit hover:border-[#986dcd] hover:text-[#986dcd] transition sm:mt-0 mt-3"
                         onClick={(e) => addMember(e)}
                       >
-                        <FaPlus className="mr-2" /> Add Member
+                        <FaPlus className="mr-2" /> {t("settings.team.addButton")}
                       </button>
                     </div>
                     <div className=" ">
                       {team?.length > 0 &&
-                        team.map((member, i) => (
+                        team.map((member) => (
                           <>
                             <div
                               key={member.id}
@@ -212,7 +214,7 @@ const Team = () => {
                                     <div className="flex flex-col justify-center">
                                       <FaPlus className="text-gray-400 text-xl mx-auto mb-1" />
                                       <p className="text-gray-400 text-sm">
-                                        Add Photo
+                                        {t("settings.team.addPhoto")}
                                       </p>
                                     </div>
                                   )}
@@ -233,7 +235,7 @@ const Team = () => {
                               <div className="sm:ml-4 flex-1 ms-0">
                                 <input
                                   type="text"
-                                  placeholder="Team Member Name"
+                                  placeholder={t("settings.team.memberName")}
                                   className=" w-full h-11 px-3 py-2.5 mb-2 bg-white border border-[#CACACA] rounded-md placeholder-gray-400     outline-none focus:border-[#986dcd]"
                                   value={member.name}
                                   onChange={(e) =>
@@ -246,7 +248,7 @@ const Team = () => {
                                 />
                                 <input
                                   type="text"
-                                  placeholder="Designation"
+                                  placeholder={t("settings.team.designation")}
                                   className=" w-full h-11 px-3 py-2.5  bg-white border border-[#CACACA] rounded-md placeholder-gray-400     outline-none focus:border-[#986dcd]"
                                   value={member.designation}
                                   onChange={(e) =>
@@ -284,7 +286,7 @@ const Team = () => {
                           type="submit"
                           className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                         >
-                          Save
+                          {t("common.save")}
                         </button>
                       </div>
                     )}

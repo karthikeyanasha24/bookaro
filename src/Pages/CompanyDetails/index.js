@@ -177,7 +177,7 @@ const CompanyDetails = () => {
                       text-[#${openIndex === null ? "339B91] font-bold" : "343F4B]"
                       }`}
                   >
-                    Info
+                    {t("companyDetails.info")}
                   </p>
                 </li>
 
@@ -188,7 +188,7 @@ const CompanyDetails = () => {
                       text-[#${openIndex === 1 ? "339B91] font-bold" : "343F4B]"
                       }`}
                   >
-                    Properties
+                    {t("companyDetails.properties")}
                   </p>
                 </li>
                 <li onClick={() => scrollFunction(refReview, null)}>
@@ -197,7 +197,7 @@ const CompanyDetails = () => {
                       text-[#${openIndex === 0 ? "339B91] font-bold" : "343F4B]"
                       }`}
                   >
-                    Visit Review
+                    {t("companyDetails.visitReview")}
                   </p>
                 </li>
               </ul>
@@ -223,11 +223,10 @@ const CompanyDetails = () => {
             <div className="max-w-[700px] mx-auto bg-[#f0ecf5] py-4 px-10 flex md:items-center items-start justify-between rounded-[12px] md:flex-row flex-col">
               <div className="md:w-[70%] w-[100%]">
                 <p className="text-[#47525E] text-[15px]">
-                  A property to sell?
+                  {t("property.propertyToSell")}
                 </p>
                 <h3 className="text-[#47525E] font-[600] text-[17px]">
-                  List it and sell it on your own or with the support of our
-                  local partner agencies
+                  {t("property.listDescription")}
                 </h3>
               </div>
               <button
@@ -300,7 +299,7 @@ const CompanyDetails = () => {
 
                       <div className="md:mt-8 mt-0">
                         <span className="text-[#47525E] text-[11px]">
-                          {`Real estate ${detail?.role}`}
+                          {t("companyDetails.realEstateRole", { role: detail?.role || "" })}
                         </span>
                         <h2 className="text-[#47525E] font-[600] text-[17px]">
                           {/* FNAIM Agence Paris Lamarck */}
@@ -317,7 +316,7 @@ const CompanyDetails = () => {
                           </li>
                           <li className="text-[#47525E] text-[14px]">
                             {/* Depuis : 2012 */}
-                            Since : {dateFormate(detail?.createdAt, "YYYY")}
+                            {t("companyDetails.since")}: {dateFormate(detail?.createdAt, "YYYY")}
                           </li>
                         </ul>
                       </div>
@@ -336,7 +335,7 @@ const CompanyDetails = () => {
                     >
                       <Typography>
                         <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                          Agency information
+                          {t("companyDetails.agencyInfo")}
                         </span>
                       </Typography>
                     </AccordionSummary>
@@ -344,7 +343,7 @@ const CompanyDetails = () => {
                       {hasProp > 0 && (
                         <div>
                           <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                            Key figures
+                            {t("companyDetails.keyFigures")}
                           </h4>
                           <div className="">
                             <ul className="flex  flex-wrap">
@@ -355,7 +354,7 @@ const CompanyDetails = () => {
                                       {detail?.saleProperties}
                                     </h4>
                                     <p className="text-[#47525E]">
-                                      Properties for sale
+                                      {t("property.forSale")}
                                     </p>
                                   </div>
                                 </li>
@@ -367,7 +366,7 @@ const CompanyDetails = () => {
                                       {detail?.rentProperties}
                                     </h4>
                                     <p className="text-[#47525E]">
-                                      Properties for rent
+                                      {t("property.forRent")}
                                     </p>
                                   </div>
                                 </li>
@@ -379,7 +378,7 @@ const CompanyDetails = () => {
                                       {detail?.offmarketProperties}
                                     </h4>
                                     <p className="text-[#47525E]">
-                                      Off-Market properties
+                                      {t("property.offMarket")}
                                     </p>
                                   </div>
                                 </li>
@@ -391,7 +390,7 @@ const CompanyDetails = () => {
                                       {detail?.directoryProperties}
                                     </h4>
                                     <p className="text-[#47525E]">
-                                      Properties in Directory
+                                      {t("property.inDirectory")}
                                     </p>
                                   </div>
                                 </li>
@@ -449,11 +448,11 @@ const CompanyDetails = () => {
                       {removeHTMLTags(detail?.about || "") && (
                         <div className="mt-7">
                           <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                            About {detail?.companyName}
+                            {t("companyDetails.about")} {detail?.companyName}
                           </h4>
                           <div>
                             <h5 className="text-[#47525E] text-[18px] font-[600] my-4">
-                              Here is the Agency Tagline
+                              {t("companyDetails.agencyTagline")}
                             </h5>
                             <p
                               dangerouslySetInnerHTML={{
@@ -464,12 +463,12 @@ const CompanyDetails = () => {
                               className="text-[#47525E] text-[14px] my-5"
                             ></p>
                             {detail?.about.length > 800 && (
-                              <sapn
+                              <span
                                 onClick={() => setShowFull(!showFull)}
                                 className="text-[#976DD0] hover:underline cursor-pointer"
                               >
                                 {showFull ? t("buttons.seeLess") : t("buttons.seeMore")}
-                              </sapn>
+                              </span>
                             )}
                           </div>
                         </div>
@@ -478,7 +477,7 @@ const CompanyDetails = () => {
                         <div className="mt-7">
                           <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
                             {" "}
-                            Services offered
+                            {t("companyDetails.servicesOffered")}
                           </h4>
                           <ul className="flex flex-wrap mt-5">
                             {detail?.servicesYouOffer?.map((itm, i) => (
@@ -494,7 +493,7 @@ const CompanyDetails = () => {
                         <div className="mt-7">
                           <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
                             {" "}
-                            Opening hours
+                            {t("companyDetails.openingHours")}
                           </h4>
                           <ul className="flex flex-wrap mt-5">
                             {detail?.openingHours?.map((item, i) => {
@@ -518,7 +517,7 @@ const CompanyDetails = () => {
                       {detail?.team?.length > 0 && (
                         <div className="mt-7">
                           <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                            Team members
+                            {t("companyDetails.teamMembers")}
                           </h4>
                           <ul className="flex flex-wrap mt-7">
                             {detail?.team?.map((item, i) => (
@@ -555,22 +554,21 @@ const CompanyDetails = () => {
                       />
                       <div className="absolute bree-serif-regular top-1/2 -translate-y-1/2 left-[30px] max-w-[500px] ">
                         <h2 className="text-white md:text-[30px] text-[20px] bree-serif-regular mb-5">
-                          WANT US TO BOOST YOUR PROPERTY VALUE AND ONLINE
-                          ATTRACTIVITY
+                          {t("marketing.boostPropertyMessage")}
                         </h2>
                         <button className="bg-[#976DD0] text-white px-7 py-2 font-[600] text-[20px]">
                           {" "}
-                          Click here
+                          {t("buttons.clickHere")}
                         </button>
                       </div>
                     </div>
                     <ul className="flex items-center bg-white border border-[#C3C3C3] border-t-0 rounded-bl-[10px] rounded-br-[10px] justify-center p-4">
                       <li className="text-[#976DD0] font-[600] text-base">
-                        <Link to="/peertopeer">Quote my property</Link>
+                        <Link to="/peertopeer">{t("propertyTypes.quoteMyProperty")}</Link>
                       </li>
                       <li className="bg-[#E1E1E1] w-[16px] h-[16px] rounded-full md:mx-24  mx-6 shrink-0"></li>
                       <li className="text-[#976DD0] font-[600] text-base">
-                        <Link>Help me sell</Link>
+                        <Link>{t("project.helpSelling")}</Link>
                       </li>
                     </ul>
                   </div>
@@ -589,9 +587,9 @@ const CompanyDetails = () => {
                     >
                       <Typography>
                         <p className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left ">
-                          Reviews
+                          {t("companyDetails.reviews")}
                           <span className="text-[#404347] block text-[14px] font-normal">
-                            Source : {ReviewData[0]?.source}. Last update: {moment(ReviewData[0]?.createdAt).format("DD/MM/YY")}
+                            {t("companyDetails.source")}: {ReviewData[0]?.source}. {t("companyDetails.lastUpdate")}: {moment(ReviewData[0]?.createdAt).format("DD/MM/YY")}
                           </span>
                         </p>
                       </Typography>
@@ -600,7 +598,7 @@ const CompanyDetails = () => {
                       <div>
                         <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2 flex justify-between items-center">
                           {" "}
-                          Detailed reviews
+                          {t("companyDetails.detailedReviews")}
                           <span className="flex items-center">
                             <IoStar className="me-[1px] text-[18px] text-[#5ACEBC]" />
                             <p className="text-[17px] text-[#5ACEBC] ms-1">

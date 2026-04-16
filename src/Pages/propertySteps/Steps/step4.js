@@ -1,5 +1,6 @@
 import { Checkbox } from "@headlessui/react";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import SelectDropdown from "../../../components/common/SelectDropdown";
 import methodModel from "../../../methods/methods";
@@ -26,6 +27,7 @@ const Step4 = ({
   dropdownOptions,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const user = useSelector((state) => state.user);
   const [draftModal, setdraftModal] = useState(false);
@@ -33,11 +35,11 @@ const Step4 = ({
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.surface) newErrors.surface = "Surface is required.";
-    if (formData.rooms == 0) newErrors.rooms = "Rooms cannot be zero.";
+    if (!formData.surface) newErrors.surface = t("propertySteps.step4.errors.surfaceRequired");
+    if (formData.rooms == 0) newErrors.rooms = t("propertySteps.step4.errors.roomsCannotBeZero");
     // if (formData.bedrooms == 0) newErrors.bedrooms = "Bedrooms cannot be zero.";
     if (formData.propertyFloor == 0)
-      newErrors.propertyFloor = "Number of Floors in Building cannot be zero..";
+      newErrors.propertyFloor = t("propertySteps.step4.errors.propertyFloorCannotBeZero");
     // if (formData.toilets == 0) newErrors.toilets = "Toilets cannot be zero.";
     // if (formData.livingRoom == 0) newErrors.livingRoom = "Living room cannot be zero.";
     // if (formData.totalFloorBuilding == 0) newErrors.totalFloorBuilding = "Buildind floor cannot be zero.";
@@ -141,25 +143,24 @@ const Step4 = ({
               ref={scrollRef}
               className="text-[#47525E] md:text-[24px] text-[21px] font-[600] text-left "
             >
-              What are the main characteristics of your property?
+              {t("propertySteps.step4.mainCharacteristics")}
               <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left ">
-                *Mandatory information
+                {t("propertySteps.step4.mandatoryInformation")}
               </span>
             </h4>
           </div>
           <div>
             <div>
               <h4 className="text-[#47525E] font-[600] text-[20px] mb-[4px]">
-                {" "}
-                Key information
+                {t("propertySteps.step4.keyInformation")}
               </h4>
             </div>
             <div className="my-9">
               <div>
                 <label className="mb-1 block text-[16px] text-[#47525E] mb-[10px] font-[600] block">
-                  Surface*{" "}
+                  {t("propertySteps.step4.surface")} 
                   <span className="block font-[400] mt-2 mb-2">
-                    You must respect Carrez Law
+                    {t("propertySteps.step4.carrezLaw")}
                   </span>
                 </label>
                 <div className="relative lg:w-[500px] w-[100%] z-[1]">
@@ -173,7 +174,7 @@ const Step4 = ({
                       setErrors({ ...errors, surface: "" });
                     }}
                     className="bg-white rounded-[7px] border border-[#976DD0] p-2 w-full pr-14"
-                    placeholder="Surface"
+                    placeholder={t("propertySteps.step4.placeholders.surface")}
                   />
                   <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                     m²
@@ -188,10 +189,9 @@ const Step4 = ({
                 {/* Number of Rooms */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-1 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Number of rooms*
+                    {t("propertySteps.step4.numberOfRooms")}
                     <span className="block font-[400] mt-2 mb-2 h-[50px] max-w-[300px] text-[14px]">
-                      Kitchen, bathrooms, and toilets are not considered as
-                      rooms.
+                      {t("propertySteps.step4.roomsInfo")}
                     </span>
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
@@ -240,10 +240,10 @@ const Step4 = ({
                 {/* Number of Bathrooms */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-1 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Number of bathrooms{" "}
-                    <span className="font-[400] ms-1"> (Optional)</span>
+                    {t("propertySteps.step4.numberOfBathrooms")}
+                    <span className="font-[400] ms-1"> {t("propertySteps.step4.optional")}</span>
                     <span className="block font-[400] mt-2 mb-2 h-[50px] max-w-[300px] text-[14px]">
-                      A room with a bath.
+                      {t("propertySteps.step4.bathroomInfo")}
                     </span>
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
@@ -287,8 +287,8 @@ const Step4 = ({
                 {/* Number of Bedrooms */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-1 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Number of bedrooms
-                    <span className="font-[400] ms-1"> (Optional)</span>
+                    {t("propertySteps.step4.numberOfBedrooms")}
+                    <span className="font-[400] ms-1"> {t("propertySteps.step4.optional")}</span>
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
                     <button
@@ -332,7 +332,7 @@ const Step4 = ({
                 {/* Floor of the Property */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-3 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Floor of the property*
+                    {t("propertySteps.step4.floorOfProperty")}
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
                     <button
@@ -380,8 +380,8 @@ const Step4 = ({
                 {/* Number of Toilets */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-3 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Number of toilets
-                    <span className="font-[400] ms-1"> (Optional)</span>
+                    {t("propertySteps.step4.numberOfToilets")}
+                    <span className="font-[400] ms-1"> {t("propertySteps.step4.optional")}</span>
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
                     <button
@@ -425,7 +425,7 @@ const Step4 = ({
                 {/* Number of Living Rooms */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-3 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Number of living rooms
+                    {t("propertySteps.step4.numberOfLivingRooms")}
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
                     <button
@@ -469,7 +469,7 @@ const Step4 = ({
                 {/* Number of Floors in the Building */}
                 <li className="md:w-[48%] w-[100%] my-5">
                   <label className="mb-3 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                    Number of floors in the building
+                    {t("propertySteps.step4.numberOfFloorsInBuilding")}
                     {/* {+formData.propertyFloor >= 1 ? "*" : ""} */}
                   </label>
                   <div className="flex items-center border border-[#976DD0] bg-white p-1 rounded-[7px] w-[200px] h-[48px]">
@@ -513,8 +513,8 @@ const Step4 = ({
               </ul>
               <div className="mt-5">
                 <label className="mb-3 block text-[16px] text-[#47525E] mb-[12px] font-[600] block">
-                  Situation
-                  <span className="font-[400] ms-1"> (Optional)</span>
+                  {t("propertySteps.step4.situation")}
+                  <span className="font-[400] ms-1"> {t("propertySteps.step4.optional")}</span>
                 </label>
                 <div className="flex items-center flex-wrap">
                   {situation?.map((option) => (
@@ -549,12 +549,12 @@ const Step4 = ({
               </div>
               <div className="mt-10">
                 <label className="mb-1 block text-[16px] text-[#47525E] mb-5 font-[600] block">
-                  Building
-                  <span className="font-[400] ms-1"> (Optional)</span>
+                  {t("propertySteps.step4.building")}
+                  <span className="font-[400] ms-1"> {t("propertySteps.step4.optional")}</span>
                 </label>
               </div>
               <div className=" lg:w-[500px] w-[100%]">
-                <label>Year of construction</label>
+                <label>{t("propertySteps.step4.yearOfConstruction")}</label>
                 <div className="font-[400] mt-2 text-[14px] text-[#47525E]">
                   <input
                     type="text"
@@ -565,7 +565,7 @@ const Step4 = ({
                       setFormData({ ...formData, building: value });
                     }}
                     className={`bg-white rounded-[7px] h-11 border p-2 px-3 xl:max-w-[500px] w-[100%] mb-4 border border-[#976DD0]`}
-                    placeholder="Enter Year of construction"
+                    placeholder={t("propertySteps.step4.placeholders.enterYearOfConstruction")}
                   />
                 </div>
               </div>
@@ -574,9 +574,9 @@ const Step4 = ({
                 0 && (
                   <>
                     <div className="lg:w-[500px] w-[100%]">
-                      <label>State</label>
+                      <label>{t("propertySteps.step4.state")}</label>
                       <SelectDropdown
-                        placeholder="Select State"
+                        placeholder={t("propertySteps.step4.placeholders.selectState")}
                         displayValue="name"
                         className="mt-2 capitalize"
                         intialValue={formData?.propertyState}
@@ -602,8 +602,7 @@ const Step4 = ({
 
               <div className="mt-10">
                 <h4 className="text-[#47525E] font-[600] text-[20px] mb-[4px]">
-                  {" "}
-                  Increase your property attractivity by giving more details.
+                  {t("propertySteps.step4.increaseAttractivity")}
                 </h4>
               </div>
 
@@ -611,7 +610,7 @@ const Step4 = ({
               {cookingOptions?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Cooking <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.cooking")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {cookingOptions.map((option) => (
@@ -661,8 +660,7 @@ const Step4 = ({
               {equipmentOptions?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Equipment{" "}
-                    <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.equipment")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {equipmentOptions.map((option) => (
@@ -708,7 +706,7 @@ const Step4 = ({
               {outsideOptions?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Outside <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.outside")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {outsideOptions.map((option) => (
@@ -754,8 +752,7 @@ const Step4 = ({
               {servicesAndAccessibility?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Services and accessibility{" "}
-                    <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.servicesAndAccessibility")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {servicesAndAccessibility.map((option) => (
@@ -806,8 +803,7 @@ const Step4 = ({
               {ancilliaryAreas?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Ancilliary areas{" "}
-                    <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.ancillaryAreas")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {ancilliaryAreas.map((option) => (
@@ -853,8 +849,7 @@ const Step4 = ({
               {environment?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Environment{" "}
-                    <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.environment")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {environment.map((option) => (
@@ -900,7 +895,7 @@ const Step4 = ({
               {leisure?.length > 0 && (
                 <div>
                   <label className="block text-[16px] text-[#47525E] font-[600] mt-10">
-                    Leisure <span className="font-[400] ms-1">(Optional)</span>
+                    {t("propertySteps.step4.leisure")} <span className="font-[400] ms-1">{t("propertySteps.step4.optionalNoLeadingSpace")}</span>
                   </label>
                   <ul className="flex justify-start gap-4 w-full items-center flex-wrap my-5">
                     {leisure.map((option) => (
@@ -948,8 +943,7 @@ const Step4 = ({
                   {" "}
                   <div className="mt-10">
                     <h4 className="text-[#47525E] font-[600] text-[20px] mb-[4px]">
-                      {" "}
-                      Is your property qualified for investment purposes?
+                      {t("propertySteps.step4.investmentQualification")}
                     </h4>
                   </div>
                   <div className="flex items-center flex-wrap mt-5 xl:w-[500px] w-[100%] ">
@@ -995,7 +989,7 @@ const Step4 = ({
               onClick={save}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save change
+              {t("propertySteps.step4.saveChange")}
             </button>
           </div>
         ) : (
@@ -1004,19 +998,19 @@ const Step4 = ({
               onClick={draftsave}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save As Draft
+              {t("propertySteps.step4.saveAsDraft")}
             </button>
             <button
               onClick={handleBackNext}
               className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4  submit-btn  "
             >
-              Back
+              {t("common.back")}
             </button>
             <button
               onClick={handleNext}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
             >
-              Next
+              {t("common.next")}
             </button>
           </div>
         )}

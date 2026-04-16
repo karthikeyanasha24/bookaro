@@ -10,6 +10,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import { Fragment, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IoMdCheckmark } from "react-icons/io";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import methodModel from "../../methods/methods";
@@ -24,6 +25,7 @@ const PropDescription = ({
   acrArr,
   kwh,
 }) => {
+  const { t } = useTranslation();
   const categorizedData = categorizeData(amenities);
   const ancilliaryAreas =
     categorizedData["ancilliary areas".toLowerCase()]?.filter((itm) =>
@@ -84,6 +86,7 @@ const PropDescription = ({
 
 
   const [openResult, setOpenResult] = useState(false);
+
   const estimateBill = (surface, energy, cls) => {
     const price = +kwh || 0.2516;
     const ranges = {
@@ -114,18 +117,18 @@ const PropDescription = ({
 
     let selectedClass = ranges[cls];
     if (!selectedClass) {
-      return "Invalid class type.";
+      return t("propertyDetails.invalidClassType");
     }
     const minC = Math.floor(selectedClass.min * +surface * price);
     const maxC = Math.floor(selectedClass.max * +surface * price);
     const min = formatCurrency(minC);
     const max = formatCurrency(maxC);
     if (cls === 'A') {
-      return `Maximum ${max} €/year`
+      return t("propertyDetails.maximumPerYear", { amount: max });
     } else if (cls === 'G') {
-      return `Minimum ${min} €/year`
+      return t("propertyDetails.minimumPerYear", { amount: min });
     } else {
-      return `Between ${min} and ${max} €/year`;
+      return t("propertyDetails.betweenPerYear", { min, max });
     }
   };
 
@@ -137,6 +140,22 @@ const PropDescription = ({
       perSqr = Number(price) / Number(sur);
     }
     return perSqr.toFixed(2);
+  };
+
+  const getCountLabel = (count, singularKey, pluralKey) => {
+    return `${count} ${t(count > 1 ? pluralKey : singularKey)}`;
+  };
+
+  const getDiagnosisStatus = () => {
+    if (detail?.diagnosisType?.toLowerCase()?.includes("later")) {
+      return t("common.pending");
+    }
+
+    if (detail?.diagnosisType?.toLowerCase()?.includes("does not")) {
+      return t("propertyDetails.notApplicable");
+    }
+
+    return "";
   };
 
   return (
@@ -154,7 +173,7 @@ const PropDescription = ({
         >
           <Typography>
             <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-              Property description
+              {t("propertyTimeline.tabs.description")}
             </span>
           </Typography>
         </AccordionSummary>
@@ -167,40 +186,40 @@ const PropDescription = ({
           </div>
           <div className="mt-7">
             <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-              Characterstics
+              {t("propertyDetails.characteristics")}
             </h4>
             <div className="flex gap-4 mt-6">
               {Number(detail?.price) > 0 && (
                 <div className="bg-[#F0F0F0] p-4 rounded-[5px] text-[#47525E]">
-                  Price: {formatCurrency(detail?.price) || 0} €
+                  {t("property.price")}: {formatCurrency(detail?.price) || 0} €
                 </div>
               )}
               <div className="bg-[#F0F0F0] p-4 rounded-[5px] text-[#976DD0] underline capitalize">
-                <p className="cursor-pointer">Estimate your monthly payment</p>
+                <p className="cursor-pointer">{t("propertyDetails.estimateMonthlyPayment")}</p>
               </div>
               {Number(detail?.price) > 0 && (
                 <div className="bg-[#F0F0F0] p-4 rounded-[5px] text-[#47525E]">
-                  Price/sqm: {getpricesqm()} €
+                  {t("propertyDetails.pricePerSqm")}: {getpricesqm()} €
                 </div>
               )}
               {detail?.building && (
                 <div className="bg-[#F0F0F0] p-4 rounded-[5px] text-[#47525E]">
-                  Built in {detail?.building}
+                  {t("propertyDetails.builtIn", { year: detail?.building })}
                 </div>
               )}
               {detail?.propertyState?.name && (
                 <div className="bg-[#F0F0F0] p-4 rounded-[5px] text-[#47525E]">
-                  State: {detail?.propertyState?.name}
+                  {t("forms.state")}: {detail?.propertyState?.name}
                 </div>
               )}
             </div>
             <ul className="flex items-start  mt-8 flex-wrap">
               {environment?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Environment</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.environment")}</h5>
                   <ul>
                     {environment?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -214,10 +233,10 @@ const PropDescription = ({
               )}
               {ancilliaryAreas?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Ancilliary areas</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.ancillaryAreas")}</h5>
                   <ul>
                     {ancilliaryAreas?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -232,11 +251,11 @@ const PropDescription = ({
               {servicesAndAccessibility?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
                   <h5 className="text-[#47525E] font-[600]">
-                    Services and accessibility
+                    {t("propertyDetails.servicesAccessibility")}
                   </h5>
                   <ul>
                     {servicesAndAccessibility?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -250,10 +269,10 @@ const PropDescription = ({
               )}
               {cookingOptions?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Cooking</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.cooking")}</h5>
                   <ul>
                     {cookingOptions?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -267,7 +286,7 @@ const PropDescription = ({
               )}
               {(+detail?.livingRoom > 0 || +detail?.bedrooms > 0) && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Living areas</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.livingAreas")}</h5>
                   <ul>
                     {+detail?.livingRoom > 0 && (
                       <li className="flex items-center text-[#47525E] my-3">
@@ -276,8 +295,7 @@ const PropDescription = ({
                           alt="basement"
                           className="w-[25px] me-2 "
                         />
-                        {detail?.livingRoom} Living Room
-                        {`${Number(detail?.livingRoom) > 1 ? "s" : ""}`}
+                        {getCountLabel(Number(detail?.livingRoom), "propertyDetails.livingRoom", "propertyDetails.livingRooms")}
                         {detail?.surface && (
                           <>
                             /{formatCurrency(detail?.surface)}{" "}
@@ -295,8 +313,7 @@ const PropDescription = ({
                           alt="parking"
                           className="w-[25px] me-2 "
                         />
-                        {detail?.bedrooms} bedroom
-                        {`${Number(detail?.bedrooms) > 1 ? "s" : ""}`}
+                        {getCountLabel(Number(detail?.bedrooms), "propertyDetails.bedroom", "propertyDetails.bedrooms")}
                       </li>
                     )}
                   </ul>
@@ -305,7 +322,7 @@ const PropDescription = ({
 
               {(+detail?.toilets > 0 || +detail?.bathroom > 0) && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Water room</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.waterRoom")}</h5>
                   <ul>
                     {+detail?.toilets > 0 && (
                       <li className="flex items-center text-[#47525E] my-3 capitalize">
@@ -314,8 +331,7 @@ const PropDescription = ({
                           alt="parking"
                           className="w-[25px] me-2 "
                         />
-                        {detail?.toilets} toilet
-                        {`${Number(detail?.toilets) > 1 ? "s" : ""}`}
+                        {getCountLabel(Number(detail?.toilets), "propertyDetails.toilet", "propertyDetails.toilets")}
                       </li>
                     )}
                     {+detail?.bathroom > 0 && (
@@ -325,8 +341,7 @@ const PropDescription = ({
                           alt="handicapped-access"
                           className="w-[25px] me-2 "
                         />
-                        {detail?.bathroom} bathroom
-                        {`${Number(detail?.bedrooms) > 1 ? "s" : ""}`}
+                        {getCountLabel(Number(detail?.bathroom), "propertyDetails.bathroom", "propertyDetails.bathrooms")}
                       </li>
                     )}
                   </ul>
@@ -335,10 +350,10 @@ const PropDescription = ({
 
               {outsideOptions?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Outside</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.outside")}</h5>
                   <ul>
                     {outsideOptions?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -352,10 +367,10 @@ const PropDescription = ({
               )}
               {leisure?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Leisure</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.leisure")}</h5>
                   <ul>
                     {leisure?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -369,10 +384,10 @@ const PropDescription = ({
               )}
               {equipmentOptions?.length > 0 && (
                 <li className="xl:w-1/3 lg:w-1/2 mb-8">
-                  <h5 className="text-[#47525E] font-[600]">Equipment</h5>
+                  <h5 className="text-[#47525E] font-[600]">{t("propertyDetails.equipment")}</h5>
                   <ul>
                     {equipmentOptions?.map((itm, i) => (
-                      <li className="flex items-center text-[#47525E] my-3 capitalize">
+                      <li key={`${itm?.id || itm?.name}-${i}`} className="flex items-center text-[#47525E] my-3 capitalize">
                         <img
                           src={methodModel.noImg(itm?.icon, "img")}
                           alt="no-facing"
@@ -388,11 +403,11 @@ const PropDescription = ({
           </div>
           <div className="mt-7">
             <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-              Heating and Diagnosis
+              {t("propertyDetails.heatingAndDiagnosis")}
             </h4>
             <ul className="flex gap-10">
               {consumption?.map((itm, i) => (
-                <li className="my-3">
+                <li key={`${itm?.id || itm?.name}-${i}`} className="my-3">
                   <div className="flex items-center text-[#47525E] capitalize">
                     <img
                       src={methodModel.noImg(itm?.icon, "img")}
@@ -408,8 +423,7 @@ const PropDescription = ({
               <li className="xl:w-1/2 w-full my-3">
                 <div className="flex items-center justify-between  mt-3">
                   <h4 className="text-[#47525E] font-[600] ">
-                    Energy performance{" "}
-                    <span className="2xl:inline-block hidden">diagnostics</span>
+                    {t("propertyDetails.energyPerformanceDiagnostics")}
                   </h4>
                   {(detail?.diagnosisType?.toLowerCase()?.includes("later") ||
                     detail?.diagnosisType
@@ -419,13 +433,7 @@ const PropDescription = ({
                         ? "text-[#52b31b]"
                         : ""
                         } bg-[#efefef] p-1 font-[600] px-3 rounded-[5px] text-[12px] text-[#976DD0]`}>
-                        {detail?.diagnosisType?.toLowerCase()?.includes("later")
-                          ? "Pending"
-                          : detail?.diagnosisType
-                            ?.toLowerCase()
-                            ?.includes("does not")
-                            ? "Not Applicable"
-                            : ""}
+                        {getDiagnosisStatus()}
                       </span>
                     )}
                 </div>
@@ -466,10 +474,10 @@ const PropDescription = ({
                   </div>
                   <div className="flex items-center justify-between  ">
                     <p className="text-[#878889] text-[12px] ">
-                      Energy-efficient home
+                      {t("propertyDetails.energyEfficientHome")}
                     </p>
                     <p className="text-[#878889] text-[12px] ">
-                      Energy-intensive housing
+                      {t("propertyDetails.energyIntensiveHousing")}
                     </p>
                   </div>
                 </div>
@@ -478,8 +486,7 @@ const PropDescription = ({
               <li className="xl:w-1/2 w-full my-3">
                 <div className="flex items-center justify-between  mt-3 ">
                   <h4 className="text-[#47525E] font-[600] ">
-                    Greenhouse gas{" "}
-                    <span className="2xl:inline-block hidden">emissions</span>
+                    {t("propertyDetails.greenhouseGasEmissions")}
                   </h4>
                   {(detail?.diagnosisType?.toLowerCase()?.includes("later") ||
                     detail?.diagnosisType
@@ -491,13 +498,7 @@ const PropDescription = ({
                           : ""
                           } bg-[#efefef] p-1  px-3 rounded-[5px] text-[12px] text-[#976DD0] font-[600]`}
                       >
-                        {detail?.diagnosisType?.toLowerCase()?.includes("later")
-                          ? "Pending"
-                          : detail?.diagnosisType
-                            ?.toLowerCase()
-                            ?.includes("does not")
-                            ? "Not Applicable"
-                            : ""}
+                        {getDiagnosisStatus()}
                       </span>
                     )}
                 </div>
@@ -536,8 +537,8 @@ const PropDescription = ({
                     </div>
                   </div>
                   <div className="flex items-center justify-between  ">
-                    <p className="text-[#878889] text-[12px] ">Low emissions</p>
-                    <p className="text-[#878889] text-[12px] ">High emisisons</p>
+                    <p className="text-[#878889] text-[12px] ">{t("propertyDetails.lowEmissions")}</p>
+                    <p className="text-[#878889] text-[12px] ">{t("propertyDetails.highEmissions")}</p>
                   </div>
                 </div>
               </li>
@@ -548,7 +549,7 @@ const PropDescription = ({
                 onClick={() => setOpenResult(true)}
                 className=" underline cursor-pointer"
               >
-                See Details
+                {t("propertyDetails.seeDetails")}
               </button>
             )}
             <Transition appear show={openResult} as={Fragment}>
@@ -588,11 +589,11 @@ const PropDescription = ({
                             as="h3"
                             className="text-2xl font-bold leading-6 text-[#47525E]"
                           >
-                            Detail of energy diagnostics
+                            {t("propertyDetails.detailOfEnergyDiagnostics")}
                           </DialogTitle>
                           <div className="mt-4">
                             <p className="text-[#47525E] font-[600]">
-                              Estimated energy bill
+                              {t("propertyDetails.estimatedEnergyBill")}
                             </p>
                           </div>
                           <div className="bg-[#f4f4ff] rounded-[8px] px-[8px] py-[16px] mb-[16px] font-[700] text-[16px] my-4">
@@ -605,7 +606,7 @@ const PropDescription = ({
                             </p>
                           </div>
                           <p className="text-[#47525E] text-[13px]">
-                            Estimated annual energy expenditure for standard use:
+                            {t("propertyDetails.estimatedAnnualEnergyExpenditure")}
                             {" "}{estimateBill(
                               +detail?.surface,
                               +detail?.energyConsumption,
@@ -613,19 +614,18 @@ const PropDescription = ({
                             )}.
                           </p>
                           <p className="text-[#47525E] text-[13px]">
-                            Average energy prices indexed as of January 1, 2020
-                            (subscription included).
+                            {t("propertyDetails.averageEnergyPricesIndexed")}
                           </p>
                           <p className="py-2 border-b border-[#eaeaea] block"></p>
 
                           <div>
                             <div className="mt-4">
                               <p className="text-[#47525E] font-[600] text-[18px] mb-4">
-                                Energy performance diagnosis (EPD)
+                                {t("propertyDetails.energyPerformanceDiagnosis")}
                               </p>
                             </div>
                             <p className="text-[12px] text-[#2b2b2b]">
-                              High-performance housing
+                              {t("propertyDetails.highPerformanceHousing")}
                             </p>
                             <div
                               className={`flex ${detail?.energy_efficient == "A" ||
@@ -668,12 +668,12 @@ const PropDescription = ({
                                     {detail?.energy_efficient}
                                   </h4>
                                   <p className="text-[12px]">
-                                    Consumption (primary energy)
+                                    {t("propertyDetails.consumptionPrimaryEnergy")}
                                   </p>
                                   <h3 className="text-[14px] font-bold">
                                     {formatCurrency(detail?.energyConsumption)} kWh/m².year
                                   </h3>
-                                  <p className="text-[12px] mt-2">Emissions</p>
+                                  <p className="text-[12px] mt-2">{t("propertyDetails.emissions")}</p>
                                   <h3 className="text-[14px] font-bold">
                                     {formatCurrency(detail?.emissions)} kg
                                   </h3>
@@ -684,21 +684,21 @@ const PropDescription = ({
                               }
                             </div>
                             <p className="text-[12px]">
-                              Extremely energy-intensive housing
+                              {t("propertyDetails.extremelyEnergyIntensiveHousing")}
                             </p>
                             <p className="text-[12px]">
-                              Diagnosis carried out {detail?.dateOfDiagnosis}
+                              {t("propertyDetails.diagnosisCarriedOut", { date: detail?.dateOfDiagnosis })}
                               {/* after July 1, 2021 */}
                             </p>
                           </div>
                           <div>
                             <div className="mt-4">
                               <p className="text-[#47525E] font-[600] text-[18px] mb-4">
-                                Greenhouse gas (GHG) emission index
+                                {t("propertyDetails.greenhouseGasEmissionIndex")}
                               </p>
                             </div>
                             <p className="text-[12px] text-[#2b2b2b]">
-                              Low CO₂ emissions
+                              {t("propertyDetails.lowCo2Emissions")}
                             </p>
                             <div
                               className={`flex ${detail?.emission_efficient == "A" ||
@@ -740,7 +740,7 @@ const PropDescription = ({
                                 <h4 className="font-bold text-[20px] text-[#2b2b2b]">
                                   {detail?.emission_efficient}
                                 </h4>
-                                <p className="text-[12px]">Emissions</p>
+                                <p className="text-[12px]">{t("propertyDetails.emissions")}</p>
                                 <h3 className="text-[14px] font-bold">
                                   {formatCurrency(detail?.emissions)} kg
                                 </h3>
@@ -750,7 +750,7 @@ const PropDescription = ({
                                 </h3>
                               </div>
                             </div>
-                            <p className="text-[12px]">Very high CO₂ emissions</p>
+                            <p className="text-[12px]">{t("propertyDetails.veryHighCo2Emissions")}</p>
                           </div>
                         </div>
 
@@ -765,7 +765,7 @@ const PropDescription = ({
             detail?.propertyType === "rent") && (
               <div className="mt-7">
                 <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2 mt-4">
-                  Pricing details
+                  {t("propertyDetails.pricingDetails")}
                 </h4>
                 {detail?.propertyType === "sale" ? (
                   <div className="">
@@ -773,12 +773,12 @@ const PropDescription = ({
                       <>
                         <div className="mt-4">
                           <div className="flex items-start justify-between ">
-                            <h5>Price without agency fees</h5>
+                            <h5>{t("propertyDetails.priceWithoutAgencyFees")}</h5>
                             <p>{formatCurrency(+detail?.price)} €</p>
                           </div>
                           <div className="flex items-start justify-between ">
                             <p>
-                              Agency fees
+                              {t("propertyDetails.agencyFees")}
                               {/* (10% of seller price) */}
                             </p>
                             <p>
@@ -789,21 +789,21 @@ const PropDescription = ({
                         <div className="mt-4">
                           <div className="flex items-start justify-between ">
                             <h5 className="text-[#47525E] font-[600] ">
-                              Price for buyer
+                              {t("propertyDetails.priceForBuyer")}
                             </h5>
                             <p className="text-[#47525E] font-[600]">
                               {formatCurrency(Math.floor(+detail?.price + +detail?.propertyAgencyFees))} €
                             </p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Estimated notary fees (8%) </p>
+                            <p>{t("propertyDetails.estimatedNotaryFees")}</p>
                             <p>{formatCurrency(Math.floor(+detail?.price * 0.08))} €</p>
                           </div>
                         </div>
                         <div className="flex items-start justify-between mt-5">
                           <div className="w-[80%]">
                             <h5 className="text-[#47525E] font-[600]">
-                              Global project amount
+                              {t("propertyDetails.globalProjectAmount")}
                             </h5>
                           </div>
                           <p className="text-[#47525E] font-[600]">
@@ -830,7 +830,7 @@ const PropDescription = ({
                         <div className="flex items-start justify-between">
                           <div className="w-[80%]">
                             <h5 className="text-[#47525E] font-[600]">
-                              Property annual building charges
+                              {t("propertyDetails.propertyAnnualBuildingCharges")}
                             </h5>
                           </div>
                           <p className="text-[#47525E] font-[600]">
@@ -843,21 +843,21 @@ const PropDescription = ({
                         <div className="mt-4">
                           <div className="flex items-start justify-between ">
                             <h5 className="text-[#47525E] font-[600] ">
-                              Price for buyer
+                              {t("propertyDetails.priceForBuyer")}
                             </h5>
                             <p className="text-[#47525E] font-[600]">
                               {+detail?.price} €
                             </p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Estimated notary fees (8%) </p>
+                            <p>{t("propertyDetails.estimatedNotaryFees")}</p>
                             <p> {formatCurrency(Math.floor(+detail?.price * 0.08))} €</p>
                           </div>
                         </div>
                         <div className="flex items-start justify-between mt-5">
                           <div className="w-[80%]">
                             <h5 className="text-[#47525E] font-[600]">
-                              Global project amount
+                              {t("propertyDetails.globalProjectAmount")}
                             </h5>
                           </div>
                           <p className="text-[#47525E] font-[600]">
@@ -874,7 +874,7 @@ const PropDescription = ({
                         <div className="mt-4">
                           <div className="flex items-start justify-between ">
                             <h5 className="text-[#47525E] font-[600] ">
-                              Total monthly rent including charges
+                              {t("propertyDetails.totalMonthlyRentIncludingCharges")}
                             </h5>
                             <p className="text-[#47525E] font-[600]">
                               {formatCurrency(Math.floor(
@@ -885,18 +885,18 @@ const PropDescription = ({
                             </p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Monthly rent</p>
+                            <p>{t("propertyDetails.monthlyRent")}</p>
                             <p>{formatCurrency(detail?.propertyMonthlyCharges || 0)} €</p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Building provisional charges</p>
+                            <p>{t("propertyDetails.buildingProvisionalCharges")}</p>
                             <p>{formatCurrency(detail?.propertyCharges || 0)} €</p>
                           </div>
                         </div>
                         <div className="mt-4">
                           <div className="flex items-start justify-between ">
                             <h5 className="text-[#47525E] font-[600] ">
-                              One time fees paid by renter
+                              {t("propertyDetails.oneTimeFeesPaidByRenter")}
                             </h5>
                             <p className="text-[#47525E] font-[600]">
                               {formatCurrency(Math.floor(
@@ -906,18 +906,18 @@ const PropDescription = ({
                             </p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Agency fees</p>
+                            <p>{t("propertyDetails.agencyFees")}</p>
                             <p>{formatCurrency(detail.propertyAgencyFees || 0)} €</p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Inventory of property</p>
+                            <p>{t("propertyDetails.inventoryOfProperty")}</p>
                             <p>{formatCurrency(detail.propertyInventory || 0)} €</p>
                           </div>
                         </div>
                         <div className="flex items-start justify-between mt-5">
                           <div className="w-[80%]">
                             <h5 className="text-[#47525E] font-[600]">
-                              Guarantee deposit
+                              {t("propertyDetails.guaranteeDeposit")}
                             </h5>
                           </div>
                           <p className="text-[#47525E] font-[600]">
@@ -930,7 +930,7 @@ const PropDescription = ({
                         <div className="mt-4">
                           <div className="flex items-start justify-between ">
                             <h5 className="text-[#47525E] font-[600] ">
-                              Total monthly rent including charges
+                              {t("propertyDetails.totalMonthlyRentIncludingCharges")}
                             </h5>
                             <p className="text-[#47525E] font-[600]">
                               {formatCurrency((+detail.propertyCharges || 0) +
@@ -939,18 +939,18 @@ const PropDescription = ({
                             </p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Monthly rent</p>
+                            <p>{t("propertyDetails.monthlyRent")}</p>
                             <p>{formatCurrency(detail?.propertyMonthlyCharges || 0)} €</p>
                           </div>
                           <div className="flex items-start justify-between ">
-                            <p>Building provisional charges</p>
+                            <p>{t("propertyDetails.buildingProvisionalCharges")}</p>
                             <p>{formatCurrency(detail?.propertyCharges || 0)} €</p>
                           </div>
                         </div>
                         <div className="flex items-start justify-between mt-5">
                           <div className="w-[80%]">
                             <h5 className="text-[#47525E] font-[600]">
-                              Guarantee deposit
+                              {t("propertyDetails.guaranteeDeposit")}
                             </h5>
                           </div>
                           <p className="text-[#47525E] font-[600]">
@@ -970,8 +970,7 @@ const PropDescription = ({
               Georisques
             </h4>
             <p className="text-[#47525E] text-[16px] py-4">
-              Information on the risks to which this property is exposed is
-              available on the Géorisques website:
+              {t("propertyDetails.georisquesInfo")}{" "}
               <a
                 href="https://www.georisques.gouv.fr"
                 target="_blank"
@@ -984,11 +983,11 @@ const PropDescription = ({
           {investmentOptions?.length > 0 && (
             <div className="mt-7">
               <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                Investment
+                {t("propertyDetails.investment")}
               </h4>
               <ul className="flex flex-wrap">
-                {investmentOptions?.map((itm) => (
-                  <li className="flex items-center md:w-1/2 w-full my-2">
+                {investmentOptions?.map((itm, index) => (
+                  <li key={`${itm?.id || itm?.name}-${index}`} className="flex items-center md:w-1/2 w-full my-2">
                     <IoMdCheckmark className="me-2 text-black" />
                     {capLetter(itm.name)}
                   </li>

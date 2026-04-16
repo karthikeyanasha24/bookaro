@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ApiClient from '../../methods/api/apiClient';
 import loader from '../../methods/loader';
@@ -8,13 +9,14 @@ const PropLeadSidebar = ({
     handleClickProperty,
     selectedProperty,
 }) => {
+    const { t } = useTranslation();
     const { user } = useSelector((state) => state);
     const tabs = [
-        { name: "All", value: "" },
-        { name: "Off-Market", value: "offmarket" },
-        { name: "Sale", value: "sale" },
-        { name: "Rent", value: "rent" },
-        { name: "Directory", value: "directory" },
+        { label: t("buttons.all"), value: "" },
+        { label: t("home.tabs.offMarket"), value: "offmarket" },
+        { label: t("property.forSale"), value: "sale" },
+        { label: t("property.forRent"), value: "rent" },
+        { label: t("home.tabs.directory"), value: "directory" },
     ];
     const [type, setType] = useState("");
     const [data, setData] = useState([]);
@@ -67,7 +69,7 @@ const PropLeadSidebar = ({
                     value={name}
                     onChange={(e) => textChange("name", e.target.value)}
                     type="search"
-                    placeholder="Search property"
+                    placeholder={t("properties.searchProperty")}
                 />
             </div>
             <ul className="flex items-center mt-5">
@@ -78,7 +80,7 @@ const PropLeadSidebar = ({
                         className={`${itm.value === type ? "" : "text-[#343F4B]"
                             } text-[14px] me-3 cursor-pointer`}
                     >
-                        {itm.name}
+                        {itm.label}
                     </li>
                 ))}
             </ul>
@@ -119,7 +121,7 @@ const PropLeadSidebar = ({
                                                 <span className="text-[#343F4B] text-[12px] font-[600] me-1">
                                                     {item?.propertyDetails?.userLeads?.length || 0}
                                                 </span>
-                                                Leads
+                                                {t("transactionSidebar.leads")}
                                             </p>
                                             <div className=" relative w-[50%] h-[25px]  justify-end ml-auto">
                                                 <img
@@ -157,14 +159,14 @@ const PropLeadSidebar = ({
                                             </div>
                                         </div>
                                         <p className="text-[#47525E] text-[12px]">
-                                            {item?.propertyDetails?.visitBookedCount || 0} Visits Booked
+                                            {t("transactionSidebar.visitsBooked", { count: item?.propertyDetails?.visitBookedCount || 0 })}
                                         </p>
                                     </div>
                                 </li>
                             )
                         }) : (
                             <p className="text-center text-gray-500">
-                                No properties available
+                                {t("transactionSidebar.noPropertiesAvailable")}
                             </p>
                         )}
                 </ul>

@@ -1,9 +1,11 @@
 import React from 'react'
 import PageLayout from '../../components/global/PageLayout'
 import { FaRegStar } from "react-icons/fa";
+import { useTranslation } from 'react-i18next';
 
 
 const Transaction4 = () => {
+  const { t } = useTranslation();
   return (
     <PageLayout>
       {/* Banner html code  */}
@@ -11,16 +13,16 @@ const Transaction4 = () => {
           <div className='grid h-[100%] grid-cols-12'>
             <div className='col-span-12 mt-[5rem] md:col-span-6 text-left flex flex-col justify-center items-start lg:mt-0 w-[300px] xs:w-[50%] sm:w-[50%] lg:w-[80%]'>
               <h6 className='text-[#976DD0] font-semibold text-[15px] sm:text-[20px] leading-[35px]'>
-                Transaction managing tool
+                {t("transaction.page4.heroTag")}
               </h6>
               <h1 className='text-[#000] sm:text-[18px] md:text-[20px] lg:text-[25px] xl:text-[35px] font-semibold mb-4'>
-                The only tool to secure and ease the transaction process both for seller and buyer
+                {t("transaction.page4.heroTitle")}
               </h1>
               <p className='text-[12px] sm:text-[16px] w-[100%] sm:w-[62%] text-left font-medium'>
-                The transaction monitoring tool guides you through all steps of your transaction with customized guidance and automated actions to save your time.
+                {t("transaction.page4.heroDescription")}
               </p>
               <button className='border-2 border-[#976DD0] text-[12px] sm:text-[14px] rounded-full text-[#976DD0] px-1 sm:px-3 py-1 sm:py-2 w-[110px] sm:w-[150px] mt-6'>
-                <span className='mb-[2px] inline-block'>Sell my property</span>
+                <span className='mb-[2px] inline-block'>{t("transaction.page4.sellMyProperty")}</span>
               </button>
             </div>
             <div className='col-span-12 md:col-span-6 py-10 flex items-center'>
@@ -29,33 +31,33 @@ const Transaction4 = () => {
                   <div className='bg-[#000] text-[#fff] px-3 py-4 rounded-[15px]'>
                     <div className='flex flex-wrap gap-2 sm:flex-nowrap justify-center items-center'>
                       <img src='assets/img/location-1.png' className='h-[20px] sm:h-[30px] w-[20px] sm:w-[40px]'></img>
-                      <p className='text-[10px] sm:text-[14px]'>You were near this appartment yesterday</p>
+                      <p className='text-[10px] sm:text-[14px]'>{t("transaction.page4.nearApartment")}</p>
                     </div>
                   </div>
                 </div>
                 <div className='col-span-6 p-3 sm:p-5 bg-[#fff] rounded-[20px]'>
                   <h2 className='text-center text-[14px] sm:text-[18px] text-[#5A5A5A] font-semibold w-[80%] mx-auto'>
-                    What do you think about this property?
+                    {t("transaction.page4.whatThinkProperty")}
                   </h2>
-                  <p className='mt-7 text-[#47525E] text-[13px] font-semibold sm:text-[15px]'>You think refrence price is:</p>
+                  <p className='mt-7 text-[#47525E] text-[13px] font-semibold sm:text-[15px]'>{t("transaction.page4.referencePriceIs")}</p>
                   <div className='flex flex-wrap justify-between gap-3 xl:gap-0 mt-1'>
                     <button className='px-2 mx-auto xl:mx-0 w-[80px] text-[10px] sm:text-[12px] rounded-[5px] py-1 bg-[#976DD0] text-[#fff]'>
-                      Cheap
+                      {t("transaction.page4.cheap")}
                     </button>
                     <button className='px-2 mx-auto xl:mx-0 w-[80px] text-[10px] sm:text-[12px] rounded-[5px] py-1 bg-[#E6E6E6] text-[#47525E]'>
                       OK
                     </button>
                     <button className='px-2 mx-auto xl:mx-0 w-[80px] text-[10px] sm:text-[12px] rounded-[5px] py-1 bg-[#E6E6E6] text-[#47525E]'>
-                      Expensive
+                      {t("transaction.page4.expensive")}
                     </button>
                   </div>
-                  <p className='mt-4 text-[#47525E] text-[14px] font-semibold sm:text-[16px]'>What would be a reasonable price?</p>
+                  <p className='mt-4 text-[#47525E] text-[14px] font-semibold sm:text-[16px]'>{t("transaction.page4.reasonablePrice")}</p>
                   <div>
 
                   </div>
-                  <p className='mt-5 mb-2 text-[#47525E] text-[12px] sm:text-[15px] font-semibold'>How would you rate:</p>
+                  <p className='mt-5 mb-2 text-[#47525E] text-[12px] sm:text-[15px] font-semibold'>{t("transaction.page4.howWouldYouRate")}</p>
                   <div className='flex justify-between mb-2 flex-wrap sm:flex-nowrap'>
-                    <span className="text-[14px] text-[#47525E]">Property title</span>
+                    <span className="text-[14px] text-[#47525E]">{t("transaction.page4.propertyTitle")}</span>
                     <div className='flex gap-1'>
                       <FaRegStar className='cursor-pointer' />
                       <FaRegStar className='cursor-pointer' />
@@ -65,7 +67,7 @@ const Transaction4 = () => {
                     </div>
                   </div>
                   <div className='flex justify-between mb-2 flex-wrap sm:flex-nowrap'>
-                    <span className="text-[14px] text-[#47525E]">Property pictures</span>
+                    <span className="text-[14px] text-[#47525E]">{t("transaction.page4.propertyPictures")}</span>
                     <div className='flex gap-1'>
                       <FaRegStar className='cursor-pointer' />
                       <FaRegStar className='cursor-pointer' />
@@ -75,7 +77,7 @@ const Transaction4 = () => {
                     </div>
                   </div>
                   <div className='flex justify-between mb-2 flex-wrap sm:flex-nowrap'>
-                    <span className="text-[14px] text-[#47525E]">Property interior design
+                    <span className="text-[14px] text-[#47525E]">{t("transaction.page4.propertyInteriorDesign")}
                     </span>
                     <div className='flex gap-1'>
                       <FaRegStar className='cursor-pointer' />
@@ -86,7 +88,7 @@ const Transaction4 = () => {
                     </div>
                   </div>
                   <div className='flex justify-between mb-2 flex-wrap sm:flex-nowrap'>
-                    <span className="text-[14px] text-[#47525E]">Property location
+                    <span className="text-[14px] text-[#47525E]">{t("transaction.page4.propertyLocation")}
                     </span>
                     <div className='flex gap-1'>
                       <FaRegStar className='cursor-pointer' />
@@ -97,7 +99,7 @@ const Transaction4 = () => {
                     </div>
                   </div>
                   <div className='flex justify-between mb-2 flex-wrap sm:flex-nowrap'>
-                    <span className="text-[14px] text-[#47525E]">Could you live in?
+                    <span className="text-[14px] text-[#47525E]">{t("transaction.page4.couldYouLiveIn")}
                     </span>
                     <div className='flex gap-1'>
                       <FaRegStar className='cursor-pointer' />
@@ -108,7 +110,7 @@ const Transaction4 = () => {
                     </div>
                   </div>
                   <button className='bg-[#976DD0] px-[2rem] text-[10px] sm:text-[15px] sm:px-[3rem] py-2 mx-auto mt-7 mb-7 block rounded-full text-[#fff]'>
-                    Submit
+                    {t("buttons.submit")}
                   </button>
                 </div>
               </div>
@@ -120,10 +122,10 @@ const Transaction4 = () => {
       <div className='container-fluid 2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px] bg-[#fff] py-[5rem] h-[100%] pb-[5rem]'>
         <div className='w-[100%] sm:w-[40%] mx-auto'>
           <h2 className='text-center text-[#000000] font-bold text-[20px] leading-[45px]'>
-            How it works?
+            {t("transaction.page4.howItWorks")}
           </h2>
           <p className='text-[#5A6978] text-[14px] text-center'>
-            Social estimation let you know what are the strengh of your property and what improvement can be done to sale your property quicker and at a better price.
+            {t("transaction.page4.howItWorksDescription")}
           </p>
         </div>
         <div className='grid grid-cols-12 gap-5 mt-10 flex-wrap'>
@@ -134,10 +136,10 @@ const Transaction4 = () => {
                   1
                 </p>
                 <h3 className='text-[12px] sm:text-[17px] font-semibold'>
-                  Create your property profile
+                  {t("transaction.page4.step1Title")}
                 </h3>
                 <h4 className='text-[#5A6978] text-[10px] sm:text-[14px]'>
-                  It takes no more than 5 minutes.
+                  {t("transaction.page4.step1Description")}
                 </h4>
               </div>
               <div className='border col-span-6 border-[#D2D2D2] rounded-[20px]'>
@@ -190,10 +192,10 @@ const Transaction4 = () => {
                   2
                 </p>
                 <h3 className='text-[12px] sm:text-[16px] font-semibold'>
-                  Our local members estimate it
+                  {t("transaction.page4.step2Title")}
                 </h3>
                 <h4 className='text-[#5A6978] text-[10px] sm:text-[13px]'>
-                  During one week our community estimate your property value and earn Bookaroo coins.
+                  {t("transaction.page4.step2Description")}
                 </h4>
               </div>
               <div className='col-span-6'>
@@ -208,10 +210,10 @@ const Transaction4 = () => {
                   3
                 </p>
                 <h3 className='text-[12px] sm:text-[16px] font-semibold'>
-                  You get an assessment report
+                  {t("transaction.page4.step3Title")}
                 </h3>
                 <h4 className='text-[#5A6978] text-[10px] sm:text-[13px]'>
-                  Report shows social estimated price and details on what they value.
+                  {t("transaction.page4.step3Description")}
                 </h4>
               </div>
               <div className='border col-span-6 border-[#D2D2D2] rounded-[20px]'>

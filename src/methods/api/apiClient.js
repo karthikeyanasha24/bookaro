@@ -13,18 +13,33 @@ const imageConfig = {
 }
 
 const baseUrl = environment.api;
+const IS_NON_PRODUCTION = process.env.NODE_ENV !== "production";
+
+const shouldForce401Redirect = () => {
+  if (process.env.REACT_APP_DISABLE_401_REDIRECT === "true") return false;
+  if (
+    IS_NON_PRODUCTION &&
+    typeof window !== "undefined" &&
+    window.localStorage?.getItem("disable401Redirect") === "true"
+  ) {
+    return false;
+  }
+  return true;
+};
 
 const handleError = (err, hideError) => {
   let message = "";
   if (err) {
     if (err && err.error && err.error.code === 401) {
       hideError = true;
-      localStorage.removeItem("persist:admin-app");
-      localStorage.removeItem("token");
-      localStorage.removeItem("deviceToken");
-      methodModel.route("/login");
-      document.getElementById('logoutBtn')?.click();
-      window.location.assign("/login");
+      if (shouldForce401Redirect()) {
+        localStorage.removeItem("persist:admin-app");
+        localStorage.removeItem("token");
+        localStorage.removeItem("deviceToken");
+        methodModel.route("/login");
+        document.getElementById('logoutBtn')?.click();
+        window.location.assign("/login");
+      }
     }
     message = err && err.error && err.error.message;
     if (!message) message = err.message;

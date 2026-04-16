@@ -3,11 +3,13 @@ import { AiOutlineDelete } from "react-icons/ai";
 import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import PageLayout from "../../components/global/PageLayout";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 
 const Notifications = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const [data, setData] = useState([]);
@@ -97,7 +99,7 @@ const Notifications = () => {
             <div className="">
               <div className="bg-white rounded-[18px] lg:p-10 lg:py-4 p-5 border border-[#DCDDDF]">
                 <h2 className="text-[#47525E] font-[600] text-[24px]  pb-5 text-center border-b border-[#DCDCDC]">
-                  Notifications
+                  {t("notifications.notifications")}
                 </h2>
                 {data?.length > 0 ? (
                   <>
@@ -148,7 +150,7 @@ const Notifications = () => {
                                 </p>
                                 <p className="text-[#343F4B] capitalize">
                                   {type == "paymentNofication"
-                                    ? "Subscription reminder notification"
+                                    ? t("notifications.subscriptionReminder")
                                     : type == "message" ||
                                       type == "interestStatus"
                                       ? title
@@ -177,11 +179,14 @@ const Notifications = () => {
                         }`}
                     >
                       <span className="md:mb-0 mb-2">
-                        Show {data?.length} from {total} Properties
+                        {t("notifications.showFromProperties", {
+                          count: data?.length,
+                          total,
+                        })}
                       </span>
                       <ReactPaginate
-                        previousLabel="< Pre"
-                        nextLabel="Next >"
+                        previousLabel={`< ${t("common.previous")}`}
+                        nextLabel={`${t("common.next")} >`}
                         breakLabel="..."
                         pageRangeDisplayed={2}
                         marginPagesDisplayed={1}
@@ -200,7 +205,7 @@ const Notifications = () => {
                       src="/assets/img/no-data.png"
                       className="w-[100px] mx-auto"
                     />
-                    No data found
+                    {t("messages.noDataFound")}
                   </p>
                 )}
               </div>
@@ -211,7 +216,7 @@ const Notifications = () => {
                   onClick={() => navigate("/profile/manage-notifications")}
                   className="cursor-pointer text-[#47525E] font-[600] lg:text-[24px] underline text-center text-[20px]"
                 >
-                  Manage your notification
+                  {t("notifications.manageNotifications")}
                 </h2>
               </div>
             </div>

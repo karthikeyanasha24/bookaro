@@ -1,4 +1,5 @@
 import ReactPaginate from 'react-paginate';
+import { useTranslation } from 'react-i18next';
 import { capLetter, imagePath, stringSeprator } from '../../models/string.model';
 import methodModel from '../../methods/methods';
 
@@ -15,13 +16,14 @@ const PropLeadSidebar = ({
     textChange,
     handlePageChange,
 }) => {
+    const { t } = useTranslation();
     const tabs = [
-        { name: "All", value: "" },
-        { name: "Off-Market", value: true },
-        { name: "Sale", value: "sale" },
-        { name: "Rent", value: "rent" },
-        { name: "Directory", value: "directory" },
-        { name: "Transferred", value: "transferred" },
+        { label: t("buttons.all"), value: "" },
+        { label: t("home.tabs.offMarket"), value: true },
+        { label: t("property.forSale"), value: "sale" },
+        { label: t("property.forRent"), value: "rent" },
+        { label: t("home.tabs.directory"), value: "directory" },
+        { label: t("transactionSidebar.transferred"), value: "transferred" },
     ];
 
     return (
@@ -31,7 +33,7 @@ const PropLeadSidebar = ({
                     value={name}
                     onChange={(e) => textChange("name", e.target.value)}
                     type="search"
-                    placeholder="Search property"
+                    placeholder={t("properties.searchProperty")}
                 />
             </div>
             <ul className="flex items-center mt-5 flex-wrap gap-3">
@@ -42,7 +44,7 @@ const PropLeadSidebar = ({
                         className={`${itm.value === type ? "" : "text-[#343F4B]"
                             } text-[14px] cursor-pointer`}
                     >
-                        {itm.name}
+                        {itm.label}
                     </li>
                 ))}
             </ul>
@@ -93,7 +95,7 @@ const PropLeadSidebar = ({
                                                         {/* {item?.userLeads?.length || 0} */}
                                                         {item?.totalLeads || 0}
                                                     </span>
-                                                    Lead{+item?.totalLeads > 1 ? "s" : ""}
+                                                    {t(+item?.totalLeads > 1 ? "transactionSidebar.leads" : "transactionSidebar.lead")}
                                                 </p>
                                                 <div className=" relative w-[50%] h-[25px] ml-auto flex">
 
@@ -129,24 +131,24 @@ const PropLeadSidebar = ({
                                                 ))}
                                         </div>
                                         <p className="text-[#47525E] text-[12px]">
-                                            {item?.visitBookedCount || 0} Visits Booked
+                                            {t("transactionSidebar.visitsBooked", { count: item?.visitBookedCount || 0 })}
                                         </p>
                                     </div>
                                 </li>
                             )
                         }) : (
                             <p className="text-center text-gray-500">
-                                No properties available
+                                {t("transactionSidebar.noPropertiesAvailable")}
                             </p>
                         )}
 
                     <div className={`paginationWrapper ${total > filters?.count ? "" : "d-none"}`}                    >
                         <span>
-                            Show {data?.length} from {total} Properties
+                            {t("notifications.showFromProperties", { count: data?.length, total })}
                         </span>
                         <ReactPaginate
-                            previousLabel="<Pre"
-                            nextLabel="Next>"
+                            previousLabel={t("pagination.previous")}
+                            nextLabel={t("pagination.next")}
                             breakLabel="..."
                             pageRangeDisplayed={2}
                             marginPagesDisplayed={1}

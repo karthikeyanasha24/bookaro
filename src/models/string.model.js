@@ -45,10 +45,10 @@ export const generateDynamicString = (obj) => {
                 case "search":
                     let one = value?.split(",")?.slice(0, 1)[0]
                     if (value?.split(",")?.length > 1) {
-                        formatted.push(`${stringSeprator(one, 20)} (+${value?.split(",")?.length - 1})`);
+                        formatted.push(`${stringSeprator(capLetter(one), 20)} (+${value?.split(",")?.length - 1})`);
                         break;
                     }
-                    formatted.push(value);
+                    formatted.push(capLetter(value));
                     break;
                 case "minPrice":
                     formatted.push(`Min price ${formatCurrency(value)} €`);

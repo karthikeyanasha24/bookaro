@@ -30,6 +30,7 @@ const VisitSlotModal = ({
   visitSlot = [],
   saveSlots = (_) => { },
   card = null,
+  type = "",
   duration,
   title = "Manage Visit Slot",
   isToggleButton = false,
@@ -518,7 +519,8 @@ const VisitSlotModal = ({
 
                 {/* upload identity proof */}
 
-                {(title == "Manage visit slots" ||
+                {(type == "visitSlots" ||
+                  title == "Manage visit slots" ||
                   title == "Manage Visit Slots") && (
                     <div
                       key="identityProof"

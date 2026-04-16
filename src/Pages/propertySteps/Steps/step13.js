@@ -3,6 +3,7 @@ import { Tooltip } from "antd";
 import ReactECharts from "echarts-for-react";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit, FiEye, FiPlusCircle } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
@@ -30,6 +31,7 @@ const Step13 = ({
   dropdownOptions,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user)
   const { id } = useParams();
   const scrollRef = useRef(null);
@@ -49,7 +51,7 @@ const Step13 = ({
 
   const validate = () => {
     if (!formData?.renovation_work || formData?.renovation_work?.length === 0) {
-      toast.error("Add renovation work details");
+      toast.error(t("propertySteps.step13.errors.addRenovationDetails"));
       return false;
     }
     let haserror = false;
@@ -64,7 +66,7 @@ const Step13 = ({
       }
     });
     if (haserror) {
-      toast.error("Enter all mandatory fields");
+      toast.error(t("propertySteps.step13.errors.enterMandatoryFields"));
       return false;
     }
     return true
@@ -116,7 +118,7 @@ const Step13 = ({
       !renovation.price?.trim() ||
       !renovation?.renovationDate
     ) {
-      return toast.error("Enter all mandatory fields");
+      return toast.error(t("propertySteps.step13.errors.enterMandatoryFields"));
     }
     //  else if (renovation.images?.length === 0) {
     //   return toast.error("Upload images");
@@ -151,7 +153,7 @@ const Step13 = ({
         });
       }
     }
-    toast.success("Record Added.")
+    toast.success(t("propertySteps.step13.recordAdded"))
   };
   const applyEditRenovation = () => {
     if (
@@ -160,7 +162,7 @@ const Step13 = ({
       !renovation.price?.trim() ||
       !renovation?.renovationDate
     ) {
-      return toast.error("Enter all mandatory fields");
+      return toast.error(t("propertySteps.step13.errors.enterMandatoryFields"));
     }
     //  else if (renovation.images?.length === 0) {
     //   return toast.error("Upload images");
@@ -202,7 +204,7 @@ const Step13 = ({
     let files = Array.from(e.target.files);
     // Check total number of files (existing + new)
     if (files.length + renovation.images?.length > 10) {
-      toast.error("Maximum 10 images allowed to add");
+      toast.error(t("propertySteps.step13.errors.maximumImages"));
       return (e.target.value = ""); // Clear file input
     }
 
@@ -210,7 +212,7 @@ const Step13 = ({
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB in bytes
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error("Each image must be smaller than 10MB");
+      toast.error(t("propertySteps.step13.errors.imageSize"));
       return (e.target.value = ""); // Clear file input
     }
     const acceptedTypes = ["image/jpeg", "image/png"];
@@ -221,12 +223,10 @@ const Step13 = ({
       (file) => !acceptedTypes.includes(file.type)
     );
     if (invalidFiles.length > 0 && files?.length > 1) {
-      toast.error(
-        "Some files are not valid format and will be ignored.Only JPG and PNG images are allowed."
-      );
+      toast.error(t("propertySteps.step13.errors.invalidFilesIgnored"));
     }
     if (filteredFiles.length !== files.length && files?.length === 1) {
-      toast.error("Only JPG and PNG images are allowed.");
+      toast.error(t("propertySteps.step13.errors.onlyJpgPng"));
     }
     if (filteredFiles?.length === 0) return;
 
@@ -245,7 +245,7 @@ const Step13 = ({
           };
         });
         if (data?.length + renovation.images?.length > 10)
-          return toast.error("Maximum 10 images allowed to add");
+          return toast.error(t("propertySteps.step13.errors.maximumImages"));
         setrenovation({
           ...renovation,
           images: [...renovation.images, ...data],
@@ -258,13 +258,13 @@ const Step13 = ({
   const docUpload = (e) => {
     let files = Array.from(e.target.files);
     if (files.length + renovation.document.length > 5) {
-      toast.error("Maximum 5 documents allowed to add");
+      toast.error(t("propertySteps.step13.errors.maximumDocuments"));
       return (e.target.value = ""); // Clear file input
     }
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB in bytes
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error("Each document must be smaller than 10MB");
+      toast.error(t("propertySteps.step13.errors.documentSize"));
       return (e.target.value = ""); // Clear file input
     }
     loader(true);
@@ -278,7 +278,7 @@ const Step13 = ({
             };
           });
           if (data.length + renovation.document.length > 5) {
-            toast.error("Maximum 5 documents allowed to add");
+            toast.error(t("propertySteps.step13.errors.maximumDocuments"));
             return (e.target.value = ""); // Clear file input
           }
           setrenovation({
@@ -428,9 +428,9 @@ const Step13 = ({
           <div className="">
             <div className="flex justify-between items-start">
               <h4 ref={scrollRef} className="text-[#47525E] text-[24px] font-[600] text-left ">
-                Add New Renovation
+                {t("propertySteps.step13.addNewRenovation")}
                 <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left ">
-                  *Mandatory information
+                  {t("propertySteps.step13.mandatoryInformation")}
                 </span>
               </h4>
               <button
@@ -442,12 +442,12 @@ const Step13 = ({
             </div>
             <div className="lg:max-w-[500px] w-[100%]">
               <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-                Renovation details
+                {t("propertySteps.step13.renovationDetails")}
               </label>
               <div className="mb-3">
                 <SelectDropdown
                   displayValue="name"
-                  placeholder="Select Renovation Type"
+                  placeholder={t("propertySteps.step13.placeholders.selectRenovationType")}
                   isClearable={false}
                   intialValue={renovation.title}
                   result={(e) => {
@@ -470,7 +470,7 @@ const Step13 = ({
                       renovationDate: date,
                     })
                   }
-                  placeholderText="Select renovation date"
+                  placeholderText={t("propertySteps.step13.placeholders.selectRenovationDate")}
                   dateFormat="dd/MM/yyyy"
                   className="bg-white rounded-[7px] border border-[#976DD0] p-2 px-3 w-full mb-3"
                   showYearDropdown
@@ -485,7 +485,7 @@ const Step13 = ({
                 <input
                   className="bg-white rounded-[7px] border border-[#976DD0]
               p-2 px-3  md:w-[500px] w-full mb-3 text-[#5A5A5A]"
-                  placeholder="Title"
+                  placeholder={t("propertySteps.step13.placeholders.title")}
                   type="text"
                   value={renovation.description}
                   onChange={(e) => {
@@ -510,7 +510,7 @@ const Step13 = ({
                   }}
                   className="bg-white rounded-[7px]  border border-[#976DD0]
               p-2 px-3 h-[44px] md:w-[500px] w-full mb-8 text-[#5A5A5A] pr-14"
-                  placeholder="Price"
+                  placeholder={t("propertySteps.step13.placeholders.price")}
                 />
                 <span className="absolute right-3 top-2.5 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
@@ -520,12 +520,10 @@ const Step13 = ({
               <div>
                 <div>
                   <label className="text-[#5A5A5A] mb-2 text-[16px] mt-4">
-                    Add Images
+                    {t("propertySteps.step13.addImages")}
                   </label>
                   <p className="text-[#000000] font-[600] mt-3  mb-5">
-                    Any Image you submit are only used by Bookaroo to
-                    certificate the accuracy of the property declared and will
-                    never be shared with a thirdparty.
+                    {t("propertySteps.step13.imagesPrivacyInfo")}
                   </p>
                 </div>
                 {renovation?.images?.length < 10 && (
@@ -566,12 +564,10 @@ const Step13 = ({
               <div>
                 <div>
                   <label className="mt-4 text-[#5A5A5A] mb-2 text-[16px] mt-4">
-                    Add proofing documents
+                    {t("propertySteps.step13.addProofingDocuments")}
                   </label>
                   <p className="text-[#000000] font-[600] mt-3  mb-5">
-                    Any document you submit are only used by Bookaroo to certificate
-                    the accuracy of the revenus declared and will never be shared
-                    with a thirdparty.
+                    {t("propertySteps.step13.documentsPrivacyInfo")}
                   </p>
                 </div>
                 {renovation?.document?.length < 5 && (
@@ -619,14 +615,14 @@ const Step13 = ({
                     }
                     className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
                   >
-                    {edit ? "Update" : "Save And Close"}
+                    {edit ? t("propertySteps.step13.update") : t("propertySteps.step13.saveAndClose")}
                   </button>
                   {edit ? ("") : (
                     <Link
                       className="text-[#976DD0] text-[15px] font-[600] mt-3 mb-10"
                       onClick={() => applyRenovation(false)}
                     >
-                      Save and create new renovation
+                      {t("propertySteps.step13.saveAndCreateNewRenovation")}
                     </Link>
                   )}
                 </div>
@@ -638,13 +634,12 @@ const Step13 = ({
             <div className="flex justify-between items-start">
 
               <h4 className="text-[#47525E] text-[24px] font-[600] xl:mb-[50px] lg:mb-[50px] mb-[40px]">
-                What improvement have you made to your property?
+                {t("propertySteps.step13.improvementsQuestion")}
                 <span className="text-[#47525E] font-[400] block text-[14px] mt-1 block">
-                  *Mandatory information
+                  {t("propertySteps.step13.mandatoryInformation")}
                 </span>
                 <p className="font-[400]  text-[16px] text-[#5A5A5A] mb-7 mt-5  xl:w-[500px] w-[100%]">
-                  Providing this information will increase trust, value and
-                  attractivity of your property
+                  {t("propertySteps.step13.improvementsInfo")}
                 </p>
               </h4>
               {addRenovation ? (
@@ -661,7 +656,7 @@ const Step13 = ({
                   }}
                   className="rounded-[50px] border border-[#976DD0] p-2 text-[#787878] w-[200px] text-[14px] "
                 >
-                  Add New Renovation
+                  {t("propertySteps.step13.addNewRenovationButton")}
                 </button>
               )}
             </div>
@@ -671,13 +666,13 @@ const Step13 = ({
                 <div className="md:max-w-[500px] w-[100%] mb-10">
                   <div className="bg-white rounded-[5px] p-3">
                     <h4 className="text-center text-[#28B3AD] text-[25px] font-bold leading-[35px] mb-4">
-                      {formatCurrency(formData?.renovation_work?.length) || 0} Renovation works
+                      {t("propertySteps.step13.renovationWorksCount", { count: formatCurrency(formData?.renovation_work?.length) || 0 })}
                     </h4>
                     <p className="text-[#5A5A5A] text-[17px] text-center">
                       <span className="text-[#5A5A5A] font-[600] ms-1">
                         {formatCurrency(total)} €{" "}
                       </span>
-                      of investment made for the property
+                      {t("propertySteps.step13.investmentMade")}
                     </p>
                     <div>
                       <ReactECharts
@@ -702,11 +697,11 @@ const Step13 = ({
                             {capLetter(itm?.description)}
                           </p>
                           <h5 className="mb-2">
-                            Status:{" "}
+                            {t("propertySteps.step13.status")}:{" "}
                             <span className="font-[600] ms-2 font-italic capitalize">
                               {formData?.request_status === "accepted"
-                                ? "Invoice Bookaroo verified"
-                                : `${formData?.request_status || "pending"}`}
+                                ? t("propertySteps.step13.bookarooVerified")
+                                : `${formData?.request_status || t("propertySteps.step13.pending")}`}
                             </span>
                           </h5>
                           <h5>
@@ -743,8 +738,7 @@ const Step13 = ({
                                     <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                       <DialogTitle className="p-6">
                                         <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-3">
-                                          You can check the documents by click on
-                                          them
+                                          {t("propertySteps.step13.checkDocumentsHint")}
                                         </p>
 
                                         <div className="mt-6">
@@ -775,7 +769,7 @@ const Step13 = ({
                                             onClick={() => closeDialog()}
                                             className="bg-primary text-white px-3 py-2  rounded-[7px]"
                                           >
-                                            Cancel
+                                          {t("common.cancel")}
                                           </button>
                                         </div>
                                       </DialogTitle>
@@ -786,7 +780,7 @@ const Step13 = ({
                             )}
                             {!page && (
                               <div className="flex items-center justify-end">
-                                <Tooltip placement="top" title="View Documents">
+                                <Tooltip placement="top" title={t("propertySteps.step13.viewDocuments")}>
                                   <Link
                                     onClick={() => openDialog(itm)}
                                   >
@@ -796,7 +790,7 @@ const Step13 = ({
 
                                   </Link>
                                 </Tooltip>
-                                <Tooltip placement="top" title="Edit">
+                                <Tooltip placement="top" title={t("common.edit")}>
                                   <Link
                                     onClick={() => {
                                       if (editMode) editRenovation(itm, i);
@@ -805,7 +799,7 @@ const Step13 = ({
                                     <FiEdit className="text-[20px] me-3" />
                                   </Link>
                                 </Tooltip>
-                                <Tooltip placement="top" title="Delete">
+                                <Tooltip placement="top" title={t("common.delete")}>
                                   <Link
                                     onClick={() => {
                                       if (editMode) removeRenovation(i);
@@ -830,7 +824,7 @@ const Step13 = ({
                   className="w-[100px]"
                   alt=""
                 />
-                <p className="mt-1">No Data Yet</p>
+                <p className="mt-1">{t("propertySteps.step13.noDataYet")}</p>
               </div>
             )}
           </>
@@ -845,7 +839,7 @@ const Step13 = ({
                 onClick={save}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
               >
-                Save change
+                {t("propertySteps.step13.saveChange")}
               </button>
             </div>
           ) : (
@@ -854,19 +848,19 @@ const Step13 = ({
                 onClick={draftsave}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
               >
-                Save As Draft
+                {t("propertySteps.step13.saveAsDraft")}
               </button>
               <button
                 onClick={handleBack}
                 className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
               >
-                Back
+                {t("common.back")}
               </button>
               <button
                 onClick={handleNext}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
               >
-                Next
+                {t("common.next")}
               </button>
             </div>
           )}

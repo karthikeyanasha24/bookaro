@@ -3,6 +3,7 @@ import CommonCreteria from "./CommonCreteria";
 import { capLetter, dateFormate, formatCurrency } from "../../models/string.model";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const PastTransectionGrid = ({
   data,
@@ -15,6 +16,7 @@ const PastTransectionGrid = ({
   getType,
 }) => {
   const { user } = useSelector((state) => state);
+  const { t } = useTranslation();
   const history = useNavigate()
   return (
     <div className="">
@@ -44,38 +46,38 @@ const PastTransectionGrid = ({
                         <ul className="p-3">
                           {+price > 0 && <li className="flex items-center mb-1">
                             <h5 className="text-[#47525E] font-[300] me-3 w-[120px] text-[13px]">
-                              Transaction price:
+                              {t("pastTransactionsGrid.transactionPrice")}:
                             </h5>
                             <p className="text-[13px]">{formatCurrency(price)} €</p>
                           </li>}
                           {+sur > 0 && <li className="flex items-center mb-1">
                             <h5 className="text-[#47525E] font-[300] me-3 w-[120px] text-[13px]">
-                              Surface:{" "}
+                              {t("pastTransactions.surface")}:{" "}
                             </h5>
-                            <p className="text-[13px]">{formatCurrency(sur)} sqm</p>
+                            <p className="text-[13px]">{formatCurrency(sur)} {t("pastTransactionsGrid.sqm")}</p>
                           </li>}
                           {+perSqr > 0 && <li className="flex items-center mb-1">
                             <h5 className="text-[#47525E] font-[300] me-3 w-[120px] text-[13px]">
-                              Price per Sqm:{" "}
+                              {t("pastTransactionsGrid.pricePerSqm")}:{" "}
                             </h5>
                             <p className="text-[13px]">{formatCurrency(perSqr)} €</p>
                           </li>}
                           {+itm?.number_of_main_pieces > 0 && <li className="flex items-center mb-1">
                             <h5 className="text-[#47525E] font-[300] me-3 w-[120px] text-[13px]">
-                              Number of rooms:{" "}
+                              {t("pastTransactionsGrid.numberOfRooms")}:{" "}
                             </h5>
                             <p className="text-[13px]">{itm?.number_of_main_pieces}</p>
                           </li>}
 
                           {itm?.mutation_date && <li className="flex items-center mb-1">
                             <h5 className="text-[#47525E] font-[300] me-3 w-[120px] text-[13px]">
-                              Transaction date:
+                              {t("pastTransactionsGrid.transactionDate")}:
                             </h5>
                             <p className="text-[13px]">{dateFormate(itm?.mutation_date)}</p>
                           </li>}
                           {itm?.address_channel_name && <li className="flex items-start mb-1">
                             <h5 className="text-[#47525E] font-[300] me-3 w-[120px] text-[13px] shrink-0">
-                              Location:
+                              {t("filtersCommon.location")}:
                             </h5>
                             <p className="text-[13px] ">
                               {`${capLetter(itm?.address_channel_name)}${itm?.community_name
@@ -89,12 +91,12 @@ const PastTransectionGrid = ({
                 ) : (
                   <div className="text-center col-span-12 my-8">
                     <img src="assets/img/no-data.svg" className="w-[400px] mx-auto " />
-                    No Records Found
+                    {t("common.noRecordsFound")}
                   </div>
                 )}
                 {!user?.loggedIn && <p className="text-center col-span-12 my-8">
                   {/* <img src="/assets/img/no-data.png" className="w-[100px] mx-auto" /> */}
-                  Want to see more past transaction list? <spna onClick={(e) => history("/login")} className="text-bold text-[#976DD0] cursor-pointer">Just log in first!</spna>
+                  {t("pastTransactionsGrid.wantToSeeMore")} <spna onClick={(e) => history("/login")} className="text-bold text-[#976DD0] cursor-pointer">{t("prolist.loginFirst")}</spna>
                 </p>}
               </div >
               <div
@@ -102,11 +104,11 @@ const PastTransectionGrid = ({
                   }`}
               >
                 <span>
-                  Show {data?.length} from {total} Properties
+                  {t("filtersCommon.showCountFromTotalProperties", { shown: data?.length, total })}
                 </span>
                 {user?.loggedIn && <ReactPaginate
-                  previousLabel="< Previous"
-                  nextLabel="Next >"
+                  previousLabel={t("filtersCommon.previous")}
+                  nextLabel={t("filtersCommon.next")}
                   breakLabel="..."
                   pageRangeDisplayed={2}
                   marginPagesDisplayed={1}

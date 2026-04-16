@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from "../../components/AuthLayout";
 import ApiClient from '../../methods/api/apiClient';
 import loader from '../../methods/loader';
 import { RxCross2 } from 'react-icons/rx';
 
 const ResetEmail = () => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const location = useLocation();
@@ -93,10 +95,10 @@ const ResetEmail = () => {
               </div>
               <img src="/assets/img/unlock.svg" className="w-[100px] mx-auto" />
               <p className="border-t text-[#389D93] text-[18px] font-bold text-center  pt-5 mt-5">
-                OTP verified successfully
+                {t('authentication.otpVerifiedSuccessfully')}
               </p>
               <p className=" text-[#389D93] text-[18px] text-center pb-5 mt-2">
-                Please verify otp at your new email address as well.
+                {t('authentication.verifyOtpNewEmail')}
               </p>
             </DialogTitle>
           </DialogPanel>
@@ -104,7 +106,7 @@ const ResetEmail = () => {
       </Dialog>
       <div className="flex items-center justify-center  w-full">
         <form onSubmit={handleSubmit} className="xl:w-8/12 lg:w-11/12 w-full p-[30px] mx-auto border border-[#976DD0] rounded-[8px] bg-white bg-white p-8 rounded  border border-[#976DD0]">
-          <h2 className="text-2xl font-bold text-center mb-5">Enter OTP</h2>
+          <h2 className="text-2xl font-bold text-center mb-5">{t('authentication.enterOtp')}</h2>
           <div className="flex space-x-2 justify-center ">
             {otp.map((value, index) => (
               <input
@@ -123,15 +125,15 @@ const ResetEmail = () => {
             ))}
           </div>
           <div className="mt-5">
-            <p className="text-center">Don't receive OTP code?</p>
-            <span onClick={handleResend} className="text-[#976DD0] text-center underline block cursor-pointer">Resend Code</span>
+            <p className="text-center">{t('authentication.dontReceiveOTP')}</p>
+            <span onClick={handleResend} className="text-[#976DD0] text-center underline block cursor-pointer">{t('buttons.resendCode')}</span>
           </div>
           <div className="flex items-center justify-center mt-5">
             <button
               type="submit"
               className="h-11 rounded-full w-52 text-center text-[#fff] bg-[#976DD0] font-medium text-[14px] hover:opacity-80 transition-all mx-auto mt-4"
             >
-              Verify & Proceed
+              {t('buttons.verifyAndProceed')}
             </button>
           </div>
         </form>

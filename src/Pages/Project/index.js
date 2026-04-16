@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const ProjectPage = () => {
   const { t } = useTranslation();
+  const pluralize = (count, singular, plural) => `${count} ${count > 1 ? plural : singular}`;
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const [profile, setProfile] = useState({});
@@ -20,52 +21,44 @@ const ProjectPage = () => {
   const sercherSpace = [
     {
       head: t("project.searchAlert"),
-      subhead: `${profile.total_alerts || 0} Search${profile.total_alerts > 1 ? "es" : ""
-        }`,
+      subhead: pluralize(profile.total_alerts || 0, t("project.labels.search"), t("project.labels.searches")),
       route: "/serach-alert",
     },
     {
       head: t("project.propertiesFollowed"),
-      subhead: `${profile.folderCount || 0} Propert${profile.folderCount > 1 ? "ies" : "y"
-        }`,
+      subhead: pluralize(profile.folderCount || 0, t("project.labels.property"), t("project.labels.properties")),
       route: "/followed-properties",
     },
     {
       head: t("project.interactedProperties"),
-      subhead: `${profile.total_likes || 0} Propert${profile.total_likes > 1 ? "ies" : "y"
-        }`,
+      subhead: pluralize(profile.total_likes || 0, t("project.labels.property"), t("project.labels.properties")),
       route: "/properties?favourites=true",
     },
     {
       head: t("project.renterApplicationFile"),
-      subhead: `${profile.renterFilesCount || 0} document${profile.renterFilesCount > 1 ? "s" : ""
-        }`,
+      subhead: pluralize(profile.renterFilesCount || 0, t("project.labels.document"), t("project.labels.documents")),
       route: "/renter-file",
     },
     {
       head: t("project.buyerFile"),
-      subhead: `${profile.buyerFilesCount || 0} document${profile.buyerFilesCount > 1 ? "s" : ""
-        }`,
+      subhead: pluralize(profile.buyerFilesCount || 0, t("project.labels.document"), t("project.labels.documents")),
       route: "/buyer-file",
     },
     {
       head: t("project.manageTransaction"),
-      subhead: `${profile.totalInterests || 0} propert${profile.totalInterests > 1 ? "ies" : "y"
-        } in funnel`,
+      subhead: `${pluralize(profile.totalInterests || 0, t("project.labels.property"), t("project.labels.properties"))} ${t("project.labels.inFunnel")}`,
       route: "/real-estate-transaction-searcher",
     },
     {
       head: t("project.p2pEstimation"),
-      subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
-        }`,
+      subhead: pluralize(profile.total_property || 0, t("project.labels.property"), t("project.labels.properties")),
       route: "/estimation",
     },
   ];
   const ownerSpace = [
     {
       head: t("project.myProperty"),
-      subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
-        }`,
+      subhead: pluralize(profile.total_property || 0, t("project.labels.property"), t("project.labels.properties")),
       route: "/my-properties",
     },
     //  {
@@ -77,20 +70,17 @@ const ProjectPage = () => {
     // },
     {
       head: t("project.sellerFile"),
-      subhead: `${profile.sellerFilesCount || 0} Document${profile.sellerFilesCount > 1 ? "s" : ""
-        }`,
+      subhead: pluralize(profile.sellerFilesCount || 0, t("project.labels.document"), t("project.labels.documents")),
       route: "/seller-file",
     },
     {
       head: t("project.manageTransaction"),
-      subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
-        }`,
+      subhead: pluralize(profile.total_property || 0, t("project.labels.property"), t("project.labels.properties")),
       route: "/real-estate-transaction-owner",
     },
     {
       head: t("project.manageP2pEstimation"),
-      subhead: `${profile.total_property || 0} propert${profile.total_property > 1 ? "ies" : "y"
-        }`,
+      subhead: pluralize(profile.total_property || 0, t("project.labels.property"), t("project.labels.properties")),
       route: "/social-estimation",
     },
   ];
@@ -107,17 +97,29 @@ const ProjectPage = () => {
   }, []);
 
   const getAllProperty = () => {
+    const userId = user?.id || user?._id;
+    if (!userId) {
+      setpropertyLoader(false);
+      return;
+    }
+
     setpropertyLoader(true);
     ApiClient.get(
-      `property/listing?page=1&count=1000&status=active&addedBy=${user?.id || user?._id
-      }&maxDistance=&userLat=&userLng=&propertyType=&userId=${user?.id || user?._id
+      `property/listing?page=1&count=1000&status=active&addedBy=${userId
+      }&maxDistance=&userLat=&userLng=&propertyType=&userId=${userId
       }`
-    ).then((res) => {
-      if (res.success) {
-        setpropertyTotal(res.total);
-      }
-      setpropertyLoader(false);
-    });
+    )
+      .then((res) => {
+        if (res.success) {
+          setpropertyTotal(res.total);
+        }
+      })
+      .catch(() => {
+        setpropertyTotal(0);
+      })
+      .finally(() => {
+        setpropertyLoader(false);
+      });
   };
 
   useEffect(() => {
@@ -159,10 +161,10 @@ const ProjectPage = () => {
           <div className="grid grid-cols-12 mx-auto">
             <div className="col-span-12  md:mb-[80px] mb-[40px] ">
               <h2 className="text-center text-[#47525E] text-[26px] font-bold">
-                Real estate is a once-in-a-lifetime project!
+                {t("project.heroTitle")}
               </h2>
               <p className="text-center text-[#47525E] lg:text-[18px] text-[16px] font-medium">
-                Plan it at your pace here
+                {t("project.heroSubtitle")}
               </p>
             </div>
           </div>
@@ -170,12 +172,12 @@ const ProjectPage = () => {
             <div className="grid grid-cols-12 lg:gap-12 gap-0">
               <div className="xl:col-span-6 lg:col-span-6 col-span-12 border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0 relative">
                 <p className="text-[#47525E] absolute -top-[20px] left-1/2  -translate-x-1/2 md:text-[24px] text-[18px] font-[600] bg-[#f2ecf8] md:px-7 px-4 w-max ">
-                  Searcher space
+                  {t("project.searcherSpace")}
                 </p>
                 <div className="p-10 md:px-14 px-8">
                   <ul>
                     {sercherSpace.map((item) => (
-                      <li className="border border-[#BEBEBE] p-5 rounded-[5px] bg-white mb-4 hover:bg-[#986dcd] hover:border-white cursor-pointer hover:text-white group transition">
+                      <li key={item.route} className="border border-[#BEBEBE] p-5 rounded-[5px] bg-white mb-4 hover:bg-[#986dcd] hover:border-white cursor-pointer hover:text-white group transition">
                         <Link
                           to={item.route}
                           className="flex items-center justify-between"
@@ -196,11 +198,12 @@ const ProjectPage = () => {
                   </ul>
                   <div className="mt-8">
                     <h4 className="border-b-[1px] [border-color:#976DD0] text-[#47525E] font-bold lg:text-[18px] text-[16px] mb-3 pb-2">
-                      Services
+                      {t("project.services")}
                     </h4>
                     {service.map((item) => (
                       <p className="text-[#47525E] lg:text-[18px] text-[16px] font-medium  mb-2 flex items-center justify-between capitalize cursor-pointer"
-                        onClick={(e) => navigate(`${item?.url}?categoryId=My Project(Home Seeker)`)}
+                        key={item.url}
+                        onClick={() => navigate(`${item?.url}?categoryId=My Project(Home Seeker)`)}
                       >
                         {item?.name}
                       </p>
@@ -210,12 +213,12 @@ const ProjectPage = () => {
               </div>
               <div className="xl:col-span-6 lg:col-span-6 col-span-12 border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0 relative">
                 <p className="text-[#47525E] absolute -top-[20px] left-1/2  -translate-x-1/2 md:text-[24px] text-[18px] font-[600] bg-[#f2ecf8] md:px-7 px-4 w-max ">
-                  Owner space
+                  {t("project.ownerSpace")}
                 </p>
                 <div className="p-10 md:px-14 px-8">
                   <ul>
-                    {ownerSpace?.map((item, i) => (
-                      <li className="border border-[#BEBEBE] p-5 rounded-[5px] bg-white mb-4 hover:bg-[#986dcd] hover:border-white cursor-pointer hover:text-white group transition">
+                    {ownerSpace?.map((item) => (
+                      <li key={item.route} className="border border-[#BEBEBE] p-5 rounded-[5px] bg-white mb-4 hover:bg-[#986dcd] hover:border-white cursor-pointer hover:text-white group transition">
                         <Link
                           to={item?.route}
                           className="flex items-center justify-between"
@@ -244,11 +247,12 @@ const ProjectPage = () => {
                   </div>
                   <div className="mt-8">
                     <h4 className="border-b-[1px] [border-color:#976DD0] text-[#47525E] font-bold lg:text-[18px] text-[16px] mb-3 pb-2">
-                      Services
+                      {t("project.services")}
                     </h4>
                     {serviceOwner.map((item) => (
                       <p className="text-[#47525E] lg:text-[18px] text-[16px] font-medium  mb-2 flex items-center justify-between capitalize cursor-pointer"
-                        onClick={(e) => navigate(`${item?.url}?categoryId=My Project(Owner Space)`)}
+                        key={item.url}
+                        onClick={() => navigate(`${item?.url}?categoryId=My Project(Owner Space)`)}
                       >
                         {item?.name}
                       </p>

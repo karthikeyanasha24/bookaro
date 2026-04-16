@@ -7,6 +7,7 @@ import {
 import { Tooltip } from "antd";
 import ReactECharts from "echarts-for-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit, FiPlusCircle } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
@@ -33,6 +34,7 @@ const Step11 = ({
 }) => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { t } = useTranslation();
   const scrollRef = useRef(null);
   const [addRevenue, setAddRevenue] = useState(false);
   const user = useSelector((state) => state.user)
@@ -51,7 +53,7 @@ const Step11 = ({
 
   const validate = () => {
     if (!formData?.revenue_detail || formData?.revenue_detail?.length === 0) {
-      toast.error("Add Revenue details");
+      toast.error(t("propertySteps.step11.errors.addRevenueDetails"));
       return false;
     }
     let haserror = false;
@@ -66,7 +68,7 @@ const Step11 = ({
       }
     });
     if (haserror) {
-      toast.error("Enter all mandatory fields");
+      toast.error(t("propertySteps.step11.errors.enterMandatoryFields"));
       return false;
     }
     return true
@@ -120,7 +122,7 @@ const Step11 = ({
       !revenue.year ||
       !revenue.price?.trim()
     ) {
-      return toast.error("Enter all mandatory fields");
+      return toast.error(t("propertySteps.step11.errors.enterMandatoryFields"));
     }
     // else if (revenue.document?.length === 0) {
     //   return toast.error("Upload document")
@@ -154,7 +156,7 @@ const Step11 = ({
         });
       }
     }
-    toast.success("Record Added.")
+    toast.success(t("propertySteps.step11.recordAdded"));
   };
   const applyEditRevenue = () => {
     if (
@@ -163,7 +165,7 @@ const Step11 = ({
       !revenue.year ||
       !revenue.price?.trim()
     ) {
-      return toast.error("Enter all mandatory fields");
+      return toast.error(t("propertySteps.step11.errors.enterMandatoryFields"));
     }
     // else if (revenue.document?.length === 0) {
     //   return toast.error("Upload document")
@@ -206,16 +208,16 @@ const Step11 = ({
     let files = Array.from(e.target.files);
     // Check total number of files (existing + new)
     if (files.length + revenue.document.length > 5) {
-      toast.error("Maximum 5 documents allowed to add");
-      return (e.target.value = ""); // Clear file input
+      toast.error(t("propertySteps.step11.errors.maximumDocuments"));
+      return (e.target.value = "");
     }
 
     // Check if any file exceeds 10MB
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB in bytes
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error("Each document must be smaller than 10MB");
-      return (e.target.value = ""); // Clear file input
+      toast.error(t("propertySteps.step11.errors.documentSize"));
+      return (e.target.value = "");
     }
     loader(true);
     ApiClient.multiImageUpload(
@@ -232,8 +234,8 @@ const Step11 = ({
           };
         });
         if (data.length + revenue.document.length > 5) {
-          toast.error("Maximum 5 documents allowed to add");
-          return (e.target.value = ""); // Clear file input
+          toast.error(t("propertySteps.step11.errors.maximumDocuments"));
+          return (e.target.value = "");
         }
         setrevenue({
           ...revenue,
@@ -433,13 +435,12 @@ const Step11 = ({
               <div>
                 <div className="flex justify-between items-start">
                   <h4 ref={scrollRef} className="text-[#47525E] text-[24px] font-[600] text-left ">
-                    Add new revenue to your property
+                    {t("propertySteps.step11.addNewRevenueHeading")}
                     <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left ">
-                      *Mandatory information
+                      {t("propertySteps.step11.mandatoryInformation")}
                     </span>
                     <p className="font-[400]  text-[16px] text-[#5A5A5A]  mt-5  xl:w-[500px] w-[100%]">
-                      Adding and getting your revenues verified by Bookaroo
-                      increases trust and add more value to your property{" "}
+                      {t("propertySteps.step11.revenueVerificationInfo")}
                     </p>
                   </h4>
                   <button
@@ -452,13 +453,13 @@ const Step11 = ({
 
                 <div className="lg:max-w-[500px] w-[100%]">
                   <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-                    Revenue details
+                    {t("propertySteps.step11.revenueDetailsLabel")}
                   </label>
                   <div className="flex items-center flex-wrap  justify-center">
                     <div class="lg:max-w-[500px] w-[100%] mb-3">
                       <SelectDropdown
                         displayValue="name"
-                        placeholder="Select Revenue type"
+                        placeholder={t("propertySteps.step11.placeholders.selectRevenueType")}
                         isClearable={false}
                         intialValue={revenue.type}
                         result={(e) => {
@@ -475,7 +476,7 @@ const Step11 = ({
                     <div class="lg:max-w-[500px] w-[100%] mb-3">
                       <SelectDropdown
                         displayValue="name"
-                        placeholder="Select Revenue Source"
+                        placeholder={t("propertySteps.step11.placeholders.selectRevenueSource")}
                         isClearable={false}
                         intialValue={revenue.source}
                         result={(e) => {
@@ -492,7 +493,7 @@ const Step11 = ({
                     <div class="lg:max-w-[500px] w-[100%] mb-3">
                       <SelectDropdown
                         displayValue="name"
-                        placeholder="Select year"
+                        placeholder={t("propertySteps.step11.placeholders.selectYear")}
                         isClearable={false}
                         intialValue={revenue.year}
                         result={(e) => {
@@ -518,7 +519,7 @@ const Step11 = ({
                         }}
                         className={`bg-white rounded-[7px] border border-[#976DD0]
                     p-2 px-3 h-[44px] md:w-[500px] font-normal w-full mb-4 text-[#5A5A5A] pr-14 text-[16px]`}
-                        placeholder="Yearly amount"
+                        placeholder={t("propertySteps.step11.placeholders.yearlyAmount")}
                       />
                       <span className="absolute right-3 top-3 text-gray-500 border-l border-[#976DD0] pl-2 text-[16px]">
                         €
@@ -527,12 +528,10 @@ const Step11 = ({
                   </div>
                   <div>
                     <label className="text-[#5A5A5A] mb-2 text-[16px]">
-                      Add proofing documents
+                      {t("propertySteps.step11.addProofingDocuments")}
                     </label>
                     <p className="text-[#000000] text-[16px] font-[600] mt-3  mb-5">
-                      Any document you submit are only used by Bookaroo to
-                      certificate the accuracy of the revenus declared and will
-                      never be shared with a thirdparty.
+                      {t("propertySteps.step11.documentsPrivacyInfo")}
                     </p>
                   </div>
                   {revenue?.document?.length < 5 && (
@@ -587,14 +586,14 @@ const Step11 = ({
                       onClick={() => (edit ? applyEditRevenue() : applyRevenue())}
                       className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
                     >
-                      {edit ? "Update" : "Save and close"}
+                      {edit ? t("propertySteps.step11.update") : t("propertySteps.step11.saveAndClose")}
                     </button>
                     {edit ? ("") : (
                       <Link
                         className="text-[#976DD0] text-[15px] font-[600] mt-3 mb-10"
                         onClick={() => applyRevenue(false)}
                       >
-                        Save and create new revenue
+                        {t("propertySteps.step11.saveAndCreateNewRevenue")}
                       </Link>
                     )}
                   </div>
@@ -608,13 +607,12 @@ const Step11 = ({
             <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
               <div className="flex justify-between items-start">
                 <h4 className="text-[#47525E] text-[24px] font-[600] text-left  leading-[30px] xl:max-w-[500px] lg:max-w-[400px] md:max-w-[300px] w-[100%] md:mt-[-4px]  ">
-                  How much revenues your property generated over the years?
+                  {t("propertySteps.step11.revenueHeading")}
                   <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left ">
-                    *Mandatory information
+                    {t("propertySteps.step11.mandatoryInformation")}
                   </span>
                   <p className="font-[400]  text-[16px] text-[#5A5A5A] mb-7 mt-5 leading-[24px] lg:w-[500px] w-[100%]">
-                    Providing this information will increase both the value and
-                    the attractivity of your property
+                    {t("propertySteps.step11.revenueSubInfo")}
                   </p>
                 </h4>
                 {addRevenue ? (
@@ -632,7 +630,7 @@ const Step11 = ({
                     }}
                     className="rounded-[50px] border border-[#976DD0] p-2 text-[#787878] w-[200px] text-[14px]"
                   >
-                    Add New Revenues
+                    {t("propertySteps.step11.addNewRevenues")}
                   </button>
                 )}
               </div>
@@ -642,7 +640,7 @@ const Step11 = ({
                 <>
                   <div className="md:max-w-[500px] w-[100%]">
                     <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-                      Lifetime Global Revenues
+                      {t("propertySteps.step11.lifetimeGlobalRevenues")}
                     </label>
                     <div className="flex items-center gap-5 flex-wrap">
                       <div className="bg-[#409781]  py-4 px-3 rounded-[12px] w-[150px] h-[130px]">
@@ -650,7 +648,7 @@ const Step11 = ({
                           {formatCurrency(totalRevenue)} €
                         </h4>
                         <p className="text-white text-[16px] text-center capitalize">
-                          Total <br /> Revenues
+                          {t("propertySteps.step11.totalRevenues")}
                         </p>
                       </div>
 
@@ -669,7 +667,7 @@ const Step11 = ({
                   {/* graph */}
                   <div className="md:max-w-[500px] w-[100%]">
                     <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-                      Yearly Revenues
+                      {t("propertySteps.step11.yearlyRevenues")}
                     </label>
                     <div className="bg-white rounded-[5px]">
                       <ReactECharts
@@ -681,14 +679,14 @@ const Step11 = ({
                   </div>
                   <div className="md:max-w-[500px] w-[100%]">
                     <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-                      Revenue Details
+                      {t("propertySteps.step11.revenueDetailsLabel")}
                     </label>
                     <div>
                       {formData?.revenue_detail?.map((itm, i) => (
                         <div className="border border-[#CECECE] bg-white p-5 rounded-[10px] flex justify-between mb-4">
                           <ul>
                             <li className="text-[#5A5A5A] text-[17px] mb-2 flex">
-                              <span className="w-[100px]">Type:</span>{" "}
+                              <span className="w-[100px]">{t("propertySteps.step11.detail.type")}</span>{" "}
                               {
                                 dropdownOptions?.find(
                                   (dd) => dd._id === itm?.type
@@ -696,7 +694,7 @@ const Step11 = ({
                               }
                             </li>
                             <li className="text-[#5A5A5A] text-[17px] mb-2 flex">
-                              <span className="w-[100px]">Source:</span>{" "}
+                              <span className="w-[100px]">{t("propertySteps.step11.detail.source")}</span>{" "}
                               {
                                 dropdownOptions?.find(
                                   (dd) => dd._id === itm?.source
@@ -704,25 +702,25 @@ const Step11 = ({
                               }
                             </li>
                             <li className="text-[#5A5A5A] text-[17px] mb-2 flex">
-                              <span className="w-[100px]"> Year:</span>{" "}
+                              <span className="w-[100px]">{t("propertySteps.step11.detail.year")}</span>{" "}
                               {itm?.year}{" "}
                             </li>
                             <li className="text-[#5A5A5A] text-[17px]  mb-2 flex">
-                              <span className="w-[100px]"> Status:</span>
+                              <span className="w-[100px]">{t("propertySteps.step11.detail.status")}</span>
                               <span className="text-[#5A5A5A] font-[600] ms-1 capitalize">
                                 {formData?.request_status === "accepted"
-                                  ? "Bookaroo verified"
-                                  : `${formData?.request_status || "pending"}`}
+                                  ? t("propertySteps.step11.bookarooVerified")
+                                  : `${formData?.request_status || t("propertySteps.step11.pending")}`}
                               </span>
                             </li>
                             {itm?.document?.length > 0 && (
                               <li className="text-[#5A5A5A] text-[17px] flex">
-                                <span className="w-[100px]"> Documents:</span>
+                                <span className="w-[100px]">{t("propertySteps.step11.detail.documents")}</span>
                                 <span
                                   onClick={() => openDialog(itm)}
                                   className="cursor-pointer text-[#fff]  ms-1 bg-[#976DD0] px-3 py-[3px] rounded-[5px] text-[14px]"
                                 >
-                                  View
+                                  {t("propertySteps.step11.view")}
                                 </span>
                                 <Dialog
                                   open={isOpenDoc}
@@ -734,8 +732,7 @@ const Step11 = ({
                                     <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                       <DialogTitle className="p-6">
                                         <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-3">
-                                          You can check the documents by click
-                                          on them
+                                          {t("propertySteps.step11.checkDocumentsHint")}
                                         </p>
 
                                         <div className="mt-6">
@@ -766,7 +763,7 @@ const Step11 = ({
                                             onClick={() => closeDialog()}
                                             className="bg-primary text-white px-3 py-2  rounded-[7px]"
                                           >
-                                            Cancel
+                                            {t("common.cancel")}
                                           </button>
                                         </div>
                                       </DialogTitle>
@@ -811,7 +808,7 @@ const Step11 = ({
                     className="w-[100px]"
                     alt=""
                   />
-                  <p className="mt-1">No Data Yet</p>
+                  <p className="mt-1">{t("propertySteps.step11.noDataYet")}</p>
                 </div>
               )}
             </div>
@@ -821,7 +818,7 @@ const Step11 = ({
                   onClick={save}
                   className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
                 >
-                  Save change
+                  {t("propertySteps.step11.saveChange")}
                 </button>
               </div>
             ) : (
@@ -830,19 +827,19 @@ const Step11 = ({
                   onClick={draftsave}
                   className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
                 >
-                  Save As Draft
+                  {t("propertySteps.step11.saveAsDraft")}
                 </button>
                 <button
                   onClick={handleBack}
                   className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4"
                 >
-                  Back
+                  {t("common.back")}
                 </button>
                 <button
                   onClick={handleNext}
                   className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
                 >
-                  Next
+                  {t("common.next")}
                 </button>
               </div>
             )}

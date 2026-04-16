@@ -4,8 +4,10 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import { GoDotFill } from "react-icons/go";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 const School = ({ detail, gtk, acrArr, handleAccordionChange }) => {
+  const { t } = useTranslation();
   return (
     <Accordion
       expanded={acrArr?.includes(5)}
@@ -20,7 +22,7 @@ const School = ({ detail, gtk, acrArr, handleAccordionChange }) => {
       >
         <Typography>
           <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-            Schools
+            {t("propertyTimeline.tabs.schools")}
           </span>
         </Typography>
       </AccordionSummary>
@@ -38,7 +40,7 @@ const School = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                 );
               })
             ) : (
-              <div className="text-center">No data</div>
+              <div className="text-center">{t("messages.noData")}</div>
             )}
           </ul>
         </div>

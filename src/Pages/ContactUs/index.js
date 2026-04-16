@@ -19,7 +19,7 @@ const ContactUs = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    subject: params.has("traningVideo")?"traning video":"Genric Contact Form",
+    subject: params.has("traningVideo") ? "traning video" : "genric contact form",
     message: "",
   });
   const handleChange = (key, value) => {
@@ -70,7 +70,13 @@ const ContactUs = () => {
     ApiClient.post("contactTeam/addNew", payload).then((res) => {
       if (res.success) {
         toast.success(res?.message);
-        setForm({name:"",email:"",type:params.has("traningVideo")?"traning video":"",subSubject:"",message:""})
+        setForm({
+          name: "",
+          email: "",
+          subject: params.has("traningVideo") ? "traning video" : "genric contact form",
+          subSubject: "",
+          message: "",
+        })
       }
       loader(false);
     });
@@ -84,15 +90,13 @@ const ContactUs = () => {
             <div className="grid grid-cols-12">
               <div className="md:col-span-6 col-span-full">
                 <h1 className="text-black  font-bold text-[40px]">
-                  Help & Contact
+                  {t("contactUs.helpContact")}
                 </h1>
                 <p className="my-3 font-bold">
-                  Do you have a question or request regarding the website or
-                  application?
+                  {t("contactUs.questionText")}
                 </p>
                 <p>
-                  Find all the useful information below or contact us if you
-                  cannot find the answer to your question.
+                  {t("contactUs.findAnswerText")}
                 </p>
               </div>
               <div className="md:col-span-6 col-span-full">
@@ -106,7 +110,7 @@ const ContactUs = () => {
         </div>
         <div className="container mx-auto py-8 px-8 mt-5">
           <h4 className="font-bold mb-4 text-[20px] text-[#976DD0]">
-            Individuals
+            {t("contactUs.individuals")}
           </h4>
           {ifaqs?.map((itm, i) => (
             <div className="mt-5 ">
@@ -139,7 +143,7 @@ const ContactUs = () => {
         </div>
         <div className="container mx-auto py-8 px-8">
           <h4 className="font-bold mb-4 text-[20px] text-[#976DD0]">
-            Professionals
+            {t("contactUs.professionals")}
           </h4>
           {pfaqs?.map((itm, i) => (
             <Accordion
@@ -171,13 +175,12 @@ const ContactUs = () => {
         <div className="container mx-auto  mb-6  px-8 py-5">
           <div className=" bg-[#f5f7fa] p-5">
             <h2 className="text-[20px] font-[600] ">
-              {" "}
-              Contact customer service
+              {t("contactUs.customerService")}
             </h2>
             <p className="font-[600] mt-4">
-              For any other request concerning the website or application...
+              {t("contactUs.otherRequestText")}
             </p>
-            <p className="mb-5">Use the following contact form: </p>
+            <p className="mb-5">{t("contactUs.useFormText")}</p>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-12 md:gap-6 gap-0 ">
                 <div className="lg:col-span-4 col-span-12">
@@ -186,20 +189,20 @@ const ContactUs = () => {
                       value={form?.name}
                       onChange={(e) => handleChange("name", e.target.value)}
                       type="text"
-                      placeholder=t("forms.name")
+                      placeholder={t("forms.name")}
                       className="border border-[#929292] rounded-[4px] h-[40px] px-[12px] block w-full"
                     />
                     <input
                       value={form?.email}
                       onChange={(e) => handleChange("email", e.target.value)}
                       type="email"
-                      placeholder=t("forms.email")
+                      placeholder={t("forms.email")}
                       className="border border-[#929292] rounded-[4px] h-[40px] px-[12px] my-4 block w-full"
                     />
                     <SelectDropdown
                       className="border border-[#929292] rounded-[4px]  px-[12px] my-3 block w-full"
                       displayValue="name"
-                      placeholder=t("common.selectOption")
+                      placeholder={t("common.selectOption")}
                       isClearable={false}
                       intialValue={form?.subject}
                       result={(e) => {
@@ -209,7 +212,7 @@ const ContactUs = () => {
                         });
                       }}
                       options={[
-                        { id: "genric contact form", name: t("forms.subject") },
+                        { id: "genric contact form", name: t("contactUs.genericContactForm") },
                         { id: "traning video", name: t("contactUs.trainingVideo") },
                       ]}
                     />
@@ -217,7 +220,7 @@ const ContactUs = () => {
                       value={form?.subSubject}
                       onChange={(e) => handleChange("subSubject", e.target.value)}
                       type="text"
-                      placeholder=t("forms.subSubject")
+                      placeholder={t("forms.subSubject")}
                       className="border border-[#929292] rounded-[4px] h-[40px] px-[12px] my-4 block w-full"
                     />
                   </div>
@@ -227,12 +230,12 @@ const ContactUs = () => {
                     value={form?.message}
                     onChange={(e) => handleChange("message", e.target.value)}
                     className="border border-[#929292] rounded-[4px] w-full px-[12px] py-4 h-full"
-                    placeholder=t("forms.yourMessage")
+                    placeholder={t("forms.yourMessage")}
                   ></textarea>
                 </div>
                 <div className=" col-span-12 pt-2">
                   <button type="submit" className="bg-[#976DD0] text-[14px] rounded-[50px] py-[8px] px-[20px] text-white font-bold block ml-auto">
-                    Send my Message
+                    {t("buttons.sendMessage")}
                   </button>
                 </div>
               </div>

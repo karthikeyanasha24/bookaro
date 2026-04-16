@@ -86,6 +86,7 @@ function App() {
     { url: "/property/add/:step", path: "propertySteps/AddEdit" },
     { url: "/", element: <Navigate to="/login" /> },
     { url: "/project", path: "Project" },
+    { url: "/dashboard", path: "Dashboard" },
     { url: "/property-details", path: "PropertyDetails" },
     { url: "/property-timeline", path: "PropertyTimeline" },
     { url: "/serach-alert", path: "SearchAlert" },

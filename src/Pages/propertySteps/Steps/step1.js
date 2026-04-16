@@ -6,8 +6,10 @@ import { Tooltip } from "antd";
 import { useSelector } from "react-redux";
 import PropertyCheck from "../PropertyCheck";
 import UpgradePlan from "../../../components/common/Modal/UpgradePlan";
+import { useTranslation } from "react-i18next";
 
 const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const activePlan = useSelector((state) => state.activePlan);
 
@@ -34,12 +36,12 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
 
   const validate = () => {
     if (!formData?.type) {
-      setError("Select Property Type..");
+      setError(t("propertySteps.step1.errors.selectPropertyType"));
       return false;
     }
     if (formData?.propertyType === "directory") {
       if (!formData?.usedAs) {
-        setError("Select Property used for..");
+        setError(t("propertySteps.step1.errors.selectPropertyUsedFor"));
         return false;
       }
     }
@@ -133,17 +135,17 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
       <div className="lg:overflow-auto lg:h-[500px] h-[100%] md:w-[90%] mx-auto overflow-unset lg:p-8 p-4 lg:py-10">
         <div className="text-center mb-5">
           <h4 className="text-[#47525E] text-[24px] font-[600] leading-tight">
-            Sell Off-Market
+            {t("propertySteps.step1.sellOffMarket")}
           </h4>
           <p className="text-[#47525E] text-[18px]">
-            Propose your property to only qualified candidates
+            {t("propertySteps.step1.proposeToQualified")}
           </p>
         </div>
 
         <div className="bg-[#976DD0]/30 rounded-lg p-4 grid lg:grid-cols-5 items-center gap-3">
           <div className="text-center lg:col-span-2">
             <div className="flex items-center justify-center gap-2">
-              <h5 className="text-[20px]">Activate Off-Market</h5>
+              <h5 className="text-[20px]">{t("propertySteps.step1.activateOffMarket")}</h5>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -169,27 +171,27 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             </div>
             <UpgradePlan planModal={newplanModal} setplanModal={newsetplanModal} />
             <Link className="text-primary text-[18px]" to={"/plan"}>
-              Upgrade plan
+              {t("propertySteps.step1.upgradePlan")}
             </Link>
           </div>
           <div className="lg:col-span-3">
-            <p className="text-[16px]">Define Who can see your property</p>
-            <p className="text-[16px]">Target best funding profile first</p>
+            <p className="text-[16px]">{t("propertySteps.step1.defineWhoCanSee")}</p>
+            <p className="text-[16px]">{t("propertySteps.step1.targetBestFunding")}</p>
             <p className="text-[16px]">
-              Release progressively your property to the market
+              {t("propertySteps.step1.releaseProgressively")}
             </p>
-            <p className="text-[16px]">No obsolescence for your ad</p>
+            <p className="text-[16px]">{t("propertySteps.step1.noObsolescence")}</p>
           </div>
         </div>
 
         <div className="px-5 mt-8">
           <h4 className="text-[20px] mb-3">
-            Make sure to get only qualified leads
+            {t("propertySteps.step1.onlyQualifiedLeads")}
           </h4>
           <h5 className="text-[18px] mb-3 flex items-center gap-2">
-            Only following user can see my property under Off-market:
+            {t("propertySteps.step1.onlyFollowingUsers")}
 
-            <Tooltip title="Among people interested in your property many of them will still be in tourism mode, not ready enough in their purchase project. Target leads with financial profile check will increase your chance to sell quickly and efficiently.">
+            <Tooltip title={t("propertySteps.step1.tooltips.financialBackground") }>
               <span className=""><FaInfoCircle /></span>
             </Tooltip>
           </h5>
@@ -208,7 +210,7 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                     })
                   }
                 />{" "}
-                <p>Document based financial background checked.</p>
+                <p>{t("propertySteps.step1.documentBasedChecked")}</p>
               </div>
             </li>
             <li>
@@ -225,7 +227,7 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                     })
                   }
                 />{" "}
-                <p>Declarative based financial background checked.</p>
+                <p>{t("propertySteps.step1.declarativeBasedChecked")}</p>
               </div>
             </li>
             <li>
@@ -237,14 +239,14 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                   disabled={checkDisabled("Any")}
                   onChange={() => handleCheckboxChange("Any")}
                 />{" "}
-                <p>Any user with access to off-market can see it</p>
+                <p>{t("propertySteps.step1.anyUserCanSee")}</p>
               </div>
             </li>
           </ul>
 
           <h5 className="text-[18px] mb-3 flex items-center gap-2">
-            Only following rates will see my property
-            <Tooltip title="Preserve the exclusivity of your property by gradually revealing it only to potential buyers with the best financial profile. You can adjust these criteria at any time.">
+            {t("propertySteps.step1.onlyFollowingRates")}
+            <Tooltip title={t("propertySteps.step1.tooltips.preserveExclusivity")}>
               <span className=""><FaInfoCircle /></span>
             </Tooltip>
           </h5>
@@ -269,10 +271,9 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
         </div>
 
         <div className="px-5">
-          <h4 className="text-[20px] mb-1">Don't get overwhelmed by requests</h4>
+          <h4 className="text-[20px] mb-1">{t("propertySteps.step1.dontGetOverwhelmed")}</h4>
           <p className="text-[16px] text-[#47525E]">
-            Once we reach the maximum number of leads we will block the ability
-            to contact you.
+            {t("propertySteps.step1.maximumLeadsInfo")}
           </p>
           <div className="inline-flex gap-3 items-center bg-[#fff] p-2 rounded-md border border-[#976DD0] mt-4">
             <input
@@ -290,7 +291,7 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
 
               }
             />
-            <h5 className="text-[16px] font-[500]">Maximum Leads</h5>
+            <h5 className="text-[16px] font-[500]">{t("propertySteps.step1.maximumLeads")}</h5>
           </div>
         </div>
       </div>
@@ -302,7 +303,7 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
               onClick={save}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save change
+              {t("propertySteps.step1.saveChange")}
             </button>
           </div>
         )
@@ -312,7 +313,7 @@ const Step1 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             onClick={handleNext}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Next
+            {t("common.next")}
           </button>
         </div>
       )}

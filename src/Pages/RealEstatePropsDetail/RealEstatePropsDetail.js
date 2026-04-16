@@ -1,9 +1,11 @@
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 
 const RealEstatePropsDetail = () => {
+  const { t } = useTranslation();
   return (
     <PageLayout>
-      RealEstatePropsDetail
+      {t("realEstatePropsDetail.title")}
     </PageLayout>
   );
 };

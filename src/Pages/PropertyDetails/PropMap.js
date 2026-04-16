@@ -5,10 +5,12 @@ import Typography from "@mui/material/Typography";
 import { MdOutlineKeyboardArrowDown, MdOutlineLocationOn } from 'react-icons/md';
 import CustomMap from "../Property/CustomMap";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const PropMap = ({ locations, detail, handleAskLoc, acrArr, handleAccordionChange }) => {
+    const { t } = useTranslation();
     const user = useSelector((state) => state.user);
-    const locationInfo = `${detail?.address || "Location not specified"}`;
+    const locationInfo = `${detail?.address || t("messages.noData")}`;
 
     return (
         <Accordion
@@ -24,7 +26,7 @@ const PropMap = ({ locations, detail, handleAskLoc, acrArr, handleAccordionChang
             >
                 <Typography>
                     <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                        Property location
+                        {t("propertyTimeline.tabs.map")}
                     </span>
                 </Typography>
             </AccordionSummary>
@@ -33,7 +35,7 @@ const PropMap = ({ locations, detail, handleAskLoc, acrArr, handleAccordionChang
                     <div className="flex items-start mb-8">
                         <MdOutlineLocationOn className="text-[18px] mt-1 me-1" />
                         <div className="">
-                            <h4 className="text-[#000] font-[600] text-[17px]">Location</h4>
+                            <h4 className="text-[#000] font-[600] text-[17px]">{t("forms.location")}</h4>
                             <p className="text-[#616161] text-[14px] capitalize">{locationInfo}</p>
                         </div>
                     </div>
@@ -48,7 +50,7 @@ const PropMap = ({ locations, detail, handleAskLoc, acrArr, handleAccordionChang
                     <div className="flex justify-center items-center">
                         <button className="text-[#47525E] border border-[#976DD0] rounded-[50px] py-2 px-10 mt-8 font-[600]"
                             onClick={() => handleAskLoc()}
-                        >Request exact location</button>
+                        >{t("propertyDetails.requestExactLocation")}</button>
                     </div>}
             </AccordionDetails>
         </Accordion>

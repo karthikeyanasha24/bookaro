@@ -17,8 +17,10 @@ import loader from "../../methods/loader";
 import { removeHTMLTags, removePropData } from "../../models/string.model";
 import CustomMap from "./CustomMap";
 import PropertyCard from "./PropertyCard";
+import { useTranslation } from "react-i18next";
 
 const MyProperties = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { user } = useSelector((state) => state);
     const [total, setTotal] = useState(0);
@@ -35,11 +37,11 @@ const MyProperties = () => {
         userLng: "",
     });
     const tabs = [
-        { name: "All", value: "" },
-        { name: "For sale", value: "sale" },
-        { name: "For rent", value: "rent" },
-        { name: "Off-Market", value: true },
-        { name: "Directory", value: "directory" },
+        { name: t("buttons.all"), value: "" },
+        { name: t("property.forSale"), value: "sale" },
+        { name: t("property.forRent"), value: "rent" },
+        { name: t("home.tabs.offMarket"), value: true },
+        { name: t("home.tabs.directory"), value: "directory" },
     ]
     const [locations, setLocations] = useState([]);
     const [view, setView] = useState("map");
@@ -159,13 +161,13 @@ const MyProperties = () => {
 
     const deleteItem = (item) => {
         Swal.fire({
-            title: "Are you sure?",
-            text: `Do you want to delete this Property`,
+            title: t("modals.confirmTitle"),
+            text: `${t("alerts.deleteConfirm")} ${t("property.property")}`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#976DD0",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes",
+            confirmButtonText: t("buttons.yes"),
         }).then((result) => {
             if (result.isConfirmed) {
                 loader(true);
@@ -244,12 +246,12 @@ const MyProperties = () => {
                                     <ul className="flex items-center">
                                         <li onClick={() => setView("map")}>
                                             <a className={`${view === "map" ? "font-[600]" : ""} text-[#47525E] text-[14px] px-3`}>
-                                                Map
+                                                {t("propertyTimeline.tabs.map")}
                                             </a>
                                         </li>
                                         <li onClick={() => setView("grid")}>
                                             <a className={`${view === "grid" ? "font-[600]" : ""} text-[#47525E] text-[14px] px-3`}>
-                                                Grid
+                                                {t("property.grid")}
                                             </a>
                                         </li>
                                     </ul>
@@ -262,37 +264,37 @@ const MyProperties = () => {
                     <div className=" items-center container  mx-auto px-6 lg:px-10">
                         <ul className="flex items-center pb-[30px]">
                             <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-                                My Project
+                                {t("project.myProject")}
                                 <span className="mx-[4px]">|</span></li>
                             <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-                                My Properties</li>
+                                {t("header.myProperties")}</li>
                         </ul>
                         <div className="grid grid-cols-12 md:gap-8 gap-0">
                             <div className="col-span-12">
                                 <p className="text-[#47525E]">
                                     <span className="text-[#47525E] font-bold text-[20px]">
-                                        {total}{` Propert${total > 1 ? "ies" : "y"} `}
+                                        {t("property.propertyCount", { count: total })}{" "}
                                     </span>
-                                    in your portfolio
+                                    {t("property.inPortfolio")}
                                 </p>
                                 <div className="flex gap-10 mt-5">
                                     <div>
-                                        <label className="text-[#8492A6] mb-1 block">Location</label>
+                                        <label className="text-[#8492A6] mb-1 block">{t("forms.location")}</label>
                                         <input
                                             type="text"
                                             value={fil.location}
                                             onChange={(e) => textChange("location", e.target.value)}
-                                            placeholder="Enter your location"
+                                            placeholder={t("property.enterLocation")}
                                             className="bg-[#F0F0F0] p-2 px-3 rounded-[5px] h-[44px]"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-[#8492A6] mb-1 block">Name</label>
+                                        <label className="text-[#8492A6] mb-1 block">{t("property.nameLabel")}</label>
                                         <input
                                             type="text"
                                             value={fil.name}
                                             onChange={(e) => textChange("name", e.target.value)}
-                                            placeholder="Property name"
+                                            placeholder={t("property.propertyName")}
                                             className="bg-[#F0F0F0] p-2 px-3 rounded-[5px] h-[44px]"
                                         />
                                     </div>
@@ -341,17 +343,17 @@ const MyProperties = () => {
                                             ) : (
                                                 <div className="text-center col-span-12 my-8">
                                                 <img src="assets/img/no-data.svg" className="w-[400px] mx-auto "/>
-                                                No Records Found
+                                                {t("messages.noRecordsFound")}
                                               </div>
                                             )}
                                         </div>
                                         <div className={`paginationWrapper ${total > filters?.count ? "" : "d-none"}`}                    >
                                             <span>
-                                                Show {data?.length} from {total} Properties
+                                                {t("manageNotifications.showFromProperties", { count: data?.length, total })}
                                             </span>
                                             <ReactPaginate
-                                                previousLabel="<Pre"
-                                                nextLabel="Next>"
+                                                previousLabel={t("pagination.previous")}
+                                                nextLabel={t("pagination.next")}
                                                 breakLabel="..."
                                                 pageRangeDisplayed={2}
                                                 marginPagesDisplayed={1}
@@ -391,15 +393,15 @@ const MyProperties = () => {
                                                                     <div className=" mb-0 ">
                                                                         {(item?.propertyType === "offmarket" || item?.propertyType === "directory") ? (
                                                                             <h5 className="text-[#6D6E6D] text-[20px] font-bold capitalize">
-                                                                                {item?.propertyType === "offmarket" ? "Off-Market" : `${item?.propertyType}`}
+                                                                                {item?.propertyType === "offmarket" ? t("home.tabs.offMarket") : t("home.tabs.directory")}
                                                                                 <span className="text-[#47525E] text-[13px] ms-2 capitalize">
-                                                                                    {item?.proposal === "both" ? "Rental/Purchase" : `${item?.proposal}`} compliance
+                                                                                    {item?.proposal === "both" ? t("propertyTimeline.events.rentalPurchase") : `${item?.proposal}`} {t("property.compliance")}
                                                                                 </span>
                                                                             </h5>
                                                                         ) : (item?.propertyType == "rent" && item?.propertyMonthlyCharges) ? (
                                                                             <h5 className="text-[#6D6E6D] text-[20px] font-bold">
                                                                                 {item?.propertyMonthlyCharges} €
-                                                                                <span className="text-[#47525E] text-[13px] "> / month</span>
+                                                                                <span className="text-[#47525E] text-[13px] "> {t("billing.perMonth")}</span>
                                                                             </h5>
                                                                         ) : (
                                                                             <>
@@ -539,11 +541,11 @@ const MyProperties = () => {
                                                                                 <ul>
                                                                                     <li onClick={() => editItem(item)} className="p-2 px-4 cursor-pointer hover:bg-gray-100 flex items-center"> <FiEdit className="me-2 text-[15px]" />
                                                                                         <span className="text-[14px] text-[#333]">
-                                                                                            Edit
+                                                                                            {t("buttons.edit")}
                                                                                         </span></li>
                                                                                     <li onClick={() => deleteItem(item)} className="p-2 px-4 cursor-pointer hover:bg-gray-100 flex items-center"> <AiOutlineDelete className="me-2" />
                                                                                         <span className="text-[14px] text-[#333]">
-                                                                                            Delete
+                                                                                            {t("buttons.delete")}
                                                                                         </span></li>
                                                                                 </ul>
                                                                             </div>
@@ -554,13 +556,13 @@ const MyProperties = () => {
                                                     </div>
                                                 </div>
                                             )
-                                        }) : <div className="text-center col-span-12">No Records Found</div>}
+                                        }) : <div className="text-center col-span-12">{t("messages.noRecordsFound")}</div>}
                                     </div>
                                     <div className={`paginationWrapper ${total > filters?.count ? '' : 'd-none'}`}>
-                                        <span>Show {data?.length} from {total} Properties</span>
+                                        <span>{t("manageNotifications.showFromProperties", { count: data?.length, total })}</span>
                                         <ReactPaginate
-                                            previousLabel="< Previous"
-                                            nextLabel="Next >"
+                                            previousLabel={t("pagination.previous")}
+                                            nextLabel={t("pagination.next")}
                                             breakLabel="..."
                                             pageRangeDisplayed={2}
                                             marginPagesDisplayed={1}

@@ -4,11 +4,13 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import ReactECharts from 'echarts-for-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { formatCurrency } from "../../models/string.model";
 
 
 const PropRevenues = ({ detail, dropdownOptions, acrArr, handleAccordionChange }) => {
+    const { t } = useTranslation();
     const [xRevenueData, setxRevenueData] = useState([])
     const [yRevenueData, setyRevenueData] = useState([])
     useEffect(() => {
@@ -83,7 +85,7 @@ const PropRevenues = ({ detail, dropdownOptions, acrArr, handleAccordionChange }
                 acc[item?.type] = {
                     type: item?.type,
                     price: price,
-                    name: dropdownItem ? dropdownItem?.name : "Unknown"
+                    name: dropdownItem ? dropdownItem?.name : t("messages.noData")
                 };
             }
             return acc;
@@ -105,14 +107,14 @@ const PropRevenues = ({ detail, dropdownOptions, acrArr, handleAccordionChange }
             >
                 <Typography>
                 <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                        Rental revenues
+                        {t("propertyTimeline.tabs.revenues")}
                     </span>
                 </Typography>
             </AccordionSummary>
             <AccordionDetails className="text-gray-500 p-4">
                 <div>
                     <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2">
-                        Lifetime Global Revenues
+                        {t("propertyDetails.lifetimeGlobalRevenues")}
                     </h4>
                     <div className="flex items-center gap-5 mt-6 mb-6">
                         <div className="bg-[#8965BB] py-4 px-3 rounded-[12px] w-[170px] h-[130px]">
@@ -120,11 +122,16 @@ const PropRevenues = ({ detail, dropdownOptions, acrArr, handleAccordionChange }
                                 {formatCurrency(totalRevenue)} €
                             </h4>
                             <p className="text-white text-[16px] text-center capitalize">
-                                Total <br /> revenues
+                                {t("propertyDetails.totalRevenues").split(" ").map((word, index) => (
+                                    <span key={`${word}-${index}`}>
+                                        {index > 0 ? <br /> : null}
+                                        {word}
+                                    </span>
+                                ))}
                             </p>
                         </div>
-                        {revenueResult?.map(itm => (
-                            <div className="bg-[#AF8EDC] py-4 px-3 rounded-[12px] w-[170px] h-[130px]">
+                        {revenueResult?.map((itm) => (
+                            <div key={itm?.type || itm?.name} className="bg-[#AF8EDC] py-4 px-3 rounded-[12px] w-[170px] h-[130px]">
                                 <h4 className="text-white font-[600] text-[26px] text-center mb-2">
                                     {formatCurrency(itm?.price)} €
                                 </h4>
@@ -137,7 +144,7 @@ const PropRevenues = ({ detail, dropdownOptions, acrArr, handleAccordionChange }
                 </div>
                 <div>
                     <h4 className="text-[#47525E] font-[600] text-[20px] border-b border-[#D5D5D5] pb-2 mb-5">
-                        Yearly Revenues
+                        {t("propertyDetails.yearlyRevenues")}
                     </h4>
                     <div className=" rounded-[5px] bg-[#F9F9F9] p-4">
                         <ReactECharts

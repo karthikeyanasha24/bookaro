@@ -63,7 +63,7 @@ const FollowedProperty = () => {
     },
     {
       key: "username",
-      name: "User Name",
+      name: t("followedProperty.colUserName"),
       sort: true,
       render: (row) => {
         return <span className="capitalize">{row?.username || "---"}</span>;
@@ -71,7 +71,7 @@ const FollowedProperty = () => {
     },
     {
       key: "propertyTitle",
-      name: "Property Title",
+      name: t("followedProperty.colPropertyTitle"),
       sort: true,
       render: (row) => {
         return <span className="capitalize">{row?.propertyTitle || "---"}</span>;
@@ -79,7 +79,7 @@ const FollowedProperty = () => {
     },
     {
       key: "propertyType",
-      name: "Property Type",
+      name: t("followedProperty.colPropertyType"),
       sort: true,
       render: (row) => {
         return <span className="capitalize">{row?.type || "---"}</span>;
@@ -91,13 +91,13 @@ const FollowedProperty = () => {
     },
     {
       key: "price",
-      name: "Price",
+      name: t("followedProperty.colPrice"),
       sort: true,
       render: (row) => <span>{row?.price && row?.price + ` €` || "---"}</span>,
     },
     {
       key: "address",
-      name: "Location",
+      name: t("followedProperty.colLocation"),
       sort: true,
       render: (row) => <span>{row?.address || "---"}</span>,
     },
@@ -158,7 +158,7 @@ const FollowedProperty = () => {
     });
   };
   const addItem = () => {
-    if (!name?.trim()) return toast.error("Enter folder name");
+    if (!name?.trim()) return toast.error(t("followedProperty.enterFolderName"));
     // if (selected?.length == 0) return toast.error("Select atleast a property");
     let dto = { name: name, property_id: selected };
     loader(true);
@@ -184,13 +184,13 @@ const FollowedProperty = () => {
   };
   const deleteItem = (id) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to delete this ${shared?.title}`,
+      title: t("modals.confirmTitle"),
+      text: t("followedProperty.deleteConfirm"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonText: t("buttons.yes"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -213,7 +213,7 @@ const FollowedProperty = () => {
     setSelected(itm?.property_id);
   };
   const submitEditItem = () => {
-    if (!name?.trim()) return toast.error("Enter folder name");
+    if (!name?.trim()) return toast.error(t("followedProperty.enterFolderName"));
     // if (selected?.length == 0) return toast.error("Select atleast a property");
 
     let dto = { id: editFolder?.id, name: name, property_id: selected };
@@ -242,9 +242,9 @@ const FollowedProperty = () => {
           <div className="lg:max-w-[1200px] mx-auto max-w-[100%] w-[100%]">
           <ul className="flex items-center pb-[50px]">
             <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-              My Project
+              {t("project.myProject")}
               <span className="mx-[4px]">|</span></li>
-            <li className="text-[#47525E] cursor-pointer capitalize font-[600]"> Followed properties</li>
+            <li className="text-[#47525E] cursor-pointer capitalize font-[600]">{t("followedProperty.title")}</li>
           </ul>
           {openPopup && (
             <button onClick={() => closePopup()} className="absolute right-10 top-10 ml-auto text-[20px] border-[#8492A6] border rounded-[50px] p-2 w-[40px] h-[40px] flex items-center justify-center ">
@@ -254,10 +254,10 @@ const FollowedProperty = () => {
           <div className="w-full ">
             <div>
               <h4 className="text-[#47525E] text-center mb-0 text-[17px]">
-              Followed properties
+              {t("followedProperty.title")}
               </h4>
               <h2 className="text-[#47525E] font-[600] text-[24px] mt-1 text-center">
-                Plan your project
+                {t("followedProperty.subtitle")}
               </h2>
             </div>
             {openPopup ? (
@@ -269,7 +269,7 @@ const FollowedProperty = () => {
                     </div>
 
                     <label className="  py-3 px-4  text-black text-center text-[20px] w-full flex items-center justify-center">
-                      Enter Folder Name
+                      {t("followedProperty.enterFolderName")}
                     </label>
                     <input
                       value={name}
@@ -281,10 +281,10 @@ const FollowedProperty = () => {
                       }}
                       type="text"
                       className="bg-[#efefef] px-4 py-4  text-[#47525E] text-[14px] w-full"
-                      placeholder="Enter Folder Name"
+                      placeholder={t("followedProperty.enterFolderName")}
                     />
                     <span className="text-end text-[12px] mt-1 text-[#c10707] ml-auto">
-                      Maximum {name.length}/200 words
+                      {t("followedProperty.maxWords", { current: name.length })}
                     </span>
                   </div>
                   <Table
@@ -315,7 +315,7 @@ const FollowedProperty = () => {
                     }}
                     className="h-12 bg-[#48464a] rounded-full w-[300px] px-10 text-[18px] font-medium text-center text-white hover:opacity-80 transition-all signup-btn"
                   >
-                    {editFolder?.name ? "Update" : "Create"} Folder
+                    {editFolder?.name ? t("followedProperty.updateFolder") : t("followedProperty.createFolder")}
                   </button>
                 </div>
               </>
@@ -336,7 +336,7 @@ const FollowedProperty = () => {
                             {itm?.name}
                           </h3>
                           <p className="text-[#47525E] my-2 mt-3 ">
-                            {itm?.property_id?.length} propert{itm?.property_id?.length>1 ?"ies":"y"} followed
+                            {t("followedProperty.propertiesFollowedCount", { count: itm?.property_id?.length })}
                           </p>
                         </div>
                         <div className="w-[20%] flex">
@@ -362,7 +362,7 @@ const FollowedProperty = () => {
                       <img src="assets/img/folder.gif" className="w-[50px] p-3" />
                       {/* <FaFolderOpen className="mx-auto text-center text-[50px] text-white  p-3  " /> */}
                     </div>
-                    <p className="mt-2">No Folder Exist</p>
+                    <p className="mt-2">{t("followedProperty.noFolderExist")}</p>
                   </div></>
                 )}
 
@@ -371,7 +371,7 @@ const FollowedProperty = () => {
                     onClick={() => setOpenPopup(true)}
                     className="h-12 bg-[#48464a] rounded-full w-[300px] px-10 text-[18px] font-medium text-center text-white hover:opacity-80 transition-all signup-btn"
                   >
-                    Create new folder
+                    {t("followedProperty.createNewFolder")}
                   </button>
                 </div>
               </>

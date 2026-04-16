@@ -56,8 +56,10 @@
     "pending": "En attente",
     "active": "Actif",
     "inactive": "Inactif",
+    "selectAll": "Tout selectionner",
     "selectOption": "Sélectionnez une option",
-    "requiredField": "*Champ obligatoire"
+    "requiredField": "*Champ obligatoire",
+    "other": "Autre"
   },
   "buttons": {
     "submit": "Soumettre",
@@ -120,12 +122,14 @@
     "preview": "Aperçu",
     "getStarted": "Commencer",
     "registerFree": "S'inscrire gratuitement",
+    "listProperty": "Créer mon bien",
     "yes": "Oui",
     "activateAlerts": "Activer les alertes",
     "findRate": "Trouver le meilleur taux",
     "browseRentals": "Parcourir les locations",
     "talkAgency": "Parler avec une agence locale",
-    "talkHunter": "Parler avec un chasseur immobilier local"
+    "talkHunter": "Parler avec un chasseur immobilier local",
+    "all": "Tous"
   },
   "forms": {
     "requiredField": "Ce champ est obligatoire",
@@ -151,6 +155,7 @@
     "mobileNoInvalid": "Le numéro mobile n'est pas valide",
     "address": "Adresse",
     "city": "Ville",
+    "whichCity": "Quelle ville ?",
     "state": "État",
     "province": "Province",
     "postalCode": "Code postal",
@@ -222,7 +227,8 @@
     "emailPlaceholder": "votreaddressemail@gmail.com",
     "searchName": "Nom de votre recherche",
     "enterRooms": "Entrer le nombre de chambres",
-    "selectRole": "Sélectionner un rôle"
+    "selectRole": "Sélectionner un rôle",
+    "location": "Localisation"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
@@ -309,6 +315,7 @@
     "noContentAvailable": "Aucun contenu disponible",
     "messageSentSuccess": "Message envoyé avec succès. L'administrateur vous recontactera dans les 24 heures.",
     "noRecordsFound": "Aucun enregistrement trouvé",
+    "noImagesAvailable": "Aucune image disponible",
     "propertyShared": "Propriété partagée avec succès",
     "interestSent": "Intérêt envoyé",
     "offerMade": "Offre faite",
@@ -348,6 +355,7 @@
     "verifyOtpMessage": "Vérifier le code OTP",
     "enterVerificationCode": "Entrez le code de vérification",
     "accountExists": "Le compte existe déjà",
+    "newPasswordHelp": "Veuillez creer un nouveau mot de passe que vous n'utilisez sur aucun autre site.",
     "createNewAccount": "Créer un nouveau compte",
     "agreeToTerms": "J'accepte les conditions générales",
     "rememberMe": "Se souvenir de moi",
@@ -391,6 +399,9 @@
     "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
     "dontReceiveOTP": "Vous n'avez pas reçu le code ?",
     "enterOTP": "Entrez le code de vérification",
+    "otpVerifiedSuccessfully": "Code OTP vérifié avec succès",
+    "verifyOtpNewEmail": "Veuillez également vérifier le code OTP sur votre nouvelle adresse e-mail.",
+    "emailChangedSuccess": "L'adresse e-mail a été modifiée",
     "manageAccount": "Gérer votre compte",
     "passwordDescription": "Définissez un nouveau mot de passe fort que vous n'utilisez nulle part ailleurs",
     "deleteAccount": "Supprimer le compte"
@@ -409,33 +420,36 @@
   "navigation": {
     "onboarding": "Onboarding",
     "dashboard": "Tableau de bord",
-    "searchProperties": "Rechercher des propriétés",
+    "searchProperties": "Chercher un bien",
     "messages": "Messages",
-    "onDemandRealtors": "Professionnels de l'immobilier à la demande",
-    "marketInsights": "Aperçu du marché",
+    "onDemandRealtors": "Services immo à la carte",
+    "plans": "Offres",
+    "innovativeServices": "Services innovants",
+    "marketInsights": "Données du marché",
     "transactions": "Transactions",
+    "transactionTool": "Outil de transaction",
     "buildingPermits": "Permis de construire",
     "realEstatePros": "Professionnels de l'immobilier",
-    "learningCenter": "Centre d'apprentissage",
+    "learningCenter": "Se former à l'immo",
     "writtenTraining": "Formation écrite",
     "videoTraining": "Formation vidéo",
-    "p2pEstimation": "Estimation P2P",
-    "estimateProperties": "Estimer les propriétés",
-    "campaignManager": "Gestionnaire de campagne",
-    "transactionManagement": "Gestion des transactions",
-    "searcher": "Chercheur",
+    "p2pEstimation": "Estimation de PAP",
+    "estimateProperties": "Estimer des biens",
+    "campaignManager": "Estimer mon bien",
+    "transactionManagement": "Gérer ma transaction",
+    "searcher": "Acheteur/Locataire",
     "owner": "Propriétaire",
-    "propertySeeker": "Chercheur de propriété",
+    "propertySeeker": "Ma recherche",
     "searchAlerts": "Alertes de recherche",
     "followedProperties": "Propriétés suivies",
     "interactedProperties": "Propriétés en interaction",
     "renterFile": "Dossier locataire",
     "buyerFile": "Dossier acheteur",
-    "propertyManager": "Gestionnaire de propriété",
+    "propertyManager": "Gérer mon bien",
     "myProperties": "Mes propriétés",
     "sellerFile": "Dossier vendeur",
     "qrCode": "Code QR",
-    "companyProfile": "Profil de l'entreprise",
+    "companyProfile": "Profil pro",
     "home": "Accueil",
     "aboutUs": "À propos de nous",
     "contactUs": "Nous contacter",
@@ -481,6 +495,7 @@
     "listingDate": "Date d'annonce",
     "daysOnMarket": "Jours sur le marché",
     "pricePerSqft": "Prix par pied carré",
+    "attractivity": "Attractivité du bien",
     "taxHistory": "Historique des impôts",
     "soldHistory": "Historique des ventes",
     "noPropertyFound": "Aucune propriété trouvée",
@@ -488,13 +503,26 @@
     "propertyCard": "Carte de propriété",
     "propertyType": "Type de propriété",
     "propertyStatus": "Statut de la propriété",
+    "grid": "Grille",
+    "inPortfolio": "dans votre portefeuille",
+    "propertyCount_one": "{{count}} Bien",
+    "propertyCount_other": "{{count}} Biens",
+    "enterLocation": "Entrez votre localisation",
+    "nameLabel": "Nom",
+    "propertyName": "Nom du bien",
+    "compliance": "conformité",
     "videos": "Vidéos",
     "propertyToSell": "Une propriété à vendre",
+    "alertPrompt": "Soyez informé quand de nouveaux biens sont publiés",
     "listDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales",
     "sellProperty": "Une propriété à vendre?",
     "sellDescription": "Listez-la et vendez-la par vous-même ou avec le soutien de nos agences partenaires locales",
     "quoteProperty": "Obtenir une estimation",
-    "helpMeSell": "Aidez-moi à vendre"
+    "helpMeSell": "Aidez-moi à vendre",
+    "filters": {
+      "enterRange": "Entrez une plage",
+      "proposalRequired": "Cochez au moins une proposition"
+    }
   },
   "modals": {
     "confirm": "Confirmer",
@@ -512,7 +540,8 @@
     "removeAndSave": "Supprimer et enregistrer le brouillon",
     "areYouSure": "Êtes-vous sûr(e) ?",
     "confirmCancelPlan": "Êtes-vous sûr?",
-    "confirmCancelPlanDesc": "Voulez-vous annuler ce plan"
+    "confirmCancelPlanDesc": "Voulez-vous annuler ce plan",
+    "confirmTitle": "Êtes-vous sûr(e) ?"
   },
   "dropdowns": {
     "statusApproved": "Approuvé",
@@ -650,6 +679,7 @@
   "chat": {
     "messages": "Messages",
     "noChats": "PAS DE CHATS",
+    "sendDirectMessage": "Envoyer un message direct",
     "startConversation": "Commencer une conversation",
     "noUserFound": "Aucun utilisateur trouvé",
     "typeYourMessage": "Tapez votre message",
@@ -661,6 +691,10 @@
     "lastSeen": "Vu en dernier",
     "typing": "Tape...",
     "messageDeleted": "Message supprimé"
+    ,"deleteForMe": "Supprimer pour moi"
+    ,"deleteForEveryone": "Supprimer pour tous"
+    ,"photo": "Photo"
+    ,"document": "Document"
   },
   "errors": {
     "genericError": "Une erreur s'est produite",
@@ -699,7 +733,274 @@
     "newKeyUpdate": "Nouvelle mise à jour clé",
     "frequency": "Fréquence des notifications",
     "sendFrequency": "Envoyez-moi des notifications:",
-    "forEachEvent": "pour chaque événement"
+    "forEachEvent": "pour chaque événement",
+    "subscriptionReminder": "Notification de rappel d'abonnement",
+    "showFromProperties": "Afficher {count} sur {total} propriétés"
+  },
+  "payment": {
+    "saveYourCard": "Enregistrer votre carte",
+    "saveCard": "Enregistrer la carte"
+  },
+  "propertyTimeline": {
+    "timeline": "Timeline",
+    "showPhoneNumber": "Afficher le numéro de téléphone",
+    "directMessage": "Message direct",
+    "propertyKeyEvents": "Événements clés de la propriété",
+    "followForKeyEvents": "Suivez cette propriété pour être informé des événements clés",
+    "follow": "Suivre",
+    "followed": "Suivi",
+    "room": "pièce",
+    "bedroom": "chambre",
+    "floor": "étage",
+    "month": "mois",
+    "realEstatePropertyProfile": "Profil de propriété immobilière",
+    "tabs": {
+      "pictures": "Photos",
+      "description": "Description",
+      "attractivity": "Attractivité",
+      "revenues": "Revenus",
+      "expenses": "Dépenses",
+      "renovationWorks": "Travaux de rénovation",
+      "schools": "Écoles",
+      "map": "Carte",
+      "goodToKnow": "Bon à savoir"
+    },
+    "events": {
+      "priceChange": "Changement de prix",
+      "newPrice": "Le nouveau prix de la propriété est {{price}}",
+      "rentChange": "Changement de loyer",
+      "newRent": "Le nouveau loyer de la propriété est {{rent}}",
+      "interestStatus": "Statut d'intérêt",
+      "propertyTransfer": "Transfert de propriété",
+      "propertyTransferredBy": "La propriété a été transférée par",
+      "to": "à",
+      "proposalChange": "Changement de proposition",
+      "openForProposal": "Cette propriété est maintenant ouverte à la",
+      "rentalPurchase": "location/vente",
+      "proposal": "proposition",
+      "statusChange": "Changement de statut",
+      "propertyNowFor": "La propriété est maintenant pour",
+      "offMarket": "Hors marché",
+      "revenueUpdated": "Le revenu de cette propriété a été mis à jour au prix de {{price}} pour {{year}}",
+      "propertyProfile": "Profil de propriété",
+      "propertyProfileCreated": "Profil de propriété créé"
+    }
+  },
+  "realEstatePropsDetail": {
+    "title": "Détail de propriété immobilière"
+  },
+  "transaction": {
+    "page1Title": "Transaction1",
+    "page2Title": "Transaction2",
+    "page3Title": "Transaction3",
+    "selectVisitSlots": "Selectionner les creneaux de visite",
+    "selectedDatesAndTimeSlots": "Dates selectionnees et creneaux horaires :",
+    "addSlot": "Ajouter un creneau",
+    "saveSlots": "Enregistrer les creneaux",
+    "slotsSaved": "Créneaux enregistrés ! Vérifiez la console pour les détails.",
+    "page4": {
+      "heroTag": "Outil de gestion des transactions",
+      "heroTitle": "Le seul outil pour securiser et simplifier le processus de transaction pour le vendeur et l'acheteur",
+      "heroDescription": "L'outil de suivi des transactions vous guide a travers toutes les etapes avec des conseils personnalises et des actions automatisees pour vous faire gagner du temps.",
+      "sellMyProperty": "Vendre ma propriété",
+      "nearApartment": "Vous etiez pres de cet appartement hier",
+      "whatThinkProperty": "Que pensez-vous de cette propriété ?",
+      "referencePriceIs": "Vous pensez que le prix de reference est :",
+      "cheap": "Bon marché",
+      "expensive": "Cher",
+      "reasonablePrice": "Quel serait un prix raisonnable ?",
+      "howWouldYouRate": "Comment noteriez-vous :",
+      "propertyTitle": "Titre de la propriété",
+      "propertyPictures": "Photos de la propriété",
+      "propertyInteriorDesign": "Design interieur de la propriété",
+      "propertyLocation": "Localisation de la propriété",
+      "couldYouLiveIn": "Pourriez-vous y vivre ?",
+      "howItWorks": "Comment ça marche ?",
+      "howItWorksDescription": "L'estimation sociale vous indique les points forts de votre propriété et les ameliorations possibles pour vendre plus vite et a un meilleur prix.",
+      "step1Title": "Créez votre profil de propriété",
+      "step1Description": "Cela ne prend pas plus de 5 minutes.",
+      "step2Title": "Nos membres locaux l'estiment",
+      "step2Description": "Pendant une semaine, notre communauté estime la valeur de votre propriété et gagne des pièces Bookaroo.",
+      "step3Title": "Vous recevez un rapport d'evaluation",
+      "step3Description": "Le rapport affiche le prix estime socialement et les details valorises."
+    }
+  },
+  "renterFile": {
+    "renterFile": "Dossier locataire",
+    "saveTimeFindHome": "Gagnez du temps et trouvez votre prochain logement plus rapidement",
+    "documentsPrivacyNote": "Aucun de ces documents ne sera partage publiquement. Notre courtier en credit immobilier les utilisera pour analyser la capacite de financement de votre projet immobilier.",
+    "documentBased": "Basé sur documents",
+    "declarative": "Déclaratif",
+    "personalInformation": "Informations personnelles",
+    "proofOfIdentity": "Piece d'identité",
+    "identityProofDescription": "Document legal requis pour visiter un bien et renforcer la confiance du vendeur.",
+    "identityProofExamples": "Peut être une carte d'identité ou un passeport.",
+    "proofOfCurrentAddress": "Justificatif de domicile actuel",
+    "addressProofDescription": "Ce document permet de mieux comprendre votre situation",
+    "addressProofExamples": "Peut être une facture de téléphone, d'eau ou d'électricité datant de moins de 3 mois.",
+    "resourcesAndIncome": "Ressources et revenus",
+    "resourcesAndIncomeDescription": "Ces documents permettent de vérifier que vos revenus couvrent le loyer mensuel et les charges associées.",
+    "yourFinancialSituation": "Votre situation financière",
+    "lastThreeSalarySlips": "3 derniers bulletins de salaire",
+    "optionalDocuments": "Documents optionnels",
+    "optionalDocumentsDescription": "Ces documents permettent de vérifier que vos revenus couvrent le loyer mensuel et les charges associées.",
+    "makeCandidacyStandOut": "Faites ressortir votre candidature",
+    "optionalDocsNote1": "Certains documents, bien qu'optionnels, sont si souvent demandés qu'il est préférable de les préparer à l'avance.",
+    "optionalDocsNote2": "Ex : dernier avis d'imposition (ou celui du garant), carte étudiante, titre de séjour, photocopie de la pièce d'identité du garant, attestation employeur (ou de l'employeur du garant), photocopie de taxe foncière (ou taxe locale si le garant est propriétaire), RIB, quittances de loyer précédentes.",
+    "uploadDocument": "Téléverser un document",
+    "youWantToBuy": "Vous souhaitez acheter",
+    "selectBuyOption": "Veuillez sélectionner une option d'achat",
+    "youWantToInvestIn": "Vous souhaitez investir dans",
+    "selectInvestOption": "Veuillez sélectionner une option d'investissement",
+    "inTheCityOf": "Dans la ville de",
+    "cityOrPostalCode": "Ville ou code postal",
+    "cityOrPostalRequired": "La ville ou le code postal est requis",
+    "maxFilesAllowed": "Maximum {{max}} fichiers autorisés à l'ajout",
+    "eachFileMaxSize": "Chaque fichier doit être inférieur à {{max}}MB",
+    "buyOptions": {
+      "alone": "Seul",
+      "two": "À deux",
+      "sci": "SCI"
+    },
+    "investOptions": {
+      "primaryResidence": "Résidence principale",
+      "secondaryResidence": "Résidence secondaire",
+      "rentalProperty": "Bien locatif",
+      "business": "Professionnel",
+      "mix": "Mixte"
+    }
+  },
+  "buyerFile": {
+    "saveTimeFindHome": "Gagnez du temps et trouvez votre prochain logement plus rapidement",
+    "documentsPrivacyNote": "Aucun de ces documents ne sera partage publiquement. Notre courtier en credit immobilier les utilisera pour analyser la capacite de financement de votre projet immobilier.",
+    "documentBased": "Basé sur documents",
+    "declarative": "Déclaratif",
+    "personalInformation": "Informations personnelles",
+    "proofOfIdentity": "Piece d'identité",
+    "identityProofDescription": "Document legal requis pour visiter un bien et renforcer la confiance du vendeur.",
+    "identityProofExamples": "Peut être une carte d'identité ou un passeport.",
+    "proofOfFamilySituation": "Justificatif de situation familiale",
+    "familySituationDescription": "Ce document permet de mieux comprendre votre situation",
+    "familySituationExamples": "Peut être un certificat de mariage, un certificat de PACS délivré par votre mairie, ou un livret de famille.",
+    "proofOfCurrentAddress": "Justificatif de domicile actuel",
+    "addressProofDescription": "Ce document permet de mieux comprendre votre situation",
+    "addressProofExamples": "Peut être une facture de téléphone, d'eau ou d'électricité datant de moins de 3 mois.",
+    "resourcesAndIncome": "Ressources et revenus",
+    "resourcesAndIncomeDescription": "Ces documents doivent être fournis pour chaque co-emprunteur et permettent de vérifier que vos comptes sont bien tenus et que votre situation financière globale est saine.",
+    "yourFinancialSituation": "Votre situation financière",
+    "lastThreeSalarySlips": "3 derniers bulletins de salaire",
+    "lastThreeBankStatements": "3 derniers relevés bancaires",
+    "lastTwoTaxNotices": "2 derniers avis d'imposition",
+    "personalContribution": "Apport personnel",
+    "personalContributionDescription": "Preuve de tout apport personnel : plan d'épargne logement (PEL), prêt ou donation familiale, héritage, etc.",
+    "uploadDocument": "Téléverser un document",
+    "youWantToBuy": "Vous souhaitez acheter",
+    "selectBuyOption": "Veuillez sélectionner une option d'achat",
+    "youWantToInvestIn": "Vous souhaitez investir dans",
+    "selectInvestOption": "Veuillez sélectionner une option d'investissement",
+    "inTheCityOf": "Dans la ville de",
+    "cityOrPostalCode": "Ville ou code postal",
+    "cityOrPostalRequired": "La ville ou le code postal est requis",
+    "buyOptions": {
+      "alone": "Seul",
+      "two": "À deux",
+      "sci": "SCI"
+    },
+    "investOptions": {
+      "primaryResidence": "Résidence principale",
+      "secondaryResidence": "Résidence secondaire",
+      "rentalProperty": "Bien locatif",
+      "business": "Professionnel",
+      "mix": "Mixte"
+    }
+  },
+  "sellerFile": {
+    "heroTitle": "Gagnez du temps et preparez votre dossier vendeur plus rapidement",
+    "privacyNote": "Aucun de ces documents ne sera partage publiquement. Notre courtier en credit immobilier les utilisera pour analyser la capacite de financement de votre projet immobilier.",
+    "personalInformation": "Informations personnelles",
+    "propertyLegalInformation": "Informations juridiques du bien",
+    "propertyLegalDescription": "Ces documents doivent etre fournis pour chaque co-emprunteur et permettent de verifier que vos comptes sont bien tenus et que votre situation financiere globale est saine.",
+    "selectPropertyForUpload": "Selectionnez un bien avant de televerser des documents",
+    "addPropertyForUpload": "Ajoutez un bien avant de televerser des documents",
+    "updatedSuccessfully": "Dossier vendeur mis a jour avec succes",
+    "personalInfo": {
+      "identityProof": {
+        "description": "Document legal requis pour visiter un bien et renforcer la confiance du vendeur."
+      },
+      "familySituation": {
+        "title": "Justificatif de situation familiale",
+        "description": "Ce document permet de mieux comprendre votre situation.",
+        "examples": "Il peut s'agir d'un certificat de mariage, d'un certificat de PACS delivre par votre mairie, ou d'un livret de famille."
+      }
+    },
+    "propertyInfo": {
+      "common": {
+        "mandatory": "Document obligatoire"
+      },
+      "carrezLaw": {
+        "title": "Certificat de surface loi Carrez"
+      },
+      "technicalDiagnostic": {
+        "title": "Dossier de diagnostic technique",
+        "description": "DPE, amiante, termites, merule, gaz, plomb, ERP, electricite"
+      },
+      "coOwnership": {
+        "title": "Reglement de copropriete",
+        "description": "Documents decrivant les regles qui regissent la copropriete."
+      },
+      "personalContribution": {
+        "title": "Apport personnel",
+        "description": "Justificatifs de tout apport personnel : plan epargne logement, pret ou donation familiale, heritage, etc."
+      },
+      "condominiumBooklet": {
+        "title": "Carnet d'entretien de la copropriete",
+        "description": "Carnet d'entretien de la copropriete"
+      },
+      "minutesOfGeneral": {
+        "title": "Proces-verbaux des assemblees generales de coproprietaires",
+        "description": "Idealement les proces-verbaux des 3 dernieres annees."
+      },
+      "titleDeed": {
+        "title": "Titre de propriete"
+      },
+      "otherDocs": {
+        "title": "Tout autre document pertinent",
+        "description": "Contrat de location pour un bien vendu loue, ainsi que tout autre document utile."
+      }
+    }
+  },
+  "transactionSidebar": {
+    "transferred": "Transferts",
+    "lead": "Prospect",
+    "leads": "Prospects",
+    "visitsBooked": "{{count}} visites reservees",
+    "noPropertiesAvailable": "Aucun bien disponible"
+  },
+  "realEstatePros": {
+    "findProfessionalTitle": "Trouvez votre professionnel de l'immobilier",
+    "location": "Localisation",
+    "seeResults": "Voir les resultats",
+    "fewWordsTitle": "Les professionnels de l'immobilier en quelques mots",
+    "qAgencySell": "Pourquoi travailler avec une agence immobilière pour vendre ma propriété ?",
+    "qHunterDreamHome": "Pourquoi travailler avec un chasseur immobilier pour trouver la maison de mes reves ?",
+    "qArchitectRenew": "Pourquoi travailler avec un architecte pour renover ma propriété ?",
+    "qListOnBookaroo": "Pourquoi lister ma propriété sur Bookaroo ?",
+    "youOwnProperty": "Vous possédez une propriété ?",
+    "getFreeQuote": "Obtenir un devis gratuit",
+    "historicalTransactionsTitle": "Transactions historiques dans les plus grandes villes de France"
+  },
+  "settings": {
+    "manageCompanyProfile": "Gerer votre profil d'entreprise",
+    "companyProfile": "Profil d'entreprise",
+    "searchableInDirectory": "Vous rendra visible dans l'annuaire",
+    "fields": {
+      "companyName": "Nom de l'entreprise",
+      "registrationNumber": "Numero d'enregistrement",
+      "address": "Adresse",
+      "postalCode": "Code postal",
+      "city": "Ville",
+      "country": "Pays"
+    }
   },
   "content": {
     "blogs": "Blogs",
@@ -755,6 +1056,10 @@
     "agencyInfo": "Informations de l'agence",
     "keyFigures": "Chiffres clés",
     "about": "À propos de",
+    "realEstateRole": "Immobilier {{role}}",
+    "since": "Depuis",
+    "source": "Source",
+    "lastUpdate": "Dernière mise à jour",
     "agencyTagline": "Voici le slogan de l'agence",
     "servicesOffered": "Services offerts",
     "openingHours": "Horaires d'ouverture",
@@ -774,6 +1079,7 @@
     "customerService": "Contacter le service client",
     "otherRequestText": "Pour toute autre demande concernant le site web ou l'application...",
     "useFormText": "Utilisez le formulaire de contact suivant:",
+    "genericContactForm": "Formulaire de contact générique",
     "trainingVideo": "Vidéo de formation"
   },
   "support": {
@@ -783,12 +1089,269 @@
   "settings": {
     "manageCompanyProfile": "Gérez le profil de votre entreprise",
     "companyProfile": "Profil de l'entreprise",
-    "searchableDirectory": "Vous rendra consultable dans l'annuaire"
+    "searchableInDirectory": "Vous rendra consultable dans l'annuaire",
+    "searchableDirectory": "Vous rendra consultable dans l'annuaire",
+    "editLogo": "Modifier le logo",
+    "editCoverImage": "Modifier l'image de couverture",
+    "imageTypesLogoCover": "Seules les images JPG et PNG sont autorisées.",
+    "fields": {
+      "companyName": "Nom de l'entreprise",
+      "registrationNumber": "Numero d'enregistrement",
+      "address": "Adresse",
+      "postalCode": "Code postal",
+      "city": "Ville",
+      "country": "Pays"
+    },
+    "team": {
+      "addTitle": "Ajouter un membre de l'equipe",
+      "addDescription": "Parlez-nous de votre equipe et de leurs roles",
+      "addButton": "Ajouter un membre",
+      "addPhoto": "Ajouter une photo",
+      "memberName": "Nom du membre",
+      "designation": "Fonction",
+      "imageRequired": "L'image est obligatoire.",
+      "nameRequired": "Le nom est obligatoire.",
+      "designationRequired": "La fonction est obligatoire.",
+      "atLeastOneMember": "Ajoutez au moins un membre d'equipe"
+    }
   },
   "accountTypes": {
     "agency": "Agence",
     "agent": "Agent",
     "hunter": "Chasseur"
+  },
+  "home": {
+    "heroTitle": "Le LinkedIn de l'immobilier",
+    "heroSubtitle": "La marketplace immobilière tout-en-un avec des biens Off-Market, des opportunites publiques et le plus grand annuaire de biens immobiliers.",
+    "deletePropertyConfirm": "Voulez-vous supprimer cette propriété ?",
+    "tabs": {
+      "offMarket": "Off-Market",
+      "rentNow": "Louer maintenant",
+      "buyNow": "Acheter maintenant",
+      "directory": "Annuaire"
+    },
+    "filters": {
+      "selectPropertyTypes": "Selectionnez les types de bien"
+    },
+    "propertyTypes": {
+      "house": "Maison",
+      "apartment": "Appartement",
+      "castle": "Chateau",
+      "building": "Immeuble",
+      "farm": "Ferme"
+    },
+    "search": {
+      "directoryHeadline": "Votre projet immobilier commence ici. Votre logement de reve y est probablement deja.",
+      "offMarketHeadline": "Le Off-Market vous donne acces a des biens et opportunites exclusifs.",
+      "directorySubheadline": "Trouvez des maintenant le bien que vous achetterez ou louerez dans quelques mois ou annees, et contactez le propriétaire des aujourd'hui.",
+      "offMarketSubheadline": "Negociez librement les conditions d'achat ou de location avec le propriétaire.",
+      "openToRentalProposal": "Ouvert aux propositions de location",
+      "openToPurchaseProposal": "Ouvert aux propositions d'achat",
+      "rental": "Location",
+      "purchase": "Achat",
+      "moreCriteria": "Plus de criteres",
+      "ownerListProperty": "Proprietaire ? Publiez votre bien",
+      "seeResults": "Voir les resultats",
+      "location": "Localisation",
+      "price": "Prix",
+      "minPrice": "Min €",
+      "maxPrice": "Max €"
+    },
+    "lastSearch": {
+      "resultsTitle": "Resultats de ma derniere recherche",
+      "savedSearches": "Voir mes recherches sauvegardees",
+      "searchName": "Nom de recherche",
+      "newResults_one": "{{count}} nouveau resultat",
+      "newResults_other": "{{count}} nouveaux resultats",
+      "seeAllResults": "Voir tous les resultats"
+    },
+    "upgrade": {
+      "title": "Passez à une offre supérieure",
+      "description": "Cette fonctionnalite n'est pas disponible avec votre offre actuelle. Veuillez changer d'offre pour y acceder.",
+      "cta": "Changer d'offre"
+    },
+    "whyBookaroo": {
+      "title": "Pourquoi Bookaroo",
+      "subtitle": "Faire du temps un allie pour acheteur et vendeur dans le cadre d'un projet immobilier et simplifier le processus de vente d'un bien de particulier a particulier."
+    },
+    "buyers": {
+      "label": "Acheteurs",
+      "title": "Anticipez votre projet immobilier",
+      "description": "Parce que le temps ne devrait plus être un facteur de stress dans votre projet immobilier mais un allié.",
+      "cta": "Voir les biens",
+      "paradigm": "Votre nouvelle plateforme fait entrer le marche de l'immobilier dans un nouveau paradigme : celui de l'anticipation.",
+      "cards": {
+        "planAhead": {
+          "title": "Anticiper votre projet d'achat",
+          "description": "N'achetez plus un bien simplement parce qu'il est disponible et correspond plus ou moins a vos criteres. En anticipant votre projet, vous pourrez trouver le bien de vos reves dans notre annuaire exhaustif."
+        },
+        "flexibility": {
+          "title": "Plus de flexibilite dans la transaction",
+          "description": "Anticiper vous permet de negocier avec le propriétaire afin de definir une date et les conditions de la transaction dans les mois ou annees a venir."
+        },
+        "financing": {
+          "title": "Preparer sereinement votre financement",
+          "description": "Vous avez maintenant plusieurs mois ou annees pour travailler avec votre banque, épargner et securiser l'obtention de votre financement à la date fixée avec le vendeur."
+        }
+      }
+    },
+    "sellers": {
+      "label": "Vendeurs",
+      "title": "Vendez votre bien au meilleur prix sans commissions.",
+      "description": "Parce qu'avec notre plateforme vous disposez de multiples possibilites pour vendre votre bien par vous meme et sans complexite.",
+      "cta": "Mettre en vente",
+      "timelineIntro": "Votre plateforme reinvente et simplifie le cycle de la possession puis de la mise en vente d'un bien immobilier",
+      "steps": {
+        "publishDirectory": {
+          "title": "Publiez votre bien sur notre annuaire",
+          "description": "Créez le profil Bookaroo de votre bien immobilier pour accroître sa visibilite et generer des leads acheteurs."
+        },
+        "testOffMarket": {
+          "title": "Testez votre bien avec le Off-Market",
+          "description": "Vendez votre bien immobilier au plus offrant et sans les contraintes du marché public."
+        },
+        "publishPublicMarket": {
+          "title": "Publiez votre bien sur le marché public",
+          "description": "Publiez d'un simple clic votre bien sur de nombreuses plateformes d'annonces immobilières."
+        },
+        "transactionTool": {
+          "title": "Realisez la vente grâce à notre outil transactionnel",
+          "description": "Vendez votre bien immobilier seul et en toute simplicite ou accompagne mais sans commission onereuse."
+        },
+        "transferProfile": {
+          "title": "Transférez la propriété du profil Bookaroo du bien",
+          "description": "Transférez la propriété du profil Bookaroo à son nouveau propriétaire après la vente."
+        }
+      }
+    },
+    "whyIndispensable": {
+      "title": "Pourquoi Bookaroo est indispensable pour les acheteurs et les vendeurs",
+      "subtitle": "Une plateforme unique qui offre une multitude d'outils et de services pour aider les particuliers a realiser sereinement leur transaction immobilière."
+    },
+    "wideChoice": {
+      "label": "Un large choix",
+      "title": "Annuaire exhaustif des biens immobiliers",
+      "description": "Nous avons vocation a référencer 100% des biens immobiliers existant pour un marche donne.",
+      "intro": "Bookaroo propose la base de données de biens immobiliers la plus complète du marché",
+      "cards": {
+        "socialProfile": {
+          "title": "Profil social d'un bien",
+          "description": "Le profil d'un bien a été pensé pour generer des interactions entre le propriétaire et les acheteurs potentiels (messages directs, like, follow)."
+        },
+        "largeSelection": {
+          "title": "Une large selection de biens",
+          "description": "En anticipant votre projet, vous pourrez choisir le bien qui correspond a l'ensemble de vos criteres dans notre large base de données de biens."
+        },
+        "richData": {
+          "title": "Information accrue",
+          "description": "Le contenu partage sur le profil du bien contribue a accroître sa valeur (travaux réalisés, budget mensuel, attractivité, rating social, revenus générés)."
+        },
+        "marketSignals": {
+          "title": "Signaux de marché renforcés",
+          "description": "L'activite et l'engagement autour d'un profil de bien donnent de meilleurs signaux pour positionner votre projet."
+        }
+      }
+    },
+    "transactionTool": {
+      "label": "Transaction simplifiee",
+      "title": "Outil de pilotage de transaction immobilière",
+      "description": "Parce que vendre son bien immobilier seul ne devrait pas être un parcours du combattant generateur de stress.",
+      "cta": "En savoir plus",
+      "intro": "Un outil de pilotage de votre transaction immobilière depuis la publication jusqu'à la signature de la vente",
+      "column1Intro": "Vendez seul, mais bien accompagne grâce à notre plateforme qui integre tout ce dont vous avez besoin pour travailler comme un pro !",
+      "column1Items": {
+        "education": "Contenu éducatif et formation à la vente",
+        "orchestratedFlow": "Parcours de vente orchestre",
+        "documentSharing": "Partage automatique de documents",
+        "visitScheduling": "Planification de visites",
+        "messaging": "Messagerie interne",
+        "candidateCriteria": "Critere de selection des candidats",
+        "multichannelPosting": "Multi-diffusion de votre annonce"
+      },
+      "column2Intro": "Vous voulez vendre sans payer une commission d'intermediation tout en bénéficiant des memes services ? Optez pour nos services à la carte.",
+      "column2Items": {
+        "freeValuation": "Estimation gratuite de la valeur de votre bien",
+        "adWriting": "Redaction de vos annonces",
+        "professionalPhotos": "Prises de vue professionnelles de votre bien",
+        "financialScreening": "Analyse de la solidité financiere des candidats",
+        "visitManagement": "Realisation des visites",
+        "legalFile": "Constitution du dossier legal vendeur",
+        "inventoryReport": "Realisation de l'etat des lieux"
+      }
+    },
+    "fairPrice": {
+      "label": "Definir le prix juste",
+      "title": "Historique des transactions immobilières",
+      "description": "Consulter l'historique des transactions immobilières pour definir la meilleure strategie.",
+      "cta": "Parcourir les transactions",
+      "intro": "Retrouvez le prix de toutes les transactions immobilières des 15 dernieres annees en France",
+      "cards": {
+        "sellPrice": {
+          "title": "Definir votre prix de vente",
+          "description": "Vous souhaitez mettre en vente votre bien immobilier au bon prix ? N'hesitez pas a consulter l'historique des transactions aux caracteristiques similaires."
+        },
+        "buyFairPrice": {
+          "title": "Acheter au juste prix",
+          "description": "En consultant l'historique des transactions similaires vous pourrez mettre en perspective le prix de vente propose par le vendeur."
+        },
+        "multiCriteria": {
+          "title": "Recherches multi-criteres",
+          "description": "Parcourez les transactions historiques en filtrant selon l'année de la transaction, la localisation, la taille et le type de bien, le nombre de pièces et le prix de vente."
+        }
+      }
+    },
+    "proNetwork": {
+      "label": "Se faire accompagner",
+      "title": "Annuaire des professionnels de l'immo",
+      "description": "Retrouvez des partenaires de confiance pour vous accompagner dans votre projet immobilier.",
+      "cta": "Trouver un professionnel",
+      "intro": "Votre plateforme reinvente et simplifie le cycle de la possession puis de la mise en vente d'un bien immobilier",
+      "cards": {
+        "agency": {
+          "title": "Agences immobilières",
+          "description": "Faites-vous accompagner par une agence locale pour la vente de votre bien immobilier."
+        },
+        "hunter": {
+          "title": "Chasseurs d'appartement",
+          "description": "Gagnez du temps en confiant la recherche de votre bien a un professionnel de la chasse immobilière."
+        },
+        "broker": {
+          "title": "Courtier",
+          "description": "Grace a nos partenaires courtiers, trouvez les meilleurs taux pour financer votre projet immobilier."
+        }
+      }
+    },
+    "whyList": {
+      "title": "Pourquoi devrais-je référencer mon bien sur Bookaroo ?",
+      "freeForever": "C'est 100% gratuit et ca le restera !",
+      "listCta": "Referencer mon bien",
+      "cards": {
+        "visibility": {
+          "title": "Gagner en visibilite",
+          "description": "En etant reference sur Bookaroo, votre bien immobilier sera mieux repertorie par les moteurs de recherche et plus facilement trouvable par les personnes concernees."
+        },
+        "leads": {
+          "title": "Generer des leads",
+          "description": "A travers le profil Bookaroo de votre bien, vous recevrez de nombreuses sollicitations et constituerez une base d'acheteurs potentiels pour une vente future."
+        },
+        "value": {
+          "title": "Accroitre la valeur de votre bien",
+          "description": "Les informations partagees sur le profil et les données de trafic (likes, visites, followers, messages) augmentent la désirabilité de votre bien et donc sa valeur."
+        },
+        "simplifiedListing": {
+          "title": "Mise en vente/location simplifiee",
+          "description": "En creant le profil Bookaroo de votre bien immobilier, vous pourrez publier en un clic une annonce de vente ou de location sur des centaines de plateformes."
+        },
+        "testOffMarket": {
+          "title": "Tester le Off-Market",
+          "description": "Avoir un profil Bookaroo pour votre bien vous permet de tester le Off-Market et de recevoir des propositions spontanees d'achat."
+        },
+        "sellFaster": {
+          "title": "Vendre plus vite",
+          "description": "Un bien reference sur Bookaroo se vend plus vite grâce à une demande continue générée dans le temps."
+        }
+      }
+    }
   },
   "plan": {
     "heroTitle": "Choisissez le plan qui transformera votre projet immobilier en parcours sans stress",
@@ -802,10 +1365,29 @@
     "yourCurrentPlan": "Votre plan actuel",
     "detailsTitle": "Voici en détail ce que vous obtenez avec chaque plan.",
     "seekerFeatures": "Fonctionnalités innovantes pour les chercheurs de propriétés:",
+    "ownerFeatures": "Fonctionnalités uniques propriétaire",
+    "salesMandatsAcquisition": "Acquisition de mandats de vente",
+    "realEstateServices": "Services immobiliers",
     "sellerFeatures": "Fonctionnalités innovantes pour les vendeurs de propriétés:",
+    "professionalServicesTitle": "Vendez votre propriété avec les services d'un professionnel de l'immobilier sans payer de commission",
     "freeOfferWarning": "Cette offre gratuite n'est valable que pour 3 jours. Après cela, vous devez acheter un plan."
   },
   "billing": {
+    "title": "Offre et facturation",
+    "planAndBillingMethod": "Offre et mode de facturation",
+    "smartStarter": "Smart starter",
+    "propertiesListedProgress": "{{used}} sur {{total}} biens publiés",
+    "upgradePlan": "Changer d'offre",
+    "paymentMethod": "Mode de paiement",
+    "editPaymentMethod": "Vous pouvez modifier votre mode de paiement ici.",
+    "cardEndingIn": "Carte se terminant par {{last4}}",
+    "expiringIn": "Expire le {{date}}",
+    "downloadInvoices": "Télécharger les factures",
+    "date": "Date",
+    "actions": "Actions",
+    "invoiceNumber": "Facture #{{number}}",
+    "smartStarterPlan": "Offre Smart starter",
+    "paid": "Payé",
     "monthly": "Mensuel",
     "annually": "Annuel",
     "perMonth": "/ Mois",
@@ -821,24 +1403,163 @@
     "dots": "..."
   },
   "propertyDetails": {
+    "loadErrorTitle": "Le contenu du bien est actuellement indisponible",
+    "loadErrorDescription": "Nous ne pouvons pas charger ce bien pour le moment. Verifiez que le serveur API est demarre puis reessayez.",
     "shareProperty": "Partager la propriété",
+    "sharePropertyPrompt": "Entrez une adresse email pour partager ce bien",
+    "requestExactLocation": "Demander la localisation exacte",
+    "exactLocationMessage": "Bonjour, je suis interesse par votre bien et je souhaite connaitre la localisation exacte",
     "notifyInterest": "Notifier l'intérêt",
     "makeOffer": "Faire une offre",
     "manageInterest": "Gérer votre intérêt",
+    "notifiedInterest": "Intérêt notifié",
     "notifyInterestBtn": "Notifier l'intérêt",
     "offerMade": "Offre faite",
     "makeOfferBtn": "Faire une offre",
-    "contactAgency": "Contacter l'agence"
+    "contactAgency": "Contacter l'agence",
+    "contactNumber": "Numéro de contact",
+    "averagePricePerSqmNeighborhood": "Prix moyen au m² dans le quartier",
+    "averageRentPerSqmNeighborhood": "Loyer moyen au m² dans le quartier",
+    "usersLookingInArea": "Utilisateurs recherchant dans cette zone",
+    "usersLookingSameType": "Utilisateurs recherchant le même type de bien",
+    "propertiesWithTerrace": "{{percent}}% des biens avec une terrasse",
+    "propertiesWithGarden": "{{percent}}% des biens avec un jardin",
+    "roomsInNeighborhood": "Nombre de {{rooms}} pièces dans le quartier",
+    "lifetimeGlobalRevenues": "Revenus globaux cumulés",
+    "totalRevenues": "Revenus totaux",
+    "yearlyRevenues": "Revenus annuels",
+    "onlineVisibility": "Visibilité en ligne",
+    "likes": "Likes",
+    "followers": "Abonnés",
+    "views": "Vues",
+    "shares": "Partages",
+    "enquiries": "Demandes",
+    "socialPlatformRating": "Note du bien sur les plateformes sociales",
+    "globalAverageYearlyExpense": "Dépense annuelle moyenne globale",
+    "investmentMadeForProperty": "d'investissement réalisé pour le bien",
+    "status": "Statut",
+    "invoiceBookarooVerified": "Facture Bookaroo vérifiée",
+    "allowedImageTypes": "Seules les images JPG, PNG, GIF et WebP sont autorisées.",
+    "allowedDocumentTypes": "Seuls les fichiers PDF, DOC et DOCX sont autorisés.",
+    "firstNameAlphaValidation": "Le prénom doit être alphabétique, peut inclure des espaces et contenir entre 2 et 50 caractères.",
+    "lastNameAlphaValidation": "Le nom doit être alphabétique, peut inclure des espaces et contenir entre 2 et 50 caractères.",
+    "phoneRequired": "Le numéro de téléphone est obligatoire.",
+    "phoneMinDigits": "Le numéro de téléphone doit contenir au moins 10 chiffres.",
+    "emailFormatValidation": "L'e-mail doit être dans un format valide",
+    "reportProfilePrompt": "Vous voulez signaler ce profil.",
+    "reportIt": "Oui, le signaler !",
+    "reportReasonPlaceholder": "Entrez la raison du signalement...",
+    "reportReasonAria": "Saisissez votre raison",
+    "reportReasonRequired": "Veuillez fournir une raison pour le signalement",
+    "requestSentTo": "Votre demande a été envoyée à {{recipient}}",
+    "admin": "l'administrateur",
+    "agency": "l'agence",
+    "claimOwnership": "Revendiquer la propriété",
+    "contactAgencyUpper": "CONTACTER L'AGENCE",
+    "contactAgentUpper": "CONTACTER L'AGENT",
+    "contactHunterUpper": "CONTACTER LE CHASSEUR",
+    "whenWouldYouLikeToBuy": "Quand souhaitez-vous acheter ?",
+    "now": "Maintenant",
+    "later": "Plus tard",
+    "alreadyOwnProperty": "Je possède déjà un bien",
+    "addMessageOptional": "Ajouter un message (optionnel)",
+    "noSimilarPropertyProfiles": "Je ne souhaite pas recevoir de profils de biens similaires ni de suggestions personnalisées de Bookaroo.",
+    "claimProperty": "Revendiquer le bien",
+    "profileId": "Profil {{id}}",
+    "reportThisProfile": "Signaler ce profil",
+    "realEstateAgencyName": "NOM DE L'AGENCE IMMOBILIÈRE",
+    "invalidClassType": "Type de classe invalide.",
+    "maximumPerYear": "Maximum {{amount}} €/an",
+    "minimumPerYear": "Minimum {{amount}} €/an",
+    "betweenPerYear": "Entre {{min}} et {{max}} €/an",
+    "notApplicable": "Non applicable",
+    "characteristics": "Caractéristiques",
+    "estimateMonthlyPayment": "Estimer votre mensualité",
+    "pricePerSqm": "Prix/m²",
+    "builtIn": "Construit en {{year}}",
+    "environment": "Environnement",
+    "ancillaryAreas": "Surfaces annexes",
+    "servicesAccessibility": "Services et accessibilité",
+    "cooking": "Cuisine",
+    "livingAreas": "Espaces de vie",
+    "livingRoom": "Salon",
+    "livingRooms": "Salons",
+    "bedroom": "Chambre",
+    "bedrooms": "Chambres",
+    "waterRoom": "Pièce d'eau",
+    "toilet": "Toilette",
+    "toilets": "Toilettes",
+    "bathroom": "Salle de bain",
+    "bathrooms": "Salles de bain",
+    "outside": "Extérieur",
+    "leisure": "Loisirs",
+    "equipment": "Équipement",
+    "heatingAndDiagnosis": "Chauffage et diagnostic",
+    "energyPerformanceDiagnostics": "Diagnostic de performance énergétique",
+    "energyEfficientHome": "Logement économe en énergie",
+    "energyIntensiveHousing": "Logement énergivore",
+    "lowEmissions": "Faibles émissions",
+    "greenhouseGasEmissions": "Émissions de gaz à effet de serre",
+    "highEmissions": "Émissions élevées",
+    "seeDetails": "Voir les détails",
+    "detailOfEnergyDiagnostics": "Détail du diagnostic énergétique",
+    "estimatedEnergyBill": "Facture énergétique estimée",
+    "estimatedAnnualEnergyExpenditure": "Dépense énergétique annuelle estimée pour un usage standard :",
+    "averageEnergyPricesIndexed": "Prix moyens de l'énergie indexés au 1er janvier 2020 (abonnement inclus).",
+    "energyPerformanceDiagnosis": "Diagnostic de performance énergétique (DPE)",
+    "highPerformanceHousing": "Logement à haute performance",
+    "consumptionPrimaryEnergy": "Consommation (énergie primaire)",
+    "emissions": "Émissions",
+    "extremelyEnergyIntensiveHousing": "Logement extrêmement énergivore",
+    "diagnosisCarriedOut": "Diagnostic réalisé le {{date}}",
+    "greenhouseGasEmissionIndex": "Indice d'émission de gaz à effet de serre (GES)",
+    "lowCo2Emissions": "Faibles émissions de CO₂",
+    "veryHighCo2Emissions": "Très fortes émissions de CO₂",
+    "pricingDetails": "Détails des prix",
+    "priceWithoutAgencyFees": "Prix hors frais d'agence",
+    "agencyFees": "Frais d'agence",
+    "priceForBuyer": "Prix pour l'acheteur",
+    "estimatedNotaryFees": "Frais de notaire estimés (8%)",
+    "globalProjectAmount": "Montant global du projet",
+    "propertyAnnualBuildingCharges": "Charges annuelles de copropriété",
+    "totalMonthlyRentIncludingCharges": "Loyer mensuel total charges comprises",
+    "monthlyRent": "Loyer mensuel",
+    "buildingProvisionalCharges": "Charges provisionnelles de l'immeuble",
+    "oneTimeFeesPaidByRenter": "Frais ponctuels payés par le locataire",
+    "inventoryOfProperty": "État des lieux du bien",
+    "guaranteeDeposit": "Dépôt de garantie",
+    "georisquesInfo": "Les informations sur les risques auxquels ce bien est exposé sont disponibles sur le site Géorisques :",
+    "investment": "Investissement",
+    "viewOriginalListing": "Voir l'annonce originale du bien",
+    "relatedSearches": {
+      "houseForSale": "Maison à vendre",
+      "houseForSaleCity": "Maison à vendre {{city}}",
+      "flatForSale": "Appartement à vendre",
+      "flatForSaleCity": "Appartement à vendre {{city}}",
+      "discoverHistoricalPrices": "Découvrez les prix des transactions historiques dans votre zone d'intérêt.",
+      "propertiesSoldCity": "Biens vendus à {{city}}",
+      "flatForRent": "Appartement à louer",
+      "flatForRentCity": "Appartement à louer à {{city}}"
+    }
   },
   "blogs": {
+    "realEstateNews": "Actualités immobilières",
+    "noBlogsFound": "Aucun article trouvé",
+    "showFromBlogs": "Afficher {{count}} sur {{total}} articles",
     "resourcesHelp": "Ressources pour vous aider dans votre parcours immobilier",
     "bestRate": "Obtenez le meilleur taux d'intérêt grâce à nos partenaires",
     "findHome": "Trouvez votre prochain logement chez Bookaroo"
   },
   "project": {
+    "myProject": "Mon projet",
+    "heroTitle": "L'immobilier est un projet unique dans une vie !",
+    "heroSubtitle": "Planifiez-le à votre rythme ici",
+    "searcherSpace": "Ma recherche immo",
+    "ownerSpace": "Espace propriétaire",
+    "services": "Services",
     "searchAlert": "Alerte de recherche",
     "propertiesFollowed": "Propriétés suivies",
-    "interactedProperties": "Propriétés avec lesquelles j'ai interagi",
+    "interactedProperties": "Propriétés en interaction",
     "renterApplicationFile": "Dossier de candidature du locataire",
     "buyerFile": "Dossier d'acheteur",
     "manageTransaction": "Gérer la transaction immobilière",
@@ -852,7 +1573,16 @@
     "helpMove": "Obtenir de l'aide pour déménager",
     "helpSelling": "Obtenir de l'aide pour vendre",
     "getQuote": "Demander un devis",
-    "listProperty": "Lister une propriété"
+    "listProperty": "Créer mon bien",
+    "labels": {
+      "search": "Recherche",
+      "searches": "Recherches",
+      "property": "Propriété",
+      "properties": "Propriétés",
+      "document": "Document",
+      "documents": "Documents",
+      "inFunnel": "dans le funnel"
+    }
   },
   "alerts": {
     "principalResidence": "recherche de résidence principale",
@@ -861,6 +1591,126 @@
     "priceEvolution": "mise à jour sur l'évolution des prix",
     "deleteConfirm": "Voulez-vous supprimer ceci"
   },
+  "searchAlert": {
+    "title": "Alertes de recherche",
+    "subtitle": "Soyez informé en premier",
+    "alertDefault": "Alerte de recherche {{count}}",
+    "newResult_one": "{{count}} nouveau résultat",
+    "newResult_other": "{{count}} nouveaux résultats",
+    "noAlerts": "Aucune alerte disponible",
+    "createNewAlert": "Créer une nouvelle alerte",
+    "dontMiss": "Ne manquez pas un bien",
+    "meetRequirements": "Qui correspond à vos critères",
+    "creatingAlertCause": "Je crée cette alerte parce que",
+    "receiveAlerts": "Recevoir des alertes",
+    "dataPrivacyNote": "Bookaroo traite vos données afin de gérer votre demande d'alertes pour de nouvelles annonces immobilières par e-mail. Pour en savoir plus et exercer vos droits, cliquez ici."
+  },
+  "followedProperty": {
+    "title": "Propriétés suivies",
+    "subtitle": "Planifiez votre projet",
+    "wantToFollowProperty": "Voulez-vous suivre ce bien ?",
+    "existingFolder": "Dossier existant",
+    "selectFolder": "Sélectionner un dossier",
+    "enterFolderName": "Saisir le nom du dossier",
+    "maxWords": "Maximum {{current}}/200 mots",
+    "createFolder": "Créer le dossier",
+    "updateFolder": "Mettre à jour le dossier",
+    "deleteConfirm": "Voulez-vous supprimer ce dossier",
+    "propertiesFollowedCount_one": "{{count}} bien suivi",
+    "propertiesFollowedCount_other": "{{count}} biens suivis",
+    "noFolderExist": "Aucun dossier n'existe",
+    "createNewFolder": "Créer un nouveau dossier",
+    "followedForSearch": "suivis pour la recherche {{name}}",
+    "colUserName": "Nom d'utilisateur",
+    "colPropertyTitle": "Titre du bien",
+    "colPropertyType": "Type de bien",
+    "colPrice": "Prix",
+    "colLocation": "Localisation"
+  },
+  "transactionSearcher": {
+    "homeSeekerTransactionManagement": "Gestion des transactions du chercheur",
+    "monitorTransactions": "Suivez vos transactions immobilières",
+    "manageBuyerFile": "Gérer le dossier acheteur",
+    "sellerFiles": "Dossiers vendeur",
+    "documentsAdded": "{{count}} documents ajoutés",
+    "purchase": "Achat",
+    "rental": "Location",
+    "requestSellerFiles": "Demander les dossiers vendeur",
+    "emptyTargetedProperties": "Les biens que vous ciblez en location ou en achat seront affichés ici.",
+    "sellingAloneTraining": "Formation pour vendre seul",
+    "trainingQuestionOne": "Que vérifier avant de signer un compromis de vente ?",
+    "trainingQuestionTwo": "Comment cette signature doit-elle se derouler ?",
+    "chooseVisitSlots": "Choisir des creneaux de visite",
+    "slotAlreadyBooked": "Ce creneau est deja reserve",
+    "noSlotsAvailable": "Aucun creneau disponible.",
+    "cantFindSuitableSlot": "Vous ne trouvez pas de creneau adapte ?",
+    "requestChangeSlot": "Demander un changement de creneau",
+    "requestNotePlaceholder": "Ajoutez une note pour votre demande...",
+    "provideRequestNote": "Veuillez ajouter une note pour votre demande",
+    "selectSlot": "Selectionnez un creneau",
+    "request": "Demander",
+    "book": "Reserver",
+    "identityProof": "Piece d'identite",
+    "identityProofDescription": "Document d'identite requis pour visiter un bien et rassurer le proprietaire.",
+    "identityProofExamples": "Peut etre une carte d'identite ou un passeport."
+  },
+  "transactionOwner": {
+    "ownerTransactionManagement": "Gestion des transactions propriétaire",
+    "monitorTransactions": "Suivez vos transactions immobilières",
+    "closeExternalTitle": "Finalisez ici une transaction immobilière externe",
+    "closeExternalDescription": "Vous avez trouvé un acheteur ailleurs que sur Bookaroo ? Ajoutez le profil de votre bien ici pour sécuriser et finaliser votre transaction grâce à notre funnel guidé.",
+    "importProperty": "Importer un bien",
+    "sellAloneTitle": "Vendre seul avec des services immobiliers professionnels",
+    "sellAloneDescription": "Vendre votre bien sans agence ne signifie pas vendre seul. Nos partenaires peuvent fournir les mêmes services qu'une agence, à un prix raisonnable.",
+    "seeServices": "Voir les services",
+    "congratulations": "Félicitations ! Vous avez trouvé un",
+    "renter": "Locataire",
+    "buyer": "Acheteur",
+    "manageLeads": "Gérez vos contacts",
+    "manageVisitSlots": "Gérer les créneaux de visite",
+    "sellerFiles": "Dossiers vendeur",
+    "slotOpened_one": "{{count}} créneau ouvert",
+    "slotOpened_other": "{{count}} créneaux ouverts",
+    "automaticInvites": "Invitations automatiques",
+    "documentsAdded": "{{count}} documents ajoutés",
+    "inviteLead": "Inviter un contact",
+    "setSigningDates": "Définir les dates de signature",
+    "homeInventoryDates": "Dates d'état des lieux",
+    "transferOwnership": "Transférer la propriété",
+    "noLeadMessage": "Aucun contact à afficher pour le moment, mais ils ne vont pas tarder !",
+    "sellingAloneTraining": "Formation pour vendre seul",
+    "trainingQuestionOne": "Que vérifier avant de signer un compromis de vente ?",
+    "trainingQuestionTwo": "Comment cette signature doit-elle se dérouler ?",
+    "inviteEmailTitle": "Saisissez l'adresse e-mail que vous souhaitez inviter",
+    "propertyTitleFallback": "Titre du bien",
+    "transferredTo": "Transfere a",
+    "transferredBy": "Transfere par",
+    "dateOfTransfer": "Date du transfert",
+    "review": "Avis",
+    "defaultTransferReview": "Ce bien est excellent. L'emplacement est ideal et les prestations sont de qualite.",
+    "user": "Utilisateur",
+    "unlockTool": "Débloquez l'outil de suivi des transactions immobilières",
+    "choosePlan": "Choisir votre offre",
+    "nativeFeaturesTitle": "Fonctionnalités natives clés de notre outil de suivi",
+    "partnerServicesTitle": "Services différenciants proposés par nos partenaires",
+    "nativeFeatures": {
+      "educationalContent": "Contenus pédagogiques pour vous aider à vendre en autonomie",
+      "filterCandidates": "Filtrer les candidats selon vos critères",
+      "financialBackground": "Vérification financière et notation des candidats",
+      "autoInvite": "Invitation automatique des bons candidats",
+      "manageVisits": "Gérer le calendrier de vos visites",
+      "autoSendPropertyFile": "Envoi automatique du dossier du bien",
+      "receiveCandidatesFiles": "Réception des dossiers des candidats",
+      "receivePurchaseOffer": "Réception des offres d'achat"
+    },
+    "partnerServices": {
+      "writingProfile": "Rédaction du profil de votre bien",
+      "professionalPictures": "Photos professionnelles de votre bien",
+      "financialCheck": "Vérification financière des acheteurs ou locataires potentiels",
+      "hostVisits": "Organisation des visites de votre bien pour les candidats",
+      "legalTasks": "Prise en charge des tâches juridiques et administratives de vente (collecte des documents légaux...)"
+    }
+  },
   "crm": {
     "buyerFile": "Dossier d'acheteur",
     "sellerFile": "Dossier du vendeur"
@@ -868,6 +1718,889 @@
   "building": {
     "permit": "Permis de construction",
     "permitList": "Permis de construction"
+  },
+  "buildingPermit": {
+    "heroTitle": "Vous voulez éviter les mauvaises surprises ?",
+    "heroSubtitle": "Consultez les permis de construire existants à proximité de votre futur logement.",
+    "tipsTitle": "Conseils de professionnels pour définir le bon prix",
+    "ctaTitle": "Vous prévoyez de vendre votre bien ?",
+    "historicalRegionsTitle": "Historique des transactions dans les plus grandes régions françaises",
+    "types": {
+      "demolitionPermit": "Permis de démolition",
+      "nonResidential": "Non résidentiel",
+      "residential": "Résidentiel"
+    },
+    "questions": {
+      "lowerPrice": "Dois-je baisser mon prix de départ pour attirer plus de contacts ?",
+      "definePrice": "Comment définir le prix de mon bien ?",
+      "workWithPro": "Pourquoi travailler avec un professionnel de l'immobilier pour vendre mon bien ?"
+    }
+  },
+  "pastTransactions": {
+    "heroTitle": "Vous essayez de définir le bon prix ?",
+    "heroSubtitle": "Parcourez l'historique des transactions pour vous faire une idée",
+    "surface": "Surface",
+    "rooms": "Pièces",
+    "enterLocation": "Saisissez une localisation",
+    "invalidSurfaceRange": "Saisissez une plage de surface valide",
+    "invalidPriceRange": "Saisissez une plage de prix valide",
+    "maxRooms": "Le nombre maximum de pièces est 5"
+  },
+  "prolist": {
+    "propertiesForRent": "Biens à louer",
+    "propertiesForSale": "Biens à vendre",
+    "propertiesOffMarket": "Biens Off-Market",
+    "propertiesDirectory": "Biens en annuaire",
+    "wantToSeeMore": "Vous voulez voir plus de profils pros ?",
+    "loginFirst": "Connectez-vous d'abord !"
+  },
+  "filtersCommon": {
+    "filters": "Filtres",
+    "location": "Localisation",
+    "propertyType": "Type de propriété",
+    "services": "Services",
+    "serviceNotFound": "Service introuvable",
+    "role": "Rôle",
+    "status": "Statut",
+    "all": "Tous",
+    "allSchoolTypes": "Tous les types d'école",
+    "allSchoolStatus": "Tous les statuts d'école",
+    "elementarySchool": "École élémentaire",
+    "college": "Collège",
+    "kindergarten": "Maternelle",
+    "elementaryPrimary": "Primaire",
+    "highSchool": "Lycée",
+    "private": "Privé",
+    "public": "Public",
+    "whereAreYouLooking": "Où recherchez-vous ?",
+    "showPropertiesThatAre": "Afficher les biens qui sont :",
+    "openToPurchaseProposals": "Ouvert aux propositions d'achat",
+    "openToRentalProposals": "Ouvert aux propositions de location",
+    "roleLookingFor": "Quel rôle recherchez-vous ?",
+    "servicesLookingFor": "Quels services recherchez-vous ?",
+    "statusLookingFor": "Quel statut recherchez-vous ?",
+    "buildingPermitTypeLookingFor": "Quel type de permis de construire recherchez-vous ?",
+    "enterLocationSearch": "Saisissez la localisation à rechercher...",
+    "selectMaximumRangeRadius": "Sélectionnez un rayon maximal pour trouver le bien",
+    "range": "Rayon",
+    "results": "résultats",
+    "resetFilters": "Réinitialiser les filtres",
+    "list": "Liste",
+    "map": "Carte",
+    "grid": "Grille",
+    "offMarketStatus": "Statut Off-Market",
+    "directoryStatus": "Statut annuaire",
+    "budget": "Budget",
+    "price": "Prix",
+    "proposals": "propositions",
+    "revenue": "Revenus",
+    "surface": "Surface",
+    "surfaceMin": "Surface min",
+    "surfaceMax": "Surface max",
+    "rooms": "Pièces",
+    "attractivity": "Attractivité",
+    "rating": "Note",
+    "extraFilters": "Filtres supplémentaires",
+    "moreCriteria": "Plus de critères",
+    "sortBy": "Trier par",
+    "highToLow": "Du plus élevé au plus bas",
+    "lowToHigh": "Du plus bas au plus élevé",
+    "floors": "Étages",
+    "cooking": "Cuisine",
+    "equipment": "Équipement",
+    "outside": "Extérieur",
+    "servicesAndAccessibility": "Services et accessibilité",
+    "ancilliaryAreas": "Surfaces annexes",
+    "environment": "Environnement",
+    "leisure": "Loisirs",
+    "investment": "Investissement",
+    "energyPerformanceDiagnostics": "Diagnostic de performance énergétique",
+    "filterProfiles": "Filtrer les profils",
+    "individuals": "Particuliers",
+    "professional": "Professionnel",
+    "sortingResults": "Tri des résultats",
+    "yearlyRevenueQuestion": "Quel montant de revenus annuels ?",
+    "attractivityLevelQuestion": "Quel niveau d'attractivité ?",
+    "selectRating": "Sélectionnez une note",
+    "selectReason": "Sélectionnez une raison",
+    "for": "pour",
+    "previous": "< Précédent",
+    "next": "Suivant >",
+    "min": "min",
+    "max": "max",
+    "showCountFromTotalProperties": "Afficher {{shown}} sur {{total}} biens",
+    "enterAtLeastOneLocation": "Saisissez au moins une localisation",
+    "selectAtLeastOneLocation": "Sélectionnez au moins une localisation",
+    "selectAtLeastOneType": "Sélectionnez au moins un type",
+    "selectAtLeastOneStatus": "Sélectionnez au moins un statut",
+    "selectAtLeastOneRole": "Sélectionnez au moins un rôle",
+    "selectAtLeastOneService": "Sélectionnez au moins un service"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue",
+    "subtitle": "Pilotez toutes les dimensions de votre projet immobilier depuis ce tableau de bord",
+    "dragHandle": "Réorganiser la section",
+    "common": {
+      "loading": "Chargement...",
+      "loadError": "Impossible de charger cette section pour le moment.",
+      "expandStatistics": "Développer les statistiques",
+      "collapseStatistics": "Réduire les statistiques"
+    },
+    "displayMode": {
+      "label": "Personnalisez l'affichage de votre tableau de bord",
+      "buyer": "Acheteur",
+      "seller": "Vendeur",
+      "owner": "Propriétaire",
+      "resetOrder": "Réinitialiser ordre"
+    },
+    "period": "Période",
+    "periods": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois",
+      "year": "Année"
+    },
+    "activityTitle": "Activité récente",
+    "quickActionsTitle": "Actions rapides",
+    "sections": {
+      "propertyAttractivity": "Suivez l'attractivité de votre bien",
+      "propertyAttractivitySub": "Enrichissez le profil de votre bien pour accroître son attractivité et sa valeur marchande",
+      "savedSearch": "Consultez les nouveaux biens de vos recherches sauvegardées",
+      "savedSearchSub": "Découvrez les nouveaux biens correspondant à vos recherches sauvegardées",
+      "pastTransactions": "Faites-vous une idée des prix du marché en consultant les transactions récentes",
+      "pastTransactionsSub": "Les transactions passées vous aident à définir le bon prix, à l'achat comme à la vente",
+      "p2pReport": "Découvrez la valorisation de votre bien par les membres de la communauté",
+      "p2pReportSub": "Exploitez ces informations pour comprendre comment les personnes de votre zone valorisent votre bien et comment augmenter son attractivité",
+      "p2pEstimation": "P2P Estimation : aidez les membres de la communauté à estimer leur bien",
+      "followedPropertyNews": "Découvrez l'actualité des biens que vous suivez",
+      "followedPropertyNewsSub": "Suivre un bien immobilier vous permet de vous positionner avant même qu'il ne soit en vente.",
+      "training": "Formez-vous à l'immobilier : les derniers contenus",
+      "trainingSub": "Appuyez-vous sur ces contenus pour piloter votre projet immobilier comme un pro",
+      "searchPipeline": "Vue d'ensemble de votre recherche d'un bien immobilier",
+      "ownerPipeline": "Vue d'ensemble de la vente ou location de votre bien"
+    },
+    "cta": {
+      "newSearch": "Nouvelle recherche",
+      "seeProfiles": "Voir profils",
+      "estimateMyProperty": "Estimer mon bien",
+      "estimateProperties": "Estimer des biens",
+      "browseTransactions": "Parcourir les transactions",
+      "browseTraining": "Parcourir les formations",
+      "createProperty": "Créer un bien"
+    },
+    "empty": {
+      "noProperties": "Aucun bien disponible pour le moment.",
+      "noSavedSearchResults": "Vous retrouverez ici les nouveaux résultats de vos recherches sauvegardées.",
+      "noTransactions": "Aucune transaction historique disponible.",
+      "noP2PReport": "Aucun rapport P2P disponible pour le moment."
+    },
+    "p2pEstimation": {
+      "countTitle": "{{count}} biens de votre zone attendent votre estimation pair-a-pair",
+      "empty": "Aucun bien à estimer pour le moment.",
+      "imageAlt": "Bien à estimer"
+    },
+    "p2pReport": {
+      "rooms": "pièces",
+      "legend": "Légende",
+      "peopleCount": "{{count}} personnes",
+      "propertyPriceTitle": "Analyse du prix de référence",
+      "appropriate": "Approprié",
+      "underEstimated": "Sous-estimé",
+      "overEstimated": "Sur-estimé",
+      "lifetimeTitle": "Estimation du prix dans le temps",
+      "max": "Max",
+      "avg": "Moy",
+      "min": "Min",
+      "qualitativeTitle": "Évaluation qualitative",
+      "title": "Titre",
+      "image": "Image",
+      "pictures": "Photos",
+      "decoration": "Décoration",
+      "interior": "Intérieur",
+      "location": "Localisation",
+      "desirability": "Désirabilité"
+    },
+    "ownerPipeline": {
+      "empty": "Commencez par ajouter votre bien pour suivre vos indicateurs.",
+      "listMyProperty": "Lister mon bien",
+      "transactionTypeSale": "Vente",
+      "transactionTypeRent": "Location",
+      "priceSale": "Prix de vente",
+      "priceRent": "Prix de location",
+      "pricePerSqm": "Prix/m2",
+      "metrics": {
+        "propertyProfileViews": "Vues du profil du bien",
+        "interestsReceived": "Intérêts reçus",
+        "profileAnalyzed": "Profils analysés",
+        "visitsHosted": "Visites réalisées",
+        "visitReviews": "Avis de visite",
+        "visitEvaluation": "Évaluation de visite",
+        "offerOrApplication": "Offres / Dossiers reçus",
+        "offerReceivedSingular": "Offre reçue",
+        "offerReceivedPlural": "Offres reçues",
+        "applicationReceivedSingular": "Dossier reçu",
+        "applicationReceivedPlural": "Dossiers reçus"
+      }
+    },
+    "searchPipeline": {
+      "empty": "Aucun bien en cours de recherche pour le moment.",
+      "metrics": {
+        "propertiesFollowed": "Biens suivis",
+        "propertyProfileViewed": "Vues du profil du bien",
+        "propertiesVisited": "Biens visités",
+        "visitReviewsReceived": "Avis de visite reçus",
+        "purchaseProposalsSentToOwners": "Offres d'achat envoyées aux propriétaires",
+        "applicationSentToOwners": "Dossiers envoyés aux propriétaires",
+        "propertiesInTransactionFlow": "Biens en cours de transaction"
+      }
+    },
+    "savedSearch": {
+      "newResults": "{{count}} nouveaux résultats",
+      "previewAlt": "Aperçu du bien",
+      "delete": "Supprimer la recherche sauvegardée",
+      "deleteConfirm": "Confirmer la suppression de cette recherche sauvegardée ?"
+    },
+    "followedNews": {
+      "empty": "Aucune actualité disponible pour le moment.",
+      "like": "Liker la news",
+      "unlike": "Retirer le like",
+      "share": "Partager",
+      "shareEmail": "Email",
+      "shareWhatsapp": "WhatsApp",
+      "copyLink": "Copier le lien",
+      "expand": "Déplier la section",
+      "collapse": "Plier la section",
+      "showAll": "Voir tout",
+      "showLatest": "Réduire",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "badges": {
+        "default": "Mise à jour",
+        "price": "Prix",
+        "works": "Travaux",
+        "status": "Statut",
+        "owner": "Propriétaire",
+        "revenue": "Revenus",
+        "expense": "Dépenses"
+      }
+    },
+    "training": {
+      "mediaType": {
+        "video": "Vidéo",
+        "written": "Écrit"
+      }
+    },
+    "units": {
+      "roomSingular": "pièce",
+      "roomPlural": "pièces",
+      "sqm": "m2"
+    },
+    "todo": {
+      "title": "Votre ToDo Liste",
+      "subtitle": "Actions pour faire avancer votre projet immobilier",
+      "emptyMessage": "Voici les actions à effectuer pour faire avancer votre projet immobilier avec succès",
+      "markAsPending": "Marquer la tâche comme en attente",
+      "markAsCompleted": "Marquer la tâche comme terminée",
+      "propertyFallbackType": "Appartement",
+      "propertyInCity": "à"
+    },
+    "cards": {
+      "newLeads": "Nouveaux leads",
+      "activeProperties": "Biens actifs",
+      "profileViews": "Vues du profil",
+      "unreadAlerts": "Alertes non lues"
+    }
+  },
+  "buildingPermitGrid": {
+    "forBuildingPermits": "pour les permis de construire",
+    "building": "batiment",
+    "requestDate": "Date de demande",
+    "requestStatus": "Statut de demande",
+    "startDate": "Date de debut",
+    "requesterName": "Nom du demandeur",
+    "address": "Adresse",
+    "wantToSeeMoreBuildingPermit": "Vous voulez voir plus de permis de construire ?"
+  },
+  "pastTransactionsGrid": {
+    "budget": "Budget",
+    "whatIsYourBudget": "Quel est votre budget ?",
+    "whatSurface": "Quelle surface ?",
+    "whatNumberOfRooms": "Combien de pièces ?",
+    "year": "Année",
+    "whichYear": "Quelle année ?",
+    "transactionPrice": "Prix de transaction",
+    "pricePerSqm": "Prix au m2",
+    "numberOfRooms": "Nombre de pièces",
+    "transactionDate": "Date de transaction",
+    "sqm": "m2",
+    "selectAtLeastOneRoom": "Sélectionnez au moins une pièce",
+    "selectAtLeastOneYear": "Sélectionnez au moins une année",
+    "wantToSeeMore": "Vous voulez voir plus de transactions passées ?"
+  },
+  "offMarketPage": {
+    "heroTag": "Vente ou location Off-Market",
+    "heroTitle": "Diffusez progressivement votre bien en définissant quels prospects peuvent le voir",
+    "heroDescription": "Avec le mode Off-Market, vous pouvez d'abord ouvrir votre bien aux acheteurs ou locataires les mieux notés, puis l'ouvrir progressivement à une audience plus large.",
+    "ownerSectionTitle": "Comment ça marche pour le propriétaire ?",
+    "ownerSectionDescription": "Recevez uniquement des prospects qualifiés et évitez l'obsolescence de votre annonce en la rendant visible progressivement au public de votre choix.",
+    "buyerSectionTitle": "Comment ça marche pour l'acheteur ou le locataire ?",
+    "buyerSectionDescription": "L'annuaire vous permet de trouver un acheteur ou un locataire avant même de mettre votre bien sur le marché.",
+    "createBuyerFile": "Créer un dossier acheteur",
+    "createRenterFile": "Créer un dossier locataire",
+    "ownerSteps": {
+      "step1": {
+        "title": "Publiez votre bien en Off-Market",
+        "description": "Créez le profil de votre bien en Off-Market. Partagez les informations clés qui valorisent votre bien."
+      },
+      "step2": {
+        "title": "Définissez quels prospects peuvent le voir",
+        "description": "Ouvrez votre bien uniquement aux profils les mieux notés, selon leur probabilité d'obtenir un financement à partir des informations financières partagées."
+      },
+      "step3": {
+        "title": "Ouvrez-le progressivement à une audience plus large",
+        "description": "Si aucun acheteur prioritaire n'est trouvé, proposez simplement votre bien au niveau suivant. Votre bien reste confidentiel et ne se déprécie pas."
+      }
+    },
+    "buyerSteps": {
+      "step1": {
+        "title": "Complétez votre profil acheteur ou locataire",
+        "description": "Transmettez vos informations de financement en toute sécurité. Elles restent confidentielles et ne sont jamais partagées à des fins commerciales."
+      },
+      "step2": {
+        "title": "Probabilité d'obtention du financement",
+        "description": "À partir des données financières partagées, notre partenaire calcule votre probabilité d'obtenir un financement. Quel que soit le score, cela montre au propriétaire que vous êtes un candidat sérieux."
+      },
+      "step3": {
+        "title": "Révélez des opportunités cachées",
+        "description": "Selon votre score de financement, la section Off-Market vous donne un accès privilégié à des opportunités cachées, renforce la crédibilité de votre profil et augmente vos chances de sécuriser le bien."
+      }
+    }
+  },
+  "transactionToolPage": {
+    "heroTag": "Outil IA de gestion de transaction",
+    "heroTitle": "Le seul outil booste par l'IA pour securiser et simplifier le processus de transaction pour vendeurs et acheteurs",
+    "heroDescription": "L'outil de suivi des transactions vous guide a chaque etape, de la selection des prospects a la signature du contrat, avec des recommandations personnalisees et des actions automatisees qui vous font gagner du temps.",
+    "ctaGoToTool": "Aller a l'outil de transaction",
+    "ctaSellMyProperty": "Vendre mon bien",
+    "mainFeaturesTitle": "Fonctionnalites principales",
+    "mainFeaturesDescription": "Notre outil unique propose un large ensemble de fonctionnalites pour aider les particuliers a vendre leur bien plus facilement et avec moins de stress.",
+    "featuresOnlyBookaroo": "Fonctionnalites exclusives Bookaroo",
+    "sectionSecureSpeed": "Securisez et accélérez votre transaction",
+    "sectionExternalHelp": "Obtenez une aide externe a chaque etape de votre transaction",
+    "features": {
+      "bookaroo": {
+        "f1": {
+          "title": "Verification financiere des prospects",
+          "text": "Le profil financier de chaque prospect est verifie pour augmenter vos chances de conclure des le premier essai."
+        },
+        "f2": {
+          "title": "Limitez le nombre de prospects autorises",
+          "text": "Evitez d'etre submerge par les sollicitations en fixant une limite de prospects."
+        },
+        "f3": {
+          "title": "Calendrier partage pour organiser les visites",
+          "text": "Ouvrez des creneaux de visite et envoyez des invitations individuelles ou automatiques pour reserver un horaire."
+        },
+        "f4": {
+          "title": "Partage de piece d'identite pour securiser la visite",
+          "text": "Le proprietaire et le prospect peuvent partager leur identite pour garantir une visite en toute securite."
+        },
+        "f5": {
+          "title": "Avis de visite pour aider le proprietaire",
+          "text": "Apres chaque visite, les prospects peuvent laisser un avis partage avec le proprietaire pour ameliorer les prochaines visites."
+        },
+        "f6": {
+          "title": "Demandez ou partagez des documents du bien",
+          "text": "Les prospects peuvent demander des documents avant de faire une offre ou une candidature. Le proprietaire peut les partager via l'application."
+        },
+        "f7": {
+          "title": "Dossier acheteur ou locataire",
+          "text": "Acheteurs et locataires peuvent creer leur dossier dans l'application pour le partager facilement lors d'une candidature."
+        },
+        "f8": {
+          "title": "Candidatez ou faites une offre pour un bien",
+          "text": "Via l'application, les prospects peuvent candidater ou faire une offre officielle pour l'achat d'un bien."
+        },
+        "f9": {
+          "title": "Repondez a une proposition de prospect",
+          "text": "Via l'application, le proprietaire peut repondre a une offre ou a une candidature pour l'achat d'un bien."
+        },
+        "f10": {
+          "title": "Discutez avec les prospects pendant la transaction",
+          "text": "Echangez via l'application pour accelerer votre transaction et avancer vers la signature."
+        },
+        "f11": {
+          "title": "Calendrier partage pour signer le contrat",
+          "text": "Ouvrez des creneaux de signature et laissez l'acheteur reserver directement un horaire adapte."
+        },
+        "f12": {
+          "title": "Historique de transaction",
+          "text": "Gardez le suivi de toutes les etapes de votre transaction."
+        },
+        "f13": {
+          "title": "Transfert de propriete du profil du bien",
+          "text": "Apres la vente, transferez la propriete du profil du bien au nouveau proprietaire."
+        }
+      },
+      "support": {
+        "f1": {
+          "title": "Besoin d'aide a une etape du processus ?",
+          "text": "Pour securiser votre transaction, posez vos questions a votre assistant IA."
+        },
+        "f2": {
+          "title": "Contenus de formation video",
+          "text": "A chaque etape, accedez a des videos de formation pour vendre en autonomie."
+        },
+        "f3": {
+          "title": "Besoin d'un support sur une action specifique ?",
+          "text": "Nos agents immobiliers partenaires peuvent vous aider avec un forfait fixe par action (visite, dossier vendeur, etc.)."
+        }
+      }
+    }
+  },
+  "propertySteps": {
+    "listingSteps": "Etapes de publication",
+    "steps": {
+      "statusAndPrice": "Statut et prix",
+      "offMarket": "Off-Market",
+      "typeOfProperty": "Type de propriete",
+      "address": "Adresse",
+      "characteristics": "Caracteristiques",
+      "energyPerformance": "Performance energetique",
+      "photos": "Photos",
+      "description": "Description",
+      "school": "Ecole",
+      "price": "Prix",
+      "contact": "Contact",
+      "revenues": "Revenus",
+      "expenses": "Depenses",
+      "renovationWorks": "Travaux de renovation",
+      "externalRatings": "Evaluations externes",
+      "offMarketStatus": "Statut Off-market",
+      "directoryStatus": "Statut annuaire"
+    },
+    "step1": {
+      "sellOffMarket": "Vendre en Off-Market",
+      "proposeToQualified": "Proposez votre bien uniquement a des candidats qualifies",
+      "activateOffMarket": "Activer Off-Market",
+      "upgradePlan": "Mettre a niveau le plan",
+      "defineWhoCanSee": "Definissez qui peut voir votre bien",
+      "targetBestFunding": "Ciblez d'abord les meilleurs profils de financement",
+      "releaseProgressively": "Diffusez progressivement votre bien sur le marche",
+      "noObsolescence": "Pas d'obsolescence de votre annonce",
+      "onlyQualifiedLeads": "Assurez-vous de ne recevoir que des prospects qualifies",
+      "onlyFollowingUsers": "Seuls les utilisateurs suivants peuvent voir mon bien en Off-market :",
+      "documentBasedChecked": "Profil financier verifie sur documents.",
+      "declarativeBasedChecked": "Profil financier verifie sur declaratif.",
+      "anyUserCanSee": "Tout utilisateur ayant acces a l'off-market peut le voir",
+      "onlyFollowingRates": "Seules les notes suivantes verront mon bien",
+      "dontGetOverwhelmed": "Ne vous laissez pas submerger par les demandes",
+      "maximumLeadsInfo": "Une fois le nombre maximal de prospects atteint, nous bloquerons la possibilite de vous contacter.",
+      "maximumLeads": "Prospects maximum",
+      "saveChange": "Enregistrer les modifications",
+      "errors": {
+        "selectPropertyType": "Selectionnez le type de bien..",
+        "selectPropertyUsedFor": "Selectionnez l'usage du bien.."
+      },
+      "tooltips": {
+        "financialBackground": "Parmi les personnes interessees par votre bien, beaucoup sont encore en phase de recherche et pas assez avancees dans leur projet. Cibler des prospects avec verification financiere augmente vos chances de vendre vite et efficacement.",
+        "preserveExclusivity": "Preservez l'exclusivite de votre bien en le revelant progressivement uniquement aux acheteurs ayant le meilleur profil financier. Vous pouvez ajuster ces criteres a tout moment."
+      }
+    },
+    "step0": {
+      "propertyStatusAndPrice": "Statut et prix du bien",
+      "mandatoryInformation": "*Informations obligatoires",
+      "currentStatusQuestion": "Quel est le statut actuel de votre bien ?*",
+      "followersInformed": "Les personnes qui suivent votre bien seront informees instantanement de tout changement",
+      "directoryOpenToDiscussion": "Ouvert a la discussion, detendez-vous et laissez les propositions arriver dans votre boite mail.",
+      "directoryOpenToProposals": "Indiquez aux utilisateurs Bookaroo que vous etes ouvert aux propositions *",
+      "selectRealEstatePro": "Selectionnez dans la liste ou saisissez le nom d'un professionnel immobilier (optionnel)",
+      "selectAgency": "Selectionner une agence",
+      "findBestLocalPartner": "Trouvez votre meilleur partenaire local",
+      "localPartnerInfo": "Parcourez notre annuaire de professionnels immobiliers pour trouver le partenaire local specialise sur votre marche. Cela augmentera vos chances de vendre au bon prix.",
+      "realEstateProDirectory": "Annuaire des professionnels de l'immobilier",
+      "whatIsYourPropertyPrice": "Quel est le prix de votre bien ?",
+      "propertyAgencyFeesIncluded": "Frais d'agence du bien (inclus dans le prix acheteur)",
+      "errors": {
+        "enterMandatoryFields": "Renseignez les champs obligatoires..",
+        "priceGreaterThanAgencyFees": "Le prix du bien doit etre superieur aux frais d'agence",
+        "agencyFeesLessThanPrice": "Les frais d'agence doivent etre inferieurs au prix du bien"
+      },
+      "placeholders": {
+        "enterPrice": "Saisir le prix",
+        "enterAgencyFees": "Saisir les frais d'agence",
+        "totalPriceForBuyer": "Prix total pour l'acheteur",
+        "enterAnnualBuildingCharges": "Saisir les charges annuelles de copropriete",
+        "enterMonthlyRent": "Saisir le loyer mensuel",
+        "enterBuildingCharges": "Saisir les charges de copropriete",
+        "totalMonthlyCharges": "Charges mensuelles totales",
+        "enterInventoryOfProperty": "Saisir l'etat des lieux",
+        "oneTimeFees": "Frais ponctuels",
+        "enterGuaranteeDeposit": "Saisir le depot de garantie"
+      }
+    },
+    "step2": {
+      "typeOfProperty": "Type de propriete",
+      "propertyUsedAs": "Le bien est utilise comme :",
+      "investmentLongTermRental": "Investissement (location longue duree)",
+      "ownUsage": "Usage personnel",
+      "displayHint": "Ce choix nous indique ou afficher votre bien lorsque les utilisateurs recherchent des biens dans l'annuaire, soit pour la location, soit pour l'achat.",
+      "publishedTypeWarning": "Une fois le profil du bien publie, vous ne pourrez plus modifier ce type de bien.",
+      "saveChange": "Enregistrer les modifications",
+      "errors": {
+        "selectPropertyType": "Selectionnez le type de bien..",
+        "selectPropertyUsedFor": "Selectionnez l'usage du bien.."
+      }
+    },
+    "step6": {
+      "addUpTo10Pictures": "Ajoutez jusqu'a 10 belles photos de votre bien",
+      "mandatoryInformation": "*Informations obligatoires",
+      "yourPictures": "Vos photos",
+      "photosAccessInfo": "Assurez-vous d'avoir autorise l'acces a vos photos. La taille de l'image ne doit pas depasser 10 Mo. Les formats pris en charge sont jpeg, png, heic.",
+      "reorderInfo": "Vous pouvez aussi changer la position de l'image par glisser-deposer ou en cliquant simplement sur l'etoile de l'image",
+      "coverPhoto": "Photo de couverture",
+      "selectAmenity": "Selectionner un equipement...",
+      "favorite": "Favori",
+      "makeMainImage": "Definir cette image comme image principale.",
+      "picturesCount": "photos / 10",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon",
+      "errors": {
+        "maximumImages": "Maximum 10 images autorisees",
+        "minimumOneImage": "Televersez au moins une image."
+      }
+    },
+    "step7": {
+      "describeProperty": "Decrivez votre bien et mettez en lumiere ce qui le rend special",
+      "mandatoryInformation": "*Informations obligatoires",
+      "propertyDescriptionLabel": "Description du bien",
+      "descriptionHint": "Mettez votre bien en valeur. Plus vous fournissez de details, plus la qualite de votre annonce sera elevee. Detaillez ici ce qui est important et ce qui distingue votre bien des autres. Une bonne description peut ajouter de la valeur a votre propriete.",
+      "propertyTitleLabel": "Titre du bien",
+      "titleCounter": "Maximum {{count}}/50 mots",
+      "descriptionCounter": "Maximum {{count}}/4000 caracteres",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer en brouillon",
+      "placeholders": {
+        "enterPropertyTitle": "Saisir le titre du bien"
+      },
+      "errors": {
+        "descriptionRequired": "La description du bien est obligatoire.",
+        "titleRequired": "Le titre du bien est obligatoire."
+      }
+    },
+    "step8": {
+      "publicSchoolsAttached": "Quels etablissements publics sont rattaches a votre bien ? Cela peut vous aider a vendre plus vite",
+      "mandatoryInformation": "*Informations obligatoires",
+      "highSchool": "Lycee",
+      "college": "College",
+      "primarySchool": "Ecole primaire",
+      "elementarySchool": "Ecole elementaire",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon"
+    },
+    "step9": {
+      "proposeOffmarket": "Proposez votre bien uniquement a des candidats qualifies",
+      "pricingHeading": "Quels sont les details du prix et autres couts ?",
+      "mandatoryInformation": "*Informations obligatoires",
+      "openToDiscussion": "Ouvert a la discussion, relaxez-vous et laissez les propositions arriver dans votre boite mail.",
+      "letUsersKnow": "Faites savoir aux utilisateurs de Bookaroo que vous etes ouvert aux propositions *",
+      "enableNotifications": "Activer les notifications",
+      "qualifiedLeads": "Assurez-vous d'obtenir uniquement des prospects qualifies",
+      "offmarketUserVisibility": "Seuls les utilisateurs suivants peuvent voir mon bien en Off-market* :",
+      "offmarketRateVisibility": "Seuls les taux suivants pourront voir mon bien",
+      "dontGetOverwhelmed": "Ne soyez pas submerge par les demandes",
+      "maxLeadsInfo": "Une fois ce nombre maximum de prospects atteint, nous bloquerons la possibilite de vous contacter.",
+      "maximumLeads": "Prospects maximum",
+      "saveAsDraft": "Enregistrer en brouillon",
+      "sale": {
+        "priceWithoutFees": "Prix du bien sans honoraires*",
+        "agencyFees": "Honoraires d'agence (inclus dans le prix acheteur)",
+        "totalPriceForBuyer": "Prix total du bien pour l'acheteur",
+        "annualBuildingCharges": "Charges annuelles de copropriete*",
+        "placeholders": {
+          "enterPrice": "Saisir le prix",
+          "enterAgencyFees": "Saisir les honoraires d'agence",
+          "totalPriceForBuyer": "Prix total pour l'acheteur",
+          "enterAnnualCharges": "Saisir les charges annuelles de copropriete"
+        }
+      },
+      "rent": {
+        "monthlyRent": "Loyer mensuel*",
+        "buildingProvisionalCharges": "Charges provisionnelles de copropriete*",
+        "totalMonthlyRent": "Loyer mensuel total charges comprises",
+        "agencyFees": "Honoraires d'agence",
+        "inventoryOfProperty": "Etat des lieux",
+        "oneTimeFees": "Frais uniques a la charge du locataire",
+        "guaranteeDeposit": "Depot de garantie*",
+        "placeholders": {
+          "enterMonthlyRent": "Saisir le loyer mensuel",
+          "enterBuildingCharges": "Saisir les charges de copropriete",
+          "totalMonthlyCharges": "Total des charges mensuelles",
+          "enterAgencyFees": "Saisir les honoraires d'agence",
+          "enterInventory": "Saisir l'etat des lieux",
+          "oneTimeFees": "Frais uniques",
+          "enterGuaranteeDeposit": "Saisir le depot de garantie"
+        }
+      },
+      "errors": {
+        "enterMandatoryFields": "Veuillez remplir tous les champs obligatoires.",
+        "priceMustBeGreater": "Le prix du bien doit etre superieur aux honoraires d'agence.",
+        "agencyFeesMustBeLess": "Les honoraires d'agence doivent etre inferieurs au prix du bien."
+      }
+    },
+    "step10": {
+      "heading": "Completez vos coordonnees de contact preferees",
+      "mandatoryInformation": "*Informations obligatoires",
+      "propertyCreated": "Le bien a ete cree",
+      "clickHereToView": "Cliquez ici pour voir",
+      "emailAttachedLabel": "Adresse e-mail associee a votre compte",
+      "emailPrivacyTitle": "Votre adresse e-mail n'est pas affichee sur le profil du bien",
+      "emailPrivacyInfo": "Rassurez-vous, nous utilisons uniquement votre e-mail pour vous envoyer les demandes de contact pour votre annonce.",
+      "usernameLabel": "Nom d'utilisateur*",
+      "usernameHint": "Nom d'utilisateur affiche sur votre profil de bien",
+      "usernamePrivacyTitle": "N'utilisez pas votre vrai nom sauf si vous etes un professionnel",
+      "usernamePrivacyInfo": "Nous ne partageons pas l'identite du proprietaire du bien sur Bookaroo. Utilisez un nom d'utilisateur pour eviter d'etre contacte en dehors de la plateforme.",
+      "phoneLabel": "Numero de telephone",
+      "phoneHint": "Permettez a votre futur acheteur de vous contacter directement",
+      "refuseMarketingEmails": "Je refuse de recevoir des e-mails ou des appels de Bookaroo pour des conseils sur mon projet de vente et des informations sur le marche immobilier.",
+      "refusePhoneTransmission": "Je refuse que mon numero de telephone soit transmis a une agence partenaire de Bookaroo pour m'aider dans la vente de mon bien.",
+      "increaseValueTitle": "Augmentez la valeur et l'attractivite de votre bien*",
+      "increaseValueInfo": "Partagez avec votre audience des informations cles sur votre bien qui genereront plus d'interet : revenus locatifs, travaux de renovation, charges, note sur les plateformes sociales.",
+      "readyToIncrease": "Pret a augmenter la valeur de votre bien ?",
+      "enableNotifications": "Activer les notifications",
+      "later": "Plus tard",
+      "addInfoLater": "Ne vous inquietez pas, vous pouvez ajouter des informations supplementaires a tout moment en mettant a jour votre profil de bien.",
+      "legalDistribution": "En validant la diffusion de mon profil, j'accepte les conditions generales d'abonnement et les regles de diffusion du site Bookaroo.",
+      "legalProfessional": "Un vendeur professionnel se faisant passer pour un consommateur ou un non-professionnel est passible des sanctions prevues a l'article L.132-2 du Code de la consommation, soit deux ans d'emprisonnement et une amende de 300 000 euros.",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer en brouillon",
+      "listMyProperty": "Publier mon bien",
+      "updateMyProperty": "Mettre a jour mon bien",
+      "placeholders": {
+        "enterUsername": "Saisir votre nom d'utilisateur",
+        "enterPhone": "Saisir votre numero de telephone"
+      },
+      "errors": {
+        "usernameRequired": "Le nom d'utilisateur est obligatoire et doit contenir au moins 6 caracteres.",
+        "invalidPhone": "Veuillez entrer un numero de telephone valide."
+      }
+    },
+    "step11": {
+      "addNewRevenueHeading": "Ajouter un nouveau revenu a votre bien",
+      "mandatoryInformation": "*Informations obligatoires",
+      "revenueVerificationInfo": "Ajouter et faire verifier vos revenus par Bookaroo renforce la confiance et apporte plus de valeur a votre bien.",
+      "revenueDetailsLabel": "Details des revenus",
+      "addProofingDocuments": "Ajouter des documents justificatifs",
+      "documentsPrivacyInfo": "Tout document soumis est utilise uniquement par Bookaroo pour certifier l'exactitude des revenus declares et ne sera jamais partage avec un tiers.",
+      "update": "Mettre a jour",
+      "saveAndClose": "Enregistrer et fermer",
+      "saveAndCreateNewRevenue": "Enregistrer et creer un nouveau revenu",
+      "revenueHeading": "Quels revenus votre bien a-t-il generes au fil des annees ?",
+      "revenueSubInfo": "Fournir ces informations augmentera la valeur et l'attractivite de votre bien.",
+      "addNewRevenues": "Ajouter des revenus",
+      "lifetimeGlobalRevenues": "Revenus globaux cumulés",
+      "totalRevenues": "Total des revenus",
+      "yearlyRevenues": "Revenus annuels",
+      "noDataYet": "Aucune donnee disponible",
+      "recordAdded": "Enregistrement ajoute.",
+      "bookarooVerified": "Verifie par Bookaroo",
+      "pending": "en attente",
+      "checkDocumentsHint": "Vous pouvez consulter les documents en cliquant dessus.",
+      "view": "Voir",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer en brouillon",
+      "detail": {
+        "type": "Type :",
+        "source": "Source :",
+        "year": "Annee :",
+        "status": "Statut :",
+        "documents": "Documents :"
+      },
+      "placeholders": {
+        "selectRevenueType": "Selectionner le type de revenu",
+        "selectRevenueSource": "Selectionner la source de revenu",
+        "selectYear": "Selectionner l'annee",
+        "yearlyAmount": "Montant annuel"
+      },
+      "errors": {
+        "addRevenueDetails": "Ajoutez les details du revenu.",
+        "enterMandatoryFields": "Veuillez remplir tous les champs obligatoires.",
+        "maximumDocuments": "Maximum 5 documents autorises.",
+        "documentSize": "Chaque document doit etre inferieur a 10 Mo."
+      }
+    },
+    "step12": {
+      "all": "Tous",
+      "mandatoryInformation": "*Informations obligatoires",
+      "globalAverageYearlyExpense": "Depense annuelle moyenne globale",
+      "addNewExpenses": "Ajouter de nouvelles depenses a votre bien",
+      "revenuesVerificationInfo": "Ajouter vos revenus et les faire verifier par Bookaroo renforce la confiance et apporte plus de valeur a votre bien.",
+      "expenseDetails": "Details des depenses",
+      "addProofingDocuments": "Ajouter des documents justificatifs",
+      "documentsPrivacyInfo": "Tout document soumis est utilise uniquement par Bookaroo pour certifier l'exactitude des revenus declares et ne sera jamais partage avec un tiers.",
+      "saveAndClose": "Enregistrer et fermer",
+      "saveAndCreateNewExpense": "Enregistrer et creer une nouvelle depense",
+      "livingBudgetQuestion": "Quel est le budget pour vivre dans votre bien ?",
+      "livingBudgetInfo": "Fournir ces informations aidera les acheteurs ou locataires potentiels a estimer leur budget de vie.",
+      "addNewExpensesButton": "Ajouter de nouvelles depenses",
+      "livingExpenses": "Depenses de vie",
+      "details": "Details",
+      "view": "Voir",
+      "checkDocumentsHint": "Vous pouvez consulter les documents en cliquant dessus",
+      "recordAdded": "Enregistrement ajoute.",
+      "noDataYet": "Aucune donnee pour le moment",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon",
+      "placeholders": {
+        "selectExpenseType": "Selectionner le type de depense",
+        "selectExpenseYear": "Selectionner l'annee de depense",
+        "expensePrice": "Montant de la depense",
+        "price": "Prix"
+      },
+      "errors": {
+        "addExpensesDetails": "Ajoutez les details des depenses",
+        "enterMandatoryFields": "Renseignez tous les champs obligatoires",
+        "maximumDocuments": "Maximum 5 documents autorises",
+        "documentSize": "Chaque document doit etre inferieur a 10 Mo"
+      }
+    },
+    "step13": {
+      "mandatoryInformation": "*Informations obligatoires",
+      "addNewRenovation": "Ajouter une nouvelle renovation",
+      "renovationDetails": "Details de la renovation",
+      "addImages": "Ajouter des images",
+      "imagesPrivacyInfo": "Toute image soumise est utilisee uniquement par Bookaroo pour certifier l'exactitude du bien declare et ne sera jamais partagee avec un tiers.",
+      "addProofingDocuments": "Ajouter des documents justificatifs",
+      "documentsPrivacyInfo": "Tout document soumis est utilise uniquement par Bookaroo pour certifier l'exactitude des revenus declares et ne sera jamais partage avec un tiers.",
+      "update": "Mettre a jour",
+      "saveAndClose": "Enregistrer et fermer",
+      "saveAndCreateNewRenovation": "Enregistrer et creer une nouvelle renovation",
+      "improvementsQuestion": "Quelles ameliorations avez-vous apportees a votre bien ?",
+      "improvementsInfo": "Fournir ces informations augmentera la confiance, la valeur et l'attractivite de votre bien",
+      "addNewRenovationButton": "Ajouter une nouvelle renovation",
+      "renovationWorksCount": "{{count}} travaux de renovation",
+      "investmentMade": "d'investissement realise pour le bien",
+      "status": "Statut",
+      "bookarooVerified": "Facture verifiee par Bookaroo",
+      "pending": "en attente",
+      "checkDocumentsHint": "Vous pouvez consulter les documents en cliquant dessus",
+      "viewDocuments": "Voir les documents",
+      "noDataYet": "Aucune donnee pour le moment",
+      "recordAdded": "Enregistrement ajoute.",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon",
+      "placeholders": {
+        "selectRenovationType": "Selectionner le type de renovation",
+        "selectRenovationDate": "Selectionner la date de renovation",
+        "title": "Titre",
+        "price": "Prix"
+      },
+      "errors": {
+        "addRenovationDetails": "Ajoutez les details des travaux de renovation",
+        "enterMandatoryFields": "Renseignez tous les champs obligatoires",
+        "maximumImages": "Maximum 10 images autorisees",
+        "imageSize": "Chaque image doit etre inferieure a 10 Mo",
+        "invalidFilesIgnored": "Certains fichiers ne sont pas dans un format valide et seront ignores. Seules les images JPG et PNG sont autorisees.",
+        "onlyJpgPng": "Seules les images JPG et PNG sont autorisees.",
+        "maximumDocuments": "Maximum 5 documents autorises",
+        "documentSize": "Chaque document doit etre inferieur a 10 Mo"
+      }
+    },
+    "step3": {
+      "whereLocated": "Ou se situe votre bien ?",
+      "exactLocationHidden": "L'emplacement exact de votre bien est masque",
+      "locationPrivacyInfo": "Pas d'inquietude, nous l'utilisons uniquement pour placer votre bien au bon quartier sur notre carte.",
+      "address": "Adresse*",
+      "showExactLocation": "Afficher l'emplacement exact",
+      "publishedWarning": "Une fois le profil du bien publie, vous ne pourrez plus modifier ceci.",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon",
+      "placeholders": {
+        "enterAddress": "Saisir l'adresse..."
+      },
+      "errors": {
+        "selectLocationFirst": "Selectionnez d'abord l'emplacement.",
+        "cityStateZipCountryRequired": "Ville, etat, code postal et pays sont obligatoires"
+      }
+    },
+    "step4": {
+      "mainCharacteristics": "Quelles sont les principales caracteristiques de votre bien ?",
+      "mandatoryInformation": "*Informations obligatoires",
+      "keyInformation": "Informations cles",
+      "surface": "Surface*",
+      "carrezLaw": "Vous devez respecter la loi Carrez",
+      "numberOfRooms": "Nombre de pieces*",
+      "roomsInfo": "La cuisine, les salles de bain et les toilettes ne sont pas considerees comme des pieces.",
+      "numberOfBathrooms": "Nombre de salles de bain",
+      "bathroomInfo": "Une piece avec une baignoire.",
+      "numberOfBedrooms": "Nombre de chambres",
+      "floorOfProperty": "Etage du bien*",
+      "numberOfToilets": "Nombre de toilettes",
+      "numberOfLivingRooms": "Nombre de sejours",
+      "numberOfFloorsInBuilding": "Nombre d'etages dans l'immeuble",
+      "situation": "Situation",
+      "building": "Immeuble",
+      "yearOfConstruction": "Annee de construction",
+      "state": "Etat",
+      "increaseAttractivity": "Augmentez l'attractivite de votre bien en donnant plus de details.",
+      "cooking": "Cuisine",
+      "equipment": "Equipement",
+      "outside": "Exterieur",
+      "servicesAndAccessibility": "Services et accessibilite",
+      "ancillaryAreas": "Surfaces annexes",
+      "environment": "Environnement",
+      "leisure": "Loisirs",
+      "investmentQualification": "Votre bien est-il eligible a des dispositifs d'investissement ?",
+      "optional": "(Optionnel)",
+      "optionalNoLeadingSpace": "(Optionnel)",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon",
+      "placeholders": {
+        "surface": "Surface",
+        "enterYearOfConstruction": "Saisir l'annee de construction",
+        "selectState": "Selectionner l'etat"
+      },
+      "errors": {
+        "surfaceRequired": "La surface est obligatoire.",
+        "roomsCannotBeZero": "Le nombre de pieces ne peut pas etre zero.",
+        "propertyFloorCannotBeZero": "Le nombre d'etages du bien ne peut pas etre zero.."
+      }
+    },
+    "step5": {
+      "energyDiagnosisResults": "Indiquez les resultats de votre diagnostic de performance energetique",
+      "mandatoryInformation": "*Informations obligatoires",
+      "heatingSystemTitle": "Parlez-nous davantage de votre systeme de chauffage",
+      "consumptionMode": "Mode de consommation",
+      "heatingType": "Type de chauffage",
+      "optional": "(Optionnel)",
+      "haveDiagnosisResults": "Avez-vous les resultats de votre diagnostic ?",
+      "diagnosisInfo": "Pas d'inquietude, nous l'utilisons uniquement pour placer votre bien sur notre carte dans le bon quartier.",
+      "doesNotApplyTitle": "Etes-vous certain que cela ne s'applique pas a votre bien ?",
+      "doesNotApplyInfo": "Pour verifier que cette reglementation ne s'applique pas a votre bien, consultez le site du gouvernement.",
+      "learnMore": "En savoir plus",
+      "communicateDpeTitle": "Communiquez votre DPE pour plus de transparence",
+      "communicateDpeInfo": "Depuis janvier 2022, il est obligatoire d'afficher votre DPE dans votre annonce pour vendre un bien. Cette information joue aussi un role cle dans la decision des acheteurs.",
+      "diagnosisResults": "Resultats du diagnostic",
+      "dpeViergeInfo": "DPE vierge : mon diagnostic n'affiche aucun classement",
+      "energyConsumption": "Consommation energetique",
+      "energyEfficientHome": "Logement sobre en energie",
+      "energyIntensiveHousing": "Logement energivore",
+      "greenhouseGasEmissions": "Emissions de gaz a effet de serre",
+      "lowEmissions": "Faibles emissions",
+      "highEmissions": "Forte emissions",
+      "dateOfDiagnosis": "Date du diagnostic",
+      "goodDpeValue": "Un bon DPE augmente la valeur de votre bien",
+      "contactRenovationPartner": "Je souhaite etre contacte(e) par email ou telephone par l'un de nos partenaires renovation pour obtenir un devis de renovation de mon bien.",
+      "saveChange": "Enregistrer les modifications",
+      "saveAsDraft": "Enregistrer comme brouillon",
+      "errors": {
+        "diagnosisTypeRequired": "Le type de diagnostic est obligatoire.",
+        "energyConsumptionRequired": "La consommation energetique est obligatoire.",
+        "emissionsRequired": "Les emissions sont obligatoires.",
+        "dateOfDiagnosisRequired": "La date du diagnostic est obligatoire."
+      }
+    }
   },
   "learning": {
     "training": "Formation"

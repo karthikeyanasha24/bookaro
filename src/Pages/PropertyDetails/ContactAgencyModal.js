@@ -14,9 +14,11 @@ import loader from "../../methods/loader";
 import ApiClient from "../../methods/api/apiClient";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { RxCross2 } from "react-icons/rx";
 
 const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const [contactSent, setcontactSent] = useState(false);
   const [agency, setagency] = useState({
@@ -31,27 +33,28 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
   const agencyChange = (atr, value) => {
     setagency({ ...agency, [atr]: value });
   };
+
+  const getLikeToBuyLabel = (value) => {
+    return value === "Later" ? t("propertyDetails.later") : t("propertyDetails.now");
+  };
+
   const validateForm = () => {
     if (!/^[A-Za-z ]{2,50}$/.test(agency.fName.trim())) {
-      toast.error(
-        "First name must be alphabetic, can include spaces, and be between 2 to 50 characters."
-      );
+      toast.error(t("propertyDetails.firstNameAlphaValidation"));
       return false;
     } else if (!/^[A-Za-z ]{2,50}$/.test(agency.lName.trim())) {
-      toast.error(
-        "Last name must be alphabetic, can include spaces, and be between 2 to 50 characters."
-      );
+      toast.error(t("propertyDetails.lastNameAlphaValidation"));
       return false;
     }
     if (!/^\d{10,}$/.test(agency.phone.trim())) {
-      toast.error("Phone number must be at least 10 digits.");
+      toast.error(t("propertyDetails.phoneMinDigits"));
       return false;
     } else if (
       !/^\S+@\S+\.\S+$/.test(agency.email.trim()) ||
       agency.email.length < 5 ||
       agency.email.length > 50
     ) {
-      toast.error("Email must be a valid format");
+      toast.error(t("propertyDetails.emailFormatValidation"));
       return false;
     }
     // else if (!agency.propertyToSell) {
@@ -113,7 +116,7 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
           <div className="flex items-center justify-between">
             <div className="">
               <h4 className="text-[#47525E] font-[600] text-[15px]">
-                REAL ESTATE AGENCY NAME
+                {t("propertyDetails.realEstateAgencyName")}
               </h4>
             </div>
             <p
@@ -129,14 +132,14 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                 value={agency?.fName}
                 onChange={(e) => agencyChange("fName", e.target.value)}
                 type="text"
-                placeholder="First name*"
+                placeholder={`${t("forms.firstName")}*`}
                 className="border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3"
               />
               <input
                 value={agency?.lName}
                 onChange={(e) => agencyChange("lName", e.target.value)}
                 type="text"
-                placeholder="Last name*"
+                placeholder={`${t("forms.lastName")}*`}
                 className="border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3"
               />
               <PhoneInput
@@ -151,17 +154,17 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                 value={agency?.email}
                 onChange={(e) => agencyChange("email", e.target.value)}
                 type="email"
-                placeholder="Email address*"
+                placeholder={`${t("forms.emailAddress")}*`}
                 className="border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3"
               />
               <div>
                 <label className="text-[#5A5A5A]">
-                  When would you like to buy?*
+                  {t("propertyDetails.whenWouldYouLikeToBuy")}*
                 </label>
                 <div>
                   <Menu>
                     <MenuButton className="bg-white border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3 text-left text-[#5A5A5A] flex justify-between">
-                      {agency?.likeToBuy}
+                      {getLikeToBuyLabel(agency?.likeToBuy)}
                       <img
                         alt=""
                         src="/assets/img/black-arrow.png"
@@ -175,7 +178,7 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                           className=" bg-white"
                         >
                           <p className="block data-[focus]:bg-blue-100 px-3 py-2 max-w-[320px] w-[100%] text-left">
-                            Now
+                            {t("propertyDetails.now")}
                           </p>
                         </MenuItem>
                         <MenuItem
@@ -183,14 +186,14 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                           className=" bg-white"
                         >
                           <p className="block data-[focus]:bg-blue-100  px-3 py-2 max-w-[320px] w-[100%] text-left">
-                            Later
+                            {t("propertyDetails.later")}
                           </p>
                         </MenuItem>
                       </div>
                     </MenuItems>
                   </Menu>
                   <div className="flex items-center justify-between">
-                    <p className="text-[#5A5A5A]">I already own a property</p>
+                    <p className="text-[#5A5A5A]">{t("propertyDetails.alreadyOwnProperty")}</p>
                     <div className="flex border border-[#976DD0] p-[2px] rounded-[7px] bg-white">
                       <Checkbox
                         checked={agency?.alreadyOwnProperty}
@@ -199,7 +202,7 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                         }
                         className="group block text-[14px] text-black rounded-[5px]  border-r bg-white data-[checked]:text-white data-[checked]:bg-[#976DD0] px-2 py-1 cursor-pointer"
                       >
-                        Yes
+                        {t("buttons.yes")}
                       </Checkbox>
                       <Checkbox
                         checked={!agency?.alreadyOwnProperty}
@@ -208,14 +211,14 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                         }
                         className="group block text-[14px] text-black rounded-[5px] bg-white data-[checked]:text-white data-[checked]:bg-[#976DD0] px-2 py-1 cursor-pointer"
                       >
-                        No
+                        {t("common.no")}
                       </Checkbox>
                     </div>
                   </div>
 
                   <div>
                     <p className="text-[#47525E] underline mb-3 mt-4">
-                      Add a message (optional)
+                      {t("propertyDetails.addMessageOptional")}
                     </p>
                     <div className="flex items-start">
                       <div>
@@ -244,12 +247,11 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                         </Checkbox>
                       </div>
                       <label className="text-[#5A5A5A]">
-                        I do not wish to receive similar property proiles and
-                        personalized suggestions from Bookaroo.
+                        {t("propertyDetails.noSimilarPropertyProfiles")}
                       </label>
                     </div>
                     <a className="underline text-[#47525E] text-[14px]">
-                      Learn more
+                      {t("buttons.learnMore")}
                     </a>
                   </div>
 
@@ -258,13 +260,13 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
                       onClick={() => contactAgency()}
                       className="bg-[#976DD0] text-white rounded-[50px] text-[14px] px-5 py-3 font-[600]"
                     >
-                      Contact agency
+                      {t("propertyDetails.contactAgency")}
                     </button>
                   </div>
                   <div className="flex items-center justify-between mt-8">
-                    <p className="text-[#5A5A5A]">Profile XV429</p>
+                    <p className="text-[#5A5A5A]">{t("propertyDetails.profileId", { id: "XV429" })}</p>
                     <a className="underline text-[#47525E] text-[14px] font-[600]">
-                      Report this profile
+                      {t("propertyDetails.reportThisProfile")}
                     </a>
                   </div>
                 </div>

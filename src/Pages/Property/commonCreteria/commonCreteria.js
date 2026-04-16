@@ -7,6 +7,7 @@ import {
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { formatCurrency, generateDynamicString } from "../../../models/string.model";
+import { useTranslation } from "react-i18next";
 
 export const CommonCreteria = ({
   total,
@@ -15,35 +16,36 @@ export const CommonCreteria = ({
   allfilters,
   handleSortBy,
 }) => {
+  const { t } = useTranslation();
   const sortByArray = [
     {
-      name: "Price",
+      name: t("filtersCommon.price"),
       value: "price",
       options: [
-        { label: "High to low", value: "asc" },
-        { label: "Low to high", value: "des" },
+        { label: t("filtersCommon.highToLow"), value: "asc" },
+        { label: t("filtersCommon.lowToHigh"), value: "des" },
       ],
     },
     {
-      name: "Revenue",
+      name: t("filtersCommon.revenue"),
       value: "revenues",
       options: [
-        { label: "High to low", value: "asc" },
-        { label: "Low to high", value: "des" },
+        { label: t("filtersCommon.highToLow"), value: "asc" },
+        { label: t("filtersCommon.lowToHigh"), value: "des" },
       ],
     },
     {
-      name: "Rating",
+      name: t("filtersCommon.rating"),
       value: "rating",
       options: [
-        { label: "High to low", value: "asc" },
-        { label: "Low to high", value: "des" },
+        { label: t("filtersCommon.highToLow"), value: "asc" },
+        { label: t("filtersCommon.lowToHigh"), value: "des" },
       ],
     },
   ];
 
   const getMenuButtonLabel = () => {
-    if (!allfilters.sortBy) return "Sort By";
+    if (!allfilters.sortBy) return t("filtersCommon.sortBy");
     const [sortKey, sortOrder] = allfilters.sortBy.split(" ");
     const selectedSort = sortByArray.find((item) => item.value === sortKey);
     const selectedOption = selectedSort?.options.find(
@@ -51,7 +53,7 @@ export const CommonCreteria = ({
     );
     return selectedSort && selectedOption
       ? `${selectedSort.name} - ${selectedOption.label}`
-      : "Sort By";
+      : t("filtersCommon.sortBy");
   };
 
   return (
@@ -60,16 +62,16 @@ export const CommonCreteria = ({
         <p className="text-[#47525E]">
           <span className="text-[#47525E] font-bold text-[20px]">
             {formatCurrency(total) || 0}
-            {`${allfilters?.accountType === "pro"
-                ? " Professional"
+            {` ${allfilters?.accountType === "pro"
+                ? t("filtersCommon.professional")
                 : allfilters?.accountType === "individual"
-                  ? " Individual"
+                  ? t("filtersCommon.individuals")
                   : ""
-              } Propert${total > 1 ? "ies" : "y"
-              } 
-              ${generateDynamicString(allfilters) ?
-                `for ${generateDynamicString(allfilters)}` : ""}`
-            }
+              } ${t(total > 1 ? "project.labels.properties" : "project.labels.property")}
+              ${generateDynamicString(allfilters)
+                ? ` ${t("filtersCommon.for")} ${generateDynamicString(allfilters)}`
+                : ""
+              }`}
           </span>
         </p>
       </div>
@@ -77,7 +79,7 @@ export const CommonCreteria = ({
       <div className="mt-5 flex md:items-center md:flex-row flex-col items-start">
         <div>
           <h4 className="text-[#47525E] text-[18px] font-[600] mb-4">
-            Filter property profiles
+            {t("filtersCommon.filterProfiles")}
           </h4>
           <div className="flex md:items-center md:flex-row flex-col items-start">
             <div className="flex items-center">
@@ -100,7 +102,7 @@ export const CommonCreteria = ({
                 </svg>
               </Checkbox>
               <p className="text-[#47525E] ms-2 text-[18px] mr-4">
-                All{" "}
+                {t("filtersCommon.all")}{" "}
                 {/* {allfilters?.accountType == "individual" ? `(${total})` : ""} */}
               </p>
             </div>
@@ -124,7 +126,7 @@ export const CommonCreteria = ({
                 </svg>
               </Checkbox>
               <p className="text-[#47525E] ms-2 text-[18px]">
-                Individuals{" "}
+                {t("filtersCommon.individuals")}{" "}
                 {/* {allfilters?.accountType == "individual" ? `(${total})` : ""} */}
               </p>
             </div>
@@ -148,7 +150,7 @@ export const CommonCreteria = ({
                 </svg>
               </Checkbox>
               <p className="text-[#47525E] ms-2 text-[18px]">
-                Professional{" "}
+                {t("filtersCommon.professional")}{" "}
                 {/* {allfilters?.accountType == "pro" ? `(${total})` : ""} */}
               </p>
             </div>
@@ -156,7 +158,7 @@ export const CommonCreteria = ({
         </div>
         <div className=" md:ms-20 ms-0 md:mt-0 mt-4 md:pb-0 pb-4">
           <h4 className="text-[#47525E] text-[18px] font-[600] mb-4 w-[200px]">
-            Sorting results
+            {t("filtersCommon.sortingResults")}
           </h4>
           <div className="">
             <Menu>

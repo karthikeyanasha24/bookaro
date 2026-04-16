@@ -4,12 +4,14 @@ import { FaCircleInfo } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { login_success } from "../../actions/user";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { imagePath, stringSeprator } from "../../models/string.model";
 
 const RenterFile = ({ isModal = false, result = (_) => { } }) => {
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const [selectall, setSelectAll] = useState(true);
   const [document, setDocument] = useState("document");
@@ -51,14 +53,14 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
     let files = Array.from(e.target.files);
     // validate max limit files
     if (files.length + form[key]?.length > maxLimit) {
-      toast.error(`Maximum ${maxLimit} files allowed to add`);
+      toast.error(t("renterFile.maxFilesAllowed", { max: maxLimit }));
       return (e.target.value = ""); // Clear file input
     }
     // validate max size
     const maxSizeInBytes = maxSize * 1024 * 1024; // 10MB
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error(`Each file must be smaller than ${maxSize}MB`);
+      toast.error(t("renterFile.eachFileMaxSize", { max: maxSize }));
       return (e.target.value = "");
     }
     // // validate extentions
@@ -90,7 +92,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
             };
           });
           if (data?.length + form[key]?.length > maxLimit)
-            return toast.error(`Maximum ${maxLimit} files allowed to add`);
+            return toast.error(t("renterFile.maxFilesAllowed", { max: maxLimit }));
           // setForm((prev) => ({
           //   ...prev,
           //   [key]: [...prev[key], ...data],
@@ -199,18 +201,18 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
 
   const BuyOption =
     [
-      { name: "Alone", value: "alone" },
-      { name: "Two", value: "two" },
-      { name: "SCI", value: "sci" },
+      { name: t("renterFile.buyOptions.alone"), value: "alone" },
+      { name: t("renterFile.buyOptions.two"), value: "two" },
+      { name: t("renterFile.buyOptions.sci"), value: "sci" },
     ]
 
   const InvestOption =
     [
-      { name: "Primary residence", value: "primary" },
-      { name: "Secondary residence", value: "secondary" },
-      { name: "Rental property", value: "rentalProperty" },
-      { name: "Business", value: "business" },
-      { name: "Mix", value: "mix" },
+      { name: t("renterFile.investOptions.primaryResidence"), value: "primary" },
+      { name: t("renterFile.investOptions.secondaryResidence"), value: "secondary" },
+      { name: t("renterFile.investOptions.rentalProperty"), value: "rentalProperty" },
+      { name: t("renterFile.investOptions.business"), value: "business" },
+      { name: t("renterFile.investOptions.mix"), value: "mix" },
     ]
 
 
@@ -227,12 +229,12 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                   onClick={() => navigate("/project")}
                   className="text-[#47525E] cursor-pointer after"
                 >
-                  My Project
+                  {t("project.myProject")}
                   <span className="mx-[4px]">|</span>
                 </li>
                 <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
                   {" "}
-                  Renter file
+                  {t("renterFile.renterFile")}
                 </li>
               </ul>
             </>
@@ -241,17 +243,14 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
           <div className="w-full ">
             <div>
               <h4 className="text-[#47525E] text-center mb-0 text-[17px]">
-                Renter file
+                {t("renterFile.renterFile")}
               </h4>
               <h2 className="text-[#47525E] font-[600] text-[24px] mt-1 text-center">
-                Save time and find your next home quicker
+                {t("renterFile.saveTimeFindHome")}
               </h2>
               <div className="max-w-2xl mx-auto bg-[#976dd0b5]  p-5 rounded-[12px] flex mt-7">
                 <p className=" text-white w-[90%]">
-                  {" "}
-                  None of these documents will be shared publicly. Our real
-                  estate credit broker will use them to analyze the financing
-                  capacity of your real estate project.
+                  {t("renterFile.documentsPrivacyNote")}
                 </p>
                 <FaCircleInfo className="w-[50px] text-[35px] ms-5" />
               </div>
@@ -265,13 +264,13 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                   onClick={() => setDocument("document")}
                   className={`rounded-full border-2 border-[#a177d6]  ${document === 'document' ? 'bg-primary hover:opacity-90 text-white' : 'text-[#a177d6]'}  font-semibold px-6 py-2`}
                 >
-                  Document based
+                  {t("renterFile.documentBased")}
                 </button>
                 <button
                   onClick={() => setDocument("declarative")}
                   className={`rounded-full border-2 border-[#a177d6]  ${document === 'declarative' ? 'bg-primary hover:opacity-90 text-white' : 'text-[#a177d6]'}  font-semibold px-6 py-2`}
                 >
-                  Declarative
+                  {t("renterFile.declarative")}
                 </button>
               </div>
               }
@@ -281,7 +280,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                   <>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px] mb-5   inline-block">
-                        Personal information
+                        {t("renterFile.personalInformation")}
                       </h2>
                       {isModal &&
                         <div className="inline-flex justify-end items-center ml-5">
@@ -292,21 +291,20 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                             id="selectAll"
                             className="mr-2"
                           />
-                          <label htmlFor="selectAll">Select All</label>
+                          <label htmlFor="selectAll">{t("common.selectAll")}</label>
                         </div>}
 
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
                         <div className=" lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Proof of identity
+                              {t("renterFile.proofOfIdentity")}
                             </h4>
                             <p className="text-[#47525E] my-2 text-[13px]">
-                              Legal document required to visit a property and also bring
-                              trust to seller.
+                              {t("renterFile.identityProofDescription")}
                             </p>
                             <p className="text-[#47525E] italic text-[12px] ">
-                              Could be an identity card or passport.
+                              {t("renterFile.identityProofExamples")}
                             </p>
                           </div>
                           {form?.identityProof?.length > 0 &&
@@ -332,7 +330,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                     onClick={() => viewDoc(itm.fileName)}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Preview
+                                    {t("common.preview")}
                                   </p>
                                   <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                     {/* Edit */}
@@ -341,7 +339,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                     onClick={() => deleteDoc(i, "identityProof")}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Delete
+                                    {t("common.delete")}
                                   </p>
                                 </div>
                               </div>
@@ -350,7 +348,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center fFont-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("renterFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -367,14 +365,13 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                         <div className=" lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Proof of current address
+                              {t("renterFile.proofOfCurrentAddress")}
                             </h4>
                             <p className="text-[#47525E] my-2 text-[13px]">
-                              This document will help better understand your situation
+                              {t("renterFile.addressProofDescription")}
                             </p>
                             <p className="text-[#47525E] italic text-[12px] ">
-                              Could be a less than 3 months old telephone, water or
-                              electricity bill.
+                              {t("renterFile.addressProofExamples")}
                             </p>
                           </div>
                           {form?.addressProof?.length > 0 &&
@@ -400,7 +397,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                     onClick={() => viewDoc(itm.fileName)}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Preview
+                                    {t("common.preview")}
                                   </p>
                                   <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                     {/* Edit */}
@@ -409,7 +406,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                     onClick={() => deleteDoc(i, "addressProof")}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Delete
+                                    {t("common.delete")}
                                   </p>
                                 </div>
                               </div>
@@ -418,7 +415,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                             <div className="flex justify-center h-[64px]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("renterFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -435,20 +432,19 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                     </div>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px] mt-5 ">
-                        Resources and income
+                        {t("renterFile.resourcesAndIncome")}
                       </h2>
                       <p className="text-black mb-5 text-[12px] max-w-2xl">
-                        These documents enable to check that your income are enough to
-                        cover montlhy rent and related charges.
+                        {t("renterFile.resourcesAndIncomeDescription")}
                       </p>
                       <h3 className="text-black underline font-semibold mb-5">
-                        Your financial situation
+                        {t("renterFile.yourFinancialSituation")}
                       </h3>
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
                         <div className="  col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Last 3 Salary slips
+                              {t("renterFile.lastThreeSalarySlips")}
                             </h4>
                           </div>
                           {form?.salarySlips?.length > 0 && (
@@ -476,7 +472,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                         onClick={() => viewDoc(itm.fileName)}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Preview
+                                        {t("common.preview")}
                                       </p>
                                       <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                         {/* Edit */}
@@ -485,7 +481,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                         onClick={() => deleteDoc(i, "salarySlips")}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Delete
+                                        {t("common.delete")}
                                       </p>
                                     </div>
                                   </div>
@@ -497,7 +493,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("renterFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -514,30 +510,22 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                     </div>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px] mt-5 ">
-                        Optional documents
+                        {t("renterFile.optionalDocuments")}
                       </h2>
                       <p className="text-black mb-5 text-[12px] max-w-2xl">
-                        These documents enable to check that your income are enough to
-                        cover montlhy rent and related charges.
+                        {t("renterFile.optionalDocumentsDescription")}
                       </p>
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
                         <div className=" col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Make your candidacy stand out
+                              {t("renterFile.makeCandidacyStandOut")}
                             </h4>
                             <p className="text-[#47525E] mt-2 text-[12px]">
-                              Certain documents, although optional, are so frequently
-                              requested that it is preferable to have them prepared in
-                              advance.
+                              {t("renterFile.optionalDocsNote1")}
                             </p>
                             <p className="text-[#47525E] mb-2 text-[12px]">
-                              i.e: Last tax assessment (or that of the guarantor), Student
-                              card, Residence permit, Photocopy of guarantor's ID,
-                              Certificate from employer (or guarantor's employer),
-                              Photocopy of property tax (or local tax if the guarantor
-                              owns his or her own home), R.I.B., rent receipts from
-                              previous tenancy.
+                              {t("renterFile.optionalDocsNote2")}
                             </p>
                           </div>
                           {form?.otherDocs?.length > 0 && (
@@ -565,7 +553,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                         onClick={() => viewDoc(itm.fileName)}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Preview
+                                        {t("common.preview")}
                                       </p>
                                       <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                         {/* Edit */}
@@ -574,7 +562,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                                         onClick={() => deleteDoc(i, "otherDocs")}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Delete
+                                        {t("common.delete")}
                                       </p>
                                     </div>
                                   </div>
@@ -586,7 +574,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                             <div className="flex justify-center h-[64px]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("renterFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -607,7 +595,7 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                   <>
                     <div>
                       <p className="font-medium text-[#4b3869] mb-3">
-                        You want to buy <span className="text-red-600">*</span>
+                        {t("renterFile.youWantToBuy")} <span className="text-red-600">*</span>
                       </p>
                       <div className="flex flex-wrap gap-3">
                         {BuyOption?.map((item) => {
@@ -616,12 +604,12 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                           </button>
                         })}
                       </div>
-                      {submited && declartiveForm?.BuyOption == "" && <span className="text-red-600">Please select any buy option</span>}
+                      {submited && declartiveForm?.BuyOption == "" && <span className="text-red-600">{t("renterFile.selectBuyOption")}</span>}
                     </div>
 
                     <div>
                       <p className="font-medium text-[#4b3869] mb-3">
-                        You want to invest in <span className="text-red-600">*</span>
+                        {t("renterFile.youWantToInvestIn")} <span className="text-red-600">*</span>
                       </p>
                       <div className="flex flex-wrap gap-3">
                         {InvestOption?.map((item, index) => {
@@ -630,28 +618,28 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                           </button>
                         })}
                       </div>
-                      {submited && declartiveForm?.InvestOption == "" && <span className="text-red-600	">Please select any Invest option</span>}
+                      {submited && declartiveForm?.InvestOption == "" && <span className="text-red-600\t">{t("renterFile.selectInvestOption")}</span>}
                     </div>
 
                     <div>
                       <p className="font-medium text-[#4b3869] mb-3">
-                        In the city of <span className="text-red-600">*</span>
+                        {t("renterFile.inTheCityOf")} <span className="text-red-600">*</span>
                       </p>
                       <input
                         type="text"
                         value={declartiveForm?.postalCode}
-                        placeholder="City or postal code"
+                        placeholder={t("renterFile.cityOrPostalCode")}
                         className="w-full max-w-md rounded-md border border-[#a177d6] px-4 py-2 outline-none"
                         onChange={(e) => setdeclartiveForm({ ...declartiveForm, postalCode: e.target.value })}
                       />
                     </div>
-                    {submited && declartiveForm?.postalCode == "" && <span className="text-red-600">City or postal code is required</span>}
+                    {submited && declartiveForm?.postalCode == "" && <span className="text-red-600">{t("renterFile.cityOrPostalRequired")}</span>}
                     <div className="mt-20 flex items-center justify-end">
                       <button
                         onClick={() => handleSubmit(form, "declarative")}
                         className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                       >
-                        Save
+                        {t("common.save")}
                       </button>
                     </div>
                   </>

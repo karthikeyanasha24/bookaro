@@ -1,11 +1,13 @@
 import { Checkbox } from "@headlessui/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { propertyTypes, saveChanges } from "../shared";
 import PropertyCheck from "../PropertyCheck";
 
 const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [Error, setError] = useState("");
 
   useEffect(() => {
@@ -23,12 +25,12 @@ const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
 
   const validate = () => {
     if (!formData?.type) {
-      setError("Select Property Type..")
+      setError(t("propertySteps.step2.errors.selectPropertyType"))
       return false;
     }
     if (formData?.propertyType === "directory") {
       if (!formData?.usedAs) {
-        setError("Select Property used for..")
+        setError(t("propertySteps.step2.errors.selectPropertyUsedFor"))
         return false;
       }
     }
@@ -78,7 +80,7 @@ const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
           {/* <PropertyCheck /> */}
         <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
           <h4 className="text-[#47525E] text-[24px] font-[600] text-left  mb-[50px] ">
-            Type of property
+            {t("propertySteps.step2.typeOfProperty")}
           </h4>
           <ul className="flex justify-start 2xl:gap-4 gap-0 w-full items-center xl:flex-nowrap flex-wrap">
             {propertyTypes.map((property) => (
@@ -105,7 +107,7 @@ const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
           {formData?.propertyType?.toLowerCase() === "directory" && (
             <div className="text-left max-w-2xl mt-14 ">
               <h3 className="text-[#47525E] font-[600] text-[18px]">
-                Property is used as:
+                {t("propertySteps.step2.propertyUsedAs")}
               </h3>
               <div className="flex flex-col  mt-3 mb-7">
                 <div className="flex items-center mb-3">
@@ -129,7 +131,7 @@ const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                   </Checkbox>
 
                   <label className="text-[#47525E] sm:text-[16px] text-[13px]">
-                    Investment (long term rental)
+                    {t("propertySteps.step2.investmentLongTermRental")}
                   </label>
                 </div>
                 <div className="flex items-center">
@@ -152,18 +154,17 @@ const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                     </svg>
                   </Checkbox>
                   <label className="text-[#47525E] sm:text-[16px] text-[13px]">
-                    Own usage
+                    {t("propertySteps.step2.ownUsage")}
                   </label>
                 </div>
               </div>
-              <p className="text-[#47525E] italic">This choice let us know where to display your property when user search properties in directory either for rental or for purchase</p>
+              <p className="text-[#47525E] italic">{t("propertySteps.step2.displayHint")}</p>
             </div>
           )}
 
           <div className="mt-2 text-left text-sm text-[#ff0000]">{Error}</div>
           <p className="text-[#47525E] text-[14px] xl:mt-16 lg:mt-8 mb-3 mt-5 text-start">
-            Once the property profile is published you won't
-            be able to edit this property type.
+            {t("propertySteps.step2.publishedTypeWarning")}
           </p>
         </div>
 
@@ -174,20 +175,20 @@ const Step2 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                 onClick={save}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
               >
-                Save change
+                {t("propertySteps.step2.saveChange")}
               </button>
             </div>
           // ) : ("")}</>
         ) : (
           <div className="text-end  bg-[#f7f4fb] flex gap-2 justify-end flex-wrap p-5 w-full ">
             <button onClick={handleBackNext} className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4">
-              Back
+              {t("common.back")}
             </button>
             <button
               onClick={handleNext}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Next
+              {t("common.next")}
             </button>
           </div>
         )}

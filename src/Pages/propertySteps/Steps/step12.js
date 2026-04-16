@@ -11,6 +11,7 @@ import {
 import { Tooltip } from "antd";
 import ReactECharts from "echarts-for-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiPlusCircle } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
@@ -36,6 +37,7 @@ const Step12 = ({
   dropdownOptions,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user)
   const { id } = useParams();
   const scrollRef = useRef(null);
@@ -51,7 +53,7 @@ const Step12 = ({
 
   const validate = () => {
     if (!formData?.Expenses || formData?.Expenses?.length === 0) {
-      toast.error("Add Expenses details");
+      toast.error(t("propertySteps.step12.errors.addExpensesDetails"));
       return false;
     }
     let haserror = false;
@@ -61,7 +63,7 @@ const Step12 = ({
       }
     });
     if (haserror) {
-      toast.error("Enter all mandatory fields");
+      toast.error(t("propertySteps.step12.errors.enterMandatoryFields"));
       return false;
     }
     return true
@@ -114,7 +116,7 @@ const Step12 = ({
       !expense.year?.trim() ||
       !expense.price?.trim()
     ) {
-      return toast.error("Enter all mandatory fields");
+      return toast.error(t("propertySteps.step12.errors.enterMandatoryFields"));
     }
     // else if (expense.document?.length === 0) {
     //   return toast.error("Upload document");
@@ -147,7 +149,7 @@ const Step12 = ({
         });
       }
     }
-    toast.success("Record Added.")
+    toast.success(t("propertySteps.step12.recordAdded"))
   };
   const removeExpense = (i) => {
     let data = formData?.Expenses?.filter((itm, ind) => ind !== i);
@@ -160,13 +162,13 @@ const Step12 = ({
   const ImageUpload = (e) => {
     let files = Array.from(e.target.files);
     if (files.length + expense.document.length > 5) {
-      toast.error("Maximum 5 documents allowed to add");
+      toast.error(t("propertySteps.step12.errors.maximumDocuments"));
       return (e.target.value = ""); // Clear file input
     }
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB in bytes
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error("Each document must be smaller than 10MB");
+      toast.error(t("propertySteps.step12.errors.documentSize"));
       return (e.target.value = ""); // Clear file input
     }
     loader(true);
@@ -180,7 +182,7 @@ const Step12 = ({
             };
           });
           if (data.length + expense.document.length > 5) {
-            toast.error("Maximum 5 documents allowed to add");
+            toast.error(t("propertySteps.step12.errors.maximumDocuments"));
             return (e.target.value = ""); // Clear file input
           }
           setexpense({
@@ -215,7 +217,7 @@ const Step12 = ({
     return map;
   }, {});
   const graphTabs = [
-    "All",
+    t("propertySteps.step12.all"),
     ...(dropdownOptions
       ?.filter((itm) => itm?.type === "Expense")
       ?.map((sman) => sman?.name) || []),
@@ -256,7 +258,7 @@ const Step12 = ({
   const chartData = {
     title: {
       // text: 'Global average monthly expense over the year',
-      text: "Global average yearly expense",
+      text: t("propertySteps.step12.globalAverageYearlyExpense"),
       left: "center",
       top: 0,
       textStyle: {
@@ -345,13 +347,12 @@ const Step12 = ({
         <div className=" lg:overflow-auto lg:h-[740px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
           <div className="flex justify-between items-start">
             <h4 ref={scrollRef} className="text-[#47525E] text-[24px] font-[600] text-left  ">
-              Add new Expenses to your property
+              {t("propertySteps.step12.addNewExpenses")}
               <span className="text-[#47525E] mt-[5px] font-[400] block text-[14px] text-left ">
-                *Mandatory information
+                {t("propertySteps.step12.mandatoryInformation")}
               </span>
               <p className="font-[400]  text-[16px] text-[#5A5A5A]  mt-5  lg:w-[500px] w-[100%]">
-                Adding and getting your revenues verified by Bookaroo increases
-                trust and add more value to your property{" "}
+                {t("propertySteps.step12.revenuesVerificationInfo")}
               </p>
             </h4>
             <button
@@ -364,13 +365,13 @@ const Step12 = ({
 
           <div className="md:max-w-[500px] w-[100%]">
             <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-              Expense details
+              {t("propertySteps.step12.expenseDetails")}
             </label>
             <div className="flex items-center flex-wrap  justify-center">
               <div class="xl:max-w-[500px] w-[100%] mb-3">
                 <SelectDropdown
                   displayValue="name"
-                  placeholder="Select expense type"
+                  placeholder={t("propertySteps.step12.placeholders.selectExpenseType")}
                   isClearable={false}
                   intialValue={expense.type}
                   result={(e) => {
@@ -387,7 +388,7 @@ const Step12 = ({
               <div class="xl:max-w-[500px] w-[100%] mb-3">
                 <SelectDropdown
                   displayValue="name"
-                  placeholder="Select expense year"
+                  placeholder={t("propertySteps.step12.placeholders.selectExpenseYear")}
                   isClearable={false}
                   intialValue={expense.year}
                   result={(e) => {
@@ -413,7 +414,7 @@ const Step12 = ({
                   }}
                   className={`bg-white rounded-[7px] border border-[#976DD0]
                   p-2 px-3 md:w-[500px] w-full mb-4 pr-14`}
-                  placeholder="Expense price"
+                  placeholder={t("propertySteps.step12.placeholders.expensePrice")}
                 />
                 <span className="absolute right-3 top-2 text-gray-500 border-l border-[#976DD0] pl-2">
                   €
@@ -422,12 +423,10 @@ const Step12 = ({
             </div>
             <div>
               <label className="text-[#5A5A5A] mb-2 text-[16px]">
-                Add proofing documents
+                {t("propertySteps.step12.addProofingDocuments")}
               </label>
               <p className="text-[#000000] font-[600] mt-3  mb-5">
-                Any document you submit are only used by Bookaroo to certificate
-                the accuracy of the revenus declared and will never be shared
-                with a thirdparty.
+                {t("propertySteps.step12.documentsPrivacyInfo")}
               </p>
             </div>
             {expense?.document?.length < 5 && (
@@ -472,13 +471,13 @@ const Step12 = ({
                   onClick={applyExpenses}
                   className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
                 >
-                  Save and close
+                  {t("propertySteps.step12.saveAndClose")}
                 </button>
                 <Link
                   className="text-[#976DD0] font-[600] mt-3 mb-10"
                   onClick={() => applyExpenses(false)}
                 >
-                  Save and create new expanse
+                  {t("propertySteps.step12.saveAndCreateNewExpense")}
                 </Link>
               </div>
             </div>
@@ -489,13 +488,12 @@ const Step12 = ({
           <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
             <div className="flex justify-between items-start">
               <h4 className="text-[#47525E] text-[24px] font-[600] xl:mb-[50px] lg:mb-[50px] mb-[40px]">
-                What is the budget for living in your property?
+                {t("propertySteps.step12.livingBudgetQuestion")}
                 <span className="text-[#47525E] font-[400] block text-[14px] mt-1 block">
-                  *Mandatory information
+                  {t("propertySteps.step12.mandatoryInformation")}
                 </span>
                 <p className="font-[400]  text-[16px] text-[#5A5A5A] mb-7 mt-5  xl:w-[500px] w-[100%]">
-                  Providing this information will help potential buyer or
-                  renters to estimate their living budget
+                  {t("propertySteps.step12.livingBudgetInfo")}
                 </p>
               </h4>
               {addExpenses ? (
@@ -513,7 +511,7 @@ const Step12 = ({
                   }}
                   className="rounded-[50px] border border-[#976DD0] p-2 text-[#787878] w-[200px] text-[14px] "
                 >
-                  Add New Expenses
+                  {t("propertySteps.step12.addNewExpensesButton")}
                 </button>
               )}
             </div>
@@ -523,7 +521,7 @@ const Step12 = ({
                   <div className="border border-[#8492A6] rounded-[12px] bg-[#F9F9F9] md:max-w-[500px] w-[100%]">
                     <div className="md:max-w-[500px] w-[100%] bg-[#F9F9F9] p-3 rounded-tl-[12px] rounded-tr-[12px]">
                       <h4 className="text-[#39A097] font-[600] text-[20px] text-center">
-                        Living Expenses
+                        {t("propertySteps.step12.livingExpenses")}
                       </h4>
                     </div>
                     <TabGroup defaultIndex={TabIndex} onChange={tabChange}>
@@ -590,7 +588,7 @@ const Step12 = ({
                 )}
                 <div className="md:max-w-[500px] w-[100%]">
                   <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-                    Details
+                    {t("propertySteps.step12.details")}
                   </label>
                   <div>
                     {formData?.Expenses?.map((itm, i) => (
@@ -612,13 +610,13 @@ const Step12 = ({
                             }}
                             className={`bg-white rounded-[7px] border
                             p-2 px-3 w-[20%]  text-[#5A5A5A] h-[44px]`}
-                            placeholder="Price"
+                            placeholder={t("propertySteps.step12.placeholders.price")}
                           />
                           <div className="w-[20%]">
                             <SelectDropdown
                               disabled={!editMode}
                               displayValue="name"
-                              placeholder="Select expense year"
+                              placeholder={t("propertySteps.step12.placeholders.selectExpenseYear")}
                               isClearable={false}
                               intialValue={itm.year}
                               result={(e) => {
@@ -638,7 +636,7 @@ const Step12 = ({
                             <SelectDropdown
                               disabled={!editMode}
                               displayValue="name"
-                              placeholder="Select expense type"
+                              placeholder={t("propertySteps.step12.placeholders.selectExpenseType")}
                               isClearable={false}
                               intialValue={itm.type}
                               result={(e) => {
@@ -660,7 +658,7 @@ const Step12 = ({
                               key={i}
                               className="w-[15%] bg-white rounded-[7px] border p-2 px-3  text-[#5A5A5A] h-[44px]"
                             >
-                              <Link onClick={() => openDialog(itm)}>View</Link>
+                              <Link onClick={() => openDialog(itm)}>{t("propertySteps.step12.view")}</Link>
                               <Dialog
                                 open={isOpenDoc}
                                 onClose={() => closeDialog()}
@@ -671,8 +669,7 @@ const Step12 = ({
                                   <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                     <DialogTitle className="p-6">
                                       <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-3">
-                                        You can check the documents by click on
-                                        them
+                                        {t("propertySteps.step12.checkDocumentsHint")}
                                       </p>
 
                                       <div className="mt-6">
@@ -703,7 +700,7 @@ const Step12 = ({
                                           onClick={() => closeDialog()}
                                           className="bg-primary text-white px-3 py-2  rounded-[7px]"
                                         >
-                                          Cancel
+                                          {t("common.cancel")}
                                         </button>
                                       </div>
                                     </DialogTitle>
@@ -737,7 +734,7 @@ const Step12 = ({
                   className="w-[100px]"
                   alt=""
                 />
-                <p className="mt-1">No Data Yet</p>
+                <p className="mt-1">{t("propertySteps.step12.noDataYet")}</p>
               </div>
             )}
           </div>
@@ -747,7 +744,7 @@ const Step12 = ({
                 onClick={save}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
               >
-                Save change
+                {t("propertySteps.step12.saveChange")}
               </button>
             </div>
           ) : (
@@ -756,19 +753,19 @@ const Step12 = ({
                 onClick={draftsave}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
               >
-                Save As Draft
+                {t("propertySteps.step12.saveAsDraft")}
               </button>
               <button
                 onClick={handleBack}
                 className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
               >
-                Back
+                {t("common.back")}
               </button>
               <button
                 onClick={handleNext}
                 className="btn text-white bg-[#48464a] rounded-full px-10 py-4  submit-btn "
               >
-                Next
+                {t("common.next")}
               </button>
             </div>
           )}

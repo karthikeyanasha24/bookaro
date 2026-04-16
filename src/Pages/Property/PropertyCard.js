@@ -10,6 +10,7 @@ import {
 import DirectMsgModal from "../PropertyDetails/DirectMsgModal";
 import { useState } from "react";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 const PropertyCard = ({
   item,
@@ -26,6 +27,7 @@ const PropertyCard = ({
   index,
   dropdownIndex,
 }) => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const [directMsg, setdirectMsg] = useState(false);
   const [detail, setDetail] = useState();
@@ -69,7 +71,6 @@ const PropertyCard = ({
         />
 
         {item?.propertyType == "directory" && <>
-        {console.log(item,"----")}
           {item?.images[0] && <div className="z-[4] absolute top-[30px] left-0 px-3 py-1 rounded-r-[6px] bg-[#976DD0] text-[#fff] font-semibold sm:text-[14px] text-[12px] ">
             {item?.proposal == "rental" && "#OpenToRentalProposals"}
             {item?.proposal == "purchase" && "#OpenToSaleProposals"}
@@ -154,7 +155,7 @@ const PropertyCard = ({
                     >
                       {" "}
                       <FiEdit className="me-2 text-[15px]" />
-                      <span className="text-[14px] text-[#333]">Edit</span>
+                      <span className="text-[14px] text-[#333]">{t("buttons.edit")}</span>
                     </li>
                     <li
                       onClick={() => deleteItem(item)}
@@ -162,7 +163,7 @@ const PropertyCard = ({
                     >
                       {" "}
                       <AiOutlineDelete className="me-2" />
-                      <span className="text-[14px] text-[#333]">Delete</span>
+                      <span className="text-[14px] text-[#333]">{t("buttons.delete")}</span>
                     </li>
                   </ul>
                 </div>
@@ -175,7 +176,7 @@ const PropertyCard = ({
           {item?.propertyType === "directory" ? (
             <>
               <h5 className="text-[#6D6E6D] text-[17px] font-bold capitalize flex justify-between items-center">
-                Directory
+                {t("home.tabs.directory")}
               </h5>
               <span className="text-[#47525E] text-[13px] capitalize font-[400]">
                 {capLetter(item?.usedAs)}
@@ -183,15 +184,15 @@ const PropertyCard = ({
             </>
           ) : item?.propertyType === "offmarket" ? (
             <h5 className="text-[#6D6E6D] text-[17px] font-bold capitalize flex justify-between items-center">
-              Off-Market
+              {t("home.tabs.offMarket")}
             </h5>
           ) : item?.propertyType === "rent" ? (
             <>
-              <p className="text-[#6D6E6D] text-[12px] font-[600]">Rental</p>
+              <p className="text-[#6D6E6D] text-[12px] font-[600]">{t("property.forRent")}</p>
               {item?.propertyMonthlyCharges && (
                 <h5 className="text-[#6D6E6D] text-[20px] font-bold">
                   {formatCurrency(item?.propertyMonthlyCharges)} €
-                  <span className="text-[#47525E] text-[13px] "> / month</span>
+                  <span className="text-[#47525E] text-[13px] "> {t("billing.perMonth")}</span>
                 </h5>
               )}
             </>
@@ -200,7 +201,7 @@ const PropertyCard = ({
               {+price > 0 ? (
                 <>
                   <p className="text-[#6D6E6D] text-[12px] font-[600]">
-                    For Sale
+                    {t("property.forSale")}
                   </p>
                   <h5 className="text-[#6D6E6D] text-[17px] font-bold flex justify-between items-center">
                     {formatCurrency(price)} €

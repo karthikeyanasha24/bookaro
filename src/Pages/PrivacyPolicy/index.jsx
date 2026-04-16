@@ -6,8 +6,10 @@ import ApiClient from '../../methods/api/apiClient';
 import loader from '../../methods/loader';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate()
   const [form, setform] = useState({
     email: "",
@@ -36,7 +38,7 @@ const Index = () => {
         const resp = ApiClient.delete(`user/delete?id=${res.data.id}`);
         if (resp?.success) {
           // alert('user Deleted')
-          toast.success("User Deleted Sucessfully")
+          toast.success(t("messages.userDeletedSuccessfully"))
           setform({
             email: "",
             password: "",
@@ -58,15 +60,15 @@ const Index = () => {
           <div className='max-w-[420px] mx-auto'>
             <div className='mb-3'>
               <img src='/images/logo.png' className='w-[60px] mx-auto mb-[1.5rem]'></img>
-              <h2 className='text-[22px] font-[600] text-center mb-1'>Delete Account</h2>
-              <p className='text-[#717171] text-[12px] text-center'>Are you sure you want to delete your account?</p>
+              <h2 className='text-[22px] font-[600] text-center mb-1'>{t("authentication.deleteAccount")}</h2>
+              <p className='text-[#717171] text-[12px] text-center'>{t("messages.confirmDeleteAccount")}</p>
             </div>
             <div>
               <div className="mb-3">
                 <FormControl
                   type="text"
                   name="email"
-                  label="Email"
+                  label={t("authentication.email")}
                   className='bg-[#EEEDED] !rounded-[8px] !h-9 border-none'
                   value={form?.email}
                   required
@@ -79,7 +81,7 @@ const Index = () => {
                 <FormControl
                   type="text"
                   name="password"
-                  label="Password"
+                  label={t("authentication.password")}
                   className='bg-[#EEEDED] !rounded-[8px] !h-9 border-none'
                   value={form?.password}
                   required
@@ -94,13 +96,13 @@ const Index = () => {
               type="submit"
               className="bg-[#000] flex gap-2 items-center justify-center text-[14px] h-10 w-[120px] m-auto text-[#fff] rounded-md font-[600] hover:opacity-80"
             >
-              Submit
+              {t("buttons.submit")}
             </button>
             <div className='mt-[2rem]'>
-              <p className='text-[#4C4C4C] text-center font-[500]'>Other Ways to Reach Us</p>
+              <p className='text-[#4C4C4C] text-center font-[500]'>{t("messages.otherWaysReach")}</p>
               <div className='flex gap-x-5 gap-2 justify-center flex-wrap mt-2'>
                 <p className='flex items-center gap-1 text-[12px] text-[#2C2B2B]'><CiMail className='text-[#666666] text-[18px]' />support@gmail.com</p>
-                <p className='flex items-center gap-1 text-[12px] text-[#2C2B2B]'><MdOutlineWatchLater className='text-[#666666] text-[18px]' />Response within 24 hours</p>
+                <p className='flex items-center gap-1 text-[12px] text-[#2C2B2B]'><MdOutlineWatchLater className='text-[#666666] text-[18px]' />{t("messages.responseWithin24h")}</p>
               </div>
             </div>
 

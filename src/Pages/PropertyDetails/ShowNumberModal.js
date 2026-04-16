@@ -4,10 +4,13 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
 import { RxCross2 } from "react-icons/rx";
 import "react-phone-input-2/lib/style.css";
 
 const ShowNumberModal = ({ showNumber, setshowNumber, detail }) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       <Dialog open={showNumber} onClose={() => setshowNumber(false)}>
@@ -15,7 +18,7 @@ const ShowNumberModal = ({ showNumber, setshowNumber, detail }) => {
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4 z-[11]">
           <DialogPanel className="max-w-lg  border bg-white p-4 w-full rounded-[8px]">
             <DialogTitle className="border-b text-[#389D93] text-[18px] text-center pb-4 relative">
-              Contact Number
+              {t("propertyDetails.contactNumber")}
               <RxCross2 onClick={() => setshowNumber(false)} className="ml-auto absolute top-1 cursor-pointer right-2" />
             </DialogTitle>
             <div className="flex flex-col items-start p-6">

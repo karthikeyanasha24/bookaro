@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import { CommonCreteria } from "./commonCreteria/commonCreteria";
 import PropertyCard from "./PropertyCard";
+import { useTranslation } from "react-i18next";
 
 const PropertiesList = ({
   data,
@@ -25,6 +26,7 @@ const PropertiesList = ({
   dropdownRefs,
   favourites,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <>
@@ -34,11 +36,11 @@ const PropertiesList = ({
             {favourites && (
               <ul className="flex items-center pb-[30px]">
                 <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-                  My Project
+                  {t("project.myProject")}
                   <span className="mx-[4px]">|</span></li>
 
                 <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-                  Interacted Properties</li>
+                  {t("project.interactedProperties")}</li>
               </ul>
             )}
             <div className="grid grid-cols-12 gap-8">
@@ -79,14 +81,14 @@ const PropertiesList = ({
                     )
                   }) :   <div className="text-center col-span-12 my-8">
                   <img src="assets/img/no-data.svg" className="w-[400px] mx-auto "/>
-                  No Records Found
+                  {t("messages.noRecordsFound")}
                 </div>}
                 </div>
                 <div className={`paginationWrapper flex md:flex-row flex-col ${total > filters?.count ? '' : 'd-none'}`}>
-                  <span className="md:mb-0 mb-2">Show {data?.length} from {total} Properties</span>
+                  <span className="md:mb-0 mb-2">{t("manageNotifications.showFromProperties", { count: data?.length, total })}</span>
                   <ReactPaginate
-                    previousLabel="< "
-                    nextLabel=" >"
+                    previousLabel={t("pagination.previous")}
+                    nextLabel={t("pagination.next")}
                     breakLabel="..."
                     pageRangeDisplayed={1}
                     marginPagesDisplayed={1}

@@ -22,8 +22,10 @@ import Step9 from "./Steps/step9";
 import Step14 from "./Steps/step14";
 import { capLetter } from "../../models/string.model";
 import Step13 from "./Steps/step13";
+import { useTranslation } from "react-i18next";
 
 const Edit = () => {
+  const { t } = useTranslation();
   const step1 = JSON.parse(localStorage.getItem("step1"));
   const { id, step } = useParams();
   const [amenity, setAmenity] = useState([]);
@@ -95,21 +97,21 @@ const Edit = () => {
   });
   const [activeTabIndex, setActiveTabIndex] = useState(parseInt(step) || 0);
   const [steps, setSteps] = useState([
-    "Status & Price",
-    "Off-Market",
-    "Type of property",
-    "Address",
-    "Characteristics",
-    "Energy performance",
-    "Photos",
-    "Description",
-    "School",
-    "Price",
-    "Contact",
-    "Revenues",
-    "Expenses",
-    "Renovation Works",
-    "External Ratings",
+    t("propertySteps.steps.statusAndPrice"),
+    t("propertySteps.steps.offMarket"),
+    t("propertySteps.steps.typeOfProperty"),
+    t("propertySteps.steps.address"),
+    t("propertySteps.steps.characteristics"),
+    t("propertySteps.steps.energyPerformance"),
+    t("propertySteps.steps.photos"),
+    t("propertySteps.steps.description"),
+    t("propertySteps.steps.school"),
+    t("propertySteps.steps.price"),
+    t("propertySteps.steps.contact"),
+    t("propertySteps.steps.revenues"),
+    t("propertySteps.steps.expenses"),
+    t("propertySteps.steps.renovationWorks"),
+    t("propertySteps.steps.externalRatings"),
   ]);
   const [addSteps, setaddSteps] = useState(false);
   const [dropdownOptions, setdropdownOptions] = useState([]);
@@ -129,41 +131,41 @@ const Edit = () => {
     setaddSteps(addMore);
     const updatedSteps = addSteps
       ? [
-        "Status & Price",
-        "Off-Market",
-        "Type of property",
-        "Address",
-        "Characteristics",
-        "Energy performance",
-        "Photos",
-        "Description",
-        "School",
+        t("propertySteps.steps.statusAndPrice"),
+        t("propertySteps.steps.offMarket"),
+        t("propertySteps.steps.typeOfProperty"),
+        t("propertySteps.steps.address"),
+        t("propertySteps.steps.characteristics"),
+        t("propertySteps.steps.energyPerformance"),
+        t("propertySteps.steps.photos"),
+        t("propertySteps.steps.description"),
+        t("propertySteps.steps.school"),
         step1?.propertyType === "offmarket" || step1?.propertyType === "directory"
-          ? "Off-market Status"
-          : "Price",
-        "Contact",
-        "Revenues",
-        "Expenses",
-        "Renovation Works",
-        "External Ratings",
+          ? t("propertySteps.steps.offMarketStatus")
+          : t("propertySteps.steps.price"),
+        t("propertySteps.steps.contact"),
+        t("propertySteps.steps.revenues"),
+        t("propertySteps.steps.expenses"),
+        t("propertySteps.steps.renovationWorks"),
+        t("propertySteps.steps.externalRatings"),
       ]
       : [
-        "Status & Price",
-        "Off-Market",
-        "Type of property",
-        "Address",
-        "Characteristics",
-        "Energy performance",
-        "Photos",
-        "Description",
-        "School",
+        t("propertySteps.steps.statusAndPrice"),
+        t("propertySteps.steps.offMarket"),
+        t("propertySteps.steps.typeOfProperty"),
+        t("propertySteps.steps.address"),
+        t("propertySteps.steps.characteristics"),
+        t("propertySteps.steps.energyPerformance"),
+        t("propertySteps.steps.photos"),
+        t("propertySteps.steps.description"),
+        t("propertySteps.steps.school"),
         step1?.propertyType === "offmarket" || step1?.propertyType === "directory"
-          ? "Off-market Status"
-          : "Price",
-        "Contact",
+          ? t("propertySteps.steps.offMarketStatus")
+          : t("propertySteps.steps.price"),
+        t("propertySteps.steps.contact"),
       ];
     setSteps(updatedSteps);
-  }, [addSteps]);
+  }, [addSteps, t]);
   const handleTabChange = (index) => {
     setActiveTabIndex(index);
   };
@@ -434,7 +436,7 @@ const Edit = () => {
                                     <RxCross2 />
                                   </button>
                                   <h4 className="text-[#47525E] text-[18px] mb-4 mt-4">
-                                    Listing steps
+                                    {t("propertySteps.listingSteps")}
                                   </h4>
                                 </div>
                                 <TabList

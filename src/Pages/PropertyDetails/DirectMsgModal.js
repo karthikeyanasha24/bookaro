@@ -25,6 +25,7 @@ import socket from "../../config/ChatSocket/socket";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { downloadFile, imagePath } from "../../models/string.model";
+import { useTranslation } from "react-i18next";
 
 const DirectMsgModal = ({
   directMsg,
@@ -35,6 +36,7 @@ const DirectMsgModal = ({
   chat_with='',
   property_id=''
 }) => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const [roomId, setroomId] = useState("");
   const [msg, setMsg] = useState("");
@@ -73,7 +75,7 @@ const DirectMsgModal = ({
         setdirectMsg(false)
         Swal.fire({
           icon: "warning",
-          text: "you have reached the chat limit need to upgrade the plan"
+          text: t("messages.chatLimitReached")
         })
       }
       return
@@ -224,7 +226,7 @@ const DirectMsgModal = ({
     const maxSizeInBytes = maxSize * 1024 * 1024; // 10MB
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error(`Each file must be smaller than ${maxSize}MB`);
+      toast.error(t("validation.fileSize", { size: maxSize }));
       return (e.target.value = "");
     }
     // validate extentions
@@ -241,8 +243,8 @@ const DirectMsgModal = ({
     );
     if (invalidFiles.length > 0) {
       if (type === "IMAGE")
-        toast.error("Only JPG, PNG, GIF, and WebP images are allowed.");
-      else toast.error("Only PDF, DOC, and DOCX files are allowed.");
+        toast.error(t("propertyDetails.allowedImageTypes"));
+      else toast.error(t("propertyDetails.allowedDocumentTypes"));
       return (e.target.value = "");
     }
 
@@ -327,7 +329,7 @@ const DirectMsgModal = ({
         <DialogBackdrop className="fixed inset-0 bg-black/30 z-[9]" />
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4 z-[10]">
           <DialogPanel className=" max-w-lg w-full space-y-4 border bg-white p-5">
-            <DialogTitle className="font-bold">Send Direct Message</DialogTitle>
+            <DialogTitle className="font-bold">{t("chat.sendDirectMessage")}</DialogTitle>
             <div>
               <div
                 ref={chatContainerRef}
@@ -452,7 +454,7 @@ const DirectMsgModal = ({
                                           >
                                             <FiEdit className="me-2 text-[15px]" />
                                             <span className="text-[14px] text-[#333]">
-                                              Edit
+                                              {t("buttons.edit")}
                                             </span>
                                           </p>
                                         </MenuItem>
@@ -476,8 +478,8 @@ const DirectMsgModal = ({
                                             )}
                                             <span className="text-[14px] text-[#333]">
                                               {msg?.type === Type.DOCUMENT
-                                                ? "Download"
-                                                : "View"}
+                                                ? t("buttons.download")
+                                                : t("buttons.view")}
                                             </span>
                                           </p>
                                         </MenuItem>
@@ -491,7 +493,7 @@ const DirectMsgModal = ({
                                         >
                                           <AiOutlineDelete className="me-2" />
                                           <span className="text-[14px] text-[#333]">
-                                            Delete For Me
+                                            {t("chat.deleteForMe")}
                                           </span>
                                         </p>
                                       </MenuItem>
@@ -507,7 +509,7 @@ const DirectMsgModal = ({
                                         >
                                           <AiOutlineDelete className="me-2" />
                                           <span className="text-[14px] text-[#333]">
-                                            Delete For Everyone
+                                            {t("chat.deleteForEveryone")}
                                           </span>
                                         </p>
                                       </MenuItem>
@@ -530,7 +532,7 @@ const DirectMsgModal = ({
                       src="/assets/img/message.svg"
                       className="w-[100px] mx-auto "
                     />
-                    <p className="text-center">No chats</p>
+                    <p className="text-center">{t("chat.noChats")}</p>
                   </div>
                 )}
               </div>
@@ -557,7 +559,7 @@ const DirectMsgModal = ({
                             <label className="flex items-center mb-2 cursor-pointer hover:text-[#976DD0] group">
                               <MdOutlinePhotoSizeSelectActual className="mr-2 text-[15px]" />
                               <span className="text-[14px] text-[#333] group-hover:text-[#976DD0]">
-                                Photo
+                                {t("chat.photo")}
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -569,7 +571,7 @@ const DirectMsgModal = ({
                             <label className="flex items-center cursor-pointer hover:text-[#976DD0] group">
                               <TiDocument className="mr-2 text-[17px]" />
                               <span className="text-[14px] text-[#333] group-hover:text-[#976DD0]">
-                                Document
+                                {t("chat.document")}
                                 <input
                                   type="file"
                                   accept=".pdf,.doc,.docx"
@@ -602,7 +604,7 @@ const DirectMsgModal = ({
                           }
                         }
                       }}
-                      placeholder="Type your message..."
+                      placeholder={t("chat.typeYourMessage")}
                       // style={{ resize: 'none', overflowY: 'auto', maxHeight: 'calc(4 * 1.5em)' }}
                     ></input>
                     <div className="flex items-center justify-center pe-4">

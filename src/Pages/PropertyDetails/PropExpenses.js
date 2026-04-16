@@ -6,9 +6,11 @@ import Typography from "@mui/material/Typography";
 import ReactECharts from 'echarts-for-react';
 import { useEffect, useState } from 'react';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+import { useTranslation } from "react-i18next";
 import { formatCurrency } from "../../models/string.model";
 
 const PropExpenses = ({ detail, dropdownOptions, acrArr, handleAccordionChange, }) => {
+    const { t } = useTranslation();
     // expanse graph data
     const typeMap = dropdownOptions?.reduce((map, option) => {
         if (option.type === "Expense") {
@@ -16,7 +18,7 @@ const PropExpenses = ({ detail, dropdownOptions, acrArr, handleAccordionChange, 
         }
         return map;
     }, {});
-    const graphTabs = ["All", ...dropdownOptions?.filter(itm => itm?.type === "Expense")?.map(sman => sman?.name) || []];
+    const graphTabs = [t("buttons.all"), ...dropdownOptions?.filter(itm => itm?.type === "Expense")?.map(sman => sman?.name) || []];
     const [TabIndex, setTabIndex] = useState(0);
     const tabChange = (index) => {
         setTabIndex(index);
@@ -63,7 +65,7 @@ const PropExpenses = ({ detail, dropdownOptions, acrArr, handleAccordionChange, 
     }, [detail?.Expenses, TabIndex])
     const chartExpenseData = {
         title: {
-            text: 'Global average yearly expense',
+            text: t("propertyDetails.globalAverageYearlyExpense"),
             left: 'center',
             top: 20,
             bottom: 20,
@@ -133,7 +135,7 @@ const PropExpenses = ({ detail, dropdownOptions, acrArr, handleAccordionChange, 
             >
                 <Typography>
                 <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                        Living expenses
+                        {t("propertyTimeline.tabs.expenses")}
                     </span>
                 </Typography>
             </AccordionSummary>
@@ -192,7 +194,7 @@ const PropExpenses = ({ detail, dropdownOptions, acrArr, handleAccordionChange, 
                                                         className="w-[100px]"
                                                         alt=""
                                                     />
-                                                    <p className="mt-1">No Data Yet</p>
+                                                    <p className="mt-1">{t("messages.noData")}</p>
                                                 </div>
                                             )}
                                         </div>

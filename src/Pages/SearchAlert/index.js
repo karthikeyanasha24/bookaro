@@ -71,7 +71,7 @@ const SearchAlert = () => {
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonText: t("buttons.yes"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -102,7 +102,7 @@ const SearchAlert = () => {
         id: t("alerts.priceEvolution"),
         name: t("alerts.priceEvolution"),
       },
-      { id: "other", name: "other" },
+      { id: "other", name: t("common.other") },
     ];
 
   useEffect(() => {
@@ -119,20 +119,20 @@ const SearchAlert = () => {
                 onClick={() => navigate("/project")}
                 className="text-[#47525E] cursor-pointer after"
               >
-                My Project
+                {t("project.myProject")}
                 <span className="mx-[4px]">|</span>
               </li>
               <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
                 {" "}
-                Search alerts
+                {t("searchAlert.title")}
               </li>
             </ul>
             <div>
               <h4 className="text-[#47525E] text-center mb-0 text-[17px]">
-                Search alerts
+                {t("searchAlert.title")}
               </h4>
               <h2 className="text-[#47525E] font-[600] text-[24px] mt-1 text-center">
-                Be informed first
+                {t("searchAlert.subtitle")}
               </h2>
             </div>
             <ul className="flex items-center flex-wrap justify-between mt-12">
@@ -147,7 +147,7 @@ const SearchAlert = () => {
                         {/* Search name */}
                         {itm?.name
                           ? `${capLetter(itm?.name)}`
-                          : `Search alert ${i + 1}`}
+                          : t("searchAlert.alertDefault", { count: i + 1 })}
                       </h3>
                       <p className="text-[#47525E] my-2 mt-3 ellipses">
                         {generateDynamicString(itm?.filteredData || {}) ||
@@ -155,9 +155,7 @@ const SearchAlert = () => {
                       </p>
                       <h5 className="text-[#47525E] font-[600] text-[17px] ellipses">
                         {/* Search Total Count */}
-                        {`${itm?.totalcount || 0} new result${
-                          itm?.totalcount > 1 ? "s" : ""
-                        }`}
+                        {t("searchAlert.newResult", { count: itm?.totalcount || 0 })}
                       </h5>
                     </div>
                     <div className="w-[10%]">
@@ -174,7 +172,7 @@ const SearchAlert = () => {
                     src="assets/img/no-data.svg"
                     className="max-w-[300px] w-full mx-auto"
                   />
-                  No alerts available
+                  {t("searchAlert.noAlerts")}
                 </li>
               )}
             </ul>
@@ -184,7 +182,7 @@ const SearchAlert = () => {
               onClick={() => setOpenPopup(true)}
               className="h-12 bg-[#48464a] rounded-full w-[300px] px-10 text-[18px] font-medium text-center text-white hover:opacity-80 transition-all signup-btn"
             >
-              Create new alert
+              {t("searchAlert.createNewAlert")}
             </button>
           </div>
         </div>
@@ -199,14 +197,14 @@ const SearchAlert = () => {
                 <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                   <DialogTitle className="p-6">
                     <p className="border-b text-[#976DD0] font-[600] text-[18px] text-center pb-4">
-                      Don't miss a property
+                      {t("searchAlert.dontMiss")}
                       <span className="text-[#47525E] text-center font-[400] text-[16px] block">
-                        That meet your requirements
+                        {t("searchAlert.meetRequirements")}
                       </span>
                     </p>
 
                     <label className="my-3 text-[#47525E] text-[16px] font-[400] mb-1 block">
-                      I'm creating this alert cause
+                      {t("searchAlert.creatingAlertCause")}
                     </label>
                     <SelectDropdown
                       placeholder={t("forms.selectReason")}
@@ -250,13 +248,11 @@ const SearchAlert = () => {
                         onClick={addAlert}
                         className="bg-[#48464a] px-4 text-[14px] py-2 rounded-[50px] text-white"
                       >
-                        Receive alerts
+                        {t("searchAlert.receiveAlerts")}
                       </button>
                     </div>
                     <p className="text-[#47525E] font-[400] text-center text-[14px]">
-                      Bookaroo processes your data in order to manage your
-                      request for new real estate ad alerts by e-mail. To find
-                      out more and exercise your rights, click here.
+                      {t("searchAlert.dataPrivacyNote")}
                     </p>
                   </DialogTitle>
                 </DialogPanel>

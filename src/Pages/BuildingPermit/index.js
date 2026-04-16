@@ -63,7 +63,7 @@ const BuildingPermit = () => {
 
   const navigateToList = () => {
     // if (!user?.loggedIn) return setloginModal(true);
-    if (!form?.location) return setError("Enter location")
+    if (!form?.location) return setError(t("property.enterLocation"))
     const query = [];
     if (form.city) query.push(`search=${encodeURIComponent(form.city)}`);
     if (form.latitude)
@@ -81,10 +81,10 @@ const BuildingPermit = () => {
         <div className="py-14   lg:py-16  bg-img bg-img-new relatitudeive ">
           <div className="container px-8 mx-auto xl:px-5">
             <h1 className="text-white font-[600] md:text-[30px]  text-[20px]   text-center">
-              Want to avoid bad surpises?
+              {t("buildingPermit.heroTitle")}
             </h1>
             <p className="text-white  text-[20px] mt-2 text-center">
-              Check existing building permits nerby your future place.
+              {t("buildingPermit.heroSubtitle")}
             </p>
             <div className="border border-[#8492A6] rounded-[12px] bg-white p-5  lg:max-w-[800px] md:max-w-[600px] w-[80%] mx-auto absolute md:-bottom-10 -bottom-[120px] left-set ">
               <div className="flex flex-wrap justify-between items-end md:flex-row flex-col">
@@ -96,7 +96,7 @@ const BuildingPermit = () => {
                         key={inputKey}
                         value={form?.location}
                         result={addressResult}
-                        placeholder="Enter your location"
+                        placeholder={t("property.enterLocation")}
                         id="address"
                         className="pe-1"
                       />
@@ -115,7 +115,7 @@ const BuildingPermit = () => {
                   <SelectDropdown
                     className="custom_drop"
                     displayValue="name"
-                    placeholder="All"
+                    placeholder={t("buttons.all")}
                     isClearable={false}
                     intialValue={form.type}
                     result={(e) => {
@@ -125,9 +125,9 @@ const BuildingPermit = () => {
                       });
                     }}
                     options={[
-                      { id: "demolitionPermit", name: "Demolition Permit" },
-                      { id: "nonResdential", name: "Non Resdential" },
-                      { id: "residential", name: "Residential" },
+                      { id: "demolitionPermit", name: t("buildingPermit.types.demolitionPermit") },
+                      { id: "nonResdential", name: t("buildingPermit.types.nonResidential") },
+                      { id: "residential", name: t("buildingPermit.types.residential") },
                     ]}
                   />
                 </div>
@@ -136,7 +136,7 @@ const BuildingPermit = () => {
                     className="bg-[#976DD0] text-[14px] rounded-[50px] py-[8px] px-[18px] text-white font-bold w-full h-[40px] flex items-center justify-center"
                     onClick={() => navigateToList()}
                   >
-                    See results
+                    {t("realEstatePros.seeResults")}
                   </button>
                 </div>
                 {error && (
@@ -153,22 +153,21 @@ const BuildingPermit = () => {
           <div className="container px-8 mx-auto xl:px-5 ">
             <div className="max-w-[800px] w-[100%]  mx-auto">
               <h2 className="text-[#47525E] font-[600] md:text-[24px] text-[20px] mb-0 pb-0 flex flex-col">
-                Real Estate professionals tips for defining a price
+                {t("buildingPermit.tipsTitle")}
                 <span className="bg-[#976DD0] w-[40px] h-[7px] rounded-[20px] inline-block"></span>
               </h2>
               <ul className="mt-10">
                 <li className="text-[#47525E] mb-4 text-[16px]">
-                  Should I lower my starting price to attract more leads?
+                  {t("buildingPermit.questions.lowerPrice")}
                 </li>
                 <li className="text-[#47525E]  mb-4 text-[16px]">
-                  How to define the price of my property?
+                  {t("buildingPermit.questions.definePrice")}
                 </li>
                 <li className="text-[#47525E]  mb-4 text-[16px]">
-                  Why should I work with a real estate professional for selling
-                  my property?
+                  {t("buildingPermit.questions.workWithPro")}
                 </li>
                 <li className="text-[#47525E]  mb-4 text-[16px]">
-                  Why list my property on Bookaroo ?
+                  {t("realEstatePros.qListOnBookaroo")}
                 </li>
               </ul>
             </div>
@@ -178,13 +177,13 @@ const BuildingPermit = () => {
           <div className="container px-8 mx-auto xl:px-5 ">
             <div className="max-w-[800px] w-[100%]  mx-auto">
               <h2 className="text-[#47525E] text-[28px] mb-0 pb-0  text-center">
-                Planning to sell your property?
+                {t("buildingPermit.ctaTitle")}
               </h2>
               <div className="flex items-center justify-center mt-4">
                 <button className="bg-[#976DD0] text-[14px] rounded-[50px] py-[8px] px-[20px] text-white font-bold "
                   onClick={(e) => navigate("/getquote-form?type=Building Permits")}
                 >
-                  Get a free quote
+                  {t("realEstatePros.getFreeQuote")}
                 </button>
               </div>
             </div>
@@ -196,7 +195,7 @@ const BuildingPermit = () => {
             <div className="grid grid-cols-12 max-w-[800px] w-[100%]  mx-auto">
               <div className="col-span-12  mb-[40px]">
                 <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                  Historical transactions in biggest French cities
+                  {t("realEstatePros.historicalTransactionsTitle")}
                   <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                 </h2>
               </div>
@@ -388,7 +387,7 @@ const BuildingPermit = () => {
             <div className="grid grid-cols-12 max-w-[800px] w-[100%]  mx-auto">
               <div className="col-span-12  mb-[40px]">
                 <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                  Historical transactions in biggest French regions{" "}
+                  {t("buildingPermit.historicalRegionsTitle")}
                   <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
                 </h2>
               </div>
@@ -576,7 +575,7 @@ const BuildingPermit = () => {
               <div className="col-span-12">
                 <div className="flex items-center justify-center mx-auto mt-10">
                   <button className="border border-[#976DD0] text-[#47525E] font-[600] rounded-[50px] py-[8px] px-10">
-                    See more regions
+                    {t("buttons.seeMore")}
                   </button>
                 </div>
               </div>

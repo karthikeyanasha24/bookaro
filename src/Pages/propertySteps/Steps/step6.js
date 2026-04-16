@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
@@ -23,6 +24,7 @@ const Step6 = ({
   page,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [errors, setErrors] = useState({ image: "", amenity: "" });
   const user = useSelector((state) => state.user);
   const [draggedIndex, setDraggedIndex] = useState(null);
@@ -32,7 +34,7 @@ const Step6 = ({
   const imageResult = (e) => {
     const uploadedImages = Array.from(e.value);
     if (uploadedImages?.length > 10)
-      toast.error("Maximum 10 images allowed to add");
+      toast.error(t("propertySteps.step6.errors.maximumImages"));
 
     const newImages = uploadedImages.map((file) => ({
       file: typeof file === "string" ? file : file.file,
@@ -109,7 +111,7 @@ const Step6 = ({
 
   const validate = () => {
     if (formData?.images?.length === 0) {
-      setErrors({ ...errors, image: "Upload minimum one image." });
+      setErrors({ ...errors, image: t("propertySteps.step6.errors.minimumOneImage") });
       return false;
     }
     return true;
@@ -173,23 +175,21 @@ const Step6 = ({
         <div className=" lg:overflow-auto lg:h-[500px] h-[100%] overflow-unset lg:p-8 p-4 lg:py-10">
           <div className="flex justify-between items-center gap-3 xl:mb-[50px] lg:mb-[50px] mb-[40px]">
             <h4 className="text-[#47525E] text-[24px] font-[600] ">
-              Add up to 10 nice pictures of your property
+              {t("propertySteps.step6.addUpTo10Pictures")}
               <span className="text-[#47525E] font-[400] block text-[14px]">
-                *Mandatory information
+                {t("propertySteps.step6.mandatoryInformation")}
               </span>
             </h4>
           </div>
           <div className="md:max-w-[500px] w-[100%]">
             <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-              Your pictures
+              {t("propertySteps.step6.yourPictures")}
             </label>
             <div className="font-[400] text-[16px] text-[#47525E] mb-3">
-              Make sure you have given access to your photos. The size of the
-              image must not exceed 10MB. Supported formats are jpeg, png, heic.
+              {t("propertySteps.step6.photosAccessInfo")}
             </div>
             <div className="font-[400] text-[16px] text-[#47525E] mb-7">
-              You can also change the position of the image by drag and drop or
-              just by a single click on the start of image itself
+              {t("propertySteps.step6.reorderInfo")}
             </div>
           </div>
 
@@ -213,7 +213,7 @@ const Step6 = ({
                       src="/assets/img/pngtree-vector-star-icon-png-image_924829.jpg"
                       className="me-2 w-[25px]"
                     />
-                    Photo de couverture
+                    {t("propertySteps.step6.coverPhoto")}
                   </h5>
                 </div>
                 <div className="flex justify-between">
@@ -228,7 +228,7 @@ const Step6 = ({
                     className="rounded py-2 text-[#5A5A5A] text-[12px] bg-transparent select_checkbox"
                     defaultValue={formData?.images[0]?.amenity || ""}
                   >
-                    <option value="">Select Amenity...</option>
+                    <option value="">{t("propertySteps.step6.selectAmenity")}</option>
                     {amenitiesOptions.map((amenity) => (
                       <option key={amenity.id} value={amenity.value}>
                         {amenity.name}
@@ -274,9 +274,9 @@ const Step6 = ({
                   <img
                     src={"/assets/img/icons/star-w.png"}
                     className="w-[25px]"
-                    alt="Favorite"
+                    alt={t("propertySteps.step6.favorite")}
                     data-tooltip-id="infoTooltip"
-                    data-tooltip-content={`Make this image as Main Image.`}
+                    data-tooltip-content={t("propertySteps.step6.makeMainImage")}
                   />
                   <Tooltip
                     id="infoTooltip"
@@ -297,7 +297,7 @@ const Step6 = ({
                     className="rounded py-2 text-[#5A5A5A] text-[12px] bg-transparent"
                     defaultValue={image.amenity || ""}
                   >
-                    <option value="">Select Amenity...</option>
+                    <option value="">{t("propertySteps.step6.selectAmenity")}</option>
                     {amenitiesOptions.map((amenity) => (
                       <option key={amenity.id} value={amenity.value}>
                         {amenity.name}
@@ -350,7 +350,7 @@ const Step6 = ({
                     {formData?.images?.length > 10
                       ? 10
                       : formData?.images?.length}{" "}
-                    pictures / 10
+                    {t("propertySteps.step6.picturesCount")}
                   </p>
                 </div>
               </div>
@@ -364,7 +364,7 @@ const Step6 = ({
               onClick={save}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save change
+              {t("propertySteps.step6.saveChange")}
             </button>
           </div>
         ) : (
@@ -373,19 +373,19 @@ const Step6 = ({
               onClick={draftsave}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
             >
-              Save As Draft
+              {t("propertySteps.step6.saveAsDraft")}
             </button>
             <button
               onClick={handleBack}
               className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
             >
-              Back
+              {t("common.back")}
             </button>
             <button
               onClick={handleNext}
               className="btn text-white bg-[#48464a] rounded-full px-10 py-4"
             >
-              Next
+              {t("common.next")}
             </button>
           </div>
         )}

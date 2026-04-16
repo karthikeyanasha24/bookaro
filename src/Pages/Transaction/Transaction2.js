@@ -3,9 +3,11 @@ import { Calendar } from "react-multi-date-picker";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 
 
 const Transaction2 = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
 
@@ -61,14 +63,14 @@ const Transaction2 = () => {
       date: new Date(date).toISOString(),
       times: slots[date]
     }));
-    alert("Slots saved! Check console for details.");
+    alert(t("transaction.slotsSaved"));
   };
 
   return (
     <PageLayout>
       <div className="App p-5">
-        Transaction2
-        <h2 className="text-center mb-3">Select Visit Slots</h2>
+        {t("transaction.page2Title")}
+        <h2 className="text-center mb-3">{t("transaction.selectVisitSlots")}</h2>
 
         {/* Calendar for selecting multiple dates */}
         <Calendar
@@ -82,7 +84,7 @@ const Transaction2 = () => {
         {/* Display selected dates & time slots */}
         {selectedDates.length > 0 && (
           <div className="mt-4">
-            <h3>Selected Dates & Time Slots:</h3>
+            <h3>{t("transaction.selectedDatesAndTimeSlots")}</h3>
             {selectedDates.map((date) => (
               <div key={date} className="mb-3 border p-3 rounded">
                 <strong>{date}</strong>
@@ -90,7 +92,7 @@ const Transaction2 = () => {
                   onClick={() => addTimeSlot(date)}
                   className="ml-3 px-2 py-1 bg-blue-500 text-white rounded"
                 >
-                  + Add Slot
+                  + {t("transaction.addSlot")}
                 </button>
 
                 {/* Time Slot Inputs */}
@@ -127,7 +129,7 @@ const Transaction2 = () => {
           onClick={saveSlots}
           className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
         >
-          Save Slots
+          {t("transaction.saveSlots")}
         </button>
       </div>
     </PageLayout>

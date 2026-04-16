@@ -175,18 +175,18 @@ const BuyerFile = () => {
 
   const BuyOption =
     [
-      { name: "Alone", value: "alone" },
-      { name: "Two", value: "two" },
-      { name: "SCI", value: "sci" },
+      { name: t("buyerFile.buyOptions.alone"), value: "alone" },
+      { name: t("buyerFile.buyOptions.two"), value: "two" },
+      { name: t("buyerFile.buyOptions.sci"), value: "sci" },
     ]
 
   const InvestOption =
     [
-      { name: "Primary residence", value: "primary" },
-      { name: "Secondary residence", value: "secondary" },
-      { name: "Rental property", value: "rentalProperty" },
-      { name: "Business", value: "business" },
-      { name: "Mix", value: "mix" },
+      { name: t("buyerFile.investOptions.primaryResidence"), value: "primary" },
+      { name: t("buyerFile.investOptions.secondaryResidence"), value: "secondary" },
+      { name: t("buyerFile.investOptions.rentalProperty"), value: "rentalProperty" },
+      { name: t("buyerFile.investOptions.business"), value: "business" },
+      { name: t("buyerFile.investOptions.mix"), value: "mix" },
     ]
 
   return (
@@ -198,28 +198,25 @@ const BuyerFile = () => {
               onClick={() => navigate("/project")}
               className="text-[#47525E] cursor-pointer after"
             >
-              My Project
+              {t("project.myProject")}
               <span className="mx-[4px]">|</span>
             </li>
             <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-              Buyer file
+              {t("project.buyerFile")}
             </li>
           </ul>
 
           <div className="w-full ">
             <div>
               <h4 className="text-[#47525E] text-center mb-0 text-[17px]">
-                Buyer file
+                {t("project.buyerFile")}
               </h4>
               <h2 className="text-[#47525E] font-[600] text-[24px] mt-1 text-center">
-                Save time and find your next home quicker
+                {t("buyerFile.saveTimeFindHome")}
               </h2>
               <div className="max-w-2xl mx-auto bg-[#976dd0b5]  p-5 rounded-[12px] flex mt-7">
                 <p className=" text-white w-[90%]">
-                  {" "}
-                  None of these documents will be shared publicly. Our real
-                  estate credit broker will use them to analyze the financing
-                  capacity of your real estate project.
+                  {t("buyerFile.documentsPrivacyNote")}
                 </p>
                 <FaCircleInfo className="w-[50px] text-[35px] ms-5" />
               </div>
@@ -234,13 +231,13 @@ const BuyerFile = () => {
                   onClick={() => setDocument("document")}
                   className={`rounded-full border-2 border-[#a177d6]  ${document === 'document' ? 'bg-primary hover:opacity-90 text-white' : 'text-[#a177d6]'}  font-semibold px-6 py-2`}
                 >
-                  Document based
+                  {t("buyerFile.documentBased")}
                 </button>
                 <button
                   onClick={() => setDocument("declarative")}
                   className={`rounded-full border-2 border-[#a177d6]  ${document === 'declarative' ? 'bg-primary hover:opacity-90 text-white' : 'text-[#a177d6]'}  font-semibold px-6 py-2`}
                 >
-                  Declarative
+                  {t("buyerFile.declarative")}
                 </button>
               </div>
 
@@ -250,20 +247,19 @@ const BuyerFile = () => {
                   <>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px] mb-5">
-                        Personal information
+                        {t("buyerFile.personalInformation")}
                       </h2>
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Proof of identity
+                              {t("buyerFile.proofOfIdentity")}
                             </h4>
                             <p className="text-[#47525E] my-2 text-[13px]">
-                              Legal document required to visit a property and
-                              also bring trust to seller.
+                              {t("buyerFile.identityProofDescription")}
                             </p>
                             <p className="text-[#47525E] italic text-[13px] h-[36px]">
-                              Could be an identity card or passport.
+                              {t("buyerFile.identityProofExamples")}
                             </p>
                           </div>
                           {form?.identityProof?.length > 0 &&
@@ -280,7 +276,7 @@ const BuyerFile = () => {
                                     onClick={() => viewDoc(itm.fileName)}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Preview
+                                    {t("buttons.preview")}
                                   </p>
                                   <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                     {/* Edit */}
@@ -291,7 +287,7 @@ const BuyerFile = () => {
                                     }
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Delete
+                                    {t("common.delete")}
                                   </p>
                                 </div>
                               </div>
@@ -300,7 +296,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full cursor-pointer">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold  absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5 pointer">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -319,16 +315,13 @@ const BuyerFile = () => {
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Proof of family situation
+                              {t("buyerFile.proofOfFamilySituation")}
                             </h4>
                             <p className="text-[#47525E] my-2 text-[13px]">
-                              This document will help better understand your
-                              situation
+                              {t("buyerFile.familySituationDescription")}
                             </p>
                             <p className="text-[#47525E] italic text-[13px] h-[36px]">
-                              Could be marriage certificate, civil partnership
-                              certificate (issued by your local Mairie), family
-                              record book.
+                              {t("buyerFile.familySituationExamples")}
                             </p>
                           </div>
                           {form?.familySituation?.length > 0 &&
@@ -345,7 +338,7 @@ const BuyerFile = () => {
                                     onClick={() => viewDoc(itm.fileName)}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Preview
+                                    {t("buttons.preview")}
                                   </p>
                                   <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                     {/* Edit */}
@@ -356,7 +349,7 @@ const BuyerFile = () => {
                                     }
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Delete
+                                    {t("common.delete")}
                                   </p>
                                 </div>
                               </div>
@@ -365,7 +358,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full group">
                                 <p className="text-[#976DD0]  text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border-b border-transparent group-hover:border-[#976DD0]">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -384,15 +377,13 @@ const BuyerFile = () => {
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Proof of current address
+                              {t("buyerFile.proofOfCurrentAddress")}
                             </h4>
                             <p className="text-[#47525E] my-2 text-[13px]">
-                              This document will help better understand your
-                              situation
+                              {t("buyerFile.addressProofDescription")}
                             </p>
                             <p className="text-[#47525E] italic text-[13px] h-[36px]">
-                              Could be a less than 3 months old telephone, water
-                              or electricity bill.
+                              {t("buyerFile.addressProofExamples")}
                             </p>
                           </div>
                           {form?.addressProof?.length > 0 &&
@@ -409,7 +400,7 @@ const BuyerFile = () => {
                                     onClick={() => viewDoc(itm.fileName)}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Preview
+                                    {t("buttons.preview")}
                                   </p>
                                   <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                     {/* Edit */}
@@ -418,7 +409,7 @@ const BuyerFile = () => {
                                     onClick={() => deleteDoc(i, "addressProof")}
                                     className="cursor-pointer text-[#383A3D] text-[14px]"
                                   >
-                                    Delete
+                                    {t("common.delete")}
                                   </p>
                                 </div>
                               </div>
@@ -427,7 +418,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -446,22 +437,20 @@ const BuyerFile = () => {
                     </div>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px] mt-10">
-                        Resources and income
+                        {t("buyerFile.resourcesAndIncome")}
                       </h2>
                       <p className="text-black mb-5 text-[12px] max-w-2xl">
-                        These documents must be provided for each co-borrower
-                        and enable to check that your accounts are properly kept
-                        and that you are in good financial health overall.
+                        {t("buyerFile.resourcesAndIncomeDescription")}
                       </p>
 
                       <h3 className="text-black underline font-semibold mb-5">
-                        Your financial situation
+                        {t("buyerFile.yourFinancialSituation")}
                       </h3>
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Last 3 Salary slips
+                              {t("buyerFile.lastThreeSalarySlips")}
                             </h4>
                           </div>
                           {form?.salarySlips?.length > 0 && (
@@ -480,7 +469,7 @@ const BuyerFile = () => {
                                         onClick={() => viewDoc(itm.fileName)}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Preview
+                                        {t("buttons.preview")}
                                       </p>
                                       <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                         {/* Edit */}
@@ -491,7 +480,7 @@ const BuyerFile = () => {
                                         }
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Delete
+                                        {t("common.delete")}
                                       </p>
                                     </div>
                                   </div>
@@ -503,7 +492,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -521,7 +510,7 @@ const BuyerFile = () => {
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Last 3 bank statements
+                              {t("buyerFile.lastThreeBankStatements")}
                             </h4>
                           </div>
                           {form?.bankStatement?.length > 0 && (
@@ -540,7 +529,7 @@ const BuyerFile = () => {
                                         onClick={() => viewDoc(itm.fileName)}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Preview
+                                        {t("buttons.preview")}
                                       </p>
                                       <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                         {/* Edit */}
@@ -551,7 +540,7 @@ const BuyerFile = () => {
                                         }
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Delete
+                                        {t("common.delete")}
                                       </p>
                                     </div>
                                   </div>
@@ -563,7 +552,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -581,7 +570,7 @@ const BuyerFile = () => {
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Last 2 tax notices
+                              {t("buyerFile.lastTwoTaxNotices")}
                             </h4>
                           </div>
                           {form?.taxNotice?.length > 0 && (
@@ -600,7 +589,7 @@ const BuyerFile = () => {
                                         onClick={() => viewDoc(itm.fileName)}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Preview
+                                        {t("buttons.preview")}
                                       </p>
                                       <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                         {/* Edit */}
@@ -611,7 +600,7 @@ const BuyerFile = () => {
                                         }
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Delete
+                                        {t("common.delete")}
                                       </p>
                                     </div>
                                   </div>
@@ -623,7 +612,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -641,12 +630,10 @@ const BuyerFile = () => {
                         <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-white rounded-[10px] md:mb-0 mb-3">
                           <div className="p-5 border-b border-[#D5D5D5]">
                             <h4 className="text-[#47525E] text-[19px] font-semibold">
-                              Personal contribution
+                              {t("buyerFile.personalContribution")}
                             </h4>
                             <p className="text-[#47525E] mt-2 text-[12px]">
-                              Proof of any personal contribution: home savings
-                              plan (PEL), family loan/donation, inheritance,
-                              etc.
+                              {t("buyerFile.personalContributionDescription")}
                             </p>
                           </div>
                           {form?.personalContribution?.length > 0 && (
@@ -665,7 +652,7 @@ const BuyerFile = () => {
                                         onClick={() => viewDoc(itm.fileName)}
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Preview
+                                        {t("buttons.preview")}
                                       </p>
                                       <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                         {/* Edit */}
@@ -676,7 +663,7 @@ const BuyerFile = () => {
                                         }
                                         className="cursor-pointer text-[#383A3D] text-[14px]"
                                       >
-                                        Delete
+                                        {t("common.delete")}
                                       </p>
                                     </div>
                                   </div>
@@ -688,7 +675,7 @@ const BuyerFile = () => {
                             <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                               <label className="relative  h-full w-full">
                                 <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                  Upload document
+                                  {t("buyerFile.uploadDocument")}
                                 </p>
                                 <input
                                   type="file"
@@ -711,7 +698,7 @@ const BuyerFile = () => {
                   <>
                     <div>
                       <p className="font-medium text-[#4b3869] mb-3">
-                        You want to buy <span className="text-red-600">*</span>
+                        {t("buyerFile.youWantToBuy")} <span className="text-red-600">*</span>
                       </p>
                       <div className="flex flex-wrap gap-3">
                         {BuyOption?.map((item) => {
@@ -720,12 +707,12 @@ const BuyerFile = () => {
                           </button>
                         })}
                       </div>
-                      {submited && declartiveForm?.BuyOption == "" && <span className="text-red-600">Please select any buy option</span>}
+                      {submited && declartiveForm?.BuyOption == "" && <span className="text-red-600">{t("buyerFile.selectBuyOption")}</span>}
                     </div>
 
                     <div>
                       <p className="font-medium text-[#4b3869] mb-3">
-                        You want to invest in <span className="text-red-600">*</span>
+                        {t("buyerFile.youWantToInvestIn")} <span className="text-red-600">*</span>
                       </p>
                       <div className="flex flex-wrap gap-3">
                         {InvestOption?.map((item, index) => {
@@ -734,28 +721,28 @@ const BuyerFile = () => {
                           </button>
                         })}
                       </div>
-                      {submited && declartiveForm?.InvestOption == "" && <span className="text-red-600	">Please select any Invest option</span>}
+                      {submited && declartiveForm?.InvestOption == "" && <span className="text-red-600	">{t("buyerFile.selectInvestOption")}</span>}
                     </div>
 
                     <div>
                       <p className="font-medium text-[#4b3869] mb-3">
-                        In the city of <span className="text-red-600">*</span>
+                        {t("buyerFile.inTheCityOf")} <span className="text-red-600">*</span>
                       </p>
                       <input
                         type="text"
                         value={declartiveForm?.postalCode}
-                        placeholder={t("forms.cityPostalCode")}
+                        placeholder={t("buyerFile.cityOrPostalCode")}
                         className="w-full max-w-md rounded-md border border-[#a177d6] px-4 py-2 outline-none"
                         onChange={(e) => setdeclartiveForm({ ...declartiveForm, postalCode: e.target.value })}
                       />
                     </div>
-                    {submited && declartiveForm?.postalCode == "" && <span className="text-red-600">City or postal code is required</span>}
+                    {submited && declartiveForm?.postalCode == "" && <span className="text-red-600">{t("buyerFile.cityOrPostalRequired")}</span>}
                     <div className="mt-20 flex items-center justify-end">
                       <button
                         onClick={() => handleSubmit(form, "declarative")}
                         className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                       >
-                        Save
+                        {t("common.save")}
                       </button>
                     </div>
                   </>

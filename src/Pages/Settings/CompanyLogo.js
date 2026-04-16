@@ -7,9 +7,11 @@ import PageLayout from '../../components/global/PageLayout';
 import ApiClient from '../../methods/api/apiClient';
 import loader from '../../methods/loader';
 import methodModel from '../../methods/methods';
+import { useTranslation } from 'react-i18next';
 import CompanySidebar from './CompanySidebar';
 
 const CompanyLogo = () => {
+    const { t } = useTranslation();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch()
     const [formData, setFormData] = useState({
@@ -30,7 +32,7 @@ const CompanyLogo = () => {
         let file = files.item(0);
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!allowedTypes.includes(file.type)) {
-            return toast.error("Only JPG and PNG images are allowed.");
+            return toast.error(t("settings.imageTypesLogoCover"));
         }
         loader(true);
         ApiClient.postFormData('upload/image', { file: file }).then(res => {
@@ -94,7 +96,7 @@ const CompanyLogo = () => {
                             <CompanySidebar />
                             <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                                 <h2 className="text-[#47525E] text-[26px] font-bold mb-6">
-                                    Manage your company profile
+                                    {t("settings.manageCompanyProfile")}
                                 </h2>
                                 <div className="p-10 xl:px-14 lg:px-8 px-8 h-[92%] border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
                                     <div className='flex  flex-col h-full'>
@@ -124,7 +126,7 @@ const CompanyLogo = () => {
                                                     onClick={handleLogo}
                                                     style={{ cursor: 'pointer' }}
                                                 >
-                                                    Edit Logo
+                                                    {t("settings.editLogo")}
                                                 </span>
                                                 {formData?.companyLogo && (
                                                     <button
@@ -160,7 +162,7 @@ const CompanyLogo = () => {
                                                     onClick={handleCover}
                                                     style={{ cursor: 'pointer' }}
                                                 >
-                                                    Edit Cover Image
+                                                    {t("settings.editCoverImage")}
                                                 </span>
                                                 {formData?.coverImage && (
                                                     <button
@@ -178,7 +180,7 @@ const CompanyLogo = () => {
                                                     type="submit"
                                                     className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                                                 >
-                                                    Save
+                                                    {t("common.save")}
                                                 </button>
                                             </div>
                                         </form>

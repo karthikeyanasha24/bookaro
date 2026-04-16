@@ -56,7 +56,7 @@ const SellerFile = () => {
     const maxSizeInBytes = maxSize * 1024 * 1024; // 10MB
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error(`Each file must be smaller than ${maxSize}MB`);
+      toast.error(t("renterFile.eachFileMaxSize", { max: maxSize }));
       return (e.target.value = "");
     }
 
@@ -126,7 +126,7 @@ const SellerFile = () => {
       ApiClient.put("property/editProperty", payload)
         .then((res) => {
           if (res.success) {
-            toast.success("Seller File Updated Successfully");
+            toast.success(t("sellerFile.updatedSuccessfully"));
           }
         })
         .catch((err) => { })
@@ -202,26 +202,23 @@ const SellerFile = () => {
 
   const personalInfo = [
     {
-      name: "Proof of identity",
-      description:
-        "Legal document required to visit a property and also bring trust to seller.",
-      description2: "Could be an identity card or passport.",
+      nameKey: "renterFile.proofOfIdentity",
+      descriptionKey: "sellerFile.personalInfo.identityProof.description",
+      description2Key: "renterFile.identityProofExamples",
       key: "identityProof",
       maxLimit: 1,
     },
     {
-      name: "Proof of family situation",
-      description: "This document will help better understand your situation",
-      description2:
-        "Could be marriage certificate, civil partnership certificate (issued by your local Mairie), family record book.",
+      nameKey: "sellerFile.personalInfo.familySituation.title",
+      descriptionKey: "sellerFile.personalInfo.familySituation.description",
+      description2Key: "sellerFile.personalInfo.familySituation.examples",
       key: "familySituation",
       maxLimit: 1,
     },
     {
-      name: "Proof of current address",
-      description: "This document will help better understand your situation",
-      description2:
-        "Could be a less than 3 months old telephone, water or electricity bill.",
+      nameKey: "renterFile.proofOfCurrentAddress",
+      descriptionKey: "renterFile.addressProofDescription",
+      description2Key: "renterFile.addressProofExamples",
       key: "addressProof",
       maxLimit: 1,
     },
@@ -229,52 +226,50 @@ const SellerFile = () => {
 
   const propertyInfo = [
     {
-      name: "The Carrez law surface certificate",
-      description: "Mandatory document",
+      nameKey: "sellerFile.propertyInfo.carrezLaw.title",
+      descriptionKey: "sellerFile.propertyInfo.common.mandatory",
       key: "carrezLaw",
       maxLimit: 10,
     },
     {
-      name: "Technical Diagnostic File",
-      description:
-        "DPE, asbestos, termites, merule, gas, lead, ERP, electricity",
+      nameKey: "sellerFile.propertyInfo.technicalDiagnostic.title",
+      descriptionKey: "sellerFile.propertyInfo.technicalDiagnostic.description",
       key: "technicalDiagnostic",
       maxLimit: 1,
     },
     {
-      name: "Co-ownership regulations",
-      description: "Documents describing the rules governing joint ownership..",
+      nameKey: "sellerFile.propertyInfo.coOwnership.title",
+      descriptionKey: "sellerFile.propertyInfo.coOwnership.description",
       key: "coOwnership",
       maxLimit: 10,
     },
     {
-      name: "Personal contribution",
-      description:
-        "Proof of any personal contribution: home savings plan (PEL), family loan/donation, inheritance, etc.",
+      nameKey: "sellerFile.propertyInfo.personalContribution.title",
+      descriptionKey: "sellerFile.propertyInfo.personalContribution.description",
       key: "personalContribution",
       maxLimit: 10,
     },
     {
-      name: "The condominium maintenance booklet",
-      description: "Condominium maintenance booklet",
+      nameKey: "sellerFile.propertyInfo.condominiumBooklet.title",
+      descriptionKey: "sellerFile.propertyInfo.condominiumBooklet.description",
       key: "condominiumBooklet",
       maxLimit: 10,
     },
     {
-      name: "Minutes of general meetings of co-owners",
-      description: "Ideally the last 3 years of general meetings.",
+      nameKey: "sellerFile.propertyInfo.minutesOfGeneral.title",
+      descriptionKey: "sellerFile.propertyInfo.minutesOfGeneral.description",
       key: "minutesOfGeneral",
       maxLimit: 10,
     },
     {
-      name: "Title deed",
-      description: "Mandatory document",
+      nameKey: "sellerFile.propertyInfo.titleDeed.title",
+      descriptionKey: "sellerFile.propertyInfo.common.mandatory",
       key: "titleDeed",
       maxLimit: 10,
     },
     {
-      name: "Any other relevant document",
-      description: "Rental contract for a propery sold rented...",
+      nameKey: "sellerFile.propertyInfo.otherDocs.title",
+      descriptionKey: "sellerFile.propertyInfo.otherDocs.description",
       key: "otherDocs",
       maxLimit: 10,
     },
@@ -290,22 +285,21 @@ const SellerFile = () => {
               onClick={() => navigate("/project")}
               className="text-[#47525E] cursor-pointer after"
             >
-              My Project
+              {t("project.myProject")}
               <span className="mx-[4px]">|</span>
             </li>
             <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-              {" "}
-              Seller file
+              {t("project.sellerFile")}
             </li>
           </ul>
 
           <div className="w-full ">
             <div>
               <h4 className="text-[#47525E] text-center mb-0 text-[17px]">
-                Seller file
+                {t("project.sellerFile")}
               </h4>
               <h2 className="text-[#47525E] font-[600] text-[24px] mt-1 text-center">
-                Save time and find your next home quicker
+                {t("sellerFile.heroTitle")}
               </h2>
               <div className="grid grid-cols-12 gap-10">
                 <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-[#8f3ead14] p-3 rounded-[12px] mt-7 relative">
@@ -385,7 +379,7 @@ const SellerFile = () => {
 
                       {!selectProperty ? (
                         <div className="text-red-500 mt-2 text-center">
-                          Select Property for uploading document
+                          {t("sellerFile.selectPropertyForUpload")}
                         </div>
                       ) : (
                         <></>
@@ -393,15 +387,14 @@ const SellerFile = () => {
                     </>
                   ) : (
                     <div className="text-red-500 mt-2 text-center">
-                      Add property for uploading document
+                      {t("sellerFile.addPropertyForUpload")}
                     </div>
                   )}
                 </div>
 
                 <div className="2xl:col-span-4 lg:col-span-6 col-span-12 bg-[#976dd0b5] p-5 rounded-[12px] flex mt-7">
                   <p className="text-white w-[90%]">
-                    None of these documents will be shared publicly. Our real estate credit broker will use them to analyze the financing
-                    capacity of your real estate project.
+                    {t("sellerFile.privacyNote")}
                   </p>
                   <FaCircleInfo className="w-[50px] text-[35px] ms-5" />
                 </div>
@@ -418,7 +411,7 @@ const SellerFile = () => {
                   <>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px]  mb-5">
-                        Personal information
+                        {t("sellerFile.personalInformation")}
                       </h2>
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
                         {propertyLoader ? (
@@ -444,17 +437,17 @@ const SellerFile = () => {
                                 >
                                   <div className="p-5 border-b border-[#D5D5D5]">
                                     <h4 className="text-[#47525E] text-[19px] font-semibold">
-                                      {item.name}
+                                      {t(item.nameKey)}
                                     </h4>
                                     <p className="text-[#47525E] my-2 text-[13px]">
-                                      {item.description}
+                                      {t(item.descriptionKey)}
                                     </p>
                                     <p className="text-[#47525E] italic text-[12px] ">
-                                      {item.description2}
+                                      {item.description2Key ? t(item.description2Key) : ""}
                                     </p>
                                   </div>
-                                  {fileList(item.key).map((itm, i) => (
-                                    <div className="p-5 flex justify-between md:flex-row flex-col md:items-center items-start">
+                                  {fileList(item.key).map((itm) => (
+                                    <div key={itm.id} className="p-5 flex justify-between md:flex-row flex-col md:items-center items-start">
                                       <div className="flex items-center">
                                         <BsFiletypePdf className="text-[24px] me-3" />
                                         <span className="text-[#383A3D] text-[12px]">
@@ -466,7 +459,7 @@ const SellerFile = () => {
                                           onClick={() => viewDoc(itm.fileName)}
                                           className="cursor-pointer text-[#383A3D] text-[14px]"
                                         >
-                                          Preview
+                                          {t("common.preview")}
                                         </p>
                                         <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                           {/* Edit */}
@@ -475,7 +468,7 @@ const SellerFile = () => {
                                           onClick={() => deleteDoc(itm.id, item.key)}
                                           className="cursor-pointer text-[#383A3D] text-[14px]"
                                         >
-                                          Delete
+                                          {t("common.delete")}
                                         </p>
                                       </div>
                                     </div>
@@ -484,7 +477,7 @@ const SellerFile = () => {
                                     <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                                       <label className="relative  h-full w-full">
                                         <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                          Upload document
+                                          {t("renterFile.uploadDocument")}
                                         </p>
                                         <input
                                           type="file"
@@ -507,12 +500,10 @@ const SellerFile = () => {
                     </div>
                     <div>
                       <h2 className="text-[#000000] font-[600] text-[22px] mt-24 ">
-                        Property legal information
+                        {t("sellerFile.propertyLegalInformation")}
                       </h2>
                       <p className="text-black mb-5 text-[12px] max-w-2xl">
-                        These documents must be provided for each co-borrower and
-                        enable to check that your accounts are properly kept and that
-                        you are in good financial health overall.
+                        {t("sellerFile.propertyLegalDescription")}
                       </p>
 
                       <div className="grid grid-cols-12 md:gap-10 gap-0">
@@ -539,16 +530,16 @@ const SellerFile = () => {
                                 >
                                   <div className="p-5 border-b border-[#D5D5D5]">
                                     <h4 className="text-[#47525E] text-[19px] font-semibold">
-                                      {item.name}
+                                      {t(item.nameKey)}
                                     </h4>
                                     <p className="text-[#47525E] mt-2 text-[12px]">
-                                      {item.description}
+                                      {t(item.descriptionKey)}
                                     </p>
                                   </div>
                                   {fileList(item.key)?.length > 0 && (
                                     <ul className="p-5">
-                                      {fileList(item.key)?.map((itm, i) => (
-                                        <li className="mb-3 ">
+                                      {fileList(item.key)?.map((itm) => (
+                                        <li key={itm.id} className="mb-3 ">
                                           <div className=" flex justify-between md:flex-row flex-col md:items-center items-start md:mb-0 mb-5">
                                             <div className="flex items-center">
                                               <BsFiletypePdf className="text-[24px] me-3 text-[#ff0000]" />
@@ -561,7 +552,7 @@ const SellerFile = () => {
                                                 onClick={() => viewDoc(itm.fileName)}
                                                 className="cursor-pointer text-[#383A3D] text-[14px]"
                                               >
-                                                Preview
+                                                {t("common.preview")}
                                               </p>
                                               <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                                                 {/* Edit */}
@@ -572,7 +563,7 @@ const SellerFile = () => {
                                                 }
                                                 className="cursor-pointer text-[#383A3D] text-[14px]"
                                               >
-                                                Delete
+                                                {t("common.delete")}
                                               </p>
                                             </div>
                                           </div>
@@ -584,7 +575,7 @@ const SellerFile = () => {
                                     <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                                       <label className="relative  h-full w-full">
                                         <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                                          Upload document
+                                          {t("renterFile.uploadDocument")}
                                         </p>
                                         <input
                                           type="file"

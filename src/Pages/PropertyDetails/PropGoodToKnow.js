@@ -2,10 +2,12 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
+import { useTranslation } from "react-i18next";
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { formatCurrency } from "../../models/string.model";
 
 const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
+    const { t } = useTranslation();
 
     let PropertyCount = Math.round(gtk.PropertyCount);
     let gardenPercent = Math.round(gtk.gardenPercent);
@@ -31,7 +33,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
             >
                 <Typography>
                     <span className="py-0 text-[#976DD0] font-[600] text-[17px] p-4 w-full text-left flex items-center justify-between">
-                        Good to know
+                        {t("propertyTimeline.tabs.goodToKnow")}
                     </span>
                 </Typography>
             </AccordionSummary>
@@ -40,7 +42,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                     <ul className="">
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                Average price per m2 in the neighborhood
+                                {t("propertyDetails.averagePricePerSqmNeighborhood")}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">
@@ -50,7 +52,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                         </li>
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                Average rent per m2 in the neighborhood
+                                {t("propertyDetails.averageRentPerSqmNeighborhood")}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">
@@ -60,7 +62,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                         </li>
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                User looking in this area
+                                {t("propertyDetails.usersLookingInArea")}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">
@@ -70,7 +72,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                         </li>
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                User looking for same type of property
+                                {t("propertyDetails.usersLookingSameType")}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">
@@ -80,7 +82,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                         </li>
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                {terracePercent}% of properties with a terrace{" "}
+                                {t("propertyDetails.propertiesWithTerrace", { percent: terracePercent })}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">
@@ -90,7 +92,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                         </li>
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                {gardenPercent}% of properties with a garden{" "}
+                                {t("propertyDetails.propertiesWithGarden", { percent: gardenPercent })}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">
@@ -100,7 +102,7 @@ const PropGoodToKnow = ({ detail, gtk, acrArr, handleAccordionChange }) => {
                         </li>
                         <li className="flex items-center justify-between my-3">
                             <p className="text-[#47525E] text-[17px] w-[80%]">
-                                Number of {formatCurrency(averageRooms)} rooms in the neighborhood{" "}
+                                {t("propertyDetails.roomsInNeighborhood", { rooms: formatCurrency(averageRooms) || 0 })}
                             </p>
                             <h6 className="bg-[#B9A2D8] p-1 rounded-[4px]">
                                 <p className="bg-[#976DD0] p-1 text-center rounded-[4px] text-white w-[100px] font-[600] font-[16px] ">

@@ -2,6 +2,7 @@ import { Dialog } from "@headlessui/react";
 import moment from "moment";
 import { Fragment, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTranslation } from "react-i18next";
 import { AiOutlineYoutube } from "react-icons/ai";
 import { GoLightBulb } from "react-icons/go";
 import { IoMdCheckmark } from "react-icons/io";
@@ -30,6 +31,7 @@ const LeadCards = ({
   setSelectedProperty,
   totalCard,
 }) => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const [isSlot, setIsSlot] = useState();
   const activePlan = useSelector((state) => state.activePlan);
@@ -204,24 +206,24 @@ const LeadCards = ({
                 as="h3"
                 className="text-lg font-medium text-black mt-3"
               >
-                {capLetter(transfer?.propertyTitle || "property Title")}
+                {capLetter(transfer?.propertyTitle || t("transactionOwner.propertyTitleFallback"))}
               </Dialog.Title>
               <div className="mt-4 text-sm text-black/75">
                 <div className="flex justify-between">
-                  <span className="font-semibold">Transferred To:</span>
+                  <span className="font-semibold">{t("transactionOwner.transferredTo")}:</span>
                   <span>
                     {" "}
                     {capLetter(
-                      transfer?.findInterest?.buyerId?.fullName || "User"
+                      transfer?.findInterest?.buyerId?.fullName || t("transactionOwner.user")
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between mt-2">
-                  <span className="font-semibold">Transferred By:</span>
+                  <span className="font-semibold">{t("transactionOwner.transferredBy")}:</span>
                   <span>{capLetter(user?.fullName)}</span>
                 </div>
                 <div className="flex justify-between mt-2">
-                  <span className="font-semibold">Date of Transfer:</span>
+                  <span className="font-semibold">{t("transactionOwner.dateOfTransfer")}:</span>
                   <span>
                     {dateFormate(
                       transfer?.transferDate || new Date(),
@@ -232,10 +234,10 @@ const LeadCards = ({
               </div>
 
               <div className="mt-4">
-                <p className="font-semibold text-black">Review:</p>
+                <p className="font-semibold text-black">{t("transactionOwner.review")}:</p>
                 <p className="mt-2 text-sm text-black/50">
                   {transfer?.review ||
-                    "This property is amazing! The location is perfect, and the amenities are top-notch. I couldn't be happier with the purchase."}
+                    t("transactionOwner.defaultTransferReview")}
                 </p>
               </div>
 
@@ -329,7 +331,7 @@ const LeadCards = ({
             />
           </div>
           <p className="text-black font-[600] text-[20px] text-center my-5 max-w-xs mx-auto">
-            No lead to show for the moment, but be patient they won't be long !
+            {t("transactionOwner.noLeadMessage")}
           </p>
           <div className="mt-10">
             <p className="bg-white w-full h-[2px] max-w-md mx-auto"></p>
@@ -337,12 +339,12 @@ const LeadCards = ({
           <div className="flex items-center justify-center mt-10">
             <GoLightBulb className="text-[24px] me-3" />
             <h3 className="text-[#343F4B] font-[700] text-[20px]">
-              Selling alone training
+              {t("transactionOwner.sellingAloneTraining")}
             </h3>
           </div>
           <div className="p-3  border-[2px] border-[#976DD0] rounded-[12px] bg-white md:max-w-sm max-w-full mx-auto flex justify-between  my-6">
             <p className="text-[#47525E] md:text-[18px] md:w-[60%] text-[16px] w-[50%]">
-              What to check before signing a sale contract?
+              {t("transactionOwner.trainingQuestionOne")}
             </p>
             <div className="flex items-center">
               <AiOutlineYoutube className="text-[30px] text-[#8492A6]" />
@@ -363,7 +365,7 @@ const LeadCards = ({
           </div>
           <div className="p-3  border-[2px] border-[#976DD0] rounded-[12px] bg-white md:max-w-sm max-w-full mx-auto flex justify-between">
             <p className="text-[#47525E] md:text-[18px] md:w-[60%] text-[16px] w-[50%]">
-              How should this signature happen?
+              {t("transactionOwner.trainingQuestionTwo")}
             </p>
             <div className="flex items-center">
               <AiOutlineYoutube className="text-[30px] text-[#8492A6]" />
@@ -389,7 +391,7 @@ const LeadCards = ({
         <>
           <VisitSlotModal
             closeModal={() => setIsSlot()}
-            title={isSlot.title || "Manage Visit Slots"}
+            title={isSlot.title || t("transactionOwner.manageVisitSlots")}
             visitSlot={isSlot?.visitSlots || visitSlots}
             propertyId={selectedProperty?.id || selectedProperty?._id}
             saveSlots={saveSlots}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import AuthLayout from "../../components/AuthLayout";
 import ApiClient from "../../methods/api/apiClient";
@@ -9,6 +10,7 @@ import methodModel from "../../methods/methods";
 import "./style.scss";
 
 const Resetpassword = () => {
+  const { t } = useTranslation();
   const history = useNavigate();
   const [form, setForm] = useState({
     confirmPassword: "",
@@ -77,11 +79,10 @@ const Resetpassword = () => {
           <div className="xl:w-8/12 lg:w-11/12 w-full p-[30px] mx-auto border border-[#976DD0] rounded-[8px] bg-white">
             <div className="mt-5">
               <h1 className="text-[22px] font-semibold text-[#47525E] text-center mb-5 tracking-[.67px] ">
-                New Password
+                {t("authentication.newPassword")}
               </h1>
               <p className="text-[16px] font-normal text-[#333] mt-4  text-center mb-5">
-                Please create a new password that you don’t use on any other
-                site.
+                {t("authentication.newPasswordHelp")}
               </p>
 
               <div className="mb-3">
@@ -94,7 +95,7 @@ const Resetpassword = () => {
                     onChange={(e) =>
                       setForm({ ...form, verificationCode: e.target.value })
                     }
-                    placeholder="Enter Verification Code"
+                    placeholder={t("authentication.enterVerificationCode")}
                     required
                   />
                 </div>
@@ -110,7 +111,7 @@ const Resetpassword = () => {
                     onChange={(e) =>
                       setForm({ ...form, newPassword: e.target.value })
                     }
-                    placeholder="New Password"
+                    placeholder={t("authentication.newPasswordPlaceholder")}
                     required
                   />
                   {eyes.newPassword ? (
@@ -131,7 +132,7 @@ const Resetpassword = () => {
                 </div>
                 {submitted && getError("newPassword").invalid ? (
                   <div className="text-xs text-red-500 mt-[4px]">
-                    Min Length must be 8 characters long
+                    {t("validation.passwordMinLength")}
                   </div>
                 ) : (
                   <></>
@@ -149,7 +150,7 @@ const Resetpassword = () => {
                       onChange={(e) =>
                         setForm({ ...form, confirmPassword: e.target.value })
                       }
-                      placeholder="Confirm Password"
+                      placeholder={t("authentication.confirmPasswordPlaceholder")}
                       required
                     />
                     {eyes.confirmPassword ? (
@@ -176,7 +177,7 @@ const Resetpassword = () => {
                   </div>
                   {submitted && getError("confirmPassword").err.confirmMatch ? (
                     <div className="text-xs text-red-500 mt-[4px] ">
-                      Confirm Password is not matched with New Password
+                      {t("authentication.confirmPasswordMismatch")}
                     </div>
                   ) : (
                     <></>
@@ -187,7 +188,7 @@ const Resetpassword = () => {
                   type="submit"
                   className="h-11 rounded-full w-52 text-center text-[#fff] bg-[#976DD0] font-semibold hover:opacity-80 transition-all signup-btn"
                 >
-                  Save
+                  {t("common.save")}
                 </button>
               </div>
             </div>

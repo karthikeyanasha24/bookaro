@@ -23,9 +23,9 @@ const RealEstateTransactionSearcher = () => {
   const [totalCard, setTotalCard] = useState(0);
 
   const tabs = [
-    { name: "All", value: "" },
-    { name: "Purchase", value: "sale" },
-    { name: "Rental", value: "rent" },
+    { name: t("buttons.all"), value: "" },
+    { name: t("transactionSearcher.purchase"), value: "sale" },
+    { name: t("transactionSearcher.rental"), value: "rent" },
   ];
   const [type, setType] = useState("");
 
@@ -55,14 +55,14 @@ const RealEstateTransactionSearcher = () => {
 
   const manageLeads = [
     {
-      head: "Manage buyer file",
-      subHead: "10 documents added",
+      head: t("transactionSearcher.manageBuyerFile"),
+      subHead: t("transactionSearcher.documentsAdded", { count: 10 }),
       icon: (<MdFolderOpen className="text-white" />),
       toggle: false,
     },
     {
-      head: "Seller files",
-      subHead: "10 documents added",
+      head: t("transactionSearcher.sellerFiles"),
+      subHead: t("transactionSearcher.documentsAdded", { count: 10 }),
       icon: (<MdFolderOpen className="text-white" />),
       toggle: false,
     },
@@ -78,14 +78,14 @@ const RealEstateTransactionSearcher = () => {
               onClick={() => navigate("/project")}
               className="text-[#47525E] cursor-pointer after"
             >
-              My Project<span className="mx-[4px]">|</span>
+              {t("project.myProject")}<span className="mx-[4px]">|</span>
             </li>
             <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-              Home-seeker transaction management
+              {t("transactionSearcher.homeSeekerTransactionManagement")}
             </li>
           </ul>
           <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
-            Monitor your real-estate transactions
+            {t("transactionSearcher.monitorTransactions")}
           </h2>
 
           {/* <div className="grid grid-cols-12 gap-5 mt-10 mb-16">

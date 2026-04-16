@@ -17,6 +17,7 @@ import "./profile.scss";
 
 const Profile = () => {
   const { t } = useTranslation();
+  const user = useSelector((state) => state.user);
   const [openEmail, setOpenEmail] = useState(false)
   function closeModal() {
     setOpenEmail(false)

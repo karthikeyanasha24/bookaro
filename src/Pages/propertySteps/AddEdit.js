@@ -22,8 +22,10 @@ import Step9 from "./Steps/step9";
 import Step14 from "./Steps/step14";
 import { capLetter } from "../../models/string.model";
 import Step13 from "./Steps/step13";
+import { useTranslation } from "react-i18next";
 
 const AddEdit = () => {
+  const { t } = useTranslation();
   const step1 = JSON.parse(localStorage.getItem("step1"));
   const user = useSelector((state) => state.user);
   const [isOpen, setIsOpen] = useState(false);
@@ -106,20 +108,20 @@ const AddEdit = () => {
   });
   const [activeTabIndex, setActiveTabIndex] = useState(parseInt(step) || 0);
   const [steps, setSteps] = useState([
-    "Off-Market",
-    "Type of property",
-    "Address",
-    "Characteristics",
-    "Energy performance",
-    "Photos",
-    "Description",
-    "School",
-    "Price",
-    "Contact",
-    "Revenues",
-    "Expenses",
-    "Renovation Works",
-    "External Ratings",
+    t("propertySteps.steps.offMarket"),
+    t("propertySteps.steps.typeOfProperty"),
+    t("propertySteps.steps.address"),
+    t("propertySteps.steps.characteristics"),
+    t("propertySteps.steps.energyPerformance"),
+    t("propertySteps.steps.photos"),
+    t("propertySteps.steps.description"),
+    t("propertySteps.steps.school"),
+    t("propertySteps.steps.price"),
+    t("propertySteps.steps.contact"),
+    t("propertySteps.steps.revenues"),
+    t("propertySteps.steps.expenses"),
+    t("propertySteps.steps.renovationWorks"),
+    t("propertySteps.steps.externalRatings"),
   ]);
   const [addSteps, setaddSteps] = useState(false);
   const [dropdownOptions, setdropdownOptions] = useState([]);
@@ -134,39 +136,39 @@ const AddEdit = () => {
     const step1 = JSON.parse(localStorage.getItem("step1"));
     const updatedSteps = addSteps
       ? [
-        "Off-Market",
-        "Type of property",
-        "Address",
-        "Characteristics",
-        "Energy performance",
-        "Photos",
-        "Description",
-        "School",
+        t("propertySteps.steps.offMarket"),
+        t("propertySteps.steps.typeOfProperty"),
+        t("propertySteps.steps.address"),
+        t("propertySteps.steps.characteristics"),
+        t("propertySteps.steps.energyPerformance"),
+        t("propertySteps.steps.photos"),
+        t("propertySteps.steps.description"),
+        t("propertySteps.steps.school"),
         step1?.propertyType === "offmarket" || step1?.propertyType === "directory"
-          ? "Off-market Status"
-          : "Price",
-        "Contact",
-        "Revenues",
-        "Expenses",
-        "Renovation Works",
-        "External Ratings",
+          ? t("propertySteps.steps.offMarketStatus")
+          : t("propertySteps.steps.price"),
+        t("propertySteps.steps.contact"),
+        t("propertySteps.steps.revenues"),
+        t("propertySteps.steps.expenses"),
+        t("propertySteps.steps.renovationWorks"),
+        t("propertySteps.steps.externalRatings"),
       ]
       : [
-        "Off-Market",
-        "Type of property",
-        "Address",
-        "Characteristics",
-        "Energy performance",
-        "Photos",
-        "Description",
-        "School",
+        t("propertySteps.steps.offMarket"),
+        t("propertySteps.steps.typeOfProperty"),
+        t("propertySteps.steps.address"),
+        t("propertySteps.steps.characteristics"),
+        t("propertySteps.steps.energyPerformance"),
+        t("propertySteps.steps.photos"),
+        t("propertySteps.steps.description"),
+        t("propertySteps.steps.school"),
         step1?.propertyType === "offmarket" || step1?.propertyType === "directory"
-          ? "Off-market Status"
-          : "Price",
-        "Contact",
+          ? t("propertySteps.steps.offMarketStatus")
+          : t("propertySteps.steps.price"),
+        t("propertySteps.steps.contact"),
       ];
     setSteps(updatedSteps);
-  }, [addSteps]);
+  }, [addSteps, t]);
 
   const handleTabChange = (index) => {
     setActiveTabIndex(index);
@@ -334,13 +336,13 @@ const AddEdit = () => {
           if (data?.propertyType === "offmarket") {
             setSteps((prev) =>
               prev.map((step, index) =>
-                index === 7 ? "Off-market Status" : step
+                index === 7 ? t("propertySteps.steps.offMarketStatus") : step
               ));
           }
           if (data?.propertyType === "directory") {
             setSteps((prev) =>
               prev.map((step, index) =>
-                index === 7 ? "Directory Status" : step
+                index === 7 ? t("propertySteps.steps.directoryStatus") : step
               ))
           }
         }
@@ -494,7 +496,7 @@ const AddEdit = () => {
                                     <RxCross2 />
                                   </button>
                                   <h4 className="text-[#47525E] text-[18px] mb-4 ">
-                                    Listing steps
+                                    {t("propertySteps.listingSteps")}
                                   </h4>
                                 </div>
                                 <TabList
@@ -559,7 +561,7 @@ const AddEdit = () => {
                     onSelect={handleTabChange}
                   >
                     <h4 className="text-[#47525E] text-[18px] mb-4 mt-1">
-                      Listing steps
+                      {t("propertySteps.listingSteps")}
                     </h4>
                     {steps.map((label, index) => {
                       if (

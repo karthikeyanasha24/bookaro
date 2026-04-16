@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { removeHTMLTags } from "../../../models/string.model";
@@ -13,6 +14,7 @@ import PropertyCheck from "../PropertyCheck";
 
 const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [error, setError] = useState({ title: "", des: "" });
   const user = useSelector((state) => state.user);
   const [draftModal, setdraftModal] = useState(false);
@@ -29,10 +31,10 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   const validate = () => {
     let data = { ...error };
     if (!removeHTMLTags(formData.content?.trim())) {
-      data = { ...data, des: "Property description is required." };
+      data = { ...data, des: t("propertySteps.step7.errors.descriptionRequired") };
     }
     if (!formData.propertyTitle?.trim()) {
-      data = { ...data, title: "Property title is required." };
+      data = { ...data, title: t("propertySteps.step7.errors.titleRequired") };
     }
     setError({ ...data });
     if (!formData.propertyTitle || !formData.content) return false;
@@ -117,27 +119,24 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
         <div>
           <div className="flex justify-between items-center gap-3 xl:mb-[50px] lg:mb-[50px] mb-[40px]">
             <h4 className="text-[#47525E] text-[24px] font-[600] lg:w-[500px] w-[100%]">
-              Describe your property and put the light on what makes it special
+              {t("propertySteps.step7.describeProperty")}
               <span className="text-[#47525E] font-[400] block text-[14px]">
-                *Mandatory information
+                {t("propertySteps.step7.mandatoryInformation")}
               </span>
             </h4>
           </div>
           <div className="md:max-w-[500px] w-[100%]">
             <label className="text-[#47525E] font-[600] text-[20px] mb-4 block my-10">
-              Property description
+              {t("propertySteps.step7.propertyDescriptionLabel")}
             </label>
             <div className="font-[400]  text-[16px] text-[#47525E] mb-7 ">
-              Enhance your property. The more details you provide, the higher
-              the quality of your ad. Detail here what's important and what
-              makes your property stand out from the rest. A good description
-              can add value to your property.
+              {t("propertySteps.step7.descriptionHint")}
             </div>
           </div>
 
           <div className="mt-4  md:max-w-[500px] w-[100%]">
             <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-              Property title
+              {t("propertySteps.step7.propertyTitleLabel")}
             </label>
             <input
               type="text"
@@ -153,10 +152,10 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                 }
               }}
               className="bg-white rounded-[7px] border border-[#976DD0] p-2 px-3 md:w-[500px] w-full"
-              placeholder="Enter property title"
+              placeholder={t("propertySteps.step7.placeholders.enterPropertyTitle")}
             />
             <p className="text-[#47525E] mt-1 text-end">
-              Maximum {formData.propertyTitle.length}/50 words
+              {t("propertySteps.step7.titleCounter", { count: formData.propertyTitle.length })}
             </p>
             {error?.title && (
               <p className="text-sm text-[#ff0000]">{error?.title}</p>
@@ -164,7 +163,7 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
           </div>
           <div className="mt-2 md:max-w-[500px] w-[100%] mb-8">
             <label className="mb-1 block text-[15px] text-[#47525E] font-[600]">
-              Property description
+              {t("propertySteps.step7.propertyDescriptionLabel")}
             </label>
             {/* <p className="text-sm text-gray-500 mt-2 mb-2">
               You can stretch the description box from the bottom  right corner to increase its length.
@@ -178,7 +177,7 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
               />
             </div>
             <p className="text-[#47525E] mt-1 text-end">
-              Maximum {removeHTMLTags(formData.content).length}/4000 characters
+              {t("propertySteps.step7.descriptionCounter", { count: removeHTMLTags(formData.content).length })}
             </p>
             {error?.des && (
               <p className="text-sm text-[#ff0000]">{error?.des}</p>
@@ -193,7 +192,7 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             onClick={save}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save change
+            {t("propertySteps.step7.saveChange")}
           </button>
         </div>
       ) : (
@@ -202,19 +201,19 @@ const Step7 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             onClick={draftsave}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save As Draft
+            {t("propertySteps.step7.saveAsDraft")}
           </button>
           <button
             onClick={handleBack}
             className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
           >
-            Back
+            {t("common.back")}
           </button>
           <button
             onClick={handleNext}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4"
           >
-            Next
+            {t("common.next")}
           </button>
         </div>
       )}

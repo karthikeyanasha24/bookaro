@@ -8,6 +8,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { dateFormate, stringSeprator } from "../../models/string.model";
 import datepipeModel from "../../models/datepipemodel";
 import { BsFiletypePdf } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 const SlotModal = ({
   slotModal,
@@ -28,6 +29,7 @@ const SlotModal = ({
   error,
   ImageUpload,
 }) => {
+  const { t } = useTranslation();
   return (
     <Dialog
       open={slotModal}
@@ -40,7 +42,7 @@ const SlotModal = ({
           <DialogTitle className="p-3">
             <div className="react-custom">
               <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-3">
-                Choose visit slots
+                {t("transactionSearcher.chooseVisitSlots")}
               </p>
               <div className="max-h-[400px] overflow-y-auto">
                 <div className="py-5 px-2 pe-3">
@@ -63,7 +65,7 @@ const SlotModal = ({
                             {slot.times.map((time, i2) => (
                               <label
                                 key={i2}
-                                title={`${time?.booked ? "This slot already booked" : ""}`}
+                                title={`${time?.booked ? t("transactionSearcher.slotAlreadyBooked") : ""}`}
                                 className="flex justify-between items-center bg-white p-3 rounded-md cursor-pointer mb-2 shadow-sm border-[#cdcdcd] border transition-all"
                               >
                                 <span className="font-semibold text-gray-700">
@@ -92,7 +94,7 @@ const SlotModal = ({
                     </div>
                   ) : (
                     <p className="text-gray-500 text-center">
-                      No slots available.
+                      {t("transactionSearcher.noSlotsAvailable")}
                     </p>
                   )}
                 </div>
@@ -104,14 +106,13 @@ const SlotModal = ({
                 >
                   <div className="p-5 border-b border-[#D5D5D5]">
                     <h4 className="text-[#47525E] text-[19px] font-semibold">
-                      Identity Proof <spna className="text-[#FF0000]">*</spna>
+                      {t("transactionSearcher.identityProof")} <spna className="text-[#FF0000]">*</spna>
                     </h4>
                     <p className="text-[#47525E] my-2 text-[13px]">
-                      Identity document required to visit a property and also
-                      bring trust to owner.
+                      {t("transactionSearcher.identityProofDescription")}
                     </p>
                     <p className="text-[#47525E] italic text-[12px] ">
-                      Could be an identity card or passport.
+                      {t("transactionSearcher.identityProofExamples")}
                     </p>
                   </div>
                   {fileList("identityProof").map((itm, i) => (
@@ -127,7 +128,7 @@ const SlotModal = ({
                           onClick={() => viewDoc(itm.fileName)}
                           className="cursor-pointer text-[#383A3D] text-[14px]"
                         >
-                          Preview
+                          {t("buttons.preview")}
                         </p>
                         <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                           {/* Edit */}
@@ -136,7 +137,7 @@ const SlotModal = ({
                           onClick={() => deleteDoc(itm.id, "identityProof")}
                           className="cursor-pointer text-[#383A3D] text-[14px]"
                         >
-                          Delete
+                          {t("buttons.delete")}
                         </p>
                       </div>
                     </div>
@@ -145,7 +146,7 @@ const SlotModal = ({
                     <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                       <label className="relative  h-full w-full">
                         <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                          Upload document
+                          {t("renterFile.uploadDocument")}
                         </p>
                         <input
                           type="file"
@@ -169,7 +170,7 @@ const SlotModal = ({
                   <div className="flex items-center mb-2">
                     <i className="fas fa-exchange-alt text-[#976DD0] mr-2"></i>
                     <p className="text-gray-700 text-sm font-medium">
-                      Can't find a suitable slot?
+                      {t("transactionSearcher.cantFindSuitableSlot")}
                     </p>
                   </div>
 
@@ -182,7 +183,7 @@ const SlotModal = ({
                       className="w-4 h-4 mr-2 text-[#976DD0] border-[#976DD0] rounded-sm focus:ring-[#976DD0] transition-all duration-300"
                     />
                     <span className="text-[#389D93] text-sm font-medium">
-                      Request to change the slot
+                      {t("transactionSearcher.requestChangeSlot")}
                     </span>
                   </label>
 
@@ -191,7 +192,7 @@ const SlotModal = ({
                       <textarea
                         value={changeRequestNote}
                         onChange={(e) => setChangeRequestNote(e.target.value)}
-                        placeholder="Please provide a note for your request..."
+                        placeholder={t("transactionSearcher.requestNotePlaceholder")}
                         className="w-full p-2 border rounded-md"
                         rows="4"
                       ></textarea>
@@ -203,13 +204,13 @@ const SlotModal = ({
                     onClick={closeSlotModal}
                     className="text-[#868389] text-[18px] underline hover:text-[#389D93] transition-colors"
                   >
-                    Cancel
+                      {t("common.cancel")}
                   </button>
                   <button
                     onClick={() => actionSlotFunc(card)}
                     className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px] hover:bg-[#7b56a4] transition-all"
                   >
-                    {checkboxChecked ? "Request" : "Book"}
+                      {checkboxChecked ? t("transactionSearcher.request") : t("transactionSearcher.book")}
                   </button>
                 </div>
               </div>

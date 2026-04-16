@@ -4,6 +4,7 @@ import CommonCreteria from "./CommonCreteria";
 import { FaStar } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ProListGrid = ({
   data,
@@ -14,6 +15,7 @@ const ProListGrid = ({
   navigateToDetail,
 }) => {
   const { user } = useSelector((state) => state);
+  const { t } = useTranslation();
   const history = useNavigate()
   return (
     <div className="">
@@ -59,7 +61,7 @@ const ProListGrid = ({
                                   {item?.rentCount || 0}
                                 </p>
                                 <span className="text-[#47525E] text-center  block">
-                                  Properties for rent
+                                  {t("prolist.propertiesForRent")}
                                 </span>
                               </li>
                               <li className="flex sm:flex-col flex-row items-center">
@@ -67,7 +69,7 @@ const ProListGrid = ({
                                   {item?.saleCount || 0}
                                 </p>
                                 <span className="text-[#47525E] text-center block">
-                                  Properties for sale
+                                  {t("prolist.propertiesForSale")}
                                 </span>
                               </li>
                               <li className="flex sm:flex-col flex-row items-center">
@@ -75,7 +77,7 @@ const ProListGrid = ({
                                   {item?.offMarketCount || 0}
                                 </p>
                                 <span className="text-[#47525E] text-center  block">
-                                  Properties Off-Market
+                                  {t("prolist.propertiesOffMarket")}
                                 </span>
                               </li>
                               <li className="flex sm:flex-col flex-row items-center">
@@ -83,7 +85,7 @@ const ProListGrid = ({
                                   {item?.directoryCount || 0}
                                 </p>
                                 <span className="text-[#47525E] text-center  block">
-                                  Properties Directory
+                                  {t("prolist.propertiesDirectory")}
                                 </span>
                               </li>
                             </ul>
@@ -95,12 +97,12 @@ const ProListGrid = ({
                 ) : (
                   <div className="text-center col-span-12 my-8">
                     <img src="assets/img/no-data.svg" className="w-[400px] mx-auto " />
-                    No Records Found
+                    {t("common.noRecordsFound")}
                   </div>
                 )}
                 {!user?.loggedIn && <p className="text-center col-span-12 my-8">
                   {/* <img src="/assets/img/no-data.png" className="w-[100px] mx-auto" /> */}
-                  Want to see more pro list? <spna onClick={(e) => history("/login")} className="text-bold text-[#976DD0] cursor-pointer">Just log in first!</spna>
+                  {t("prolist.wantToSeeMore")} <span onClick={() => history("/login")} className="text-bold text-[#976DD0] cursor-pointer">{t("prolist.loginFirst")}</span>
                 </p>}
               </div>
               <div
@@ -108,11 +110,11 @@ const ProListGrid = ({
                   }`}
               >
                 <span>
-                  Show {data?.length} from {total} Properties
+                  {t("filtersCommon.showCountFromTotalProperties", { shown: data?.length, total })}
                 </span>
                 <ReactPaginate
-                  previousLabel="< Previous"
-                  nextLabel="Next >"
+                  previousLabel={t("filtersCommon.previous")}
+                  nextLabel={t("filtersCommon.next")}
                   breakLabel="..."
                   pageRangeDisplayed={2}
                   marginPagesDisplayed={1}

@@ -13,17 +13,17 @@ const Help = () => {
                             <AcountSidebar />
                             <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                                    Manage your account
+                                    {t("account.manageAccount")}
                                 </h2>
                                 <div className="p-10 md:px-14 px-8  flex flex-col justify-between border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
                                     <form className="flex  flex-col h-full">
                                         <div>
                                             <div className="mb-8">
                                                 <h4 className="text-black font-bold text-[19px]  mb-0">
-                                                    help center
+                                                    {t("help.center")}
                                                 </h4>
                                                 <p className="text-black text-[16px] mb-2  ">
-                                                    Improving your experience is our top priority. Allow us to secure your account with your phone number.
+                                                    {t("help.centerInfo")}
                                                 </p>
                                             </div>
                                         </div>

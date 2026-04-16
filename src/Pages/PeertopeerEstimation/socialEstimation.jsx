@@ -40,6 +40,10 @@ const SocialEstimation = () => {
   const params = new URLSearchParams(window.location.search);
   const IsApp = params.get("isApp");
   const UserId = params.get("userId");
+  const requestedPropertyId = params.get("propertyId");
+  const shouldAutoStartCampaign = params.get("startCampaign") === "1";
+  const requestedPropertyIdRef = useRef(requestedPropertyId);
+  const shouldAutoStartCampaignRef = useRef(shouldAutoStartCampaign);
   const { user } = useSelector((state) => state);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [allCards, setAllCards] = useState([]);
@@ -300,12 +304,42 @@ const SocialEstimation = () => {
         setTotal(res?.total || data?.length);
 
         if (data.length) {
-          handleClickProperty(data[0]);
+          const matchingProperty = requestedPropertyIdRef.current
+            ? data.find((itm) => {
+                const candidateIds = [
+                  itm?._id,
+                  itm?.id,
+                  itm?.propertyId,
+                  itm?.propertyId?._id,
+                  itm?.propertyId?.id,
+                ];
+                return candidateIds
+                  .filter((value) => value !== undefined && value !== null)
+                  .map((value) => `${value}`)
+                  .includes(`${requestedPropertyIdRef.current}`);
+              })
+            : null;
+
+          handleClickProperty(matchingProperty || data[0]);
+
+          if (shouldAutoStartCampaignRef.current) {
+            setShowModal(true);
+            getNewCampagionData();
+            shouldAutoStartCampaignRef.current = false;
+          }
+        } else if (shouldAutoStartCampaignRef.current) {
+          setAlertModal(true);
+          shouldAutoStartCampaignRef.current = false;
         }
       } else {
         setData([]);
         setFilteredData([]);
         setTotal(0);
+
+        if (shouldAutoStartCampaignRef.current) {
+          setAlertModal(true);
+          shouldAutoStartCampaignRef.current = false;
+        }
       }
       loader(false);
     });

@@ -1,4 +1,5 @@
 import "slick-carousel/slick/slick-theme.css";
+import { useTranslation } from "react-i18next";
 import "slick-carousel/slick/slick.css";
 import ImageSlider from "../../components/common/ImageSlider";
 
@@ -10,6 +11,7 @@ const PropertiesList = ({
   isFollow,
   navigateToDetail,
 }) => {
+  const { t } = useTranslation();
 
   return (
     <>
@@ -20,10 +22,9 @@ const PropertiesList = ({
               <div className="col-span-12">
                 <p className="text-[#47525E]">
                   <span className="text-[#47525E] font-bold text-[20px]">
-                    {data?.length}
-                    {` Propert${data?.length > 1 ? "ies" : "y"}`}
+                    {t("property.propertyCount", { count: data?.length })}
                   </span>
-                  {` followed for ${detail?.folder?.name || ""} search`}
+                  {` ${t("followedProperty.followedForSearch", { name: detail?.folder?.name || "" })}`}
                 </p>
               </div>
               <div className="col-span-12 lg:mb-0 mb-4  pe-3">
@@ -176,7 +177,7 @@ const PropertiesList = ({
                     )
                   }) :   <div className="text-center col-span-12 my-8">
                   <img src="assets/img/no-data.svg" className="w-[400px] mx-auto "/>
-                  No Records Found
+                  {t("messages.noRecordsFound")}
                 </div>}
                 </div>
                 {/* <div className={`paginationWrapper ${total > filters?.count ? '' : 'd-none'}`}>

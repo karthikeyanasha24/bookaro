@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import ImageSlider from "../../components/common/ImageSlider";
@@ -13,6 +14,7 @@ const PropertiesGrid = ({
   navigateToDetail,
 }) => {
   const navigate = useNavigate();
+    const { t } = useTranslation();
   return (
     <>
       <div className="">
@@ -20,10 +22,10 @@ const PropertiesGrid = ({
           <div className="items-center  mx-auto container lg:px-10 px-6">
             <ul className="flex items-center pb-[30px]">
               <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-                My Project
+                {t("project.myProject")}
                 <span className="mx-[4px]">|</span></li>
               <li onClick={() => navigate("/followed-properties")} className="text-[#47525E] cursor-pointer capitalize">
-                Followed properties
+                {t("followedProperty.title")}
                 <span className="mx-[4px]">|</span></li>
               <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
                 {detail?.folder?.name}</li>
@@ -32,10 +34,9 @@ const PropertiesGrid = ({
               <div className="col-span-12">
                 <p className="text-[#47525E]">
                   <span className="text-[#47525E] font-bold text-[20px]">
-                    {data?.length}
-                    {` Propert${data?.length > 1 ? "ies" : "y"}`}
+                    {t("property.propertyCount", { count: data?.length })}
                   </span>
-                  {` followed for ${detail?.folder?.name || ""} search`}
+                  {` ${t("followedProperty.followedForSearch", { name: detail?.folder?.name || "" })}`}
                 </p>
               </div>
               <div className="col-span-12 lg:mb-0 mb-4  pe-3">
@@ -197,7 +198,7 @@ const PropertiesGrid = ({
                     )
                   }) :   <div className="text-center col-span-12 my-8">
                   <img src="assets/img/no-data.svg" className="w-[400px] mx-auto "/>
-                  No Records Found
+                  {t("messages.noRecordsFound")}
                 </div>}
                 </div>
                 {/* <div className={`paginationWrapper ${total > filters?.count ? '' : 'd-none'}`}>

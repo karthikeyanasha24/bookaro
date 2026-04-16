@@ -16,6 +16,7 @@ import addressModel from "../../models/address.model";
 import { stringSeprator } from "../../models/string.model";
 import { GoHome } from "react-icons/go";
 import { HiOutlineUser } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 const CommonFilter = ({
     isOpen1,
@@ -46,6 +47,7 @@ const CommonFilter = ({
     selectedStatus,
     setSelectedStatus,
 }) => {
+    const { t } = useTranslation();
     const [inputKey, setInputKey] = useState(0);
     const addressResult = async (e) => {
         let address = {};
@@ -157,7 +159,7 @@ const CommonFilter = ({
                                     <IoLocationOutline className=" me-1 text-[15px]" />
                                     {allfilters?.city ? `${stringSeprator(locBtnStr, 20)}
                                             ${allfilters?.city?.split(",")?.length > 1 ? `(+${allfilters?.city?.split(",")?.length - 1})` : ""}`
-                                        : "Location"}
+                                        : t("filtersCommon.location")}
 
                                 </button>
                                 <Dialog
@@ -173,14 +175,14 @@ const CommonFilter = ({
                                         <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                             <DialogTitle className="p-6">
                                                 <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                                                    Where are you looking?
+                                                    {t("filtersCommon.whereAreYouLooking")}
                                                 </p>
                                                 <div className="pt-10 flex items-center google_address">
                                                     <GooglePlaceAutoComplete
                                                         key={inputKey}
                                                         value={currentLocation}
                                                         result={addressResult}
-                                                        placeholder="Enter location you want to search..."
+                                                        placeholder={t("filtersCommon.enterLocationSearch")}
                                                         id="address"
                                                     />
                                                 </div>
@@ -239,10 +241,10 @@ const CommonFilter = ({
                                                 </div>
                                                 {trueLocs?.length < 2 && (
                                                     <>
-                                                        <label className="mb-1 text-[14px] text-[#656565] mt-3 block">Select maximum range radius to find the property</label>
+                                                        <label className="mb-1 text-[14px] text-[#656565] mt-3 block">{t("filtersCommon.selectMaximumRangeRadius")}</label>
                                                         <div className="mb-4 range_slider  border bg-[#986dcd0f">
                                                             <div className="flex justify-between bg-[#986dcd]  px-3 py-2 text-white">
-                                                                <label className="text-white">Range</label>
+                                                                <label className="text-white">{t("filtersCommon.range")}</label>
                                                                 <p> {selectedValue} Km</p>
                                                             </div>
                                                             <div className="px-4 py-2">
@@ -284,11 +286,11 @@ const CommonFilter = ({
                                                     setError({ ...error, location: "" })
                                                     setIsOpen2(false)
                                                 }} className="text-[#868389] text-[18px] underline">
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
-                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> results
+                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> {t("filtersCommon.results")}
                                                     </button>
                                                     {(allfilters?.city) && (
                                                         <button className="text-[#868389] me-3"
@@ -309,14 +311,14 @@ const CommonFilter = ({
                                                                 setError({ ...error, location: "" })
                                                             }}
                                                         >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button
                                                         onClick={() => {
-                                                            if (location?.length === 0) return setError({ ...error, location: "Enter atleast a location" })
+                                                            if (location?.length === 0) return setError({ ...error, location: t("filtersCommon.enterAtLeastOneLocation") })
                                                             let locs = location?.filter(itm => itm?.added);
-                                                            if (locs?.length === 0) return setError({ ...error, location: "Select atleast a location" })
+                                                            if (locs?.length === 0) return setError({ ...error, location: t("filtersCommon.selectAtLeastOneLocation") })
                                                             setIsOpen2(false);
                                                             let data = { ...allfilters };
                                                             data = {
@@ -337,7 +339,7 @@ const CommonFilter = ({
                                                         }}
                                                         className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                     >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -354,7 +356,7 @@ const CommonFilter = ({
 
                                     {allfilters?.type ? `${stringSeprator(typeBtnStr, 20)}
                                             ${allfilters?.type?.split(",")?.length > 1 ? `(+${allfilters?.type?.split(",")?.length - 1})` : ""}`
-                                        : "All"}
+                                        : t("filtersCommon.all")}
                                 </button>
                                 <Dialog
                                     open={isOpen3}
@@ -369,7 +371,7 @@ const CommonFilter = ({
                                         <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                             <DialogTitle className="p-6">
                                                 <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                                                    Building Permit type you are looking for?
+                                                    {t("filtersCommon.buildingPermitTypeLookingFor")}
                                                 </p>
                                                 <ul className="flex items-center  justify-between flex-wrap pt-8">
                                                     {[
@@ -417,11 +419,11 @@ const CommonFilter = ({
                                                     setError({ ...error, type: "" })
                                                 }}
                                                     className="text-[#868389] text-[18px] underline">
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
-                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> results
+                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> {t("filtersCommon.results")}
                                                     </button>
                                                     {(allfilters?.type) && (
                                                         <button className="text-[#868389] me-3"
@@ -435,19 +437,19 @@ const CommonFilter = ({
                                                                 })
                                                                 setIndFilter({ ...indFilter, type: "", });
                                                             }} >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                         onClick={() => {
-                                                            if (selectedType?.length === 0) return setError({ ...error, type: "Select atleast a role" })
+                                                            if (selectedType?.length === 0) return setError({ ...error, type: t("filtersCommon.selectAtLeastOneType") })
                                                             setIsOpen3(false);
                                                             setAllFilters({
                                                                 ...allfilters,
                                                                 type: selectedType.join()
                                                             })
                                                         }} >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -465,7 +467,7 @@ const CommonFilter = ({
 
                                     {allfilters?.status ? `${stringSeprator(statusBtnStr, 20)}
                                             ${allfilters?.status?.split(",")?.length > 1 ? `,${allfilters?.status?.split(",")?.length - 1}` : ""}`
-                                        : "Status"}
+                                        : t("filtersCommon.status")}
                                 </button>
                                 <Dialog
                                     open={isOpen1}
@@ -477,7 +479,7 @@ const CommonFilter = ({
                                         <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
                                             <DialogTitle className="p-6">
                                                 <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
-                                                    status you are looking for?
+                                                    {t("filtersCommon.statusLookingFor")}
                                                 </p>
                                                 <ul className="flex items-center flex-wrap  justify-center py-14">
                                                     {[
@@ -525,11 +527,11 @@ const CommonFilter = ({
                                                     setError({ ...error, status: "" })
                                                 }}
                                                     className="text-[#868389] text-[18px] underline">
-                                                    Cancel
+                                                    {t("common.cancel")}
                                                 </button>
                                                 <div className="flex items-center">
                                                     <button className="text-[#868389] me-3">
-                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> results
+                                                        <span className="text-[#976DD0] font-[600]">{upcomingCount}</span> {t("filtersCommon.results")}
                                                     </button>
                                                     {(allfilters?.status) && (
                                                         <button className="text-[#868389] me-3"
@@ -542,19 +544,19 @@ const CommonFilter = ({
                                                                 setIndFilter({ ...indFilter, status: "", });
                                                                 setSelectedStatus([])
                                                             }} >
-                                                            Reset
+                                                            {t("common.reset")}
                                                         </button>
                                                     )}
                                                     <button className="bg-[#976DD0] px-4 py-[7px] text-white rounded-full font-[600] text-[14px]"
                                                         onClick={() => {
-                                                            if (selectedStatus?.length === 0) return setError({ ...error, status: "Select atleast a status" })
+                                                            if (selectedStatus?.length === 0) return setError({ ...error, status: t("filtersCommon.selectAtLeastOneStatus") })
                                                             setIsOpen1(false);
                                                             setAllFilters({
                                                                 ...allfilters,
                                                                 status: selectedStatus.map((ser) => ser?.id).join()
                                                             })
                                                         }} >
-                                                        Apply
+                                                        {t("common.apply")}
                                                     </button>
                                                 </div>
                                             </div>
@@ -568,7 +570,7 @@ const CommonFilter = ({
                                     <button onClick={resetData}
                                         className="bg-[#48464a]  border border-[#48464a] rounded-[50px] py-[6px] text-[12px] text-white px-3 font-[600] flex items-center"
                                     >
-                                        Reset Filters
+                                        {t("filtersCommon.resetFilters")}
                                     </button>
 
                                 </li>
@@ -578,12 +580,12 @@ const CommonFilter = ({
                             <ul className="flex items-center">
                                 <li onClick={() => setView("map")}>
                                     <a className={`${view === "map" ? "font-[600]" : ""} text-[#47525E] text-[14px] px-3`}>
-                                        Map
+                                        {t("filtersCommon.map")}
                                     </a>
                                 </li>
                                 <li onClick={() => setView("grid")}>
                                     <a className={`${view === "grid" ? "font-[600]" : ""} text-[#47525E] text-[14px] px-3`}>
-                                        Grid
+                                        {t("filtersCommon.grid")}
                                     </a>
                                 </li>
                             </ul>

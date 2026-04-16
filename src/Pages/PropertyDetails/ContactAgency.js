@@ -15,6 +15,7 @@ import { useCallback, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import ApiClient from "../../methods/api/apiClient";
@@ -32,6 +33,7 @@ const ContactAgency = ({
   setshowNumber,
   cId,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const [contactSent, setcontactSent] = useState(false);
@@ -52,36 +54,39 @@ const ContactAgency = ({
     setagency({ ...agency, [atr]: value });
     setErrors({ ...errors, [atr]: "" });
   };
+
+  const getLikeToBuyLabel = (value) => {
+    return value === "Later" ? t("propertyDetails.later") : t("propertyDetails.now");
+  };
+
   const validate = () => {
     const newErrors = {};
     if (!agency.fName.trim()) {
-      newErrors.fName = "First name is required.";
+      newErrors.fName = t("validation.firstNameRequired");
     } else if (!/^[A-Za-z ]{2,50}$/.test(agency.fName.trim())) {
-      newErrors.fName =
-        "First name must be alphabetic, can include spaces, and be between 2 to 50 characters.";
+      newErrors.fName = t("propertyDetails.firstNameAlphaValidation");
     }
     if (!agency.lName.trim()) {
-      newErrors.lName = "Last name is required.";
+      newErrors.lName = t("validation.lastNameRequired");
     } else if (!/^[A-Za-z ]{2,50}$/.test(agency.lName.trim())) {
-      newErrors.lName =
-        "Last name must be alphabetic, can include spaces, and be between 2 to 50 characters.";
+      newErrors.lName = t("propertyDetails.lastNameAlphaValidation");
     }
     if (!agency.claimMessage.trim()) {
-      newErrors.claimMessage = "Message is required.";
+      newErrors.claimMessage = t("validation.required");
     }
     if (!agency.phone.trim()) {
-      newErrors.phone = "Phone number is required.";
+      newErrors.phone = t("propertyDetails.phoneRequired");
     } else if (!/^\d{10,}$/.test(agency.phone.trim())) {
-      newErrors.phone = "Phone number must be at least 10 digits.";
+      newErrors.phone = t("propertyDetails.phoneMinDigits");
     }
     if (!agency.email.trim()) {
-      newErrors.email = "Email is required.";
+      newErrors.email = t("validation.emailRequired");
     } else if (
       !/^\S+@\S+\.\S+$/.test(agency.email.trim()) ||
       agency.email.length < 5 ||
       agency.email.length > 50
     ) {
-      newErrors.email = "Email must be a valid format";
+      newErrors.email = t("propertyDetails.emailFormatValidation");
     }
     // else if (!agency.propertyToSell) {
     //     toast.error("Please indicate if you have a property to sell.");
@@ -168,7 +173,7 @@ const ContactAgency = ({
     const maxSizeInBytes = maxSize * 1024 * 1024; // 10MB
     const oversizedFiles = files.filter((file) => file.size > maxSizeInBytes);
     if (oversizedFiles.length > 0) {
-      toast.error(`Each file must be smaller than ${maxSize}MB`);
+      toast.error(t("validation.fileSize", { size: maxSize }));
       return (e.target.value = "");
     }
     setErrors({ ...errors, docs: "" });
@@ -211,22 +216,23 @@ const ContactAgency = ({
 
   const report = () => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "You want to report this!",
+      title: t("modals.areYouSure"),
+      text: t("propertyDetails.reportProfilePrompt"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#6c757d",
-      confirmButtonText: "Yes, report it!",
+      confirmButtonText: t("propertyDetails.reportIt"),
+      cancelButtonText: t("buttons.cancel"),
       input: 'textarea',
-      inputPlaceholder: 'Enter reason for reporting...',
+      inputPlaceholder: t("propertyDetails.reportReasonPlaceholder"),
       inputAttributes: {
-        'aria-label': 'Type your reason'
+        'aria-label': t("propertyDetails.reportReasonAria")
       },
       showLoaderOnConfirm: true,
       preConfirm: (reason) => {
         if (!reason || reason.trim() === "") {
-          Swal.showValidationMessage("Please provide a reason for the report");
+          Swal.showValidationMessage(t("propertyDetails.reportReasonRequired"));
           return false;
         }
         return reason;
@@ -269,7 +275,9 @@ const ContactAgency = ({
                 alt=""
               />
               <p className="border-b text-[#389D93] text-[18px] text-center pb-5 mt-5">
-                Your request has been sent to the {claimProperty?"Admin":"agency"}
+                {t("propertyDetails.requestSentTo", {
+                  recipient: claimProperty ? t("propertyDetails.admin") : t("propertyDetails.agency")
+                })}
               </p>
               <div className="pt-8  flex items-center justify-center">
                 <Button
@@ -288,13 +296,11 @@ const ContactAgency = ({
           <div className="">
             {claimProperty ? (
               <h4 className="text-[#47525E] font-[600] text-[18px]">
-                {/* CONTACT THE AGENCY */}
-                CLAIM OWNERSHIP
+                {t("propertyDetails.claimOwnership")}
               </h4>
             ) :
               (<h4 className="text-[#47525E] font-[600] text-[18px]">
-                {/* CONTACT THE AGENCY */}
-                {detail?.role == "agency" ? "CONTACT AGENCY" : detail?.role == "agent" ? "CONTACT AGENT" : detail?.role == "hunter" ? "CONTACT HUNTER" : ""}
+                {detail?.role == "agency" ? t("propertyDetails.contactAgencyUpper") : detail?.role == "agent" ? t("propertyDetails.contactAgentUpper") : detail?.role == "hunter" ? t("propertyDetails.contactHunterUpper") : ""}
               </h4>)
             }
 
@@ -303,7 +309,7 @@ const ContactAgency = ({
                 onClick={() => setshowNumber(true)}
                 className="underline mt-4 inline-block text-[#47525E]"
               >
-                Show phone number
+                {t("propertyTimeline.showPhoneNumber")}
               </span>
             )}
           </div>
@@ -312,7 +318,7 @@ const ContactAgency = ({
               value={agency?.fName}
               onChange={(e) => agencyChange("fName", e.target.value)}
               type="text"
-              placeholder="First name*"
+              placeholder={`${t("forms.firstName")}*`}
               className="border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3"
             />
             {errors.fName && (
@@ -322,7 +328,7 @@ const ContactAgency = ({
               value={agency?.lName}
               onChange={(e) => agencyChange("lName", e.target.value)}
               type="text"
-              placeholder="Last name*"
+              placeholder={`${t("forms.lastName")}*`}
               className="border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3"
             />
             {errors.lName && (
@@ -340,7 +346,7 @@ const ContactAgency = ({
               value={agency?.email}
               onChange={(e) => agencyChange("email", e.target.value)}
               type="email"
-              placeholder="Email address*"
+              placeholder={`${t("forms.emailAddress")}*`}
               className="border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3"
             />
             {errors.email && (
@@ -348,7 +354,7 @@ const ContactAgency = ({
             )}
             <div>
               {!claimProperty && <label className="text-[#5A5A5A]">
-                When would you like to buy?*
+                {t("propertyDetails.whenWouldYouLikeToBuy")}*
               </label>}
 
               <div>
@@ -381,7 +387,7 @@ const ContactAgency = ({
                           onClick={() => viewDoc(itm.fileName)}
                           className="cursor-pointer text-[#383A3D] text-[14px]"
                         >
-                          Preview
+                          {t("buttons.preview")}
                         </p>
                         <p className="cursor-pointer text-[#383A3D] text-[14px] mx-3">
                           {/* Edit */}
@@ -390,7 +396,7 @@ const ContactAgency = ({
                           onClick={() => deleteDoc(itm.id, "docs")}
                           className="cursor-pointer text-[#383A3D] text-[14px]"
                         >
-                          Delete
+                          {t("buttons.delete")}
                         </p>
                       </div>
                     </div>
@@ -399,7 +405,7 @@ const ContactAgency = ({
                     <div className="flex justify-center h-[64px] border-t border-[#D5D5D5]">
                       <label className="relative  h-full w-full">
                         <p className="text-[#976DD0] w-full text-[14px] text-center font-semibold cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-5">
-                          Upload document
+                          {t("renterFile.uploadDocument")}
                         </p>
                         <input
                           type="file"
@@ -417,7 +423,7 @@ const ContactAgency = ({
                   )}
                 </> : <><Menu>
                   <MenuButton className="bg-white border border-[#976DD0] rounded-[7px] px-3 py-2 w-full my-3 text-left text-[#5A5A5A] flex justify-between">
-                    {agency?.likeToBuy}
+                    {getLikeToBuyLabel(agency?.likeToBuy)}
                     <img
                       alt=""
                       src="/assets/img/black-arrow.png"
@@ -431,7 +437,7 @@ const ContactAgency = ({
                         className=" bg-white"
                       >
                         <p className="block data-[focus]:bg-blue-100 px-3 py-2 max-w-[320px] w-[100%] text-left">
-                          Now
+                          {t("propertyDetails.now")}
                         </p>
                       </MenuItem>
                       <MenuItem
@@ -439,13 +445,13 @@ const ContactAgency = ({
                         className=" bg-white"
                       >
                         <p className="block data-[focus]:bg-blue-100  px-3 py-2 max-w-[320px] w-[100%] text-left">
-                          Later
+                          {t("propertyDetails.later")}
                         </p>
                       </MenuItem>
                     </div>
                   </MenuItems>
                 </Menu> <div className="flex items-center justify-between">
-                    <p className="text-[#5A5A5A]">I already own a property</p>
+                    <p className="text-[#5A5A5A]">{t("propertyDetails.alreadyOwnProperty")}</p>
                     <div className="flex border border-[#976DD0] p-[2px] rounded-[7px] bg-white">
                       <Checkbox
                         checked={agency?.alreadyOwnProperty}
@@ -454,7 +460,7 @@ const ContactAgency = ({
                         }
                         className="group block text-[14px] text-black rounded-[5px]  border-r bg-white data-[checked]:text-white data-[checked]:bg-[#976DD0] px-2 py-1 cursor-pointer"
                       >
-                        Yes
+                        {t("buttons.yes")}
                       </Checkbox>
                       <Checkbox
                         checked={!agency?.alreadyOwnProperty}
@@ -463,7 +469,7 @@ const ContactAgency = ({
                         }
                         className="group block text-[14px] text-black rounded-[5px] bg-white data-[checked]:text-white data-[checked]:bg-[#976DD0] px-2 py-1 cursor-pointer"
                       >
-                        No
+                        {t("common.no")}
                       </Checkbox>
                     </div>
                   </div> <div>
@@ -472,7 +478,7 @@ const ContactAgency = ({
                         onClick={() => setIsOpenTextArea((prev) => !prev)}
                         className="cursor-pointer underline text-[#47525E] text-[16px] inline-block"
                       >
-                        Add a message (optional)
+                        {t("propertyDetails.addMessageOptional")}
                       </p>
                     </div>
                     {isOpenTextArea && (
@@ -511,12 +517,11 @@ const ContactAgency = ({
                         </Checkbox>
                       </div>
                       <label className="text-[#5A5A5A]">
-                        I do not wish to receive similar property proiles and
-                        personalized suggestions from Bookaroo.
+                        {t("propertyDetails.noSimilarPropertyProfiles")}
                       </label>
                     </div>
                     <a className="underline text-[#47525E] text-[14px]">
-                      Learn more
+                      {t("buttons.learnMore")}
                     </a>
                   </div></>}
 
@@ -525,16 +530,16 @@ const ContactAgency = ({
                     onClick={() => contactAgency()}
                     className="bg-[#976DD0] text-white rounded-[50px] text-[14px] px-5 py-3 font-[600]"
                   >
-                    {claimProperty ? "Claim Property" : "Contact agency"}
+                      {claimProperty ? t("propertyDetails.claimProperty") : t("propertyDetails.contactAgency")}
                   </button>
                 </div>
                 {!claimProperty && <div className="flex items-center justify-between mt-8">
-                  <p className="text-[#5A5A5A]">Profile XV429</p>
+                    <p className="text-[#5A5A5A]">{t("propertyDetails.profileId", { id: "XV429" })}</p>
                   <p
                     onClick={() => report()}
                     className="underline text-[#47525E] text-[14px] font-[600]"
                   >
-                    Report this profile
+                      {t("propertyDetails.reportThisProfile")}
                   </p>
                 </div>}
 

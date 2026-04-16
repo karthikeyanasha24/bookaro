@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { saveChanges } from "../shared";
 import SaveDraftModal from "../../../components/common/Modal/SaveDraftModal";
@@ -13,6 +14,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   // this new tab for school***********************************************
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const user = useSelector((state) => state.user);
   const [draftModal, setdraftModal] = useState(false);
   const [highschooldata, sethighschooldata] = useState([]);
@@ -261,17 +263,16 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
         <div>
           <div className="flex justify-between items-center mb-6 ">
             <h4 className="text-[#47525E] text-[24px] font-[600] mx-auto lg:w-[60%] w-[100%]">
-              What public schools are attached to your property ? This can help
-              you sell faster
+              {t("propertySteps.step8.publicSchoolsAttached")}
               <span className="text-[#47525E] font-[400] block text-[14px]">
-                *Mandatory information
+                {t("propertySteps.step8.mandatoryInformation")}
               </span>
             </h4>
           </div>
           <div className="lg:w-[60%] w-[100%] mx-auto">
             <div className="mb-4">
               <label className="text-[16px] inline-block mb-2">
-                High School
+                {t("propertySteps.step8.highSchool")}
               </label>
               <AsyncSelect
                 cacheOptions
@@ -291,7 +292,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
               />
             </div>
             <div className="mb-4">
-              <label className="text-[16px] inline-block mb-2">College</label>
+              <label className="text-[16px] inline-block mb-2">{t("propertySteps.step8.college")}</label>
 
               <AsyncSelect
                 cacheOptions
@@ -312,7 +313,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             </div>
             <div className="mb-4">
               <label className="text-[16px] inline-block mb-2">
-                Primary School
+                {t("propertySteps.step8.primarySchool")}
               </label>
 
               <AsyncSelect
@@ -334,7 +335,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             </div>
             <div>
               <label className="text-[16px] inline-block mb-2">
-                Elementary school
+                {t("propertySteps.step8.elementarySchool")}
               </label>
 
               <AsyncSelect
@@ -364,7 +365,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             onClick={save}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save change
+            {t("propertySteps.step8.saveChange")}
           </button>
         </div>
       ) : (
@@ -373,19 +374,19 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
             onClick={draftsave}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4 submit-btn"
           >
-            Save As Draft
+            {t("propertySteps.step8.saveAsDraft")}
           </button>
           <button
             onClick={handleBack}
             className="btn text-[#48464a] border border-[#48464a] rounded-full px-10 py-4 "
           >
-            Back
+            {t("common.back")}
           </button>
           <button
             onClick={handleNext}
             className="btn text-white bg-[#48464a] rounded-full px-10 py-4"
           >
-            Next
+            {t("common.next")}
           </button>
         </div>
       )}
