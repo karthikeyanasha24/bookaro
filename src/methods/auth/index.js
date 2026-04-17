@@ -10,11 +10,5 @@ export const Auth = (store) => {
 
 
 /******** Set Authorization token in header ***********/
-export const setAuthorizationToken = (axios) => {
-    let token = localStorage.getItem("token")
-    if (token) {
-        axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    } else {
-        delete axios.defaults.headers.common.Authorization;
-    }
-};
+// Suppression de la logique d'injection du token réseau
+export const setAuthorizationToken = () => {};

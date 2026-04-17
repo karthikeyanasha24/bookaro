@@ -335,7 +335,8 @@ const PageLayout = ({ children }) => {
   //   if (user?.loggedIn) getNotifications();
   // }, []);
   useEffect(() => {
-    if (user.loggedIn) {
+    // Ne jamais faire d'appel réseau en mode autonome (mock user)
+    if (process.env.REACT_APP_DEBUG_MOCK_USER !== 'true' && user.loggedIn) {
       ApiClient.get(`user/detail`, { id: user?._id }).then((res) => {
         if (res.success) {
           dispatch(login_success(res?.data));

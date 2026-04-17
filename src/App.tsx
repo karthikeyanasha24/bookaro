@@ -22,28 +22,7 @@ import { active_plan_success, clear_plan_success } from "./actions/activePlan";
 const { persistor, store } = configureStoreProd();
 
 const PageRouter = ({ children }: any) => {
-  const user = useSelector((state: any) => state.user);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (user.loggedIn) {
-      ApiClient.get(
-        "user/activeplan",
-        { userId: user._id || user.id },
-        "",
-        true
-      ).then((res) => {
-        if (res.success) {
-          dispatch(active_plan_success(res.data));
-        }else{
-           dispatch(clear_plan_success(""));
-        }
-      }).catch((error) => {
-        dispatch(clear_plan_success(""));
-      });;
-    }
-  }, [user]);
-
+  // useEffect supprimé pour éviter toute boucle infinie en mode mock
   return <>{children}</>;
 };
 
@@ -148,7 +127,7 @@ function App() {
   return (
     <>
       <Provider store={store}>
-        <PersistGate loading={"loading ..."} persistor={persistor}>
+        {process.env.REACT_APP_DEBUG_MOCK_USER === 'true' ? (
           <Suspense
             fallback={
               <div id="loader" className="loaderDiv">
@@ -163,14 +142,9 @@ function App() {
             }
           >
             <Router>
-              {/* <div className="language-switcher-container">
-                  <LanguageSwitcher />
-                </div> */}
-              {/* <PageLayout> */}
               <Routes>
                 {routes.map((itm: any, index) => {
                   const Element = lazy(() => import(`./Pages/${itm.path}`));
-
                   return (
                     <Route
                       path={itm.url}
@@ -191,10 +165,51 @@ function App() {
                   );
                 })}
               </Routes>
-              {/* </PageLayout> */}
             </Router>
           </Suspense>
-        </PersistGate>
+        ) : (
+          <PersistGate loading={"loading ..."} persistor={persistor}>
+            <Suspense
+              fallback={
+                <div id="loader" className="loaderDiv">
+                  <div>
+                    <img
+                      src="/assets/img/loader.gif"
+                      alt="logo"
+                      className="loaderlogo"
+                    />
+                  </div>
+                </div>
+              }
+            >
+              <Router>
+                <Routes>
+                  {routes.map((itm: any, index) => {
+                    const Element = lazy(() => import(`./Pages/${itm.path}`));
+                    return (
+                      <Route
+                        path={itm.url}
+                        key={index}
+                        element={
+                          itm.path ? (
+                            <PageRouter
+                              url={itm.url}
+                              auth={itm.auth ? true : false}
+                            >
+                              <Element />
+                            </PageRouter>
+                          ) : (
+                            itm.element
+                          )
+                        }
+                      />
+                    );
+                  })}
+                </Routes>
+              </Router>
+            </Suspense>
+          </PersistGate>
+        )}
       </Provider>
       <div id="loader" className="loaderDiv d-none">
         <div>

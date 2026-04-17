@@ -22,6 +22,7 @@ const Html = ({
   isOpen = true,
   onToggle = () => {},
   menus,
+  user,
 }) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -257,19 +258,21 @@ const Html = ({
           )}
         </div>
 
-        {/* Company Profile Section-style Item */}
-        <div className="menu-section expandable">
-          <SectionHeader
-            icon={MdBusiness}
-            label={t('navigation.companyProfile')}
-            sectionId="companyProfile"
-            isCollapsed={!isOpen}
-            hasSubitems={false}
-            onClick={() => {
-              window.location.href = "https://app.anyhomes.fr/profile/";
-            }}
-          />
-        </div>
+        {/* Company Profile Section-style Item: Only for pro users */}
+        {user?.accountType === 'pro' && (
+          <div className="menu-section expandable">
+            <SectionHeader
+              icon={MdBusiness}
+              label={t('navigation.companyProfile')}
+              sectionId="companyProfile"
+              isCollapsed={!isOpen}
+              hasSubitems={false}
+              onClick={() => {
+                window.location.href = "https://app.anyhomes.fr/profile/";
+              }}
+            />
+          </div>
+        )}
       </nav>
 
     </div>

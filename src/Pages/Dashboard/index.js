@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FaGripLinesVertical } from "react-icons/fa6";
 import PageLayout from "../../components/global/PageLayout";
@@ -158,8 +159,11 @@ const DashboardPage = () => {
   const [draggedSectionHeight, setDraggedSectionHeight] = useState(0);
   const [dragOverSectionId, setDragOverSectionId] = useState(null);
   const [activeGripSectionId, setActiveGripSectionId] = useState(null);
+  const [isResettingOrder, setIsResettingOrder] = useState(false);
+  const sectionRefs = useRef({});
   const dragPreviewNodeRef = useRef(null);
   const { data, loading, error } = useDashboardOverview(period);
+  const user = useSelector((state) => state.user);
 
   const sections = data?.sections || {};
 
@@ -289,7 +293,47 @@ const DashboardPage = () => {
   };
 
   const handleResetSectionOrder = () => {
+    // FLIP animation: capture positions before
+    const prevRects = {};
+    sectionOrder.forEach((sectionId) => {
+      const el = sectionRefs.current[sectionId];
+      if (el) prevRects[sectionId] = el.getBoundingClientRect();
+    });
+
+    setIsResettingOrder(true);
     setSectionOrder(getDefaultSectionOrderForMode(displayMode));
+
+    setTimeout(() => {
+      // After DOM update, measure new positions and animate
+      const newRects = {};
+      Object.keys(sectionRefs.current).forEach((sectionId) => {
+        const el = sectionRefs.current[sectionId];
+        if (el) newRects[sectionId] = el.getBoundingClientRect();
+      });
+      Object.keys(newRects).forEach((sectionId) => {
+        const el = sectionRefs.current[sectionId];
+        if (!el || !prevRects[sectionId]) return;
+        const dy = prevRects[sectionId].top - newRects[sectionId].top;
+        if (dy !== 0) {
+          el.style.transition = 'none';
+          el.style.transform = `translateY(${dy}px)`;
+          // Force reflow
+          void el.offsetWidth;
+          el.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1)';
+          el.style.transform = 'translateY(0)';
+        }
+      });
+      // Nettoyage après l'animation
+      setTimeout(() => {
+        Object.values(sectionRefs.current).forEach((el) => {
+          if (el) {
+            el.style.transition = '';
+            el.style.transform = '';
+          }
+        });
+        setIsResettingOrder(false);
+      }, 500);
+    }, 30); // Laisse le temps au DOM de se mettre à jour
   };
 
   const sectionComponents = {
@@ -342,7 +386,13 @@ const DashboardPage = () => {
       <section className="dashboard-page">
         <div className="dashboard-container">
           <DashboardHeader
-            firstName={data?.user?.firstName || "User"}
+            firstName={
+              user?.firstName
+                ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
+                : (data?.user?.firstName
+                  ? data.user.firstName.charAt(0).toUpperCase() + data.user.firstName.slice(1).toLowerCase()
+                  : "User")
+            }
             t={t}
             displayMode={displayMode}
             onDisplayModeChange={handleDisplayModeChange}
@@ -360,15 +410,19 @@ const DashboardPage = () => {
             const isDragging = draggedSectionId === sectionId;
             const isGripActive = activeGripSectionId === sectionId;
 
+            // Animation lors du reset
+            const animateClass = isResettingOrder ? "dashboard-section-reset-animate" : "";
+
             return (
               <div
                 key={sectionId}
                 data-section-id={sectionId}
+                ref={el => (sectionRefs.current[sectionId] = el)}
                 className={`dashboard-section-dnd-wrapper ${
                   isDragOver ? "dashboard-section-drop-target" : ""
                 } ${isDragging ? "dashboard-section-dragging" : ""} ${
                   isGripActive ? "dashboard-section-grip-active" : ""
-                }`.trim()}
+                } ${animateClass}`.trim()}
                 onDragOver={(event) => handleSectionDragOver(event, sectionId)}
                 onDrop={(event) => handleSectionDrop(event, sectionId)}
               >

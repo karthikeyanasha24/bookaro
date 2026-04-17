@@ -1,20 +1,20 @@
 /*********** Reduceres defined here *********/
 
-import { persistCombineReducers } from 'redux-persist';
-import storage from 'redux-persist/es/storage'; // default: localStorage if web, AsyncStorage if react-native
+import { combineReducers } from 'redux';
 import user from './modules/user';
 import loader from './modules/loader';
 import search from './modules/search';
 import activePlan from './modules/activePlan';
-const userPersistConfig = {
-    key: 'admin-app',
-    storage: storage,
-    blacklist: ['loader'],
-};
 
-export default persistCombineReducers(userPersistConfig, {
-    loader,
-    user,
-    search,
-    activePlan
-});
+// Désactive redux-persist en mode mock user
+const isMock = process.env.REACT_APP_DEBUG_MOCK_USER === 'true';
+
+const rootReducer = isMock
+  ? combineReducers({ loader, user, search, activePlan })
+  : require('redux-persist').persistCombineReducers({
+      key: 'admin-app',
+      storage: require('redux-persist/es/storage').default,
+      blacklist: ['loader'],
+    }, { loader, user, search, activePlan });
+
+export default rootReducer;

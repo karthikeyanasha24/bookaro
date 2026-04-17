@@ -22,15 +22,14 @@ const Forgotpassword = () => {
   const hendleSubmit = (e: any) => {
     e.preventDefault();
     loader(true);
-    ApiClient.post("user/forgot/password", form).then((res) => {
-      if (res.success) {
-        navigate("/login");
-        setTimeout(() => {
-          toast.success(res.message);
-        }, 100);
-      }
+    // Mode autonome : simule le succès sans appel réseau
+    setTimeout(() => {
+      navigate("/login");
+      setTimeout(() => {
+        toast.success(t("messages.forgotPasswordSuccess"));
+      }, 100);
       loader(false);
-    });
+    }, 500);
   };
 
   return (
