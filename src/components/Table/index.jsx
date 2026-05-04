@@ -111,7 +111,9 @@ const Table = ({
                       >
                         {columns.map((citm,index) => (
                           <td className={`px-2 py-4 whitespace-nowrap ${citm.className} ${index === 0 ? firstColumnClass : ''}`} key={citm.key}>
-                            {citm.render(itm) || "--"}
+                            <div style={citm.key === 'property' ? { display: 'flex', alignItems: 'center', gap: 12 } : {}}>
+                              {citm.render(itm) || "--"}
+                            </div>
                           </td>
                         ))}
                       </tr>

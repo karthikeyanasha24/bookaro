@@ -1,5 +1,5 @@
 import React from 'react';
-import './QRCodeManagement.css';
+
 
 const QRCodeManagement = () => {
   // TODO: intégration API et logique
@@ -20,7 +20,7 @@ const QRCodeManagement = () => {
           <div>
             <div className="qr-step-title">Create your QR Code</div>
             <div className="qr-step-desc">Hit the button Generate a QR Code next to the property. It will generate a JPG poster including your property cover image. The poster will include the QR Code.</div>
-            <img className="qr-step-img" src="/assets/qr-demo.png" alt="QR flyer demo" />
+            <img className="qr-step-img" src="/assets/img/qr-flyer-demo.jpg" alt="QR flyer demo" />
           </div>
         </div>
         <div className="qr-step">

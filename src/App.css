@@ -1,3 +1,16 @@
+/* Synchronise la hauteur de l'image Chill avec le flyer uniquement sur desktop */
+.chill-img-responsive {
+  height: 707px;
+  width: auto;
+  max-width: 100%;
+}
+@media (max-width: 1100px) {
+  .chill-img-responsive {
+    height: auto !important;
+    width: 100% !important;
+    max-width: 500px !important;
+  }
+}
 .App {
   text-align: center;
 }
