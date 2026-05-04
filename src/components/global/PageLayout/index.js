@@ -38,6 +38,7 @@ const PageLayout = ({ children }) => {
   const [loginModal, setloginModal] = useState(false);
   const [notLength, setNotLength] = useState(0);
   const [chatLength, setChatLength] = useState(0);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [isInChatPage, setIsInChatPage] = useState(false);
   const dispatch = useDispatch();
   const menuRef = useRef("");
@@ -142,80 +143,39 @@ const PageLayout = ({ children }) => {
       menu: (
         <>
           <ul className="bg-white py-4 pe-4 ps-2 right-0 rounded-[10px] absolute w-[200px] shadow-md border-0 border-[#00000024]">
-            <>
-              <li
-                onClick={() => {
-                  navigate("/profile/Account");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.personalInformation')}
-              </li>
-              {user?.accountType == "pro" && <li
-                onClick={() => {
-                  navigate("/profile");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.companyProfile')}
-              </li>}
-
-              <li
-                onClick={() => {
-                  navigate("/profile/manage-notifications");
-                  setProjectData("");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.notifications')}
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/change-password");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.password')}
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/phone-number");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.phoneNumber')}
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/contact-us");
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.helpCenter')}
-              </li>
-              <li
-                onClick={() => {
-                  Logout()
-                }}
-                className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
-              >
-                <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
-                <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                {t('header.logout')}
-              </li>
-            </>
+            {/* 1. Informations personnelles */}
+            <li
+              onClick={() => {
+                navigate("/profile/Account");
+              }}
+              className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
+            >
+              <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
+              <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
+              {t('header.personalInformation')}
+            </li>
+            {/* 6. Centre d’aide / Contact */}
+            <li
+              onClick={() => {
+                navigate("/contact-us");
+              }}
+              className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
+            >
+              <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
+              <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
+              {t('header.helpCenter')}
+            </li>
+            {/* 7. Déconnexion */}
+            <li
+              onClick={() => {
+                Logout()
+              }}
+              className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
+            >
+              <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
+              <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
+              {t('header.logout')}
+            </li>
           </ul>
         </>
       ),
@@ -441,6 +401,9 @@ const PageLayout = ({ children }) => {
   };
 
 
+  // Injection du menu utilisateur dans window pour accès depuis Html.jsx
+  window.renderAccountMenu = () => accountMenu[0].menu;
+
   return (
     <>
       <LoginModal loginModal={loginModal} setloginModal={setloginModal} />
@@ -454,7 +417,7 @@ const PageLayout = ({ children }) => {
         )}
         <div className="flex-1 min-w-0">
           {/* Header en haut */}
-          <Header setIsOpen={setIsSidebarOpen} isOpen={isSidebarOpen} particularData={null} />
+          <Header setIsOpen={setIsSidebarOpen} isOpen={isSidebarOpen} particularData={null} showAccountMenu={showAccountMenu} setShowAccountMenu={setShowAccountMenu} />
           {/* Main Content Area */}
           <main
             className={`page-content-wrapper ${shouldShowSidebar ? "with-sidebar" : "full-width"} ${

@@ -1,3 +1,19 @@
+.animate-blink {
+  animation: blink-simple 1s steps(2, start) infinite;
+}
+
+@keyframes blink-simple {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.violet-message {
+  color: #a259e6 !important;
+}
 @import '../../../scss/mixins';
 
 a.btn.barlink.text-primary {

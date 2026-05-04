@@ -14,6 +14,7 @@ const Header = memo(function Header({ setIsOpen, isOpen, particularData }) {
     localStorage.setItem("sidebar", !isOpen);
   };
   const [isOpen1, setIsOpen1] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
   let messagecount = localStorage.getItem("unreadMessages") || 0;
   const [messageCount, setUnreadMessagesCount] = useState(messagecount);
   const history = useNavigate();
@@ -59,21 +60,27 @@ const Header = memo(function Header({ setIsOpen, isOpen, particularData }) {
     // dispatch(search_success(''))
   };
 
-  return (
-    <Html
-      isOpen={isOpen}
-      toggle={toggle}
-      searchHandle={searchHandle}
-      search={search}
-      user={user}
-      searchChange={searchChange}
-      isOpen1={isOpen1}
-      clear={clear}
-      Logout={Logout}
-      messageCount={messageCount}
-      particularData={particularData}
-    />
-  );
+    // Récupère le nombre de notifications non lues depuis localStorage (ou Redux si intégré)
+    let notificationCount = localStorage.getItem("unreadNotifications") || 0;
+
+    return (
+      <Html
+        isOpen={isOpen}
+        toggle={toggle}
+        searchHandle={searchHandle}
+        search={search}
+        user={user}
+        searchChange={searchChange}
+        isOpen1={isOpen1}
+        clear={clear}
+        Logout={Logout}
+        messageCount={messageCount}
+        notificationCount={notificationCount}
+        particularData={particularData}
+        showAccountMenu={showAccountMenu}
+        setShowAccountMenu={setShowAccountMenu}
+      />
+    );
 });
 
 export default Header;

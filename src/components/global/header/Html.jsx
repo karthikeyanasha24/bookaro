@@ -1,4 +1,5 @@
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
+import { MdNotifications, MdPerson, MdEmail } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../sidebar";
 
@@ -6,6 +7,10 @@ const Html = ({
   isOpen,
   toggle,
   isOpen1,
+  messageCount,
+  notificationCount,
+  showAccountMenu,
+  setShowAccountMenu,
 }) => {
   const location = useLocation();
 
@@ -29,21 +34,29 @@ const Html = ({
       {/* Bouton toggle sidebar supprimé du header, seul celui du sidebar reste */}
 
       <div className="flex items-center gap-4 ml-auto">
-        <button className="mx-2" title="Messages">
-          <span role="img" aria-label="messages">
-            💬
-          </span>
+        {Number(messageCount) > 0 && (
+          <button
+            className="mx-2 animate-blink message-header-btn"
+            title="Messages"
+            onClick={() => window.location.href = '/chat'}
+          >
+            <MdEmail className="menu-icon violet-message" size={22} />
+          </button>
+        )}
+        <button className="mx-2 notification-btn" title="Notifications" onClick={() => window.location.href = '/notifications'}>
+          <MdNotifications className={`menu-icon${Number(notificationCount) > 0 ? ' violet-message' : ''}`} size={20} />
         </button>
-        <button className="mx-2" title="Notifications">
-          <span role="img" aria-label="notifications">
-            🔔
-          </span>
-        </button>
-        <button className="mx-2" title="Account">
-          <span role="img" aria-label="account">
-            👤
-          </span>
-        </button>
+        <div style={{position: 'relative', display: 'inline-block'}}>
+          <button className="mx-2" title="Account" onClick={() => setShowAccountMenu((v) => !v)}>
+            <MdPerson className="menu-icon" size={20} />
+          </button>
+          {showAccountMenu &&
+            <div style={{position: 'absolute', right: 0, top: '100%', zIndex: 100}}>
+              {/* Le menu utilisateur sera injecté ici par PageLayout */}
+              {window.renderAccountMenu && window.renderAccountMenu()}
+            </div>
+          }
+        </div>
       </div>
 
       {isOpen1 && (

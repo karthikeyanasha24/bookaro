@@ -215,7 +215,7 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
   const { i18n } = useTranslation();
   const [likedIds, setLikedIds] = useState({});
   const [openShareId, setOpenShareId] = useState(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const newsGroups = useMemo(() => {
     const source = Array.isArray(section?.items) && section.items.length > 0
