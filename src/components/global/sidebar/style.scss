@@ -1,3 +1,45 @@
+/* Ligne du haut sidebar : logo + bouton toggle */
+.sidebar-top-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  padding: 32px 0 16px 0;
+  min-height: 56px;
+  background: transparent;
+  overflow: visible !important;
+}
+
+.sidebar-logo {
+  margin-left: 16px;
+  margin-bottom: 0;
+  transition: width 0.3s;
+}
+
+.toggle-btn.always-visible {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  background: #976DD0;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  padding: 0;
+  color: #fff;
+  transition: background 0.3s, box-shadow 0.2s;
+}
+.toggle-btn.always-visible:hover {
+  background: #8b5fbf;
+  box-shadow: 0 4px 16px rgba(151,109,208,0.25);
+}
 @import '../../../scss/mixins';
 
 /* Sidebar Wrapper */
@@ -10,6 +52,7 @@
   background: #2d3748;
   color: #e2e8f0;
   transition: width 0.3s ease-in-out;
+  overflow: visible !important;
   
   &.sidebar-open {
     width: 280px;
@@ -44,13 +87,12 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease;
   z-index: 500;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   
   &:hover {
     background: #8b5fbf;
-    transform: scale(1.1);
   }
 }
 

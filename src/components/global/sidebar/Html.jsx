@@ -135,14 +135,20 @@ const Html = ({
 
   return (
     <div className={`sidebar-wrapper ${isOpen ? 'sidebar-open' : 'sidebar-collapsed'}`} style={{height: '100vh', overflowY: 'auto'}}>
-      {/* Floating Toggle Button - always visible */}
-      <button 
-        onClick={onToggle}
-        className="toggle-btn hidden md:flex"
-        title={isOpen ? "Collapse sidebar" : "Expand sidebar"}
-      >
-        {isOpen ? <HiChevronLeft /> : <HiChevronRight />}
-      </button>
+      {/* Logo en haut de la sidebar */}
+
+      <div className="sidebar-top-row">
+        {isOpen && (
+          <img src="/assets/img/logo.png" alt="Logo" className="sidebar-logo" style={{ width: 140 }} />
+        )}
+        <button
+          onClick={onToggle}
+          className="toggle-btn always-visible"
+          title={isOpen ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          {isOpen ? <HiChevronLeft /> : <HiChevronRight />}
+        </button>
+      </div>
 
       {/* Sidebar Menu - Complete Navigation */}
       <nav className="sidebar-menu">
