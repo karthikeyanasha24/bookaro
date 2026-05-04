@@ -11,7 +11,7 @@ const SECTION_ROUTES = {
   estimation: ["/estimation", "/social-estimation"],
   transactionMgmt: ["/real-estate-transaction-searcher", "/real-estate-transaction-owner"],
   propertySeeker: ["/serach-alert", "/followed-properties", "/properties?favourites=true", "/renter-file", "/buyer-file"],
-  properties: ["/my-properties", "/seller-file"],
+  properties: ["/my-properties", "/seller-file", "/property/qr-code"],
 };
 
 const Html = ({
@@ -134,7 +134,7 @@ const Html = ({
   );
 
   return (
-    <div className={`sidebar-wrapper ${isOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+    <div className={`sidebar-wrapper ${isOpen ? 'sidebar-open' : 'sidebar-collapsed'}`} style={{height: '100vh', overflowY: 'auto'}}>
       {/* Floating Toggle Button - always visible */}
       <button 
         onClick={onToggle}
@@ -253,7 +253,7 @@ const Html = ({
             <div className="section-items">
               <MenuItem icon={MdHome} label={t('navigation.myProperties')} url="/my-properties" isCollapsed={!isOpen} />
               <MenuItem icon={MdHome} label={t('navigation.sellerFile')} url="/seller-file" isCollapsed={!isOpen} />
-              <MenuItem icon={MdHome} label={t('navigation.qrCode')} url="#" isCollapsed={!isOpen} />
+              <MenuItem icon={MdHome} label={t('navigation.qrCode')} url="/property/qr-code" isCollapsed={!isOpen} />
             </div>
           )}
         </div>

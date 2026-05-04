@@ -1,0 +1,192 @@
+diff a/src/Pages/Login/index.tsx b/src/Pages/Login/index.tsx	(rejected hunks)
+@@ -16,17 +16,15 @@ import "./style.scss";
+ 
+ 
+ const Login = () => {
++  // Hooks toujours en haut
+   const navigate = useNavigate();
+   const { user } = useSelector((state: any) => state);
+   const dispatch = useDispatch();
+   const { t } = useTranslation();
+   const googleClientId: string = process.env.REACT_APP_CLINT_ID as string;
+   const fbAppId: string = process.env.REACT_APP_FACEBOOK_APP_ID as string;
+-  const [social, setSocial] = useState<any>({
+-    google: "", fb: "",
+-  });
+-  const propertyId = methodModel.getPrams('propertyId')
+-
++  const [social, setSocial] = useState<any>({ google: "", fb: "" });
++  const propertyId = methodModel.getPrams('propertyId');
+   const [form, setForm]: any = useState({
+     email: "",
+     password: "",
+@@ -38,68 +36,38 @@ const Login = () => {
+     confirmPassword: false,
+     currentPassword: false,
+   });
+-
+   const deviceInfo = {
+     deviceToken: localStorage.getItem("deviceToken"),
+     deviceID: `${navigator.product}_${navigator.productSub}`,
+     deviceName: navigator.platform,
+   };
+-  const hendleSubmit = (e: any) => {
+-    e.preventDefault();
+-    let url = "user/login";
+-    let data: any = {
+-      ...form,
+-      deviceToken: deviceInfo?.deviceToken,
+-      deviceId: deviceInfo?.deviceID,
+-      deviceName: deviceInfo?.deviceName,
+-    };
+-    loader(true);
+-    ApiClient.post(url, data).then(async (res) => {
+-      if (res.success) {
+-        if (res?.data?.isVerified == "Y") {
+-          let url = "/";
+-          setTimeout(() => {
+-            toast.success(res?.message);
+-          }, 400);
+-          localStorage.setItem("token", res?.data.access_token);
+-
+-          let renterFiles: any = res.data.renterFiles
+-          if (renterFiles) {
+-            Object.keys(renterFiles).map(key => {
+-              let arr = (renterFiles?.[key]?.length ? renterFiles[key] : []) || []
+-              renterFiles[key] = arr?.map((itm: any) => ({ ...itm, checked: true })) || []
+-            })
+-            res.data.renterFiles = renterFiles
+-          }
+-          dispatch(login_success(res?.data));
+-
+-          if (propertyId) url = `/property-details?id=${propertyId}`
+-          navigate(url);
+-        } else {
+-          setTimeout(() => {
+-            toast.success(t("messages.otpVerification"));
+-          }, 400);
+-          navigate(`/otpverify?email=${form?.email}&propertyId=${propertyId}`);
+-        }
+-      }
+-      loader(false);
+-    });
+-  };
+ 
++  // 1. Force le mock user si mode autonome et pas loggé
+   useEffect(() => {
+-    let email = methodModel.getPrams("email");
+-    if (user && user?.loggedIn) {
+-      navigate("/");
++    if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true' && (!user || !user.loggedIn)) {
++      dispatch(login_success({
++        ...user,
++        loggedIn: true,
++        email: user?.email || 'test@example.com',
++        fullName: user?.fullName || 'Test User',
++        token: 'mock-token',
++      }));
+     }
++  }, []);
+ 
+-    if (email) {
+-      setForm({
+-        ...form,
+-        email: email,
+-        fullName: methodModel.getPrams("name"),
+-      });
++  // 2. Redirection immédiate si loggé (mock ou réel)
++  useEffect(() => {
++    if (user && user.loggedIn) {
++      navigate("/dashboard");
+     }
+-  }, []);
++  }, [user, navigate]);
++
++
++  // 3. Attendre l'init Redux avant d'afficher le formulaire (sinon return null)
++  // On ne retourne plus null ici pour éviter les hooks conditionnels
++
++  // ...le reste du composant (formulaire, handlers, etc.)...
++
+ 
+   useEffect(() => {
+     const fcmToken = async () => {
+@@ -116,7 +84,7 @@ const Login = () => {
+       const decodedToken: any = jwtDecode(res.credential);
+       if (decodedToken) {
+         setSocial({ ...social, google: decodedToken });
+-        checkEmail(decodedToken.email);
++        // checkEmail neutralisé en mode autonome
+       }
+     } catch (error) {
+       console.error(t("messages.errorDecodingToken"), error);
+@@ -126,46 +94,41 @@ const Login = () => {
+     if (res.status !== 'unknown') {
+       console.log(t("messages.facebookLoginSuccess"), res);
+       setSocial({ ...social, fb: res });
+-      checkEmail(res.email)
++      // checkEmail neutralisé en mode autonome
+     } else {
+       console.error(t("messages.facebookLoginFailed"), res);
+     }
+   };
+ 
+-  const checkEmail = (email: string) => {
+-    let url = "user/checkAccount";
+-    let dto = { email };
+-    loader(true);
+-    ApiClient.post(url, dto)
+-      ?.then((res) => {
+-        if (res.success) {
+-          toast.success(res?.message);
+-          localStorage.setItem("token", res?.data.access_token);
+-          dispatch(login_success(res?.data));
+-          let url = '/'
+-          if (propertyId) url = `/signup?propertyId=${propertyId}`
+-          navigate(url);
+-        } else {
+-          navigate(`/signup?email=${email}&propertyId=${propertyId}`)
+-        }
+-      })
+-      ?.catch((err) => { console.log("err", err) })
+-      ?.finally(() => {
+-        loader(false);
+-      })
+-  }
+ 
++  // Mode autonome : simule la vérification d'email sans appel réseau
++  const handleSubmit = (e: any) => {
++    e.preventDefault();
++    // Simule un login réussi pour le front autonome
++    setTimeout(() => {
++      dispatch(login_success({
++        email: form.email,
++        fullName: form.fullName || "Utilisateur",
++        isVerified: "Y",
++        token: "mock-token",
++      }));
++      toast.success("Connexion réussie (mode autonome)");
++      navigate("/dashboard");
++    }, 500);
++  };
++
++  // Handler pour le bouton signup
+   const signup = () => {
+-    let url = '/signup'
+-    if (propertyId) url = `/signup?propertyId=${propertyId}`
+-    navigate(url)
+-  }
++    let url = '/signup';
++    if (propertyId) url = `/signup?propertyId=${propertyId}`;
++    navigate(url);
++  };
+ 
+   return (
+     <>
+       <AuthLayout>
+         <form className="flex items-center justify-center login flex-col w-full"
+-          onSubmit={hendleSubmit} autoComplete="off">
++            onSubmit={handleSubmit} autoComplete="off">
+           <Link to="/">
+             <img src="assets/img/logo.png" className="w-[150px] mx-auto mb-12" />
+           </Link>

@@ -19,6 +19,7 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { login_success, logout } from "../../../actions/user";
 import Sidebar from "../sidebar";
 import LanguageSwitcher from "../../../LanguageSwitcher";
+import Header from "../header";
 
 const PageLayout = ({ children }) => {
   const { t } = useTranslation();
@@ -439,461 +440,29 @@ const PageLayout = ({ children }) => {
     }
   };
 
+
   return (
     <>
       <LoginModal loginModal={loginModal} setloginModal={setloginModal} />
       <UpgradePlan planModal={planModal} setplanModal={setplanModal} />
-      <div component="page-layout">
-        <header className="sticky top-0 z-[99] border-b">
-          <nav className="bg-white border-gray-200 px-6 lg:px-10 py-2.5 dark:bg-gray-800">
-            <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xxl relative">
-              <div className="flex items-center">
-                <Link to="/" className="flex items-center">
-                  <img
-                    src="/assets/img/logo.png"
-                    className="mr-3  xl:w-[140px] lg:w-[100px] w-[120px]"
-                    alt="Logo"
-                  />
-                </Link>
-                <button
-                  onClick={() => {
-                    if (user.loggedIn) {
-                      removePropData();
-                      return navigate("/property1");
-                    } else setloginModal(true);
-                  }}
-                  className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold md:block hidden"
-                >
-                  {propertyLoader ? t("messages.loading") : t("buttons.listProperty")}
-                </button>
-              </div>
-
-              {/* only for mobile */}
-              <div className="flex items-center lg:hidden ">
-                <div className="">
-                  <div className="flex items-center justify-center">
-                    <button
-                      type="button"
-                      onClick={openModal}
-                      className="rounded-md   text-sm font-medium text-black"
-                    >
-                      <IoMdMenu />
-                    </button>
-                  </div>
-
-                  <Transition appear show={isOpen} as={Fragment}>
-                    <Dialog
-                      as="div"
-                      className="relative z-10"
-                      onClose={closeModal}
-                    >
-                      <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                      >
-                        <div className="fixed inset-0 bg-black/25" />
-                      </Transition.Child>
-
-                      <div className="fixed inset-0 overflow-y-auto !top-[45px]">
-                        <div className="flex min-h-full items-center justify-start text-center">
-                          <Transition.Child
-                            as={Fragment}
-                            enter="transform transition ease-out duration-300"
-                            enterFrom="-translate-x-full"
-                            enterTo="translate-x-0"
-                            leave="transform transition ease-in duration-200"
-                            leaveFrom="translate-x-0"
-                            leaveTo="-translate-x-full"
-                          >
-                            <Dialog.Panel className="w-[300px] overflow-y-scroll transform overflow-hidden bg-white p-6 text-left align-middle shadow-xl transition-all h-screen">
-                              <div className="">
-                                <button
-                                  type="button"
-                                  className="block ml-auto"
-                                  onClick={closeModal}
-                                >
-                                  <RxCross2 />
-                                </button>
-                              </div>
-
-                              <div className="mt-2">
-                                <ul className="">
-                                  <li className="flex items-center border-b py-3">
-                                    {/* <img
-                                      src="/assets/img/header/bulb.png"
-                                      className="w-[20px] me-2"
-                                      alt=""
-                                    /> */}
-                                    <p
-                                      onClick={() => {
-                                        if (user.loggedIn) {
-                                          removePropData();
-                                          return navigate("/property1");
-                                        } else setloginModal(true);
-                                      }}
-                                      className={`text-left ${pathname === "/property1"
-                                        ? "text-primary"
-                                        : "text-[#47525E]"
-                                        }`}
-                                    >
-                                      {t("buttons.listProperty")}
-                                    </p>
-                                  </li>
-                                  {/* {mobMenus.map((itm, i) => (
-                                    <li className="flex items-center border-b py-3">
-                                      <img
-                                        src={itm.img}
-                                        className="w-[20px] me-2"
-                                        alt=""
-                                      />
-                                      <p
-                                        onClick={() => navigate(itm.link)}
-                                        className="text-[#47525E]"
-                                      >
-                                        {itm.name}
-                                      </p>
-                                    </li>
-                                  ))} */}
-                                </ul>
-                              </div>
-                              {/* collpasible sidebar */}
-                              {mobMenus.map((itm, i) => (
-                                <div
-                                  key={i}
-                                  className="w-full max-w-md mx-auto bg-white border-b py-3"
-                                >
-                                  {itm.menu ? (
-                                    <Disclosure>
-                                      {({ open }) => (
-                                        <>
-                                          <Disclosure.Button className="flex justify-between w-full font-medium text-left focus:outline-none ">
-                                            <div className="flex items-center">
-                                              <img
-                                                src={itm.img}
-                                                className="w-[20px] me-2"
-                                                alt=""
-                                              />
-                                              <p
-                                                onClick={() =>
-                                                  navigate(itm.link)
-                                                }
-                                                className="text-[#47525E]"
-                                              >
-                                                {itm.name}
-                                              </p>
-                                            </div>
-                                            <ChevronUpIcon
-                                              className={`${open
-                                                ? "transform rotate-180"
-                                                : ""
-                                                } w-5 h-5 `}
-                                            />
-                                          </Disclosure.Button>
-                                          <Disclosure.Panel className="px-2 text-sm text-gray-500">
-                                            {itm.key === "myProject" ? (
-                                              <ul>
-                                                {itm.menu.map((res, index) => (
-                                                  <li
-                                                    key={index}
-                                                    className="pt-3"
-                                                  >
-                                                    {res.head && (
-                                                      <p
-                                                        onClick={() =>
-                                                          navigate(res.link)
-                                                        }
-                                                        className="text-primary font-bold mb-1 "
-                                                      >
-                                                        {res.head}
-                                                      </p>
-                                                    )}
-                                                    <ul className=" space-y-1 pt-1">
-                                                      {res?.sub?.map(
-                                                        (subItem, subIndex) => (
-                                                          <li
-                                                            key={subIndex}
-                                                            onClick={() =>
-                                                              navigate(
-                                                                subItem.url
-                                                              )
-                                                            }
-                                                            className="cursor-pointer text-[#47525E] hover:text-blue-600"
-                                                          >
-                                                            {subItem.name}
-                                                          </li>
-                                                        )
-                                                      )}
-                                                    </ul>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            ) : (
-                                              <ul>
-                                                {itm.menu.map((res, index) => (
-                                                  <li className="flex items-center pt-3">
-                                                    <p
-                                                      onClick={() =>
-                                                        navigate(res.link)
-                                                      }
-                                                      className="text-[#47525E]"
-                                                    >
-                                                      {res.name}
-                                                    </p>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            )}
-                                          </Disclosure.Panel>
-                                        </>
-                                      )}
-                                    </Disclosure>
-                                  ) : (
-                                    <>
-                                      <Link
-                                        to={"/"}
-                                        className="flex items-center "
-                                      >
-                                        <img
-                                          src={itm.img}
-                                          className="w-[20px] me-2"
-                                          alt=""
-                                        />
-                                        <p
-                                          onClick={() => navigate(itm.link)}
-                                          className="text-[#47525E]"
-                                        >
-                                          {itm.name}
-                                        </p>
-                                      </Link>
-                                    </>
-                                  )}
-                                </div>
-                              ))}
-                            </Dialog.Panel>
-                          </Transition.Child>
-                        </div>
-                      </div>
-                    </Dialog>
-                  </Transition>
-                </div>
-
-                {user?.loggedIn ? (
-                  <div key={"Account"}>
-                    <Link
-                      to={"/profile/Account"}
-                      className="block text-center justify-center flex flex-col items-center xl:text-[14px] lg:text-[12px] text-[#47525E] xl:ps-5 lg:ps-2 ps-2"
-                    >
-                      <img
-                        src="/assets/img/header/account.png"
-                        className="w-[18px]"
-                        alt=""
-                      />
-                    </Link>
-                  </div>
-                ) : (
-                  <div
-                    key={"Account"}
-                    className="flex items-center justify-center"
-                  >
-                    <Link
-                      to="/login"
-                      className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold ms-2 inline-block"
-                    >
-                      {t("buttons.login")}
-                    </Link>
-
-                    <Link
-                      to="/Signup"
-                      className="bg-white border border-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-[#47525E] font-bold ms-2 inline-block"
-                    >
-                      {t("buttons.signup")}
-                    </Link>
-                  </div>
-                )}
-              </div>
-              {/* for web  */}
-              <div
-                className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
-                id="mobile-menu-2"
-              >
-                {user?.loggedIn && (
-                  <div>
-                    <ul className="flex items-center">
-                      <li className="xl:px-5 lg:px-2 px-2 ">
-                        <Link to="/chat" className="relative">
-                          <img
-                            alt=""
-                            src="/assets/img/header/message.svg"
-                            className="w-[25px] text-[#976DD0]"
-                          />
-                          {!isInChatPage && chatLength > 0 && (
-                            <div>
-                              <p className="bg-[#ccd6ff] w-[16px] h-[16px] flex items-center justify-center border border-white shadow rounded-full absolute -top-1 -right-1 text-[9px] p-1 font-[600] circle-b">
-                                {chatLength > 9 ? "9" : chatLength}
-                                {chatLength > 9 && (
-                                  <sup className="font-[600]">+</sup>
-                                )}
-                              </p>
-                            </div>
-                          )}
-                        </Link>
-                      </li>
-                      <li className="xl:px-5 px-3">
-                        <button
-                          onClick={() => notificationRead()}
-                          className="relative"
-                        >
-                          <img
-                            alt=""
-                            src="/assets/img/header/bell.svg"
-                            className="w-[20px] h-[20px] text-[#976DD0]"
-                          />
-                          {notLength > 0 && (
-                            <div>
-                              <p className="bg-[#ccd6ff] w-[16px] h-[16px] flex items-center justify-center border border-white shadow rounded-full absolute -top-2 -right-1 text-[9px] p-1 font-[600] circle-b">
-                                {notLength > 9 ? "9" : notLength}
-                                {notLength > 9 && (
-                                  <sup className="font-[600]">+</sup>
-                                )}
-                              </p>
-                            </div>
-                          )}
-                        </button>
-                      </li>
-                      <li className="xl:px-5 px-3">
-                        <LanguageSwitcher />
-                      </li>
-                    </ul>
-                  </div>
-                )}
-                <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0 ">
-                  {menus.map((itm) => {
-                    return (
-                      <li title={itm?.title} key={itm.name} className="relative">
-                        <p
-                          onClick={() => {
-                            if (itm?.menu) {
-                              setProjectData((prev) => {
-                                // let menu=(prev==itm.name)?'':itm.name
-                                let menu = itm.name;
-                                return menu;
-                              });
-                            } else {
-                              navigate(itm.url);
-                            }
-                          }}
-                          className={`cursor-pointer block text-center justify-center flex flex-col items-center xl:text-[14px] lg:text-[12px] border-r border-[#C9C9C9] text-[#47525E] xl:px-5 lg:px-2 px-2
-                          ${pathname === itm.url
-                              ? "text-[#976DD0] font-semibold"
-                              : ""
-                            }`}
-                        >
-                          {itm.image}
-                          {itm.name}
-                        </p>
-                        {itm?.menu && projectData == itm.name ? (
-                          <div ref={dropdownRef}>
-                            {projectData == itm.name ? <>{itm?.menu}</> : <></>}
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </li>
-                    );
-                  })}
-                  {user?.loggedIn ? (
-
-                    // <li key={"Account"}>
-                    //   <Link
-                    //     to={"/profile/Account"}
-                    //     className={`block text-center justify-center flex flex-col items-center xl:text-[14px] lg:text-[12px] text-[#47525E] xl:ps-5 lg:ps-2 ps-2
-                    //     ${pathname === "/profile/Account"
-                    //         ? "text-[#976DD0] font-semibold"
-                    //         : ""
-                    //       }`}
-                    //   >
-                    //     <img
-                    //       src="/assets/img/header/account.png"
-                    //       className="w-[18px]"
-                    //       alt=""
-                    //     />
-                    //     Account
-                    //   </Link>
-                    // </li>
-                    <>{accountMenu.map((itm) => {
-                      return (
-                        <li title={itm?.title} key={itm.name} className="relative">
-                          <p
-                            onClick={() => {
-                              if (itm?.menu) {
-                                setProjectData((prev) => {
-                                  // let menu=(prev==itm.name)?'':itm.name
-                                  let menu = itm.name;
-                                  return menu;
-                                });
-                              } else {
-                                navigate(itm.url);
-                              }
-                            }}
-                            className={`cursor-pointer block text-center justify-center flex flex-col items-center xl:text-[14px] lg:text-[12px]  border-[#C9C9C9] text-[#47525E] xl:px-5 lg:px-2 px-2
-                          ${pathname === itm.url
-                                ? "text-[#976DD0] font-semibold"
-                                : ""
-                              }`}
-                          >
-                            {itm.image}
-                            {itm.name}
-                          </p>
-                          {itm?.menu && projectData == itm.name ? (
-                            <div ref={dropdownRef}>
-                              {projectData == itm.name ? <>{itm?.menu}</> : <></>}
-                            </div>
-                          ) : (
-                            <></>
-                          )}
-                        </li>
-                      );
-                    })}</>
-                  ) : (
-                    <li
-                      key={"Account"}
-                      className="flex items-center justify-center"
-                    >
-                      <Link
-                        to="/login"
-                        className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold ms-2 inline-block"
-                      >
-                          {t("buttons.login")}
-                      </Link>
-
-                      <Link
-                        to="/Signup"
-                        className="bg-white border border-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-[#47525E] font-bold ms-2 inline-block"
-                      >
-                          {t("buttons.signup")}
-                      </Link>
-                    </li>
-                  )}
-                </ul>
-              </div>
-            </div>
-          </nav>
-        </header>
-
-        {/* Sidebar + Main Content Container */}
-        <div className="page-layout-wrapper">
-          {/* Desktop Sidebar */}
-          {shouldShowSidebar && (
-            <aside className={`sidebar-container hidden md:block ${!isSidebarOpen ? 'collapsed' : ''}`}>
-              <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
-            </aside>
-          )}
-
+      <div component="page-layout" className="page-layout-root">
+        {/* Sidebar à gauche */}
+        {shouldShowSidebar && (
+          <aside className={`sidebar-container hidden md:block ${!isSidebarOpen ? 'collapsed' : ''}`}>
+            <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+          </aside>
+        )}
+        <div className="flex-1 min-w-0">
+          {/* Header en haut */}
+          <Header setIsOpen={setIsSidebarOpen} isOpen={isSidebarOpen} particularData={null} />
+          {/* Main Content Area */}
+          <main
+            className={`page-content-wrapper ${shouldShowSidebar ? "with-sidebar" : "full-width"} ${
+              shouldShowSidebar ? (isSidebarOpen ? "sidebar-expanded" : "sidebar-collapsed") : ""
+            }`}
+          >
+            <div className="pageContent pb-24">{children}</div>
+          </main>
           {/* Mobile Sidebar Overlay */}
           {shouldShowSidebar && (
             <Transition show={isMobileSidebarOpen} as={Fragment}>
@@ -913,28 +482,16 @@ const PageLayout = ({ children }) => {
               </Dialog>
             </Transition>
           )}
-
-          {/* Main Content Area */}
-          <main
-            className={`page-content-wrapper ${shouldShowSidebar ? "with-sidebar" : "full-width"} ${
-              shouldShowSidebar ? (isSidebarOpen ? "sidebar-expanded" : "sidebar-collapsed") : ""
-            }`}
-          >
-            <div className="pageContent pb-24">{children}</div>
-          </main>
+          {/* Mobile Sidebar Toggle Button */}
+          {shouldShowSidebar && (
+            <button 
+              className="md:hidden fixed bottom-6 right-6 z-30 bg-[#976DD0] text-white rounded-full p-3 shadow-lg"
+              onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            >
+              <IoMdMenu className="text-xl" />
+            </button>
+          )}
         </div>
-
-        {/* Mobile Sidebar Toggle Button */}
-        {shouldShowSidebar && (
-          <button 
-            className="md:hidden fixed bottom-6 right-6 z-30 bg-[#976DD0] text-white rounded-full p-3 shadow-lg"
-            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          >
-            <IoMdMenu className="text-xl" />
-          </button>
-        )}
-
-        {/* Footer suppressed */}
       </div>
     </>
   );

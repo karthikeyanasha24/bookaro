@@ -1,0 +1,1738 @@
+diff --git a/package-lock.json b/package-lock.json
+index c3305bd..1436c00 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -26,6 +26,7 @@
+         "@types/react-dom": "^18.2.22",
+         "antd": "^5.15.3",
+         "axios": "^1.6.7",
++        "bcryptjs": "^3.0.3",
+         "dotenv": "^16.4.5",
+         "echarts": "^6.0.0",
+         "echarts-for-react": "^3.0.2",
+@@ -68,6 +69,7 @@
+         "redux-thunk": "^3.1.0",
+         "sass": "^1.72.0",
+         "slick-carousel": "^1.8.1",
++        "socket.io": "^4.8.3",
+         "socket.io-client": "^4.8.1",
+         "sweetalert2": "^11.10.7",
+         "swiper": "^11.2.10",
+@@ -5831,6 +5833,15 @@
+         "@types/node": "*"
+       }
+     },
++    "node_modules/@types/cors": {
++      "version": "2.8.19",
++      "resolved": "https://registry.npmjs.org/@types/cors/-/cors-2.8.19.tgz",
++      "integrity": "sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/node": "*"
++      }
++    },
+     "node_modules/@types/eslint": {
+       "version": "8.56.12",
+       "resolved": "https://registry.npmjs.org/@types/eslint/-/eslint-8.56.12.tgz",
+@@ -7551,12 +7562,30 @@
+       "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
+       "license": "MIT"
+     },
++    "node_modules/base64id": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/base64id/-/base64id-2.0.0.tgz",
++      "integrity": "sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==",
++      "license": "MIT",
++      "engines": {
++        "node": "^4.5.0 || >= 5.9"
++      }
++    },
+     "node_modules/batch": {
+       "version": "0.6.1",
+       "resolved": "https://registry.npmjs.org/batch/-/batch-0.6.1.tgz",
+       "integrity": "sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==",
+       "license": "MIT"
+     },
++    "node_modules/bcryptjs": {
++      "version": "3.0.3",
++      "resolved": "https://registry.npmjs.org/bcryptjs/-/bcryptjs-3.0.3.tgz",
++      "integrity": "sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==",
++      "license": "BSD-3-Clause",
++      "bin": {
++        "bcrypt": "bin/bcrypt"
++      }
++    },
+     "node_modules/bfj": {
+       "version": "7.1.0",
+       "resolved": "https://registry.npmjs.org/bfj/-/bfj-7.1.0.tgz",
+@@ -7862,6 +7891,26 @@
+         "lodash.uniq": "^4.5.0"
+       }
+     },
++    "node_modules/caniuse-lite": {
++      "version": "1.0.30001788",
++      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001788.tgz",
++      "integrity": "sha512-6q8HFp+lOQtcf7wBK+uEenxymVWkGKkjFpCvw5W25cmMwEDU45p1xQFBQv8JDlMMry7eNxyBaR+qxgmTUZkIRQ==",
++      "funding": [
++        {
++          "type": "opencollective",
++          "url": "https://opencollective.com/browserslist"
++        },
++        {
++          "type": "tidelift",
++          "url": "https://tidelift.com/funding/github/npm/caniuse-lite"
++        },
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/ai"
++        }
++      ],
++      "license": "CC-BY-4.0"
++    },
+     "node_modules/case-sensitive-paths-webpack-plugin": {
+       "version": "2.4.0",
+       "resolved": "https://registry.npmjs.org/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.4.0.tgz",
+@@ -8355,6 +8404,23 @@
+       "integrity": "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==",
+       "license": "MIT"
+     },
++    "node_modules/cors": {
++      "version": "2.8.6",
++      "resolved": "https://registry.npmjs.org/cors/-/cors-2.8.6.tgz",
++      "integrity": "sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==",
++      "license": "MIT",
++      "dependencies": {
++        "object-assign": "^4",
++        "vary": "^1"
++      },
++      "engines": {
++        "node": ">= 0.10"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/express"
++      }
++    },
+     "node_modules/cosmiconfig": {
+       "version": "7.1.0",
+       "resolved": "https://registry.npmjs.org/cosmiconfig/-/cosmiconfig-7.1.0.tgz",
+@@ -9411,6 +9477,27 @@
+         "node": ">= 0.8"
+       }
+     },
++    "node_modules/engine.io": {
++      "version": "6.6.6",
++      "resolved": "https://registry.npmjs.org/engine.io/-/engine.io-6.6.6.tgz",
++      "integrity": "sha512-U2SN0w3OpjFRVlrc17E6TMDmH58Xl9rai1MblNjAdwWp07Kk+llmzX0hjDpQdrDGzwmvOtgM5yI+meYX6iZ2xA==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/cors": "^2.8.12",
++        "@types/node": ">=10.0.0",
++        "@types/ws": "^8.5.12",
++        "accepts": "~1.3.4",
++        "base64id": "2.0.0",
++        "cookie": "~0.7.2",
++        "cors": "~2.8.5",
++        "debug": "~4.4.1",
++        "engine.io-parser": "~5.2.1",
++        "ws": "~8.18.3"
++      },
++      "engines": {
++        "node": ">=10.2.0"
++      }
++    },
+     "node_modules/engine.io-client": {
+       "version": "6.6.3",
+       "resolved": "https://registry.npmjs.org/engine.io-client/-/engine.io-client-6.6.3.tgz",
+@@ -9471,6 +9558,36 @@
+         "node": ">=10.0.0"
+       }
+     },
++    "node_modules/engine.io/node_modules/cookie": {
++      "version": "0.7.2",
++      "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.7.2.tgz",
++      "integrity": "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
++    "node_modules/engine.io/node_modules/ws": {
++      "version": "8.18.3",
++      "resolved": "https://registry.npmjs.org/ws/-/ws-8.18.3.tgz",
++      "integrity": "sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=10.0.0"
++      },
++      "peerDependencies": {
++        "bufferutil": "^4.0.1",
++        "utf-8-validate": ">=5.0.2"
++      },
++      "peerDependenciesMeta": {
++        "bufferutil": {
++          "optional": true
++        },
++        "utf-8-validate": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/enhanced-resolve": {
+       "version": "5.18.3",
+       "resolved": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.18.3.tgz",
+@@ -19609,6 +19726,55 @@
+         "jquery": ">=1.8.0"
+       }
+     },
++    "node_modules/socket.io": {
++      "version": "4.8.3",
++      "resolved": "https://registry.npmjs.org/socket.io/-/socket.io-4.8.3.tgz",
++      "integrity": "sha512-2Dd78bqzzjE6KPkD5fHZmDAKRNe3J15q+YHDrIsy9WEkqttc7GY+kT9OBLSMaPbQaEd0x1BjcmtMtXkfpc+T5A==",
++      "license": "MIT",
++      "dependencies": {
++        "accepts": "~1.3.4",
++        "base64id": "~2.0.0",
++        "cors": "~2.8.5",
++        "debug": "~4.4.1",
++        "engine.io": "~6.6.0",
++        "socket.io-adapter": "~2.5.2",
++        "socket.io-parser": "~4.2.4"
++      },
++      "engines": {
++        "node": ">=10.2.0"
++      }
++    },
++    "node_modules/socket.io-adapter": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/socket.io-adapter/-/socket.io-adapter-2.5.6.tgz",
++      "integrity": "sha512-DkkO/dz7MGln0dHn5bmN3pPy+JmywNICWrJqVWiVOyvXjWQFIv9c2h24JrQLLFJ2aQVQf/Cvl1vblnd4r2apLQ==",
++      "license": "MIT",
++      "dependencies": {
++        "debug": "~4.4.1",
++        "ws": "~8.18.3"
++      }
++    },
++    "node_modules/socket.io-adapter/node_modules/ws": {
++      "version": "8.18.3",
++      "resolved": "https://registry.npmjs.org/ws/-/ws-8.18.3.tgz",
++      "integrity": "sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=10.0.0"
++      },
++      "peerDependencies": {
++        "bufferutil": "^4.0.1",
++        "utf-8-validate": ">=5.0.2"
++      },
++      "peerDependenciesMeta": {
++        "bufferutil": {
++          "optional": true
++        },
++        "utf-8-validate": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/socket.io-client": {
+       "version": "4.8.1",
+       "resolved": "https://registry.npmjs.org/socket.io-client/-/socket.io-client-4.8.1.tgz",
+@@ -22373,4 +22539,4 @@
+       "license": "0BSD"
+     }
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/package.json b/package.json
+index 7bdcf1d..a5b8431 100644
+--- a/package.json
++++ b/package.json
+@@ -25,6 +25,7 @@
+     "@types/react-dom": "^18.2.22",
+     "antd": "^5.15.3",
+     "axios": "^1.6.7",
++    "bcryptjs": "^3.0.3",
+     "dotenv": "^16.4.5",
+     "echarts": "^6.0.0",
+     "echarts-for-react": "^3.0.2",
+@@ -67,6 +68,7 @@
+     "redux-thunk": "^3.1.0",
+     "sass": "^1.72.0",
+     "slick-carousel": "^1.8.1",
++    "socket.io": "^4.8.3",
+     "socket.io-client": "^4.8.1",
+     "sweetalert2": "^11.10.7",
+     "swiper": "^11.2.10",
+diff --git a/server.js b/server.js
+index c063813..5588228 100644
+--- a/server.js
++++ b/server.js
+@@ -1,10 +1,27 @@
+-// Get dependencies
++
+ const express = require('express');
+ const path = require('path');
+ const http = require('http');
++const { Server } = require('socket.io');
++
++
++// (Suppression de toute route de test, restauration à l'état d'origine)
++
+ 
+ const app = express();
+ 
++// --- CORS middleware to allow frontend requests ---
++app.use((req, res, next) => {
++  res.header('Access-Control-Allow-Origin', 'http://localhost:8089');
++  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
++  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
++  res.header('Access-Control-Allow-Credentials', 'true');
++  if (req.method === 'OPTIONS') {
++    return res.sendStatus(200);
++  }
++  next();
++});
++
+ app.use(express.json());
+ 
+ app.get('/api/dashboard/overview', (req, res) => {
+@@ -27,14 +44,7 @@ app.get('/api/dashboard/overview', (req, res) => {
+           title: 'To do list',
+           subtitle: 'Actions to drive your real-estate project',
+           emptyMessage: 'Here will be displayed actions you need to take to drive your real estate project to success',
+-          items: [
+-            {
+-              id: 'todo-1',
+-              label: 'Envoyer dossier vendeur à Paul Dupont',
+-              property: { coverUrl: '/assets/img/blogs/blog-2.png', type: 'Maison', surface: 100, city: 'Paris' },
+-              action: { route: '/seller-file' },
+-            },
+-          ],
++          items: [],
+         },
+         propertyAttractivity: {
+           visible: true,
+@@ -214,10 +224,15 @@ app.get('/api/dashboard/activity', (req, res) => {
+ });
+ 
+ // Point static path to dist
++
++// --- Static file serving and catch-all moved below API routes ---
++
++
++
++// --- Static file serving and catch-all route (must be after API routes) ---
+ app.use(express.static(path.join(__dirname, 'build')));
+-let url=path.join(__dirname, 'build/index.html')
+-console.log("url",url)
+-// Catch all other routes and return the index file
++let url = path.join(__dirname, 'build/index.html');
++console.log("url", url);
+ app.get('*', (req, res) => {
+   res.sendFile(path.join(__dirname, 'build/index.html'));
+ });
+@@ -232,6 +247,12 @@ app.set('port', port);
+  * Create HTTP server.
+  */
+ const server = http.createServer(app);
++const io = new Server(server, { cors: { origin: '*' } });
++
++io.on('connection', (socket) => {
++  console.log('Client connecté via WebSocket');
++  // Ici tu peux ajouter la logique temps réel (chat, notifications, etc.)
++});
+ 
+ /**
+  * Listen on provided port, on all network interfaces.
+diff --git a/src/App.tsx b/src/App.tsx
+index 63d22c3..d99a761 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -22,28 +22,7 @@ import { active_plan_success, clear_plan_success } from "./actions/activePlan";
+ const { persistor, store } = configureStoreProd();
+ 
+ const PageRouter = ({ children }: any) => {
+-  const user = useSelector((state: any) => state.user);
+-  const dispatch = useDispatch();
+-
+-  useEffect(() => {
+-    if (user.loggedIn) {
+-      ApiClient.get(
+-        "user/activeplan",
+-        { userId: user._id || user.id },
+-        "",
+-        true
+-      ).then((res) => {
+-        if (res.success) {
+-          dispatch(active_plan_success(res.data));
+-        }else{
+-           dispatch(clear_plan_success(""));
+-        }
+-      }).catch((error) => {
+-        dispatch(clear_plan_success(""));
+-      });;
+-    }
+-  }, [user]);
+-
++  // useEffect supprimé pour éviter toute boucle infinie en mode mock
+   return <>{children}</>;
+ };
+ 
+@@ -148,7 +127,7 @@ function App() {
+   return (
+     <>
+       <Provider store={store}>
+-        <PersistGate loading={"loading ..."} persistor={persistor}>
++        {process.env.REACT_APP_DEBUG_MOCK_USER === 'true' ? (
+           <Suspense
+             fallback={
+               <div id="loader" className="loaderDiv">
+@@ -163,14 +142,9 @@ function App() {
+             }
+           >
+             <Router>
+-              {/* <div className="language-switcher-container">
+-                  <LanguageSwitcher />
+-                </div> */}
+-              {/* <PageLayout> */}
+               <Routes>
+                 {routes.map((itm: any, index) => {
+                   const Element = lazy(() => import(`./Pages/${itm.path}`));
+-
+                   return (
+                     <Route
+                       path={itm.url}
+@@ -191,10 +165,51 @@ function App() {
+                   );
+                 })}
+               </Routes>
+-              {/* </PageLayout> */}
+             </Router>
+           </Suspense>
+-        </PersistGate>
++        ) : (
++          <PersistGate loading={"loading ..."} persistor={persistor}>
++            <Suspense
++              fallback={
++                <div id="loader" className="loaderDiv">
++                  <div>
++                    <img
++                      src="/assets/img/loader.gif"
++                      alt="logo"
++                      className="loaderlogo"
++                    />
++                  </div>
++                </div>
++              }
++            >
++              <Router>
++                <Routes>
++                  {routes.map((itm: any, index) => {
++                    const Element = lazy(() => import(`./Pages/${itm.path}`));
++                    return (
++                      <Route
++                        path={itm.url}
++                        key={index}
++                        element={
++                          itm.path ? (
++                            <PageRouter
++                              url={itm.url}
++                              auth={itm.auth ? true : false}
++                            >
++                              <Element />
++                            </PageRouter>
++                          ) : (
++                            itm.element
++                          )
++                        }
++                      />
++                    );
++                  })}
++                </Routes>
++              </Router>
++            </Suspense>
++          </PersistGate>
++        )}
+       </Provider>
+       <div id="loader" className="loaderDiv d-none">
+         <div>
+diff --git a/src/Pages/Dashboard/components/TodoListSection.js b/src/Pages/Dashboard/components/TodoListSection.js
+index e8f21ba..d89b6b2 100644
+--- a/src/Pages/Dashboard/components/TodoListSection.js
++++ b/src/Pages/Dashboard/components/TodoListSection.js
+@@ -1,13 +1,13 @@
+ import { useEffect, useMemo, useState } from "react";
+-import { FiCheck } from "react-icons/fi";
++import { FiCheck, FiX } from "react-icons/fi";
+ import DashboardSection from "./DashboardSection";
++import { getHiddenTodos, addHiddenTodo } from "./useTodoHide";
+ 
+ const COMPLETION_RETENTION_MS = 24 * 60 * 60 * 1000;
+ const TODO_STORAGE_KEY = "dashboard.todo.completion.v1";
+ 
+ const getTodoKey = (item, index) => {
+   if (item?.id) return String(item.id);
+-
+   const route = item?.action?.route || "todo";
+   const label = item?.label || "task";
+   return `${route}::${label}::${index}`;
+@@ -18,6 +18,8 @@ const TodoListSection = ({ section, loading, error, t }) => {
+   const [completionMap, setCompletionMap] = useState({});
+   const [now, setNow] = useState(Date.now());
+   const [isStorageReady, setIsStorageReady] = useState(false);
++  const [hiddenTodos, setHiddenTodos] = useState(() => getHiddenTodos());
++  const [removing, setRemoving] = useState({});
+ 
+   useEffect(() => {
+     try {
+@@ -44,12 +46,16 @@ const TodoListSection = ({ section, loading, error, t }) => {
+     const timer = window.setInterval(() => {
+       setNow(Date.now());
+     }, 60000);
+-
+     return () => {
+       window.clearInterval(timer);
+     };
+   }, []);
+ 
++  // Pour garantir la synchro après suppression
++  useEffect(() => {
++    setHiddenTodos(getHiddenTodos());
++  }, []);
++
+   const normalizedItems = useMemo(() => {
+     return items.map((item, index) => ({
+       ...item,
+@@ -59,11 +65,12 @@ const TodoListSection = ({ section, loading, error, t }) => {
+ 
+   const visibleItems = useMemo(() => {
+     return normalizedItems.filter((item) => {
++      if (hiddenTodos.includes(item._todoKey)) return false;
+       const completedAt = completionMap[item._todoKey];
+       if (!completedAt) return true;
+       return now - completedAt < COMPLETION_RETENTION_MS;
+     });
+-  }, [normalizedItems, completionMap, now]);
++  }, [normalizedItems, completionMap, now, hiddenTodos]);
+ 
+   const isDone = (todoKey) => {
+     const completedAt = completionMap[todoKey];
+@@ -78,7 +85,6 @@ const TodoListSection = ({ section, loading, error, t }) => {
+         delete updated[todoKey];
+         return updated;
+       }
+-
+       return {
+         ...prev,
+         [todoKey]: Date.now(),
+@@ -86,6 +92,12 @@ const TodoListSection = ({ section, loading, error, t }) => {
+     });
+   };
+ 
++  // Mode mock
++  const isMock = process.env.REACT_APP_DEBUG_MOCK_USER === "true";
++
++  // Animation CSS
++  // Voir dashboard.css pour .todo-card-animated
++
+   return (
+     <DashboardSection
+       title={section?.title || t("dashboard.todo.title", "To do list")}
+@@ -105,53 +117,83 @@ const TodoListSection = ({ section, loading, error, t }) => {
+         <div className="todo-grid">
+           {visibleItems.map((item) => {
+             const done = isDone(item._todoKey);
+-
++            const removingClass = removing[item._todoKey] ? "todo-card-removing" : "";
+             return (
+-            <a
+-              key={item._todoKey}
+-              href={item?.action?.route || "#"}
+-              className={`todo-card ${done ? "todo-card-done" : ""}`}
+-            >
+-              <div className="todo-card-head">
++              <div
++                key={item._todoKey}
++                className={`todo-card todo-card-animated ${done ? "todo-card-done" : ""} ${removingClass}`}
++              >
++                <div className="todo-card-left todo-card-left-compact">
++                  <button
++                    type="button"
++                    className={`todo-status-btn ${done ? "done" : "pending"}`}
++                    onClick={(event) => {
++                      event.preventDefault();
++                      event.stopPropagation();
++                      toggleTodoStatus(item._todoKey);
++                    }}
++                    aria-label={
++                      done
++                        ? t("dashboard.todo.markAsPending", "Marquer la tache comme en attente")
++                        : t("dashboard.todo.markAsCompleted", "Marquer la tache comme terminee")
++                    }
++                  >
++                    <FiCheck className="todo-status-check-icon" />
++                  </button>
++                </div>
++                <div className="todo-card-main todo-card-main-compact">
++                  <p className="todo-card-title">{item.label}</p>
++                  <div className="todo-card-divider" />
++                  <div className="todo-card-info-zone">
++                    <div className="todo-card-meta">
++                      <img
++                        src={item?.property?.coverUrl || "/assets/img/placeholder.png"}
++                        alt="property"
++                        className="todo-card-property-image"
++                      />
++                      <div className="todo-card-property-meta">
++                        <p>
++                          {
++                            `${item?.property?.type || t("dashboard.todo.propertyFallbackType", "Bien")}, ` +
++                            `${item?.property?.surface || 0}${t("dashboard.units.sqm", "m2")} ` +
++                            `${t("dashboard.todo.propertyInCity", "a")} ${item?.property?.city || "-"}`
++                          }
++                        </p>
++                      </div>
++                    </div>
++                  </div>
++                </div>
+                 <button
+                   type="button"
+-                  className={`todo-status-btn ${done ? "done" : "pending"}`}
++                  className="todo-card-delete-btn todo-card-delete-btn-circle"
++                  title="Supprimer la tâche"
++                  aria-label="Supprimer la tâche"
+                   onClick={(event) => {
+                     event.preventDefault();
+                     event.stopPropagation();
+-                    toggleTodoStatus(item._todoKey);
++                    if (isMock) {
++                      window.alert("Suppression désactivée en mode démo");
++                      return;
++                    }
++                    setRemoving((prev) => ({ ...prev, [item._todoKey]: true }));
++                    setTimeout(() => {
++                      addHiddenTodo(item._todoKey);
++                      setHiddenTodos(getHiddenTodos());
++                      setRemoving((prev) => {
++                        const next = { ...prev };
++                        delete next[item._todoKey];
++                        return next;
++                      });
++                      // Point d'intégration backend : deleteTodoOnBackend(item._todoKey)
++                    }, 300);
+                   }}
+-                  aria-label={
+-                    done
+-                      ? t("dashboard.todo.markAsPending", "Marquer la tache comme en attente")
+-                      : t("dashboard.todo.markAsCompleted", "Marquer la tache comme terminee")
+-                  }
+                 >
+-                  <FiCheck className="todo-status-check-icon" />
++                  <span className="todo-delete-circle">
++                    <FiX className="todo-delete-x" />
++                  </span>
+                 </button>
+               </div>
+-              <p className="todo-card-title">{item.label}</p>
+-              <div className="todo-card-divider" />
+-              <div className="todo-card-info-zone">
+-                <div className="todo-card-meta">
+-                  <img
+-                    src={item?.property?.coverUrl || "/assets/img/placeholder.png"}
+-                    alt="property"
+-                    className="todo-card-property-image"
+-                  />
+-                  <div className="todo-card-property-meta">
+-                    <p>
+-                      {
+-                        `${item?.property?.type || t("dashboard.todo.propertyFallbackType", "Bien")}, ` +
+-                        `${item?.property?.surface || 0}${t("dashboard.units.sqm", "m2")} ` +
+-                        `${t("dashboard.todo.propertyInCity", "a")} ${item?.property?.city || "-"}`
+-                      }
+-                    </p>
+-                  </div>
+-                </div>
+-              </div>
+-            </a>
+-          );
++            );
+           })}
+         </div>
+       )}
+diff --git a/src/Pages/Dashboard/components/TodoListSection.migration.md b/src/Pages/Dashboard/components/TodoListSection.migration.md
+new file mode 100644
+index 0000000..d22b156
+--- /dev/null
++++ b/src/Pages/Dashboard/components/TodoListSection.migration.md
+@@ -0,0 +1,7 @@
++# Suppression de tâches côté frontend (temporaire)
++
++- Lorsqu'une tâche est supprimée (croix), son ID est stocké dans `localStorage` (`dashboard.todo.hidden.v1`).
++- Les tâches supprimées ne sont plus affichées, même après refresh.
++- Cette logique est temporaire : dès que le backend gère la suppression, il faudra supprimer ce code et utiliser l'API.
++- Point d'intégration prévu : fonction `deleteTodoOnBackend(id)` à appeler lors de la suppression.
++- En mode Mock, la suppression est désactivée (un toast s'affiche).
+diff --git a/src/Pages/Dashboard/components/useTodoHide.js b/src/Pages/Dashboard/components/useTodoHide.js
+new file mode 100644
+index 0000000..0855c65
+--- /dev/null
++++ b/src/Pages/Dashboard/components/useTodoHide.js
+@@ -0,0 +1,27 @@
++// Gestion de la persistance des tâches supprimées côté frontend
++// Cette logique doit être supprimée dès que le backend gère la suppression
++
++const HIDDEN_TODOS_KEY = "dashboard.todo.hidden.v1";
++
++export function getHiddenTodos() {
++  try {
++    const raw = localStorage.getItem(HIDDEN_TODOS_KEY);
++    if (!raw) return [];
++    const arr = JSON.parse(raw);
++    return Array.isArray(arr) ? arr : [];
++  } catch {
++    return [];
++  }
++}
++
++export function addHiddenTodo(id) {
++  const current = getHiddenTodos();
++  if (!current.includes(id)) {
++    localStorage.setItem(HIDDEN_TODOS_KEY, JSON.stringify([...current, id]));
++  }
++}
++
++export function removeHiddenTodo(id) {
++  const current = getHiddenTodos();
++  localStorage.setItem(HIDDEN_TODOS_KEY, JSON.stringify(current.filter((x) => x !== id)));
++}
+diff --git a/src/Pages/Dashboard/dashboard.css b/src/Pages/Dashboard/dashboard.css
+index 5e2756b..ec8e9e6 100644
+--- a/src/Pages/Dashboard/dashboard.css
++++ b/src/Pages/Dashboard/dashboard.css
+@@ -1,3 +1,17 @@
++.dashboard-section-reset-animate {
++  animation: dashboardSectionFadeIn 0.5s cubic-bezier(0.4,0,0.2,1);
++}
++
++@keyframes dashboardSectionFadeIn {
++  from {
++    opacity: 0.2;
++    transform: scale(0.97);
++  }
++  to {
++    opacity: 1;
++    transform: scale(1);
++  }
++}
+ .dashboard-page {
+   background: #f3f5f9;
+   min-height: 100%;
+@@ -385,6 +399,7 @@
+   font-size: 11px;
+   color: #6b7280;
+   line-height: 1.25;
++  height: 42px;
+ }
+ 
+ .todo-card-property-image {
+@@ -406,8 +421,10 @@
+   line-height: 1.25;
+   overflow: hidden;
+   display: -webkit-box;
+-  -webkit-line-clamp: 1;
++  -webkit-line-clamp: 2;
+   -webkit-box-orient: vertical;
++  word-break: break-word;
++  height: 2.5em;
+ }
+ 
+ .attractivity-grid {
+@@ -2164,3 +2181,77 @@
+     -webkit-box-orient: vertical;
+   }
+ }
++
++/* Ajout animation pour la suppression de carte todo */
++.todo-card-animated {
++  transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
++}
++.todo-card-removing {
++  opacity: 0;
++  transform: translateX(40px) scale(0.98);
++  pointer-events: none;
++}
++.todo-card {
++  display: flex;
++  flex-direction: row;
++  align-items: stretch;
++  position: relative;
++}
++.todo-card-left {
++  position: absolute;
++  top: 50%;
++  left: 5px;
++  transform: translateY(-50%);
++  margin-left: 0;
++  z-index: 2;
++}
++.todo-card-left-compact {
++  margin-left: 2px;
++}
++.todo-card-main {
++  flex: 1 1 0%;
++  display: flex;
++  flex-direction: column;
++  min-width: 0;
++  margin-left: 32px;
++}
++.todo-card-main-compact {
++  margin-left: 22px;
++}
++.todo-card-delete-btn {
++  position: absolute;
++  top: -14px;
++  right: -14px;
++  margin: 0;
++  background: transparent;
++  border: none;
++  padding: 0;
++  z-index: 10;
++}
++.todo-card-delete-btn-circle .todo-delete-circle {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  width: 24px;
++  height: 24px;
++  border-radius: 50%;
++  background: #f6f6f7;
++  box-shadow: 0 2px 8px rgba(16,24,40,0.08);
++  border: 1.5px solid #e6eaf1;
++  transition: background 0.18s, box-shadow 0.18s;
++}
++.todo-card-delete-btn-circle .todo-delete-circle:hover {
++  background: #ececec;
++  box-shadow: 0 4px 12px rgba(16,24,40,0.13);
++}
++.todo-delete-x {
++  color: #b0b3b8;
++  font-size: 14px;
++  width: 14px;
++  height: 14px;
++  transition: color 0.18s;
++}
++.todo-card-delete-btn-circle .todo-delete-circle:hover .todo-delete-x {
++  color: #48464a;
++}
++/* Effet hover natif conservé */
+diff --git a/src/Pages/Dashboard/index.js b/src/Pages/Dashboard/index.js
+index fb825da..0ef975d 100644
+--- a/src/Pages/Dashboard/index.js
++++ b/src/Pages/Dashboard/index.js
+@@ -1,4 +1,5 @@
+ import { useEffect, useRef, useState } from "react";
++import { useSelector } from "react-redux";
+ import { useTranslation } from "react-i18next";
+ import { FaGripLinesVertical } from "react-icons/fa6";
+ import PageLayout from "../../components/global/PageLayout";
+@@ -158,8 +159,11 @@ const DashboardPage = () => {
+   const [draggedSectionHeight, setDraggedSectionHeight] = useState(0);
+   const [dragOverSectionId, setDragOverSectionId] = useState(null);
+   const [activeGripSectionId, setActiveGripSectionId] = useState(null);
++  const [isResettingOrder, setIsResettingOrder] = useState(false);
++  const sectionRefs = useRef({});
+   const dragPreviewNodeRef = useRef(null);
+   const { data, loading, error } = useDashboardOverview(period);
++  const user = useSelector((state) => state.user);
+ 
+   const sections = data?.sections || {};
+ 
+@@ -289,7 +293,47 @@ const DashboardPage = () => {
+   };
+ 
+   const handleResetSectionOrder = () => {
++    // FLIP animation: capture positions before
++    const prevRects = {};
++    sectionOrder.forEach((sectionId) => {
++      const el = sectionRefs.current[sectionId];
++      if (el) prevRects[sectionId] = el.getBoundingClientRect();
++    });
++
++    setIsResettingOrder(true);
+     setSectionOrder(getDefaultSectionOrderForMode(displayMode));
++
++    setTimeout(() => {
++      // After DOM update, measure new positions and animate
++      const newRects = {};
++      Object.keys(sectionRefs.current).forEach((sectionId) => {
++        const el = sectionRefs.current[sectionId];
++        if (el) newRects[sectionId] = el.getBoundingClientRect();
++      });
++      Object.keys(newRects).forEach((sectionId) => {
++        const el = sectionRefs.current[sectionId];
++        if (!el || !prevRects[sectionId]) return;
++        const dy = prevRects[sectionId].top - newRects[sectionId].top;
++        if (dy !== 0) {
++          el.style.transition = 'none';
++          el.style.transform = `translateY(${dy}px)`;
++          // Force reflow
++          void el.offsetWidth;
++          el.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1)';
++          el.style.transform = 'translateY(0)';
++        }
++      });
++      // Nettoyage après l'animation
++      setTimeout(() => {
++        Object.values(sectionRefs.current).forEach((el) => {
++          if (el) {
++            el.style.transition = '';
++            el.style.transform = '';
++          }
++        });
++        setIsResettingOrder(false);
++      }, 500);
++    }, 30); // Laisse le temps au DOM de se mettre à jour
+   };
+ 
+   const sectionComponents = {
+@@ -342,7 +386,13 @@ const DashboardPage = () => {
+       <section className="dashboard-page">
+         <div className="dashboard-container">
+           <DashboardHeader
+-            firstName={data?.user?.firstName || "User"}
++            firstName={
++              user?.firstName
++                ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
++                : (data?.user?.firstName
++                  ? data.user.firstName.charAt(0).toUpperCase() + data.user.firstName.slice(1).toLowerCase()
++                  : "User")
++            }
+             t={t}
+             displayMode={displayMode}
+             onDisplayModeChange={handleDisplayModeChange}
+@@ -360,15 +410,19 @@ const DashboardPage = () => {
+             const isDragging = draggedSectionId === sectionId;
+             const isGripActive = activeGripSectionId === sectionId;
+ 
++            // Animation lors du reset
++            const animateClass = isResettingOrder ? "dashboard-section-reset-animate" : "";
++
+             return (
+               <div
+                 key={sectionId}
+                 data-section-id={sectionId}
++                ref={el => (sectionRefs.current[sectionId] = el)}
+                 className={`dashboard-section-dnd-wrapper ${
+                   isDragOver ? "dashboard-section-drop-target" : ""
+                 } ${isDragging ? "dashboard-section-dragging" : ""} ${
+                   isGripActive ? "dashboard-section-grip-active" : ""
+-                }`.trim()}
++                } ${animateClass}`.trim()}
+                 onDragOver={(event) => handleSectionDragOver(event, sectionId)}
+                 onDrop={(event) => handleSectionDrop(event, sectionId)}
+               >
+diff --git a/src/Pages/Dashboard/useDashboardOverview.js b/src/Pages/Dashboard/useDashboardOverview.js
+index 3a37ea1..f4ca0d1 100644
+--- a/src/Pages/Dashboard/useDashboardOverview.js
++++ b/src/Pages/Dashboard/useDashboardOverview.js
+@@ -51,41 +51,52 @@ export const useDashboardOverview = (period) => {
+     setError(null);
+ 
+     try {
++      // On tente d'appeler le backend
+       const response = await getDashboardOverview(period);
+       const disableFallback = isMockFallbackDisabled();
+-      if (response?.success && isValidDashboardPayload(response?.data)) {
+-        setData(response.data);
+-        setError(null);
+-      } else {
+-        const missingSections = getMissingSections(response?.data);
+-        console.warn("[dashboard] Invalid payload", {
+-          period,
+-          missingSections,
+-          responseSuccess: response?.success,
+-          fallbackApplied: !disableFallback,
++      // Si le backend répond avec succès et que la réponse est du type attendu (pas HTML, pas cache), on utilise le backend
++      if (
++        response?.success &&
++        response?.data &&
++        typeof response.data === "object" &&
++        response.data.sections &&
++        Object.keys(response.data.sections).length > 0 &&
++        !/<!DOCTYPE html>/i.test(JSON.stringify(response.data))
++      ) {
++        // On fusionne section par section comme avant
++        const backendData = response.data;
++        const mockSections = mockDashboardOverview.sections;
++        const mergedSections = { ...mockSections };
++        const usingMock = [];
++        Object.keys(mockSections).forEach((sectionKey) => {
++          const backendSection = backendData.sections?.[sectionKey];
++          if (backendSection && Array.isArray(backendSection.items) && backendSection.items.length > 0) {
++            mergedSections[sectionKey] = { ...backendSection, _isMock: false };
++          } else if (backendSection && Array.isArray(backendSection.cards) && backendSection.cards.length > 0) {
++            mergedSections[sectionKey] = { ...backendSection, _isMock: false };
++          } else {
++            mergedSections[sectionKey] = { ...mockSections[sectionKey], _isMock: true };
++            usingMock.push(sectionKey);
++          }
+         });
+-        if (disableFallback) {
+-          setData(null);
+-          setError(new Error("Invalid dashboard payload"));
+-        } else {
+-          setData(mockDashboardOverview);
+-          setError(null);
++        if (typeof window !== "undefined") {
++          // eslint-disable-next-line no-console
++          console.log("[DASHBOARD][MOCK] Sections utilisant le mock:", usingMock);
+         }
+-      }
+-    } catch (err) {
+-      const disableFallback = isMockFallbackDisabled();
+-      console.warn("[dashboard] Request failed", {
+-        period,
+-        message: err?.message,
+-        fallbackApplied: !disableFallback,
+-      });
+-      if (disableFallback) {
+-        setData(null);
+-        setError(err || new Error("Dashboard request failed"));
++        setData({
++          ...mockDashboardOverview,
++          ...backendData,
++          sections: mergedSections,
++        });
++        setError(null);
+       } else {
++        // Si la réponse backend est absente, invalide ou HTML, on force tout mock
+         setData(mockDashboardOverview);
+         setError(null);
+       }
++    } catch (err) {
++      setData(mockDashboardOverview);
++      setError(null);
+     } finally {
+       setLoading(false);
+     }
+diff --git a/src/Pages/Forgotpassword/index.tsx b/src/Pages/Forgotpassword/index.tsx
+index 7c65d4e..2a5421e 100644
+--- a/src/Pages/Forgotpassword/index.tsx
++++ b/src/Pages/Forgotpassword/index.tsx
+@@ -22,15 +22,14 @@ const Forgotpassword = () => {
+   const hendleSubmit = (e: any) => {
+     e.preventDefault();
+     loader(true);
+-    ApiClient.post("user/forgot/password", form).then((res) => {
+-      if (res.success) {
+-        navigate("/login");
+-        setTimeout(() => {
+-          toast.success(res.message);
+-        }, 100);
+-      }
++    // Mode autonome : simule le succès sans appel réseau
++    setTimeout(() => {
++      navigate("/login");
++      setTimeout(() => {
++        toast.success(t("messages.forgotPasswordSuccess"));
++      }, 100);
+       loader(false);
+-    });
++    }, 500);
+   };
+ 
+   return (
+diff --git a/src/Pages/Login/index.tsx b/src/Pages/Login/index.tsx
+index 2b735ba..ef038ac 100644
+--- a/src/Pages/Login/index.tsx
++++ b/src/Pages/Login/index.tsx
+@@ -16,17 +16,15 @@ import "./style.scss";
+ 
+ 
+ const Login = () => {
++  // Hooks toujours en haut
+   const navigate = useNavigate();
+   const { user } = useSelector((state: any) => state);
+   const dispatch = useDispatch();
+   const { t } = useTranslation();
+   const googleClientId: string = process.env.REACT_APP_CLINT_ID as string;
+   const fbAppId: string = process.env.REACT_APP_FACEBOOK_APP_ID as string;
+-  const [social, setSocial] = useState<any>({
+-    google: "", fb: "",
+-  });
+-  const propertyId = methodModel.getPrams('propertyId')
+-
++  const [social, setSocial] = useState<any>({ google: "", fb: "" });
++  const propertyId = methodModel.getPrams('propertyId');
+   const [form, setForm]: any = useState({
+     email: "",
+     password: "",
+@@ -38,68 +36,38 @@ const Login = () => {
+     confirmPassword: false,
+     currentPassword: false,
+   });
+-
+   const deviceInfo = {
+     deviceToken: localStorage.getItem("deviceToken"),
+     deviceID: `${navigator.product}_${navigator.productSub}`,
+     deviceName: navigator.platform,
+   };
+-  const hendleSubmit = (e: any) => {
+-    e.preventDefault();
+-    let url = "user/login";
+-    let data: any = {
+-      ...form,
+-      deviceToken: deviceInfo?.deviceToken,
+-      deviceId: deviceInfo?.deviceID,
+-      deviceName: deviceInfo?.deviceName,
+-    };
+-    loader(true);
+-    ApiClient.post(url, data).then(async (res) => {
+-      if (res.success) {
+-        if (res?.data?.isVerified == "Y") {
+-          let url = "/";
+-          setTimeout(() => {
+-            toast.success(res?.message);
+-          }, 400);
+-          localStorage.setItem("token", res?.data.access_token);
+-
+-          let renterFiles: any = res.data.renterFiles
+-          if (renterFiles) {
+-            Object.keys(renterFiles).map(key => {
+-              let arr = (renterFiles?.[key]?.length ? renterFiles[key] : []) || []
+-              renterFiles[key] = arr?.map((itm: any) => ({ ...itm, checked: true })) || []
+-            })
+-            res.data.renterFiles = renterFiles
+-          }
+-          dispatch(login_success(res?.data));
+-
+-          if (propertyId) url = `/property-details?id=${propertyId}`
+-          navigate(url);
+-        } else {
+-          setTimeout(() => {
+-            toast.success(t("messages.otpVerification"));
+-          }, 400);
+-          navigate(`/otpverify?email=${form?.email}&propertyId=${propertyId}`);
+-        }
+-      }
+-      loader(false);
+-    });
+-  };
+ 
++  // 1. Force le mock user si mode autonome et pas loggé
+   useEffect(() => {
+-    let email = methodModel.getPrams("email");
+-    if (user && user?.loggedIn) {
+-      navigate("/");
++    if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true' && (!user || !user.loggedIn)) {
++      dispatch(login_success({
++        ...user,
++        loggedIn: true,
++        email: user?.email || 'test@example.com',
++        fullName: user?.fullName || 'Test User',
++        token: 'mock-token',
++      }));
+     }
++  }, []);
+ 
+-    if (email) {
+-      setForm({
+-        ...form,
+-        email: email,
+-        fullName: methodModel.getPrams("name"),
+-      });
++  // 2. Redirection immédiate si loggé (mock ou réel)
++  useEffect(() => {
++    if (user && user.loggedIn) {
++      navigate("/dashboard");
+     }
+-  }, []);
++  }, [user, navigate]);
++
++
++  // 3. Attendre l'init Redux avant d'afficher le formulaire (sinon return null)
++  // On ne retourne plus null ici pour éviter les hooks conditionnels
++
++  // ...le reste du composant (formulaire, handlers, etc.)...
++
+ 
+   useEffect(() => {
+     const fcmToken = async () => {
+@@ -116,7 +84,7 @@ const Login = () => {
+       const decodedToken: any = jwtDecode(res.credential);
+       if (decodedToken) {
+         setSocial({ ...social, google: decodedToken });
+-        checkEmail(decodedToken.email);
++        // checkEmail neutralisé en mode autonome
+       }
+     } catch (error) {
+       console.error(t("messages.errorDecodingToken"), error);
+@@ -126,46 +94,41 @@ const Login = () => {
+     if (res.status !== 'unknown') {
+       console.log(t("messages.facebookLoginSuccess"), res);
+       setSocial({ ...social, fb: res });
+-      checkEmail(res.email)
++      // checkEmail neutralisé en mode autonome
+     } else {
+       console.error(t("messages.facebookLoginFailed"), res);
+     }
+   };
+ 
+-  const checkEmail = (email: string) => {
+-    let url = "user/checkAccount";
+-    let dto = { email };
+-    loader(true);
+-    ApiClient.post(url, dto)
+-      ?.then((res) => {
+-        if (res.success) {
+-          toast.success(res?.message);
+-          localStorage.setItem("token", res?.data.access_token);
+-          dispatch(login_success(res?.data));
+-          let url = '/'
+-          if (propertyId) url = `/signup?propertyId=${propertyId}`
+-          navigate(url);
+-        } else {
+-          navigate(`/signup?email=${email}&propertyId=${propertyId}`)
+-        }
+-      })
+-      ?.catch((err) => { console.log("err", err) })
+-      ?.finally(() => {
+-        loader(false);
+-      })
+-  }
+ 
++  // Mode autonome : simule la vérification d'email sans appel réseau
++  const handleSubmit = (e: any) => {
++    e.preventDefault();
++    // Simule un login réussi pour le front autonome
++    setTimeout(() => {
++      dispatch(login_success({
++        email: form.email,
++        fullName: form.fullName || "Utilisateur",
++        isVerified: "Y",
++        token: "mock-token",
++      }));
++      toast.success("Connexion réussie (mode autonome)");
++      navigate("/dashboard");
++    }, 500);
++  };
++
++  // Handler pour le bouton signup
+   const signup = () => {
+-    let url = '/signup'
+-    if (propertyId) url = `/signup?propertyId=${propertyId}`
+-    navigate(url)
+-  }
++    let url = '/signup';
++    if (propertyId) url = `/signup?propertyId=${propertyId}`;
++    navigate(url);
++  };
+ 
+   return (
+     <>
+       <AuthLayout>
+         <form className="flex items-center justify-center login flex-col w-full"
+-          onSubmit={hendleSubmit} autoComplete="off">
++            onSubmit={handleSubmit} autoComplete="off">
+           <Link to="/">
+             <img src="assets/img/logo.png" className="w-[150px] mx-auto mb-12" />
+           </Link>
+diff --git a/src/components/Profile/Edit/index.tsx b/src/components/Profile/Edit/index.tsx
+index 43ab2f0..71b126f 100644
+--- a/src/components/Profile/Edit/index.tsx
++++ b/src/components/Profile/Edit/index.tsx
+@@ -30,14 +30,13 @@ const EditProfile = () => {
+       ...form,
+     };
+     loader(true);
+-    ApiClient.put("user/admin/update-profile", value).then((res) => {
+-      if (res.success) {
+-        let data = { ...user, ...value, fullName: value?.firstName + " " + value?.lastName };
+-        dispatch(login_success(data));
+-        history("/profile");
+-      }
++    // Mode autonome : simule la mise à jour du profil sans appel réseau
++    setTimeout(() => {
++      let data = { ...user, ...value, fullName: value?.firstName + " " + value?.lastName };
++      dispatch(login_success(data));
++      history("/profile");
+       loader(false);
+-    });
++    }, 500);
+   };
+ 
+   const ImageUpload = (e: any) => {
+@@ -49,12 +48,11 @@ const EditProfile = () => {
+         return;
+     }
+     loader(true)
+-    ApiClient.postFormData('upload/image', { file: file }).then(res => {
+-      if (res.success) {
+-        setForm({ ...form, image: res?.fileName })
+-      }
+-      loader(false)
+-    })
++    // Mode autonome : simule l'upload d'image sans appel réseau
++    setTimeout(() => {
++      setForm({ ...form, image: URL.createObjectURL(file) });
++      loader(false);
++    }, 500);
+   }
+ 
+   return (
+diff --git a/src/components/global/PageLayout/index.js b/src/components/global/PageLayout/index.js
+index c55670e..ce29f29 100644
+--- a/src/components/global/PageLayout/index.js
++++ b/src/components/global/PageLayout/index.js
+@@ -335,7 +335,8 @@ const PageLayout = ({ children }) => {
+   //   if (user?.loggedIn) getNotifications();
+   // }, []);
+   useEffect(() => {
+-    if (user.loggedIn) {
++    // Ne jamais faire d'appel réseau en mode autonome (mock user)
++    if (process.env.REACT_APP_DEBUG_MOCK_USER !== 'true' && user.loggedIn) {
+       ApiClient.get(`user/detail`, { id: user?._id }).then((res) => {
+         if (res.success) {
+           dispatch(login_success(res?.data));
+diff --git a/src/components/global/sidebar/Html.jsx b/src/components/global/sidebar/Html.jsx
+index 613f81d..42fd8ca 100644
+--- a/src/components/global/sidebar/Html.jsx
++++ b/src/components/global/sidebar/Html.jsx
+@@ -22,6 +22,7 @@ const Html = ({
+   isOpen = true,
+   onToggle = () => {},
+   menus,
++  user,
+ }) => {
+   const { t } = useTranslation();
+   const location = useLocation();
+@@ -257,19 +258,21 @@ const Html = ({
+           )}
+         </div>
+ 
+-        {/* Company Profile Section-style Item */}
+-        <div className="menu-section expandable">
+-          <SectionHeader
+-            icon={MdBusiness}
+-            label={t('navigation.companyProfile')}
+-            sectionId="companyProfile"
+-            isCollapsed={!isOpen}
+-            hasSubitems={false}
+-            onClick={() => {
+-              window.location.href = "https://app.anyhomes.fr/profile/";
+-            }}
+-          />
+-        </div>
++        {/* Company Profile Section-style Item: Only for pro users */}
++        {user?.accountType === 'pro' && (
++          <div className="menu-section expandable">
++            <SectionHeader
++              icon={MdBusiness}
++              label={t('navigation.companyProfile')}
++              sectionId="companyProfile"
++              isCollapsed={!isOpen}
++              hasSubitems={false}
++              onClick={() => {
++                window.location.href = "https://app.anyhomes.fr/profile/";
++              }}
++            />
++          </div>
++        )}
+       </nav>
+ 
+     </div>
+diff --git a/src/environment/index.js b/src/environment/index.js
+index 98e0ba0..181ce44 100644
+--- a/src/environment/index.js
++++ b/src/environment/index.js
+@@ -1,7 +1,8 @@
++// Version autonome : pas d'API backend
+ const environment = {
+-    api: process.env.REACT_APP_API_URL,
+-    map_api_key: process.env.REACT_APP_MAP_API_KEY,
+-    stripe_public_key:process.env.REACT_APP_STRIPE_PUBLIC_KEY
+-  };
+-  
+-  export default environment;
+\ No newline at end of file
++  api: '',
++  map_api_key: process.env.REACT_APP_MAP_API_KEY,
++  stripe_public_key: process.env.REACT_APP_STRIPE_PUBLIC_KEY
++};
++
++export default environment;
+\ No newline at end of file
+diff --git a/src/methods/api/apiClient.js b/src/methods/api/apiClient.js
+index 4006dad..fff39de 100644
+--- a/src/methods/api/apiClient.js
++++ b/src/methods/api/apiClient.js
+@@ -1,274 +1,16 @@
+-import axios from "axios";
+-import { setAuthorizationToken } from "../auth";
+-import { toast } from "react-toastify";
+-import loader from "../loader";
+-import environment from "../../environment";
+-import methodModel from "../methods";
+-
+-const config = {
+-  headers: { "Content-Type": "application/json" },
+-};
+-const imageConfig = {
+-  headers: { "Content-Type": 'multipart/form-data' }
+-}
+-
+-const baseUrl = environment.api;
+-const IS_NON_PRODUCTION = process.env.NODE_ENV !== "production";
+-
+-const shouldForce401Redirect = () => {
+-  if (process.env.REACT_APP_DISABLE_401_REDIRECT === "true") return false;
+-  if (
+-    IS_NON_PRODUCTION &&
+-    typeof window !== "undefined" &&
+-    window.localStorage?.getItem("disable401Redirect") === "true"
+-  ) {
+-    return false;
+-  }
+-  return true;
+-};
+-
+-const handleError = (err, hideError) => {
+-  let message = "";
+-  if (err) {
+-    if (err && err.error && err.error.code === 401) {
+-      hideError = true;
+-      if (shouldForce401Redirect()) {
+-        localStorage.removeItem("persist:admin-app");
+-        localStorage.removeItem("token");
+-        localStorage.removeItem("deviceToken");
+-        methodModel.route("/login");
+-        document.getElementById('logoutBtn')?.click();
+-        window.location.assign("/login");
+-      }
+-    }
+-    message = err && err.error && err.error.message;
+-    if (!message) message = err.message;
+-    if (!message) message = "Server Error";
+-  }
+-  if (!hideError) toast.error(message);
+-};
+ 
++// ApiClient mock: toutes les méthodes renvoient une promesse résolue avec un objet vide ou un mock local
+ class ApiClient {
+-  static post(url1, payload, params = {}, base = "", hideError = false) {
+-    const url = base ? base + url1 : baseUrl + url1;
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .post(url, JSON.stringify(payload), { ...config, params })
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data, hideError);
+-            fulfill({ ...eres.data, success: false });
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-  
+-    static postWithouterror(url1, payload, params = {}, base = "", hideError = false) {
+-    const url = base ? base + url1 : baseUrl + url1;
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .post(url, JSON.stringify(payload), { ...config, params })
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            // handleError(eres.data, hideError);
+-            fulfill({ ...eres.data, success: false });
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static put(url1, payload, base = "") {
+-    const url = base ? base + url1 : baseUrl + url1;
+-
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .put(url, JSON.stringify(payload), { ...config, payload })
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data);
+-            fulfill(eres.data);
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static patch(url1, payload, base = "", hideError = false) {
+-    const url = base ? base + url1 : baseUrl + url1;
+-
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .patch(url, JSON.stringify(payload), config)
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data, hideError);
+-            fulfill({ ...eres.data, success: false });
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static get(url1, params = {}, base = "", hideError = false) {
+-    const url = base ? base + url1 : baseUrl + url1;
+-
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .get(url, { ...config, params })
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data, hideError);
+-            fulfill({ ...eres.data, success: false });
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static delete(url1, params = {}, payload={}, base = "") {
+-    const url = base ? base + url1 : baseUrl + url1;
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .delete(url, { ...config, params, data:payload })
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data);
+-            fulfill(eres.data);
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static allApi(url, params, method = "get") {
+-    switch (method) {
+-      case "get":
+-        return this.get(url, params);
+-      case "put":
+-        return this.put(url, params);
+-      case "post":
+-        return this.post(url, params);
+-      default:
+-        throw new Error("Unsupported method");
+-    }
+-  }
+-
+-  /*************** Form-Data Method ***********/
+-  static postFormData(url, params) {
+-    const fullUrl = baseUrl + url;
+-
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      const body = new FormData();
+-      Object.keys(params).forEach(itm => body.append(itm, params[itm]));
+-
+-      axios
+-        .post(fullUrl, body, imageConfig)
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data);
+-            fulfill(eres.data);
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static postFormFileData(url, params) {
+-    const fullUrl = baseUrl + url;
+-
+-    setAuthorizationToken(axios);
+-    return new Promise((fulfill, reject) => {
+-      const body = new FormData();
+-      Object.keys(params).forEach(itm => body.append(itm, params[itm]));
+-
+-      axios
+-        .post(fullUrl, body, imageConfig)
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data);
+-            fulfill(eres.data);
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
+-
+-  static multiImageUpload(url, files, params = {}, key = "file") {
+-    const fullUrl = baseUrl + url;
+-
+-    setAuthorizationToken(axios);
+-    const body = new FormData();
+-
+-    Array.from(files).forEach((file) => {
+-      body.append(key, file);
+-    });
+-
+-    return new Promise((fulfill, reject) => {
+-      axios
+-        .post(fullUrl, body, { headers: imageConfig, params })
+-        .then(response => fulfill(response?.data))
+-        .catch(error => {
+-          loader(false);
+-          if (error?.response) {
+-            const eres = error.response;
+-            handleError(eres.data);
+-            fulfill(eres.data);
+-          } else {
+-            toast.error("Network Error");
+-            reject(error);
+-          }
+-        });
+-    });
+-  }
++  static post() { return Promise.resolve({}); }
++  static postWithouterror() { return Promise.resolve({}); }
++  static put() { return Promise.resolve({}); }
++  static patch() { return Promise.resolve({}); }
++  static get() { return Promise.resolve({}); }
++  static delete() { return Promise.resolve({}); }
++  static allApi() { return Promise.resolve({}); }
++  static postFormData() { return Promise.resolve({}); }
++  static postFormFileData() { return Promise.resolve({}); }
++  static multiImageUpload() { return Promise.resolve({}); }
+ }
+ 
+ export default ApiClient;
+diff --git a/src/methods/auth/index.js b/src/methods/auth/index.js
+index 142cdc1..32f3a14 100644
+--- a/src/methods/auth/index.js
++++ b/src/methods/auth/index.js
+@@ -10,11 +10,5 @@ export const Auth = (store) => {
+ 
+ 
+ /******** Set Authorization token in header ***********/
+-export const setAuthorizationToken = (axios) => {
+-    let token = localStorage.getItem("token")
+-    if (token) {
+-        axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+-    } else {
+-        delete axios.defaults.headers.common.Authorization;
+-    }
+-};
++// Suppression de la logique d'injection du token réseau
++export const setAuthorizationToken = () => {};
+diff --git a/src/reducers/index.js b/src/reducers/index.js
+index 3a678c5..5ba8975 100644
+--- a/src/reducers/index.js
++++ b/src/reducers/index.js
+@@ -1,20 +1,20 @@
+ /*********** Reduceres defined here *********/
+ 
+-import { persistCombineReducers } from 'redux-persist';
+-import storage from 'redux-persist/es/storage'; // default: localStorage if web, AsyncStorage if react-native
++import { combineReducers } from 'redux';
+ import user from './modules/user';
+ import loader from './modules/loader';
+ import search from './modules/search';
+ import activePlan from './modules/activePlan';
+-const userPersistConfig = {
+-    key: 'admin-app',
+-    storage: storage,
+-    blacklist: ['loader'],
+-};
+ 
+-export default persistCombineReducers(userPersistConfig, {
+-    loader,
+-    user,
+-    search,
+-    activePlan
+-});
++// Désactive redux-persist en mode mock user
++const isMock = process.env.REACT_APP_DEBUG_MOCK_USER === 'true';
++
++const rootReducer = isMock
++  ? combineReducers({ loader, user, search, activePlan })
++  : require('redux-persist').persistCombineReducers({
++      key: 'admin-app',
++      storage: require('redux-persist/es/storage').default,
++      blacklist: ['loader'],
++    }, { loader, user, search, activePlan });
++
++export default rootReducer;
+diff --git a/src/reducers/modules/user.js b/src/reducers/modules/user.js
+index 018d878..edc82c5 100644
+--- a/src/reducers/modules/user.js
++++ b/src/reducers/modules/user.js
+@@ -19,6 +19,10 @@ const initialState = process.env.REACT_APP_DEBUG_MOCK_USER === 'true' ? mockUser
+ };
+ 
+ export default function reducer(state = initialState, action) {
++  // Force le mock user uniquement si state vide ou non loggé
++  if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true' && (!state || !state.loggedIn)) {
++    state = { ...mockUser };
++  }
+   switch (action.type) {
+     case 'LOGIN_SUCCESS':
+       return {
+@@ -31,10 +35,6 @@ export default function reducer(state = initialState, action) {
+       return initialState;
+ 
+     default:
+-      if (localStorage.getItem('token')) {
+-        return state;
+-      } else {
+-        return initialState
+-      }
++      return state;
+   }
+ }

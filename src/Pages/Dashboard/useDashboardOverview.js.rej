@@ -1,0 +1,81 @@
+diff a/src/Pages/Dashboard/useDashboardOverview.js b/src/Pages/Dashboard/useDashboardOverview.js	(rejected hunks)
+@@ -51,41 +51,52 @@ export const useDashboardOverview = (period) => {
+     setError(null);
+ 
+     try {
++      // On tente d'appeler le backend
+       const response = await getDashboardOverview(period);
+       const disableFallback = isMockFallbackDisabled();
+-      if (response?.success && isValidDashboardPayload(response?.data)) {
+-        setData(response.data);
+-        setError(null);
+-      } else {
+-        const missingSections = getMissingSections(response?.data);
+-        console.warn("[dashboard] Invalid payload", {
+-          period,
+-          missingSections,
+-          responseSuccess: response?.success,
+-          fallbackApplied: !disableFallback,
++      // Si le backend répond avec succès et que la réponse est du type attendu (pas HTML, pas cache), on utilise le backend
++      if (
++        response?.success &&
++        response?.data &&
++        typeof response.data === "object" &&
++        response.data.sections &&
++        Object.keys(response.data.sections).length > 0 &&
++        !/<!DOCTYPE html>/i.test(JSON.stringify(response.data))
++      ) {
++        // On fusionne section par section comme avant
++        const backendData = response.data;
++        const mockSections = mockDashboardOverview.sections;
++        const mergedSections = { ...mockSections };
++        const usingMock = [];
++        Object.keys(mockSections).forEach((sectionKey) => {
++          const backendSection = backendData.sections?.[sectionKey];
++          if (backendSection && Array.isArray(backendSection.items) && backendSection.items.length > 0) {
++            mergedSections[sectionKey] = { ...backendSection, _isMock: false };
++          } else if (backendSection && Array.isArray(backendSection.cards) && backendSection.cards.length > 0) {
++            mergedSections[sectionKey] = { ...backendSection, _isMock: false };
++          } else {
++            mergedSections[sectionKey] = { ...mockSections[sectionKey], _isMock: true };
++            usingMock.push(sectionKey);
++          }
+         });
+-        if (disableFallback) {
+-          setData(null);
+-          setError(new Error("Invalid dashboard payload"));
+-        } else {
+-          setData(mockDashboardOverview);
+-          setError(null);
++        if (typeof window !== "undefined") {
++          // eslint-disable-next-line no-console
++          console.log("[DASHBOARD][MOCK] Sections utilisant le mock:", usingMock);
+         }
+-      }
+-    } catch (err) {
+-      const disableFallback = isMockFallbackDisabled();
+-      console.warn("[dashboard] Request failed", {
+-        period,
+-        message: err?.message,
+-        fallbackApplied: !disableFallback,
+-      });
+-      if (disableFallback) {
+-        setData(null);
+-        setError(err || new Error("Dashboard request failed"));
++        setData({
++          ...mockDashboardOverview,
++          ...backendData,
++          sections: mergedSections,
++        });
++        setError(null);
+       } else {
++        // Si la réponse backend est absente, invalide ou HTML, on force tout mock
+         setData(mockDashboardOverview);
+         setError(null);
+       }
++    } catch (err) {
++      setData(mockDashboardOverview);
++      setError(null);
+     } finally {
+       setLoading(false);
+     }

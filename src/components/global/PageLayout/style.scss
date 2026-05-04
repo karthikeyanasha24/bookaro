@@ -1,13 +1,21 @@
+/* Root wrapper for page layout */
+.page-layout-root {
+  height: 100vh;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+}
 @import '../../../scss/mixins';
 
 .pageContent {
   min-height: calc(100vh - 350px);
+  height: 100%;
 }
 
 /* Page Layout Wrapper with Sidebar */
 .page-layout-wrapper {
   display: flex;
-  height: calc(100vh - 71px);
+  height: 100vh;
   min-height: calc(100vh - 71px);
   width: 100%;
   overflow: hidden;
@@ -21,6 +29,8 @@
   transition: width 0.3s ease-in-out;
   overflow: visible;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   
   /* Default width when expanded */
   width: 280px;

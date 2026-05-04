@@ -63,6 +63,8 @@ function App() {
     { url: "/property/edit/:id", path: "propertySteps/Edit" },
     { url: "/property/edit/:id/:step", path: "propertySteps/Edit" },
     { url: "/property/add/:step", path: "propertySteps/AddEdit" },
+    // QR Code management page
+    { url: "/property/qr-code", path: "QRCodeManagement" },
     { url: "/", element: <Navigate to="/login" /> },
     { url: "/project", path: "Project" },
     { url: "/dashboard", path: "Dashboard" },

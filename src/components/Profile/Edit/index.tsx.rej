@@ -1,0 +1,40 @@
+diff a/src/components/Profile/Edit/index.tsx b/src/components/Profile/Edit/index.tsx	(rejected hunks)
+@@ -30,14 +30,13 @@ const EditProfile = () => {
+       ...form,
+     };
+     loader(true);
+-    ApiClient.put("user/admin/update-profile", value).then((res) => {
+-      if (res.success) {
+-        let data = { ...user, ...value, fullName: value?.firstName + " " + value?.lastName };
+-        dispatch(login_success(data));
+-        history("/profile");
+-      }
++    // Mode autonome : simule la mise à jour du profil sans appel réseau
++    setTimeout(() => {
++      let data = { ...user, ...value, fullName: value?.firstName + " " + value?.lastName };
++      dispatch(login_success(data));
++      history("/profile");
+       loader(false);
+-    });
++    }, 500);
+   };
+ 
+   const ImageUpload = (e: any) => {
+@@ -49,12 +48,11 @@ const EditProfile = () => {
+         return;
+     }
+     loader(true)
+-    ApiClient.postFormData('upload/image', { file: file }).then(res => {
+-      if (res.success) {
+-        setForm({ ...form, image: res?.fileName })
+-      }
+-      loader(false)
+-    })
++    // Mode autonome : simule l'upload d'image sans appel réseau
++    setTimeout(() => {
++      setForm({ ...form, image: URL.createObjectURL(file) });
++      loader(false);
++    }, 500);
+   }
+ 
+   return (
