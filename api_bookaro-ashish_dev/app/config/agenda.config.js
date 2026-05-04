@@ -1,15 +1,16 @@
-const Agenda = require('agenda');
-const mongoose = require('mongoose');
+const Agenda = require("agenda");
 const dotenv = require("dotenv");
+const dbConfig = require("./db.config.js");
 
 dotenv.config();
 
-const {
-  DB_URL
-} = process.env;
+const address =
+  (process.env.DB_URL && process.env.DB_URL.trim()) ||
+  (process.env.MONGODB_URI && process.env.MONGODB_URI.trim()) ||
+  dbConfig.url;
 
 const agenda = new Agenda({
-  db: { address: DB_URL, collection: 'agendaJobs' }
+  db: { address, collection: "agendaJobs" },
 });
 
 module.exports = agenda;

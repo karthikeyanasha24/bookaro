@@ -58,6 +58,11 @@ const { resetDailyMessageLimit } = require("./app/cron/message.cron");
 const { checkAndSendSubscriptionReminders } = require("./app/cron/subscription.cron");
 const { monthlyCampaignLimit } = require("./app/cron/campaign.cron.js");
 
+function redactMongoUrl(u) {
+  if (!u || typeof u !== "string") return "(none)";
+  return u.replace(/\/\/([^:@/]+):([^@/]+)@/, "//***:***@");
+}
+
 // require('./app/routes/users.routes')(app);
 // require('./app/routes/upload.routes')(app);
 // require('./app/routes/category.routes')(app);
@@ -74,17 +79,29 @@ db.mongoose
   .then(async () => {
     console.log("Connected to the database!");
 
-
     //load all jobs
     const agenda = require("./app/config/agenda.config");
     require("./app/jobs/agenda.jobs")(agenda, db);
 
     await agenda.start();
     console.log("Agenda started and jobs loaded.");
+    try {
+      await agenda.every("1 week", "weekly-ai-agent-digests");
+      await agenda.every("1 day", "ai-agent-owner-no-interest-scan");
+    } catch (e) {
+      console.warn("Agenda schedule (ai agent):", e.message || e);
+    }
+    try {
+      await seedDb();
+    } catch (e) {
+      console.error("seedDb failed (non-fatal):", e.message || e);
+    }
   })
   .catch((err) => {
-    console.log("Cannot connect to the database!", err);
-    process.exit();
+    console.error("Cannot connect to the database:", err && err.message ? err.message : err);
+    console.error("Connection target (redacted):", redactMongoUrl(db.url));
+    console.error("Set DB_URL or MONGODB_URI to your Atlas connection string on Render.");
+    process.exit(1);
   });
 
 // simple route
@@ -128,7 +145,6 @@ const seedDb = async () => {
     // }
   }
 };
-seedDb();
 
 resetDailyMessageLimit();
 checkAndSendSubscriptionReminders();
@@ -138,7 +154,7 @@ const PORT = process.env.PORT || 6089;
 
 let startServer = http.createServer(app);
 socketService.initializeSocket(startServer)
-startServer.listen(PORT, function () {
+startServer.listen(PORT, "0.0.0.0", function () {
   console.log(`Server is running on port ${PORT}.`);
 });
 module.exports = app;
