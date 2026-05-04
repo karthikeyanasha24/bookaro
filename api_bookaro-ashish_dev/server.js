@@ -2,7 +2,6 @@ const express = require("express");
 var cors = require("cors");
 let http = require("http");
 var bcrypt = require("bcrypt");
-const agenda = require('./app/config/agenda.config.js');
 
 const app = express();
 app.use(cors());
@@ -63,6 +62,15 @@ function redactMongoUrl(u) {
   return u.replace(/\/\/([^:@/]+):([^@/]+)@/, "//***:***@");
 }
 
+process.on("unhandledRejection", (reason) => {
+  console.error("[unhandledRejection]", reason && reason.stack ? reason.stack : reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("[uncaughtException]", err && err.stack ? err.stack : err);
+  process.exit(1);
+});
+
 // require('./app/routes/users.routes')(app);
 // require('./app/routes/upload.routes')(app);
 // require('./app/routes/category.routes')(app);
@@ -75,22 +83,29 @@ function redactMongoUrl(u) {
 
 db.mongoose.set("strictQuery", false);
 db.mongoose
-  .connect(db.url, {})
+  .connect(db.url, { serverSelectionTimeoutMS: 20000 })
   .then(async () => {
     console.log("Connected to the database!");
 
-    //load all jobs
-    const agenda = require("./app/config/agenda.config");
-    require("./app/jobs/agenda.jobs")(agenda, db);
-
-    await agenda.start();
-    console.log("Agenda started and jobs loaded.");
     try {
-      await agenda.every("1 week", "weekly-ai-agent-digests");
-      await agenda.every("1 day", "ai-agent-owner-no-interest-scan");
-    } catch (e) {
-      console.warn("Agenda schedule (ai agent):", e.message || e);
+      const agendaInstance = require("./app/config/agenda.config");
+      require("./app/jobs/agenda.jobs")(agendaInstance, db);
+      await agendaInstance.start();
+      console.log("Agenda started and jobs loaded.");
+      try {
+        await agendaInstance.every("1 week", "weekly-ai-agent-digests");
+        await agendaInstance.every("1 day", "ai-agent-owner-no-interest-scan");
+      } catch (e) {
+        console.warn("Agenda schedule (ai agent):", e.message || e);
+      }
+    } catch (agendaErr) {
+      console.error(
+        "Agenda failed to start — HTTP API still runs; fix jobs/DB:",
+        agendaErr && agendaErr.message ? agendaErr.message : agendaErr
+      );
+      if (agendaErr && agendaErr.stack) console.error(agendaErr.stack);
     }
+
     try {
       await seedDb();
     } catch (e) {
