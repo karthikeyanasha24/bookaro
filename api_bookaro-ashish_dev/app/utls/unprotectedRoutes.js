@@ -1,6 +1,7 @@
 
 module.exports = {
   unprotectedroutes: [
+    "/",
     "/buildingPermits/listing",
     "/user/pro/listing",
     "/service/list",
