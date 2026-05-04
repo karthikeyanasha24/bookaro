@@ -1,9 +1,11 @@
 const loader = (p) => {
+    const el = document.getElementById("loader");
+    if (!el) return;
     if (p) {
-        document.getElementById('loader').classList.remove('d-none');
+        el.classList.remove("d-none");
     } else {
-        document.getElementById('loader').classList.add('d-none');
+        el.classList.add("d-none");
     }
-}
+};
 
 export default loader;

@@ -45,7 +45,7 @@ const video = (video,modal='videos') => {
   return value;
 };
 
-const document = (img, modal = "img") => {
+const docAsset = (img, modal = "img") => {
   let value = "/assets/img/placeholder.png";
   // if (img) value = environment.api + 'img/' + img
   if (img) value = `${environment.api}document/${img}`;
@@ -312,6 +312,7 @@ const methodModel = {
   containsSpaceonly,
   msToTime,
   urlValidation,
-  document
+  document: docAsset
 };
 export default methodModel;
+

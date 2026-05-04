@@ -25,7 +25,23 @@ const BuyerFile = () => {
     taxNotice: [],
     personalContribution: [],
   });
-  const [declartiveForm, setdeclartiveForm] = useState({ BuyOption: "", InvestOption: "", postalCode: "" });
+  const [declartiveForm, setdeclartiveForm] = useState({
+    BuyOption: "",
+    InvestOption: "",
+    postalCode: "",
+    budgetRange: "",
+    propertyType: "",
+    desiredArea: "",
+    numberOfRooms: "",
+    financingStatus: "",
+    mortgagePreApproved: "",
+    employmentStatus: "",
+    monthlyIncome: "",
+    purchaseTimeline: "",
+    alreadySoldProperty: "",
+    searchDuration: "",
+    buyerPriority: "",
+  });
 
   useEffect(() => {
     if (user?.buyerFiles) {
@@ -49,6 +65,18 @@ const BuyerFile = () => {
         BuyOption: user?.declarativeBuyerFiles?.BuyOption,
         InvestOption: user?.declarativeBuyerFiles?.InvestOption,
         postalCode: user?.declarativeBuyerFiles?.postalCode,
+        budgetRange: user?.declarativeBuyerFiles?.budgetRange,
+        propertyType: user?.declarativeBuyerFiles?.propertyType,
+        desiredArea: user?.declarativeBuyerFiles?.desiredArea,
+        numberOfRooms: user?.declarativeBuyerFiles?.numberOfRooms,
+        financingStatus: user?.declarativeBuyerFiles?.financingStatus,
+        mortgagePreApproved: user?.declarativeBuyerFiles?.mortgagePreApproved,
+        employmentStatus: user?.declarativeBuyerFiles?.employmentStatus,
+        monthlyIncome: user?.declarativeBuyerFiles?.monthlyIncome,
+        purchaseTimeline: user?.declarativeBuyerFiles?.purchaseTimeline,
+        alreadySoldProperty: user?.declarativeBuyerFiles?.alreadySoldProperty,
+        searchDuration: user?.declarativeBuyerFiles?.searchDuration,
+        buyerPriority: user?.declarativeBuyerFiles?.buyerPriority,
       });
     }
   }, [user?.declarativeBuyerFiles]);
@@ -748,7 +776,190 @@ const BuyerFile = () => {
                       />
                     </div>
                     {submited && declartiveForm?.postalCode == "" && <span className="text-red-600">City or postal code is required</span>}
-                    <div className="mt-20 flex items-center justify-end">
+
+                    {/* Q4 — Budget Range */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Your total budget</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "< €100,000", value: "under100k" },
+                          { name: "€100k – €200k", value: "100k-200k" },
+                          { name: "€200k – €400k", value: "200k-400k" },
+                          { name: "€400k – €700k", value: "400k-700k" },
+                          { name: "€700k+", value: "700k+" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.budgetRange ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, budgetRange: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q5 — Property Type */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Preferred property type</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Apartment", value: "apartment" },
+                          { name: "House", value: "house" },
+                          { name: "Building", value: "building" },
+                          { name: "Land", value: "land" },
+                          { name: "Commercial", value: "commercial" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.propertyType ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, propertyType: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q6 — Desired Area */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Desired surface area (m²)</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "< 30 m²", value: "under30" },
+                          { name: "30 – 60 m²", value: "30-60" },
+                          { name: "60 – 100 m²", value: "60-100" },
+                          { name: "100 – 150 m²", value: "100-150" },
+                          { name: "150 m²+", value: "150plus" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.desiredArea ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, desiredArea: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q7 — Number of Rooms */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Number of rooms needed</p>
+                      <div className="flex flex-wrap gap-3">
+                        {["Studio", "2 rooms", "3 rooms", "4 rooms", "5 rooms", "6+ rooms"].map((v) => (
+                          <button key={v} className={`${v === declartiveForm?.numberOfRooms ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, numberOfRooms: v })}>{v}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q8 — Financing Status */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">How do you plan to finance?</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Cash buyer", value: "cash" },
+                          { name: "Mortgage", value: "mortgage" },
+                          { name: "Investigating options", value: "investigating" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.financingStatus ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, financingStatus: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q9 — Mortgage Pre-Approval */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Mortgage pre-approval status</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Yes, approved", value: "approved" },
+                          { name: "In progress", value: "inprogress" },
+                          { name: "Not yet", value: "notyet" },
+                          { name: "Not applicable", value: "na" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.mortgagePreApproved ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, mortgagePreApproved: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q10 — Employment Status */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Your employment status</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Employed (CDI)", value: "employed_cdi" },
+                          { name: "Employed (CDD)", value: "employed_cdd" },
+                          { name: "Self-employed", value: "selfemployed" },
+                          { name: "Civil servant", value: "civil_servant" },
+                          { name: "Retired", value: "retired" },
+                          { name: "Other", value: "other" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.employmentStatus ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, employmentStatus: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q11 — Monthly Income */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Gross monthly household income</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "< €2,000", value: "under2k" },
+                          { name: "€2,000 – €3,500", value: "2k-3.5k" },
+                          { name: "€3,500 – €5,000", value: "3.5k-5k" },
+                          { name: "€5,000 – €8,000", value: "5k-8k" },
+                          { name: "€8,000+", value: "8k+" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.monthlyIncome ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, monthlyIncome: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q12 — Purchase Timeline */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">When do you want to buy?</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "As soon as possible", value: "asap" },
+                          { name: "3 – 6 months", value: "3-6months" },
+                          { name: "6 – 12 months", value: "6-12months" },
+                          { name: "1 – 2 years", value: "1-2years" },
+                          { name: "Just exploring", value: "exploring" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.purchaseTimeline ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, purchaseTimeline: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q13 — Already Sold Property */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">Have you already sold your current property?</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Yes", value: "yes" },
+                          { name: "No", value: "no" },
+                          { name: "Not applicable", value: "na" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.alreadySoldProperty ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, alreadySoldProperty: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q14 — Search Duration */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">How long have you been searching?</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Just started", value: "just_started" },
+                          { name: "< 3 months", value: "under3m" },
+                          { name: "3 – 6 months", value: "3-6m" },
+                          { name: "6 – 12 months", value: "6-12m" },
+                          { name: "1+ year", value: "over1y" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.searchDuration ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, searchDuration: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q15 — Buyer Priority */}
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">What is your top priority?</p>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { name: "Price / Value", value: "price" },
+                          { name: "Location", value: "location" },
+                          { name: "Property size", value: "size" },
+                          { name: "Condition / quality", value: "condition" },
+                          { name: "Neighbourhood", value: "neighbourhood" },
+                        ].map((item) => (
+                          <button key={item.value} className={`${item.value === declartiveForm?.buyerPriority ? "bg-primary hover:opacity-90 text-white" : "text-[#4b3869] bg-white"} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={() => setdeclartiveForm({ ...declartiveForm, buyerPriority: item.value })}>{item.name}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-10 flex items-center justify-end">
                       <button
                         onClick={() => handleSubmit(form, "declarative")}
                         className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"

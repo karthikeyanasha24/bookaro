@@ -70,3 +70,93 @@ Checklist derived from the workflow / AI orchestration discussion and mapped to 
 - No **LLM / agent** integration in application code (only generic `chat` for user messages).
 - No **event → conversation** router; logic is **implicit** in controller branches + `interestTransactions` writes.
 - **README** at repo root is minimal; this file is the working checklist until you promote content elsewhere.
+
+---
+
+## F. Current delivery status (meeting snapshot)
+
+### ✅ Completed so far
+
+- [x] Platform boot reliability fixes (API/frontend/admin startup blockers addressed)
+- [x] Login blockers fixed (`JWT_SECRET` setup + seeded accounts for testing)
+- [x] API URL / env setup for frontend and admin (removed `undefined...` request failures)
+- [x] Sidebar overlap fix (logged-in pages no longer covered by sidebar)
+- [x] Mobile sidebar drawer implemented (open/close behavior)
+- [x] Sidebar menu migrated toward Marvel hierarchy with nested sections
+- [x] Sidebar submenus now click-to-toggle dropdowns
+- [x] Sidebar visual cleanup (professional icons, width/text clipping fixes)
+- [x] Logged-in footer switched to compact app footer (full marketing footer kept for non-logged pages)
+
+### 🔄 In progress
+
+- [ ] Pixel-perfect Marvel parity pass for sidebar/app-shell typography, spacing, and interactions
+- [ ] Route-by-route mapping for each sidebar sub-item (replace temporary fallback links)
+- [ ] Dashboard shell polish for stronger “inside app” feeling after login
+
+### ⛔ Blocked / awaiting client inputs
+
+- [ ] Final event-to-conversation mapping sheet for AI orchestrator (latest agreed version)
+- [ ] Final question list (10-15 each) for buyer/renter declarative forms
+- [ ] Final UX decision on on-demand services edge flows (release/dispute/payment details)
+- [ ] Final Marvel references for remaining screens to style exactly
+
+### 🧭 Next 3 milestones (ETA)
+
+- [ ] Milestone 1: Sidebar/app-shell Marvel parity polish (0.5-1 day)
+- [ ] Milestone 2: Logged-in dashboard baseline widgets (1-2 days)
+- [ ] Milestone 3: QR code MVP (generate + redirect tracking + stats UI) (1.5-2.5 days)
+
+---
+
+## G. Phase Scope (video source of truth)
+
+All items below are derived from the reviewed walkthrough video and are treated as in-scope for this phase.
+
+### 1) UI/UX upgrades
+
+- [ ] Landing page UI upgrade (layout, spacing, typography, hierarchy, responsive behavior)
+- [ ] Post-login UI consistency pass across onboarding, dashboard, property, transaction, and services screens (UI only)
+- [ ] Lead cards enhancement in transaction tools (add: number of visits, number of offers, property search time)
+
+### 2) Document-based declaration enhancements
+
+- [ ] Expand declaration section by ~10-15 additional questions (same existing interaction pattern)
+- [ ] Ensure new questions are persisted correctly in current/extended data model
+- [ ] Ensure questions are visible and editable in relevant flows
+
+### 3) QR code functionality
+
+- [ ] Generate unique QR code per property
+- [ ] Allow download/reuse of generated QR code
+- [ ] Implement redirect URL flow: QR scan -> platform -> corresponding property details page
+- [ ] Add frontend controls to generate and download/share QR code
+- [ ] Add backend tracking URL + redirect handler for each property
+
+### 4) AI agent logging and integration validation
+
+- [ ] Create DB tables/collections for AI communications (messages, responses, timestamps, context IDs)
+- [ ] Log all system-triggered AI-to-user communications with event linkage
+- [ ] Validate existing ChatGPT API integration (connectivity, response handling, error handling)
+- [ ] Align ChatGPT integration with new AI logging model and ensure retrievability
+
+### 5) On-demand services
+
+- [ ] On-demand services listing and purchase flow validation/alignment (as shown in video)
+
+### 6) Deliverables for this phase
+
+- [ ] Updated landing page UI
+- [ ] Updated logged-in UI aligned with provided designs
+- [ ] Expanded declaration questionnaire
+- [ ] QR code generation + redirect implementation
+- [ ] AI agent communication log tables
+- [ ] Verified ChatGPT API compatibility with logging
+- [ ] Updated source code with all approved changes
+
+### 7) Explicit exclusions for this phase
+
+- [ ] No mobile app development
+- [ ] No multilingual support
+- [ ] No advanced analytics dashboards
+- [ ] No AI model training/fine-tuning
+- [ ] No new payment logic/financial workflow redesign

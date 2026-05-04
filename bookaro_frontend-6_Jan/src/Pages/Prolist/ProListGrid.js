@@ -12,6 +12,7 @@ const ProListGrid = ({
   handlePageChange,
   allfilters,
   navigateToDetail,
+  openServiceView,
 }) => {
   const { user } = useSelector((state) => state);
   const history = useNavigate()
@@ -26,16 +27,20 @@ const ProListGrid = ({
                 {data?.length > 0 ? (
                   data.map((item, i) => {
                     return (
-                      <div key={i} onClick={() => navigateToDetail(item)}
+                      <div key={i}
                         className="2xl:col-span-4 xl:col-span-6 lg:col-span-6 col-span-12">
-                        <div className="bg-[#EBEBEB] p-4 rounded-[12px] flex  flex-col mb-4">
+                        <div className="bg-white border border-[#EAE4F3] p-4 rounded-[14px] flex flex-col mb-4 shadow-sm">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="bg-black text-white text-[10px] px-2 py-1 rounded-[4px]">Top agent</span>
+                            <button className="text-[#B8B8C0]">☆</button>
+                          </div>
                           <div className="flex justify-between items-start">
                             <div>
                               <span className="capitalize text-[#AAAAAA] text-[14px] font-[600]">
                                 {item?.role}
                               </span>
                               <h2 className="text-[#47525E] font-[600] text-[17px]">
-                                {item?.companyName}
+                                <button onClick={() => navigateToDetail(item)} className="text-left">{item?.companyName}</button>
                                 {/* 123WEBIMMO.COM ANGERS */}
                               </h2>
                               <p className="text-[#47525E]">
@@ -47,11 +52,11 @@ const ProListGrid = ({
                               4,4/5
                             </div>
                           </div>
-                          <div className="flex mt-7 sm:flex-row flex-col sm:items-center items-start">
+                          <div className="flex mt-5 sm:flex-row flex-col sm:items-center items-start">
                             <img
                               src="assets/img/pro-logo.png"
                               alt=""
-                              className="w-[80px] h-[80px] rounded-[5px] brder border-[#8492A6]"
+                              className="w-[68px] h-[68px] rounded-full border border-[#E5E7EB]"
                             />
                             <ul className="sm:ms-3 ms-0 flex sm:flex-row flex-col  gap-2 sm:mt-0 mt-4">
                               <li className="flex sm:flex-col flex-row items-center">
@@ -87,6 +92,20 @@ const ProListGrid = ({
                                 </span>
                               </li>
                             </ul>
+                          </div>
+                          <div className="mt-4 border-t border-[#F0EBF8] pt-3 flex items-center justify-between">
+                            <button
+                              className="text-[#7B6E8E] text-[13px] underline"
+                              onClick={() => openServiceView?.(item)}
+                            >
+                              Contact
+                            </button>
+                            <button
+                              className="bg-[#976DD0] text-white text-[13px] px-4 py-1.5 rounded-full"
+                              onClick={() => openServiceView?.(item)}
+                            >
+                              Buy
+                            </button>
                           </div>
                         </div>
                       </div>

@@ -1,6 +1,6 @@
 import styles from "./index.module.css";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Button, Tooltip } from "antd";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Tooltip } from "antd";
 import { logout } from "../../../actions/user";
 import { useDispatch } from "react-redux";
 import methodModel from "../../../methods/methods";
@@ -19,6 +19,7 @@ const Html = ({
   const location = useLocation();
   const dispatch = useDispatch();
   const history = useNavigate();
+  const isCollapsed = isOpen;
 
   const activecls = (tab) => {
     const url = window.location.href;
@@ -40,28 +41,33 @@ const Html = ({
   return (
     <>
       <div
-        className={` mt-5 h-full flex justify-between flex-col   ${isOpen && styles.sm_sidebar
-          }`}
+        className={`h-full flex justify-between flex-col ${isCollapsed ? styles.sm_sidebar : ""}`}
         component="siderbar"
       >
         <div id="logoutBtn" onClick={() => Logout()}></div>
-        <div className="h-[80%] px-[6px] overflow-auto">
-          <div className="">
-            {" "}
-            <p className="text-white text-[10px] text-center mb-5 ">Main Menu</p>
+        <div className="h-[82%] px-[8px] overflow-auto pt-2">
+          <div className={`mb-2 ${isCollapsed ? "" : "px-1"}`}>
+            {!isCollapsed && (
+              <p className="text-white/85 text-[10px] mb-2 tracking-wide uppercase">Main Menu</p>
+            )}
           </div>
-          <ul className="space-y-2 ">
+          <ul className="space-y-1">
             {menus.map((itm, index) => {
               if (!isAllow(itm.key)) return null;
+              const isActive =
+                itm.url === "/dashboard"
+                  ? location.pathname === "/dashboard"
+                  : location.pathname === itm.url ||
+                    location.pathname.startsWith(`${itm.url}/`);
               return (
-                <span key={index} className="mx-auto">
+                <span key={index} className="block">
                   {itm.icon ? (
                     <>
                       <li
                         className={
-                          location.pathname.includes(itm.url)
-                            ? "mb-4 flex items-center justify-center w-[30px] h-[30px] mx-auto rounded-full bg-white text-[#20988e]"
-                            : "mb-4 flex items-center justify-center w-[30px] h-[30px] mx-auto rounded-full text-[#20988e] "
+                          isActive
+                            ? `mb-2 rounded-[10px] ${isCollapsed ? "w-[40px] mx-auto" : "w-full"} bg-white shadow-sm`
+                            : `mb-2 rounded-[10px] ${isCollapsed ? "w-[40px] mx-auto" : "w-full"} text-white/90 hover:bg-white/15`
                         }
                       >
                         <>
@@ -74,13 +80,17 @@ const Html = ({
                               >
                                 <NavLink
                                   to={itm.url}
-                                  className={(isActive) =>
-                                    " w-[30px] h-[30px] flex items-center justify-center " +
-                                    (location?.pathname.includes(itm.url) &&
-                                      " !text-[#20988e]  !font-medium w-[30px] h-[30px] mx-auto active-span")
-                                  }
+                                  end={itm.url === "/dashboard"}
+                                  className={`h-[40px] flex items-center ${isCollapsed ? "justify-center w-[40px] mx-auto" : "justify-start px-3 gap-3 w-full"} ${isActive ? "font-medium text-[#20988e]" : "text-white"}`}
                                 >
-                                  <span className="">{itm.icon}</span>
+                                  <span
+                                    className={`admin-sidebar__icon-wrap flex shrink-0 items-center justify-center ${isActive ? "text-[#20988e] [&_svg]:text-[#20988e]" : "text-white [&_svg]:text-white"}`}
+                                  >
+                                    {itm.icon}
+                                  </span>
+                                  {!isCollapsed && (
+                                    <span className="admin-sidebar__label text-[15px] leading-[20px]">{itm.name}</span>
+                                  )}
                                 </NavLink>
                               </Tooltip>
                             </>
@@ -92,15 +102,11 @@ const Html = ({
                     </>
                   ) : (
                     <>
-                      <li>
+                      <li className={isCollapsed ? "hidden" : ""}>
                         <h6
-                          className={`${isOpen ? "py-[12px] " : "p-[12px]  text-md"
-                            } text-xs font-medium text-[#7E8B99] mt-[12px]`}
+                          className="p-[12px] text-xs font-medium text-white/70 mt-[12px]"
                         >
-                          <span className=" sidebar_text text-center heading_block">
-                            {" "}
-                            {itm.name}{" "}
-                          </span>
+                          <span className="sidebar_text text-left heading_block">{itm.name}</span>
                         </h6>
                       </li>
                     </>
@@ -111,11 +117,12 @@ const Html = ({
           </ul>
         </div>
 
-
-        <div className="flex  justify-center h-[14%] px-[6px] pb-7 flex-col items-center">
+        <div className={`flex h-[14%] px-[8px] pb-5 ${isCollapsed ? "flex-col items-center justify-center" : "items-center justify-between gap-2"}`}>
           <button onClick={() => Logout()}
+            className={`text-white ${isCollapsed ? "" : "px-3 py-2 rounded-[10px] hover:bg-white/15 flex items-center gap-2"}`}
           >
-            <LuLogOut className="text-white mb-3" />
+            <LuLogOut className={`text-white ${isCollapsed ? "mb-3" : "mb-0"}`} />
+            {!isCollapsed && <span className="text-[14px]">Logout</span>}
           </button>
           <NavLink
             to={"/profile"}
@@ -124,7 +131,7 @@ const Html = ({
             <img
               alt="image"
               src={methodModel.userImg(user.image)}
-              className="h-8 w-8 rounded-full object-cover"
+              className={`rounded-full object-cover ${isCollapsed ? "h-8 w-8" : "h-9 w-9"}`}
             />
           </NavLink>
         </div>

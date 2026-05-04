@@ -28,7 +28,8 @@ const Html = ({
 }: any) => {
   const categoryVal = () => {
     let ext = options && options.find((item: any) => item.id == selectedValues);
-    return ext ? { value: ext.id, label: ext[displayValue] } : "";
+    if (!ext) return null;
+    return { value: ext.id, label: String(ext[displayValue] ?? "") };
   };
 
 const [isOpen,setIsOpen]=useState(false)
@@ -111,7 +112,7 @@ const [isOpen,setIsOpen]=useState(false)
             <Select
               options={
                 options?.map((itm: any) => {
-                  return { value: itm.id, label: itm[displayValue] };
+                  return { value: itm.id, label: String(itm?.[displayValue] ?? "") };
                 }) || []
               }
               placeholder={placeholder}

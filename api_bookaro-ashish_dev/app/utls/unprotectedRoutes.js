@@ -77,6 +77,7 @@ module.exports = {
     "/user/verifyOtp",
     "/property/listing",
     "/property/detail",
+    "/property/qr/track",
     "/revenue/listing",
     "/blogs/listing",
     "/blogs/detail",

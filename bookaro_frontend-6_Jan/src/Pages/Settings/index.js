@@ -7,8 +7,11 @@ import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import CompanySidebar from "./CompanySidebar";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../LanguageSwitcher";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch()
@@ -89,20 +92,29 @@ const Settings = () => {
               <CompanySidebar />
               <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                 <h2 className=" text-[#47525E] md:text-[24px] text-[20px]  font-bold mb-6 flex justify-between md:flex-row flex-col">
-                  Manage your company profile
+                  {t("settings.manageCompanyProfile")}
                   <button onClick={() => navigate(`/company-details?id=${user?._id}`)} className="bg-[#986dcd] px-4 py-2 text-[14px] text-white rounded-md w-max md:ml-auto ml-0 mt-4 md:mt-0">
-                    Preview
+                    {t("settings.preview")}
                   </button>
                 </h2>
                 <div className="p-10 md:px-14 px-8  border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
+                  <div className="mb-8 p-4 rounded-[10px] border border-[#E9DCF9] bg-[#FCFAFF]">
+                    <h4 className="text-black font-bold text-[18px] mb-1">
+                      {t("settings.languagePreferences")}
+                    </h4>
+                    <p className="text-[#5A5A5A] text-[14px] mb-3">
+                      {t("settings.chooseLanguage")}
+                    </p>
+                    <LanguageSwitcher className="max-w-[280px]" />
+                  </div>
                   <form onSubmit={handleSubmit} className="flex  flex-col h-full">
                     <div>
                       <div className="mb-8">
                         <h4 className="text-black font-bold text-[19px] mb-0">
-                          Company Profile
+                          {t("settings.companyProfile")}
                         </h4>
                         <p className="text-black text-[18px] mb-2 ">
-                          Will make you searchable in directory
+                          {t("settings.searchableDirectory")}
                         </p>
                       </div>
                       <div className=" max-w-[100%] mx-auto">
@@ -174,7 +186,7 @@ const Settings = () => {
                         type="submit"
                         className="bg-[#48464a] rounded-[100px] px-14 py-3 text-white signup-btn border border-transparent hover:bg-transparent hover:border-[#48464a] transition duration-300 ease-in-out"
                       >
-                        Save
+                        {t("common.save")}
                       </button>
                     </div>
                   </form>

@@ -254,7 +254,6 @@ const AddEdit = () => {
     return jsonArray;
   };
   const amenitiesOptions = generateAmenityArray() || [];
-  console.log(amenitiesOptions,"amenitiesOptions")
  
 
   const getAmenities = () => {

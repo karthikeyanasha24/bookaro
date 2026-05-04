@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
+import { LuDownload, LuQrCode, LuSearch, LuTrash2 } from "react-icons/lu";
 import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -191,6 +192,40 @@ const MyProperties = () => {
         navigate(`/property-details?id=${itm?._id}`)
     };
 
+    const generateQr = async (item) => {
+        loader(true);
+        const res = await ApiClient.post("property/qr/generate", { propertyId: item?._id || item?.id });
+        loader(false);
+        if (res?.success) {
+            toast.success("QR code generated.");
+            getData({ ...filters });
+        }
+    };
+
+    const removeQr = async (item) => {
+        loader(true);
+        const res = await ApiClient.delete("property/qr/remove", { propertyId: item?._id || item?.id });
+        loader(false);
+        if (res?.success) {
+            toast.success("QR code removed.");
+            getData({ ...filters });
+        }
+    };
+
+    const downloadQr = (item) => {
+        const qrImage = item?.qrCode?.imageDataUrl;
+        if (!qrImage) {
+            toast.info("Generate QR code first.");
+            return;
+        }
+        const a = document.createElement("a");
+        a.href = qrImage;
+        a.download = `${(item?.propertyTitle || "property").replace(/\s+/g, "-").toLowerCase()}-qr.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
     const toggleDropdown = (index) => {
         setDropdownIndex((prevIndex) => (prevIndex === index ? null : index));
     };
@@ -269,31 +304,61 @@ const MyProperties = () => {
                         </ul>
                         <div className="grid grid-cols-12 md:gap-8 gap-0">
                             <div className="col-span-12">
+                                <div className="border border-[#EDE8F5] rounded-[14px] p-5 mb-6 bg-[#FCFBFF]">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <h3 className="text-[20px] font-[700] text-[#2D1B4E]">QR Code management</h3>
+                                        <span className="text-[#9A8CB4] text-[12px]">How it works</span>
+                                    </div>
+                                    <p className="text-[13px] text-[#6B7280] max-w-[920px] mt-1 mb-4">
+                                        Generate QR code posters for your properties and share them on external platforms.
+                                        Scans redirect users to the correct property profile in your transaction journey.
+                                    </p>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <div className="bg-white border border-[#EEE8F8] rounded-[12px] p-4">
+                                            <span className="w-6 h-6 rounded-full bg-[#EEE5FC] text-[#7F56C6] text-[12px] font-[700] inline-flex items-center justify-center mb-2">1</span>
+                                            <h4 className="text-[14px] font-[600] text-[#4B5563]">Create your QR code</h4>
+                                            <p className="text-[12px] text-[#7C8798] mt-1">Generate a poster from your property cover image.</p>
+                                        </div>
+                                        <div className="bg-white border border-[#EEE8F8] rounded-[12px] p-4">
+                                            <span className="w-6 h-6 rounded-full bg-[#EEE5FC] text-[#7F56C6] text-[12px] font-[700] inline-flex items-center justify-center mb-2">2</span>
+                                            <h4 className="text-[14px] font-[600] text-[#4B5563]">Share externally</h4>
+                                            <p className="text-[12px] text-[#7C8798] mt-1">Publish on portals, social media, or print material.</p>
+                                        </div>
+                                        <div className="bg-white border border-[#EEE8F8] rounded-[12px] p-4">
+                                            <span className="w-6 h-6 rounded-full bg-[#EEE5FC] text-[#7F56C6] text-[12px] font-[700] inline-flex items-center justify-center mb-2">3</span>
+                                            <h4 className="text-[14px] font-[600] text-[#4B5563]">Track engagement</h4>
+                                            <p className="text-[12px] text-[#7C8798] mt-1">Monitor scan activity and update listings quickly.</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <p className="text-[#47525E]">
                                     <span className="text-[#47525E] font-bold text-[20px]">
                                         {total}{` Propert${total > 1 ? "ies" : "y"} `}
                                     </span>
                                     in your portfolio
                                 </p>
-                                <div className="flex gap-10 mt-5">
+                                <div className="flex flex-wrap gap-5 mt-5 mb-6">
                                     <div>
-                                        <label className="text-[#8492A6] mb-1 block">Location</label>
+                                        <label className="text-[#8492A6] mb-1 block text-[13px]">Search a property</label>
+                                        <div className="relative">
+                                            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9BA3AF]" />
+                                            <input
+                                                type="text"
+                                                value={fil.name}
+                                                onChange={(e) => textChange("name", e.target.value)}
+                                                placeholder="Type property title"
+                                                className="bg-[#F7F8FA] border border-[#E6E8EC] p-2 pl-9 pr-3 rounded-[8px] h-[42px] min-w-[260px]"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-[#8492A6] mb-1 block text-[13px]">Location</label>
                                         <input
                                             type="text"
                                             value={fil.location}
                                             onChange={(e) => textChange("location", e.target.value)}
-                                            placeholder="Enter your location"
-                                            className="bg-[#F0F0F0] p-2 px-3 rounded-[5px] h-[44px]"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-[#8492A6] mb-1 block">Name</label>
-                                        <input
-                                            type="text"
-                                            value={fil.name}
-                                            onChange={(e) => textChange("name", e.target.value)}
-                                            placeholder="Property name"
-                                            className="bg-[#F0F0F0] p-2 px-3 rounded-[5px] h-[44px]"
+                                            placeholder="Enter city / area"
+                                            className="bg-[#F7F8FA] border border-[#E6E8EC] p-2 px-3 rounded-[8px] h-[42px] min-w-[240px]"
                                         />
                                     </div>
                                 </div>
@@ -526,6 +591,14 @@ const MyProperties = () => {
                                                                                 <img src={`assets/img/${item?.followunfollows_details ? "fill-house" : "lined-house"}.svg`} alt="" className="w-[30px]" />
                                                                             </a>
                                                                         </li>
+                                                                        <li className="my-3">
+                                                                            <button
+                                                                                onClick={() => generateQr(item)}
+                                                                                className="w-[30px] h-[30px] rounded-full border border-[#E5E7EB] text-[#7F56C6] flex items-center justify-center"
+                                                                            >
+                                                                                <LuQrCode size={16} />
+                                                                            </button>
+                                                                        </li>
                                                                     </ul>
                                                                 </div>
                                                                 {/* Three-dot menu */}
@@ -549,6 +622,33 @@ const MyProperties = () => {
                                                                             </div>
                                                                         )}
                                                                     </div>}
+                                                                <div className="w-full mt-2 border-t border-[#EEF0F3] pt-3 flex items-center justify-end gap-2">
+                                                                    <span className="text-[12px] text-[#7C8798] mr-auto">
+                                                                        {`Scans: ${item?.qrCode?.scanCount || 0}`}
+                                                                    </span>
+                                                                    <button
+                                                                        onClick={() => downloadQr(item)}
+                                                                        className="inline-flex items-center gap-1 text-[12px] px-3 py-1.5 rounded-full border border-[#E4D9F5] text-[#7F56C6] hover:bg-[#F6F2FC] transition"
+                                                                    >
+                                                                        <LuDownload size={14} />
+                                                                        Download QR
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => removeQr(item)}
+                                                                        disabled={!item?.qrCode?.token}
+                                                                        className="inline-flex items-center gap-1 text-[12px] px-3 py-1.5 rounded-full border border-[#EFE3F3] text-[#A46477] hover:bg-[#FBF3F6] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                                                    >
+                                                                        <LuTrash2 size={14} />
+                                                                        Remove QR
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => generateQr(item)}
+                                                                        className="inline-flex items-center gap-1 text-[12px] px-3 py-1.5 rounded-full bg-[#976DD0] text-white hover:opacity-90 transition"
+                                                                    >
+                                                                        <LuQrCode size={14} />
+                                                                        {item?.qrCode?.token ? "Regenerate QR Code" : "Generate QR Code"}
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

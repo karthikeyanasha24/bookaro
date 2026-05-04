@@ -67,8 +67,11 @@ const About = () => {
               <CompanySidebar />
               <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8 ">
                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                  Manage your company profile
+                  About company
                 </h2>
+                <p className="text-[#6B7280] text-[14px] mb-4">
+                  Describe your expertise, positioning, and why clients should work with you.
+                </p>
                 <div className="p-6 md:px-14 px-6 border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0 h-[92%]">
                   <form
                     onSubmit={handleSubmit}

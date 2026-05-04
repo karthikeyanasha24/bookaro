@@ -32,24 +32,28 @@ const ContactAgencyModal = ({ open, setOpen, paramId, setloginModal }) => {
     setagency({ ...agency, [atr]: value });
   };
   const validateForm = () => {
-    if (!/^[A-Za-z ]{2,50}$/.test(agency.fName.trim())) {
+    const fName = String(agency.fName ?? "").trim();
+    const lName = String(agency.lName ?? "").trim();
+    const phone = String(agency.phone ?? "").trim();
+    const email = String(agency.email ?? "").trim();
+    if (!/^[A-Za-z ]{2,50}$/.test(fName)) {
       toast.error(
         "First name must be alphabetic, can include spaces, and be between 2 to 50 characters."
       );
       return false;
-    } else if (!/^[A-Za-z ]{2,50}$/.test(agency.lName.trim())) {
+    } else if (!/^[A-Za-z ]{2,50}$/.test(lName)) {
       toast.error(
         "Last name must be alphabetic, can include spaces, and be between 2 to 50 characters."
       );
       return false;
     }
-    if (!/^\d{10,}$/.test(agency.phone.trim())) {
+    if (!/^\d{10,}$/.test(phone)) {
       toast.error("Phone number must be at least 10 digits.");
       return false;
     } else if (
-      !/^\S+@\S+\.\S+$/.test(agency.email.trim()) ||
-      agency.email.length < 5 ||
-      agency.email.length > 50
+      !/^\S+@\S+\.\S+$/.test(email) ||
+      email.length < 5 ||
+      email.length > 50
     ) {
       toast.error("Email must be a valid format");
       return false;

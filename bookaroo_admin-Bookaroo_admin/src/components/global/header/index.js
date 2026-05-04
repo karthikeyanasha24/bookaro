@@ -8,11 +8,10 @@ import { logout } from "../../../actions/user";
 import { memo } from 'react';
 import { globalLogout, removeLocal } from "../../../models/string.models";
 
-const Header = memo(function Header({ setIsOpen, isOpen, particularData }) {
+const Header = memo(function Header({ setIsOpen, isOpen, particularData, sidebarWidth }) {
   const user = useSelector((state) => state.user);
   const toggle = () => {
-    setIsOpen(!isOpen);
-    localStorage.setItem("sidebar", !isOpen);
+    setIsOpen((prev) => !prev);
   };
   const [isOpen1, setIsOpen1] = useState(false);
   let messagecount = localStorage.getItem("unreadMessages") || 0;
@@ -72,6 +71,7 @@ const Header = memo(function Header({ setIsOpen, isOpen, particularData }) {
       Logout={Logout}
       messageCount={messageCount}
       particularData={particularData}
+      sidebarWidth={sidebarWidth}
     />
   );
 });

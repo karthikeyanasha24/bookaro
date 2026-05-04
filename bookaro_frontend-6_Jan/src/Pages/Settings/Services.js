@@ -9,6 +9,8 @@ import CompanySidebar from "./CompanySidebar";
 import { login_success } from "../../actions/user";
 
 const Services = () => {
+  const params = new URLSearchParams(window.location.search);
+  const isOnDemandTab = params.get("tab") === "ondemand";
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch()
   const [services, setServices] = useState([]);
@@ -76,8 +78,13 @@ const Services = () => {
               <CompanySidebar />
               <div className="xl:col-span-8 lg:col-span-7 col-span-12 lg:mt-0 mt-8 h-full">
                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                  Manage your company profile
+                  {isOnDemandTab ? "On demand service" : "Services"}
                 </h2>
+                <p className="text-[#6B7280] text-[14px] mb-4">
+                  {isOnDemandTab
+                    ? "Configure services that can be purchased on demand with fixed fee delivery."
+                    : "Select the professional services your company offers."}
+                </p>
                 <div className="p-6 md:px-14 px-6 border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0 lg:h-[92%] ">
                   <form
                     onSubmit={handleSubmit}
@@ -86,10 +93,12 @@ const Services = () => {
                     <div>
                       <div className="mb-8">
                         <h4 className="text-black font-bold text-[19px]  mb-0">
-                          Services You Offer
+                          {isOnDemandTab ? "On-demand service catalog" : "Services you offer"}
                         </h4>
                         <p className="text-black text-[18px]  mb-2 ">
-                          Services You Offer shown below
+                          {isOnDemandTab
+                            ? "These services appear in your on-demand profile and purchase flow."
+                            : "Services you offer shown below"}
                         </p>
                       </div>
                       <div className=" max-w-[100%]">

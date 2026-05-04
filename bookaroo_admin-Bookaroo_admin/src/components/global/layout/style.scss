@@ -40,24 +40,18 @@
 }
 
 .main-sidebar {
-  max-width: 280px;
   z-index: 1;
   background-repeat: no-repeat;
   background-size: 100%;
-  min-width: 280px;
-  width: 100%;
-  border-right: 1px dashed rgba(0, 0, 0, 0.3411764706);
+  border-right: 1px solid rgba(151, 109, 208, 0.35);
 }
 @media (max-width: 767px) {
   .main-wrapper main.main {
     width: calc(100% - 50px);
   }
-  .bg-white.ml-\[49px\].sidebar-brand.text-center.w-\[230px\].h-full{
-    display: none;
-  }
+
   .main-sidebar{
-    max-width: 50px !important;
-    min-width: 50px !important;
+    min-width: auto !important;
   }
  
   .sidebar-h {

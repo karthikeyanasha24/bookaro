@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { PersistGate } from "redux-persist/integration/react";
+import { PersistGate } from "redux-persist/es/integration/react";
 import "./App.css";
 import configureStoreProd from "./config/configureStore.prod";
 import "./scss/main.scss";
@@ -66,6 +66,7 @@ function App() {
     { url: "/profile/about", path: "Settings/About" },
     { url: "/profile/team", path: "Settings/Team" },
     { url: "/profile/services", path: "Settings/Services" },
+    { url: "/settings", element: <Navigate to="/profile" replace /> },
     { url: "/settings/work-hour", path: "Settings/WorkingHour" },
     {
       url: "/profile/manage-notifications",
@@ -138,6 +139,8 @@ function App() {
     { url: "/support-page", path: "Support" },
     { url: "/privacy-policy", path: "PrivacyPolicy" },
     { url: "/delete-user", path: "DeleteUser" },
+    { url: "/dashboard", path: "Dashboard" },
+    { url: "/onboarding", path: "Onboarding" },
   ];
 
   return (

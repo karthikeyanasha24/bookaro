@@ -33,18 +33,46 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
     return true;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    let merged = { ...formData };
+
+    const locOk = (fd) =>
+      fd?.location?.lat != null &&
+      fd?.location?.lng != null &&
+      !Number.isNaN(Number(fd?.location?.lat)) &&
+      !Number.isNaN(Number(fd?.location?.lng));
+
+    if (!locOk(merged) && merged.address?.trim()) {
+      loader(true);
+      const nom = await addressModel.geocodeNominatim(merged.address.trim());
+      loader(false);
+      if (nom) {
+        merged = applyGeoToFormState(merged, nom.address, nom.lat, nom.lng, nom);
+      }
+    }
+
+    if (!locOk(merged)) {
+      setError(
+        "We could not place this address on the map. Enter a full street address (or pick a suggestion) and try again."
+      );
+      return;
+    }
+
     if (
-      !formData.country ||
-      !formData.city ||
-      !formData.state ||
-      !formData.zipcode
+      !merged.country ||
+      !merged.city ||
+      !merged.state ||
+      !merged.zipcode
     ) {
       setError("City, State, Zipcode and Country is required");
       return;
     }
-    if (!validate()) return;
-    localStorage.setItem("step1", JSON.stringify(formData));
+    if (!merged.address?.trim()) {
+      setError("Select Location First .");
+      return;
+    }
+    setFormData(merged);
+    localStorage.setItem("step1", JSON.stringify(merged));
     if (id) {
       navigate(`/property/edit/${id}/3`);
     } else {
@@ -63,7 +91,14 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   };
 
   const modifyCoordinate = (coordinate) => {
-    const [integerPart, decimalPart] = coordinate.toString().split(".");
+    if (coordinate === undefined || coordinate === null || coordinate === "") {
+      return coordinate;
+    }
+    const num = Number(coordinate);
+    if (Number.isNaN(num)) {
+      return coordinate;
+    }
+    const [integerPart, decimalPart] = String(num).split(".");
     let thirdDigit = decimalPart ? parseInt(decimalPart[2], 10) : null;
     if (thirdDigit === 9) {
       thirdDigit = 8;
@@ -77,37 +112,99 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
         decimalPart.slice(0, 2) + thirdDigit + decimalPart.slice(3);
       return parseFloat(`${integerPart}.${modifiedDecimalPart}`);
     }
-    return coordinate;
+    return num;
+  };
+
+  const applyGeoToFormState = (prev, addressLine, lat, lng, addrMeta = {}) => {
+    const random = Math.random() < 0.5 ? "lat" : "lng";
+    const other = random === "lat" ? "lng" : "lat";
+    const pt = { lat, lng };
+    return {
+      ...prev,
+      address: addressLine ?? prev.address,
+      city: addrMeta.city ?? prev.city,
+      zipcode: addrMeta.zipcode ?? prev.zipcode,
+      country: addrMeta.country ?? prev.country,
+      state: addrMeta.state ?? prev.state,
+      newlocation: {
+        type: "Point",
+        coordinates: [Number(lng), Number(lat)],
+      },
+      location: { lng: Number(lng), lat: Number(lat) },
+      randomLocation: {
+        [random]: modifyCoordinate(pt[random]),
+        [other]: pt[other],
+      },
+    };
   };
 
   const addressResult = async (e) => {
+    if (!id && e?.event === "value") {
+      setFormData((prev) => ({ ...prev, address: e.value }));
+      return;
+    }
+
     let address = {};
     if (e.place) {
       address = await addressModel.getAddress(e.place);
     }
+    let lat = address?.lat;
+    let lng = address?.lng;
+    let hasCoords =
+      lat != null &&
+      lng != null &&
+      !Number.isNaN(Number(lat)) &&
+      !Number.isNaN(Number(lng));
+
+    const query =
+      (typeof e.value === "string" && e.value.trim()) ||
+      e.place?.formatted_address?.trim?.() ||
+      "";
+
+    if (!hasCoords && query) {
+      const nom = await addressModel.geocodeNominatim(query);
+      if (nom) {
+        address = {
+          ...address,
+          lat: nom.lat,
+          lng: nom.lng,
+          address: nom.address,
+          city: nom.city || address.city,
+          state: nom.state || address.state,
+          zipcode: nom.zipcode || address.zipcode,
+          country: nom.country || address.country,
+        };
+        lat = address.lat;
+        lng = address.lng;
+        hasCoords = true;
+      }
+    }
+
     if (!id) {
-      const random = Math.random() < 0.5 ? "lat" : "lng";
-      setFormData((prev) => ({
-        ...prev,
-        address: e.value,
-        city: address?.city,
-        zipcode: address?.zipcode,
-        country: address?.country,
-        state: address?.state,
-        newlocation: {
-          type: "Point",
-          coordinates: [address?.lng, address?.lat],
-        },
-        location: {
-          lng: address?.lng,
-          lat: address?.lat,
-        },
-        randomLocation: {
-          [random]: modifyCoordinate(address[random]), // Modify the randomly chosen key
-          [random === "lat" ? "lng" : "lat"]:
-            address?.[random === "lat" ? "lng" : "lat"], // Keep the other key unchanged
-        },
-      }));
+      setFormData((prev) => {
+        const base = {
+          ...prev,
+          address: e.value ?? address?.address ?? prev.address,
+          city: address?.city,
+          zipcode: address?.zipcode,
+          country: address?.country,
+          state: address?.state,
+        };
+        if (!hasCoords) {
+          return {
+            ...base,
+            newlocation: prev.newlocation,
+            location: prev.location,
+            randomLocation: prev.randomLocation,
+          };
+        }
+        return applyGeoToFormState(base, base.address, lat, lng, {
+          city: address?.city,
+          zipcode: address?.zipcode,
+          country: address?.country,
+          state: address?.state,
+        });
+      });
     }
     setError("");
   };
@@ -164,7 +261,7 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
               </h4>
               <p className="text-[#47525E]">
                 No worries, we only use it to place your property on our map in
-                the right neigborhood.
+                the right neighborhood.
               </p>
             </div>
 
@@ -180,11 +277,14 @@ const Step3 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
                 <GooglePlaceAutoComplete
                   value={formData.address}
                   result={addressResult}
-                  placeholder="Enter address..."
+                  placeholder="e.g. 12 Rue de Rivoli, 75001 Paris — or street + city + postal code"
                   id="address"
                   disabled={id}
                 />
               </div>
+              <p className="text-[12px] text-[#6B7280] mt-2 leading-snug">
+                Type a full street address (street, city, country). If suggestions appear, pick one; otherwise click Next and we will try to locate it on the map automatically. A postal code alone is often not enough—include the city or area.
+              </p>
               <div style={{ color: "red" }}>{Error}</div>
 
               <div className="flex items-center flex-wrap mt-5">

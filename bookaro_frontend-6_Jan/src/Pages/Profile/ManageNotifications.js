@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageLayout from "../../components/global/PageLayout";
@@ -8,81 +8,129 @@ import loader from "../../methods/loader";
 import AcountSidebar from "../Settings/AcountSidebar";
 import "./profile.scss";
 
+const DEFAULT_NOTIFICATION_SETTING = {
+  new_messages: {
+    mail: true,
+    phone: true,
+  },
+  property_profile: {
+    mail: true,
+    phone: true,
+  },
+  new_like: {
+    phone: true,
+  },
+  new_follow: {
+    phone: true,
+  },
+  new_share: {
+    mail: true,
+    phone: true,
+  },
+  new_status_update: {
+    mail: true,
+    phone: true,
+  },
+  new_key_update: {
+    mail: true,
+    phone: true,
+  },
+  new_share_follow: {
+    mail: true,
+    phone: true,
+  },
+  new_blog_post: {
+    mail: true,
+    phone: true,
+  },
+  new_feature_release: {
+    mail: true,
+    phone: true,
+  },
+};
+
+function mergeNestedSetting(incoming, fallback) {
+  const base =
+    fallback && typeof fallback === "object" && !Array.isArray(fallback)
+      ? { ...fallback }
+      : {};
+  if (incoming && typeof incoming === "object" && !Array.isArray(incoming)) {
+    return { ...base, ...incoming };
+  }
+  return base;
+}
+
 const ManageNotifications = () => {
   const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const [setting, setSetting] = useState({
-    new_messages: {
-      mail: true,
-      phone: true
-    },
-    property_profile: {
-      mail: true,
-      phone: true
-    },
-    new_like: {
-      phone: true
-    },
-    new_follow: {
-      phone: true
-    },
-    new_share: {
-      mail: true,
-      phone: true
-    },
-    new_status_update: {
-      mail: true,
-      phone: true
-    },
-    new_key_update: {
-      mail: true,
-      phone: true
-    },
-    new_share_follow: {
-      mail: true,
-      phone: true
-    },
-    new_blog_post: {
-      mail: true,
-      phone: true
-    },
-    new_feature_release: {
-      mail: true,
-      phone: true
-    }
-  });
+  const [setting, setSetting] = useState(() => ({
+    ...DEFAULT_NOTIFICATION_SETTING,
+  }));
 
   const changeSetting = (key, key2, value) => {
+    const prev =
+      setting[key] && typeof setting[key] === "object" && !Array.isArray(setting[key])
+        ? setting[key]
+        : {};
     setSetting({
       ...setting,
-      [key]: { ...setting[key], [key2]: !value }
-    })
-  }
+      [key]: { ...prev, [key2]: !value },
+    });
+  };
   const getSettings = () => {
     ApiClient.get("setting/detail/", { user_id: user?._id }).then((res) => {
       if (res.success) {
         let data = res.data;
         if (data) {
           setSetting({
-            new_blog_post: data?.new_blog_post,
-            new_feature_release: data?.new_feature_release,
-            new_follow: data?.new_follow,
-            new_key_update: data?.new_key_update,
-            new_like: data?.new_like,
-            new_messages: data?.new_messages,
-            new_share: data?.new_share,
-            new_share_follow: data?.new_share_follow,
-            new_status_update: data?.new_status_update,
-            property_profile: data?.property_profile,
-          })
+            new_blog_post: mergeNestedSetting(
+              data.new_blog_post,
+              DEFAULT_NOTIFICATION_SETTING.new_blog_post
+            ),
+            new_feature_release: mergeNestedSetting(
+              data.new_feature_release,
+              DEFAULT_NOTIFICATION_SETTING.new_feature_release
+            ),
+            new_follow: mergeNestedSetting(
+              data.new_follow,
+              DEFAULT_NOTIFICATION_SETTING.new_follow
+            ),
+            new_key_update: mergeNestedSetting(
+              data.new_key_update,
+              DEFAULT_NOTIFICATION_SETTING.new_key_update
+            ),
+            new_like: mergeNestedSetting(
+              data.new_like,
+              DEFAULT_NOTIFICATION_SETTING.new_like
+            ),
+            new_messages: mergeNestedSetting(
+              data.new_messages,
+              DEFAULT_NOTIFICATION_SETTING.new_messages
+            ),
+            new_share: mergeNestedSetting(
+              data.new_share,
+              DEFAULT_NOTIFICATION_SETTING.new_share
+            ),
+            new_share_follow: mergeNestedSetting(
+              data.new_share_follow,
+              DEFAULT_NOTIFICATION_SETTING.new_share_follow
+            ),
+            new_status_update: mergeNestedSetting(
+              data.new_status_update,
+              DEFAULT_NOTIFICATION_SETTING.new_status_update
+            ),
+            property_profile: mergeNestedSetting(
+              data.property_profile,
+              DEFAULT_NOTIFICATION_SETTING.property_profile
+            ),
+          });
         }
       }
-      loader(false)
+      loader(false);
     });
-  }
+  };
   useEffect(() => {
     getSettings();
-  }, [])
+  }, [user?._id]);
 
   const updateSetting = () => {
     loader(true);

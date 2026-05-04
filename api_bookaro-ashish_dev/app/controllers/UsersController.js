@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 const constants = require("../utls/constants");
 const Emails = require("../Emails/onBoarding");
 const helper = require("../utls/helper");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
+const aiOrchestrator = require("../services/aiOrchestrator.service");
 
 function generateOTP() {
   let digits = "0123456789";
@@ -1761,6 +1763,12 @@ module.exports = {
           );
           userInfo.access_token = token;
 
+          setImmediate(() => {
+            aiAgentTriggers.onAccountWelcome(data1._id);
+            // Enhanced AI orchestrator welcome (stored in AI chat history)
+            aiOrchestrator.fireTrigger(aiOrchestrator.TRIGGER.ACCOUNT_WELCOME, data1._id.toString(), null).catch(console.error);
+          });
+
           return res.status(200).json({
             success: true,
             data: userInfo,
@@ -2654,6 +2662,7 @@ module.exports = {
             lastLogin: new Date(),
           }
         );
+        setImmediate(() => aiAgentTriggers.onAccountWelcome(registeredUser._id));
         return res.status(200).json({
           success: true,
           message: constants.onBoarding.LOGIN_SUCCESS,
@@ -3095,19 +3104,17 @@ module.exports = {
   //get emiision value set by admin
   getQuaterlyEmissionValue: async (req, res) => {
     try {
+      const DEFAULT_KWH = "0.2516";
       const find = await Users.findOne({ _id: "678a1dfc93a9a4b39a13f2cb" });
-      if (!find.kwh) {
-        return res.status(400).json({
-          success: false,
-          message: "Quaterly Emission Value Missing",
-        })
-      }
-      let kwh = find.kwh;
+      const kwh =
+        find && find.kwh != null && String(find.kwh).trim() !== ""
+          ? find.kwh
+          : DEFAULT_KWH;
       return res.json({
         success: true,
         data: {
-          kwh: kwh
-        }
+          kwh,
+        },
       });
     }
     catch (error) {
@@ -3617,17 +3624,19 @@ module.exports = {
       let planType = findUser.planType;
 
       if (!planId) {
-        return res.status(400).json({
-          success: false,
-          message: "You don't have any plan purchase a plan first."
+        return res.status(200).json({
+          success: true,
+          data: [],
+          message: "No active plan found."
         })
       }
 
       const findPlan = await db.plans.findOne({ _id: planId, isDeleted: false });
       if (!findPlan) {
-        return res.status(400).json({
-          success: false,
-          message: "Plan doesn't exists."
+        return res.status(200).json({
+          success: true,
+          data: [],
+          message: "Active plan not found."
         })
       }
       let planDuration = findUser.planDuration;

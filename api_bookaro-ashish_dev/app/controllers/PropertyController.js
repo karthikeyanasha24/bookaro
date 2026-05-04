@@ -11,7 +11,10 @@ const {
   Readable
 } = require("stream");
 const fs = require("fs");
+const crypto = require("crypto");
+const QRCode = require("qrcode");
 const Emails = require("../Emails/onBoarding");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
 const { handleServerError } = require("../utls/helper");
 const { STATUS } = require("../utls/enums");
 const upload = multer({
@@ -100,6 +103,216 @@ function processArrayField(fieldData) {
   }
 }
 
+const getFrontendBaseUrl = (req) => {
+  if (process.env.FRONT_WEB_URL) return process.env.FRONT_WEB_URL.replace(/\/$/, "");
+  const origin = req.get("origin");
+  if (origin) return origin.replace(/\/$/, "");
+  return "http://localhost:8089";
+};
+
+const getApiBaseUrl = (req) => {
+  const host = req.get("host");
+  const proto = req.get("x-forwarded-proto") || req.protocol || "http";
+  return `${proto}://${host}`;
+};
+
+/** Lenient ObjectId[] for amenity-style fields (ignores invalid entries). */
+function coerceObjectIdArray(fieldData) {
+  if (fieldData == null || fieldData === "") return [];
+  let data = fieldData;
+  if (typeof data === "string") {
+    try {
+      data = JSON.parse(data);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(data)) return [];
+  const ids = [];
+  for (const item of data) {
+    if (typeof item === "string" && mongoose.isValidObjectId(item)) {
+      ids.push(item);
+    } else if (item && typeof item === "object") {
+      if (item.id && mongoose.isValidObjectId(item.id)) ids.push(String(item.id));
+      else if (item._id && mongoose.isValidObjectId(item._id)) ids.push(String(item._id));
+    }
+  }
+  return ids;
+}
+
+function deleteEmptyStringScalars(data, keys) {
+  for (const k of keys) {
+    if (data[k] === "") delete data[k];
+  }
+}
+
+function stripInvalidNumberFields(data) {
+  const numFields = [
+    "price",
+    "propertyMonthlyCharges",
+    "guaranteeDeposit",
+    "propertyInventory",
+    "propertyCharges",
+    "propertyAgencyFees",
+    "referencePrice",
+    "pricePerSqm",
+  ];
+  for (const f of numFields) {
+    if (data[f] === "" || data[f] === null) {
+      delete data[f];
+    } else if (data[f] !== undefined && data[f] !== null) {
+      const n = Number(data[f]);
+      if (!Number.isNaN(n)) data[f] = n;
+    }
+  }
+}
+
+function parseMaybeJSONObject(val) {
+  if (typeof val !== "string") return val;
+  const s = val.trim();
+  if (!s.startsWith("{") && !s.startsWith("[")) return val;
+  try {
+    return JSON.parse(s);
+  } catch {
+    return val;
+  }
+}
+
+/** Reject empty strings — Number("") is 0 and would fake valid coords. */
+function isFiniteCoord(v) {
+  if (v === "" || v === null || v === undefined) return false;
+  const n = Number(v);
+  return Number.isFinite(n);
+}
+
+/** Align client payload with property.models.js before Property.create */
+function normalizePropertyCreatePayload(data) {
+  if (data.propertyType === "offmarket") {
+    data.propertyType = "sale";
+  }
+
+  if (data.location && typeof data.location === "string") {
+    data.location = parseMaybeJSONObject(data.location);
+  }
+  if (data.newlocation && typeof data.newlocation === "string") {
+    data.newlocation = parseMaybeJSONObject(data.newlocation);
+  }
+  if (data.randomLocation && typeof data.randomLocation === "string") {
+    data.randomLocation = parseMaybeJSONObject(data.randomLocation);
+  }
+
+  const resolveCoords = () => {
+    // Try explicit GeoJSON first.
+    if (
+      data.newlocation &&
+      Array.isArray(data.newlocation.coordinates) &&
+      data.newlocation.coordinates.length >= 2
+    ) {
+      const [lng, lat] = data.newlocation.coordinates;
+      if (isFiniteCoord(lat) && isFiniteCoord(lng)) {
+        return [Number(lng), Number(lat)];
+      }
+    }
+
+    // Try plain location object used by the frontend wizard.
+    const locLat = data.location?.lat ?? data.location?.latitude;
+    const locLng = data.location?.lng ?? data.location?.longitude;
+    if (isFiniteCoord(locLat) && isFiniteCoord(locLng)) {
+      return [Number(locLng), Number(locLat)];
+    }
+    if (
+      Array.isArray(data.location?.coordinates) &&
+      data.location.coordinates.length >= 2 &&
+      isFiniteCoord(data.location.coordinates[0]) &&
+      isFiniteCoord(data.location.coordinates[1])
+    ) {
+      return [Number(data.location.coordinates[0]), Number(data.location.coordinates[1])];
+    }
+
+    // Fallback to randomized coordinates shape used for hidden exact location.
+    const randomLat = data.randomLocation?.lat ?? data.randomLocation?.latitude;
+    const randomLng = data.randomLocation?.lng ?? data.randomLocation?.longitude;
+    if (isFiniteCoord(randomLat) && isFiniteCoord(randomLng)) {
+      return [Number(randomLng), Number(randomLat)];
+    }
+    if (
+      Array.isArray(data.randomLocation?.coordinates) &&
+      data.randomLocation.coordinates.length >= 2 &&
+      isFiniteCoord(data.randomLocation.coordinates[0]) &&
+      isFiniteCoord(data.randomLocation.coordinates[1])
+    ) {
+      return [Number(data.randomLocation.coordinates[0]), Number(data.randomLocation.coordinates[1])];
+    }
+
+    // Some clients send lat/lng at the root of the body.
+    if (isFiniteCoord(data.lat) && isFiniteCoord(data.lng)) {
+      return [Number(data.lng), Number(data.lat)];
+    }
+
+    return null;
+  };
+
+  const resolvedCoords = resolveCoords();
+  if (resolvedCoords) {
+    data.newlocation = {
+      type: "Point",
+      coordinates: resolvedCoords,
+    };
+  }
+
+  const hasValidNewloc =
+    data.newlocation &&
+    data.newlocation.type === "Point" &&
+    Array.isArray(data.newlocation.coordinates) &&
+    data.newlocation.coordinates.length >= 2 &&
+    isFiniteCoord(data.newlocation.coordinates[0]) &&
+    isFiniteCoord(data.newlocation.coordinates[1]);
+
+  if (hasValidNewloc) {
+    const [lng, lat] = data.newlocation.coordinates;
+    data.newlocation = {
+      type: "Point",
+      coordinates: [Number(lng), Number(lat)],
+    };
+  }
+
+  deleteEmptyStringScalars(data, [
+    "categories",
+    "heatingType",
+    "energymode",
+    "agency",
+    "propertyState",
+  ]);
+
+  stripInvalidNumberFields(data);
+
+  const arrayOidFields = [
+    "amenities",
+    "equipment",
+    "outside",
+    "serviceAccessibility",
+    "ancilliary",
+    "environment",
+    "leisure",
+    "cooking",
+    "investment",
+  ];
+  for (const field of arrayOidFields) {
+    if (data[field] != null) {
+      data[field] = coerceObjectIdArray(data[field]);
+    }
+  }
+}
+
+function formatMongooseError(err) {
+  if (err.name === "ValidationError" && err.errors) {
+    return Object.values(err.errors)
+      .map((e) => e.message)
+      .join("; ");
+  }
+  return err.message || String(err);
+}
+
 module.exports = {
   add: async (req, res) => {
     try {
@@ -151,10 +364,11 @@ module.exports = {
       //  console.log("currentPropertCount", currentPropertCount);
       //  console.log("findAddedBy.planId.numberOfProperty", findAddedBy.planId.numberOfProperty);
 
-      if(currentPropertCount >= findAddedBy.planId.numberOfProperty){
+      const monthlyLimit = findAddedBy?.planId?.numberOfProperty;
+      if (monthlyLimit && currentPropertCount >= monthlyLimit) {
           return res.status(400).json({
         success: false,
-        message: `Property limit reached. You can only add ${findAddedBy.planId.numberOfProperty} properties this month.`
+        message: `Property limit reached. You can only add ${monthlyLimit} properties this month.`
       });
       }
 
@@ -163,6 +377,25 @@ module.exports = {
         data.importBy = "platform"
       } else {
         data.importBy = "user"
+      }
+
+      normalizePropertyCreatePayload(data);
+
+      if (
+        !data.newlocation ||
+        data.newlocation.type !== "Point" ||
+        !Array.isArray(data.newlocation.coordinates) ||
+        data.newlocation.coordinates.length < 2 ||
+        !isFiniteCoord(data.newlocation.coordinates[0]) ||
+        !isFiniteCoord(data.newlocation.coordinates[1])
+      ) {
+        const message =
+          "Location coordinates are missing or invalid. Open the Address step and select your property from the map suggestions.";
+        return res.status(400).json({
+          success: false,
+          message,
+          error: { code: 400, message },
+        });
       }
 
       let property = await Property.create(data);
@@ -195,6 +428,19 @@ module.exports = {
         type: "propertyCreated",
       })
 
+      if (property.propertyType === "sale") {
+        const saleCount = await db.property.countDocuments({
+          addedBy: req.identity.id,
+          propertyType: "sale",
+          isDeleted: false,
+        });
+        if (saleCount === 1) {
+          setImmediate(() =>
+            aiAgentTriggers.onFirstPropertyForSaleListed(req.identity.id, property._id)
+          );
+        }
+      }
+
       return res.status(200).json({
         success: true,
         data: property,
@@ -202,11 +448,13 @@ module.exports = {
       });
     } catch (err) {
       console.log("ERROR:", err);
+      const message = formatMongooseError(err);
       return res.status(400).json({
         success: false,
+        message,
         error: {
           code: 400,
-          message: err,
+          message,
         },
       });
     }
@@ -330,6 +578,13 @@ module.exports = {
       data.ownerId = findOwner._id;
       data.isInterested = isInterested;
       data.totalInquries = findInqiries;
+      if (userId && propertyDetail.addedBy) {
+        const ownerRaw = propertyDetail.addedBy._id || propertyDetail.addedBy;
+        const ownerId = ownerRaw && ownerRaw.toString ? ownerRaw.toString() : ownerRaw;
+        setImmediate(() =>
+          aiAgentTriggers.recordProfileView(userId, id, ownerId)
+        );
+      }
       return res.status(200).json({
         success: true,
         data: data,
@@ -3696,6 +3951,109 @@ module.exports = {
       })
     } catch (error) {
       return handleServerError(res, error, "List Claims");
+    }
+  },
+
+  generatePropertyQr: async (req, res) => {
+    try {
+      const { propertyId } = req.body;
+      const userId = req.identity?._id?.toString();
+      if (!propertyId) {
+        return res.status(400).json({ success: false, message: "propertyId is required." });
+      }
+
+      const property = await db.property.findOne({ _id: propertyId, isDeleted: false });
+      if (!property) {
+        return res.status(404).json({ success: false, message: "Property not found." });
+      }
+      if (property.addedBy?.toString() !== userId) {
+        return res.status(403).json({ success: false, message: "You can only manage QR for your own property." });
+      }
+
+      let token = property.qrCode?.token;
+      if (!token) {
+        token = crypto.randomBytes(12).toString("hex");
+      }
+
+      const trackUrl = `${getApiBaseUrl(req)}/property/qr/track?token=${token}`;
+      const imageDataUrl = await QRCode.toDataURL(trackUrl, { width: 320, margin: 2 });
+
+      property.qrCode = {
+        token,
+        trackUrl,
+        imageDataUrl,
+        scanCount: property.qrCode?.scanCount || 0,
+        lastScannedAt: property.qrCode?.lastScannedAt || null,
+        createdAt: property.qrCode?.createdAt || new Date(),
+      };
+      await property.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "QR code generated successfully.",
+        data: property.qrCode,
+      });
+    } catch (error) {
+      return handleServerError(res, error, "property qr generation");
+    }
+  },
+
+  removePropertyQr: async (req, res) => {
+    try {
+      const propertyId = req.body?.propertyId || req.query?.propertyId;
+      const userId = req.identity?._id?.toString();
+      if (!propertyId) {
+        return res.status(400).json({ success: false, message: "propertyId is required." });
+      }
+
+      const property = await db.property.findOne({ _id: propertyId, isDeleted: false });
+      if (!property) {
+        return res.status(404).json({ success: false, message: "Property not found." });
+      }
+      if (property.addedBy?.toString() !== userId) {
+        return res.status(403).json({ success: false, message: "You can only manage QR for your own property." });
+      }
+
+      property.qrCode = {
+        token: "",
+        trackUrl: "",
+        imageDataUrl: "",
+        scanCount: 0,
+        lastScannedAt: null,
+        createdAt: null,
+      };
+      await property.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "QR code removed successfully.",
+      });
+    } catch (error) {
+      return handleServerError(res, error, "remove property qr");
+    }
+  },
+
+  trackPropertyQr: async (req, res) => {
+    try {
+      const { token } = req.query;
+      if (!token) return res.status(400).send("Invalid QR token");
+
+      const property = await db.property.findOne({ "qrCode.token": token, isDeleted: false });
+      if (!property) return res.status(404).send("QR not found");
+
+      await db.property.updateOne(
+        { _id: property._id },
+        {
+          $inc: { "qrCode.scanCount": 1 },
+          $set: { "qrCode.lastScannedAt": new Date() },
+        }
+      );
+
+      const redirectBase = getFrontendBaseUrl(req);
+      return res.redirect(`${redirectBase}/property-details?id=${property._id}`);
+    } catch (error) {
+      console.error("QR track error", error);
+      return res.status(500).send("Unable to process QR redirection");
     }
   }
 }

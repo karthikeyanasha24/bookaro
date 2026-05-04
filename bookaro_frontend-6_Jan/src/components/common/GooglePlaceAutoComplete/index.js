@@ -14,10 +14,11 @@ const GooglePlaceAutoComplete = ({ placeholder, result, id, value,disabled, }) =
   };
 
   const placeChange = (place) => {
-    setSeatchText(place.formatted_address);
+    const text = place?.formatted_address ?? "";
+    setSeatchText(text);
     result({
       event: "placeChange",
-      value: place.formatted_address,
+      value: text,
       place,
     });
   };

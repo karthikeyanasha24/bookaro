@@ -254,14 +254,25 @@ exports.initializeSocket = function (startServer) {
           })
         ]);
  
-        if (!property || !recieverMember || !senderUser?.planId) {
+        if (!property || !recieverMember || !senderUser) {
           return socket.emit("error", { message: "Required data not found." });
         }
- 
+
+        // AI bot messages bypass plan checks entirely
+        if (recieverMember.user_id) {
+          const receiverUser = await db.users.findOne({ _id: recieverMember.user_id }, { isAiBot: 1 }).lean();
+          if (receiverUser?.isAiBot) {
+            const createdAiMsg = await services.message.create_message(data);
+            if (createdAiMsg) socket.emit("receive-message", { data: createdAiMsg });
+            return;
+          }
+        }
+
         const isDirectory = property.propertyType === "directory";
         const isOwner = recieverMember.user_id.toString() === property.addedBy.toString();
- 
-        if (isOwner) {
+
+        // Users without a plan get unlimited messaging (free tier)
+        if (isOwner && senderUser.planId) {
           const { otherDetails } = senderUser.planId;
           let updates = {};
  

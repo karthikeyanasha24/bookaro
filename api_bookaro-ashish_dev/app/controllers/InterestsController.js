@@ -1,6 +1,8 @@
 const db = require("../models");
 const Emails = require("../Emails/onBoarding");
 const visitInvite = require("../Emails/visitInvite");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
+const aiOrchestrator = require("../services/aiOrchestrator.service");
 
 
 
@@ -166,9 +168,17 @@ module.exports = {
                         buyerEmail: findBuyer.email,
                     }
                     await visitInvite.buyerPropertyVisitRequest(buyerEmailPayload);
+                    setImmediate(() => aiAgentTriggers.onVisitInviteToLead(buyerId, property));
                 }
                 data1.funnelStatus = "invite user for a visit";
                 const saveInviteTransaction = await db.interestTransactions.create(data1);
+
+                setImmediate(() => {
+                    aiAgentTriggers.onBuyerInterestInterest(buyerId, property);
+                    if (findExistingLeads === 0) {
+                        aiAgentTriggers.onOwnerFirstLeadTip(property.addedBy, propertyId);
+                    }
+                });
 
                 if (maxLeadLimit >= findExistingLeads) {
                     return res.status(201).json({
@@ -222,6 +232,23 @@ module.exports = {
             data.interestType = interestType;
             const saveInterest = await db.interestTransactions.create(data);
 
+            setImmediate(() => {
+                aiAgentTriggers.onBuyerInterestInterest(buyerId, property);
+                if (findExistingLeads === 0) {
+                    aiAgentTriggers.onOwnerFirstLeadTip(property.addedBy, propertyId);
+                }
+                // AI Orchestrator — fire richer AI chat triggers
+                const tKey = propertyType === "rent"
+                    ? aiOrchestrator.TRIGGER.RENTER_FILE_INTEREST
+                    : aiOrchestrator.TRIGGER.BUYER_FILE_INTEREST;
+                aiOrchestrator.fireTrigger(tKey, buyerId, propertyId).catch(console.error);
+                if (findExistingLeads === 0) {
+                    aiOrchestrator.fireTrigger(aiOrchestrator.TRIGGER.OWNER_FIRST_LEAD, property.addedBy?.toString(), propertyId).catch(console.error);
+                } else {
+                    aiOrchestrator.fireTrigger(aiOrchestrator.TRIGGER.OWNER_LEAD_MANAGEMENT_TIP, property.addedBy?.toString(), propertyId, { leadsCount: findExistingLeads + 1 }).catch(console.error);
+                }
+            });
+
             if (property.autoInvite && !allSlotsBooked) {
                 const ownerDetail = await db.users.findById(property.addedBy)
                 // const buyerDetail = await db.users.findById(buyerId)
@@ -243,6 +270,7 @@ module.exports = {
                     buyerEmail: findBuyer.email,
                 }
                 await visitInvite.buyerPropertyVisitRequest(buyerEmailPayload);
+                setImmediate(() => aiAgentTriggers.onVisitInviteToLead(buyerId, property));
             }
 
             if (maxLeadLimit >= findExistingLeads) {

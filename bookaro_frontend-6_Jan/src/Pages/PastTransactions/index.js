@@ -12,6 +12,9 @@ import PageLayout from "../../components/global/PageLayout";
 const PastTransactions = () => {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get("tab");
+  const isPurchasesTab = tab === "purchases";
   const [form, setForm] = useState({
     location: "",
     role: "",
@@ -93,15 +96,39 @@ const PastTransactions = () => {
     <PageLayout>
       <div>
         <LoginModal loginModal={loginModal} setloginModal={setloginModal} />
-        <div className="py-14   lg:py-16  bg-img bg-img-new relative bg-img-real ">
+        <div className="py-14 lg:py-16 relative bg-white">
           <div className="container px-8 mx-auto xl:px-5">
-            <h1 className="text-white font-[600] md:text-[30px] text-[20px] text-center">
-              Trying to define the right price?
-            </h1>
-            <p className="text-white  md:text-[20px] text-[16px] mt-2 md:leading-[30px] mb-10 leading-[25px] text-center">
-              Browse past transactions historical data to get an idea
-            </p>
-            <div className="border border-[#8492A6] rounded-[12px] bg-white p-5  lg:max-w-[1000px] md:max-w-[700px] md:w-[100%] w-[90%] mx-auto sm:absolute lg:-bottom-14 md:-bottom-25 -bottom-66  sm:transform-all sm:left-1/2 sm:-translate-x-1/2 md:mt-0 mt-5  ">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-10">
+              <div>
+                <p className="inline-flex items-center border border-[#E8E0F4] rounded-full px-3 py-1 text-[12px] font-semibold text-[#976DD0] mb-3">
+                  Discover features
+                </p>
+                {isPurchasesTab ? (
+                  <>
+                    <h1 className="font-[700] text-[#1F2937] md:text-[46px] text-[30px] leading-[1.1]">
+                      My purchased services
+                    </h1>
+                    <p className="text-[#4B5563] text-[15px] mt-3 leading-[24px] max-w-[520px]">
+                      Track all services you purchased from on-demand professionals and monitor upcoming deliveries.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h1 className="font-[700] text-[#1F2937] md:text-[46px] text-[30px] leading-[1.1]">
+                      Consult property transaction history in France for the last 15 years
+                    </h1>
+                    <p className="text-[#4B5563] text-[15px] mt-3 leading-[24px] max-w-[520px]">
+                      Compare your property with recent sales and understand price trends with location-aware filters.
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="flex justify-center">
+                <img src="/assets/img/blog-one.jpg" alt="Transaction history" className="w-[420px] h-[420px] rounded-full object-cover" />
+              </div>
+            </div>
+            {!isPurchasesTab ? (
+              <div className="border border-[#E6E8EC] rounded-[12px] bg-white p-5 lg:max-w-[1000px] md:max-w-[700px] md:w-[100%] w-[90%] mx-auto">
               <div className="flex flex-wrap md:justify-between  items-end md:flex-row flex-col ">
                 <div className=" md:w-[30%] lg:w-[22%] w-[100%] md:mb-0 mb-3">
                   <label className="text-[#8492A6] mb-1 block">Location</label>
@@ -243,11 +270,31 @@ const PastTransactions = () => {
                   </span>
                 )}
               </div>
-            </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { name: "Property visit package", agent: "Pauline Dupont", status: "Scheduled", amount: "300 EUR" },
+                  { name: "Photo pack 12", agent: "Jean Martin", status: "In progress", amount: "100 EUR" },
+                  { name: "Seller file assistance", agent: "Claire Bernard", status: "Completed", amount: "300 EUR" },
+                ].map((purchase, idx) => (
+                  <div key={idx} className="border border-[#E6E8EC] rounded-[12px] bg-white p-4">
+                    <p className="text-[12px] text-[#8B93A1]">Purchased service</p>
+                    <h3 className="text-[18px] font-[700] text-[#2D1B4E] mt-1">{purchase.name}</h3>
+                    <p className="text-[13px] text-[#4B5563] mt-1">Agent: {purchase.agent}</p>
+                    <p className="text-[13px] text-[#4B5563]">Amount: {purchase.amount}</p>
+                    <span className="inline-block mt-3 text-[12px] px-3 py-1 rounded-full bg-[#EEE5FC] text-[#7F56C6]">
+                      {purchase.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="bg-white md:pb-24 md:pt-40 pt-16">
+        {!isPurchasesTab && (
+        <div className="bg-white md:pb-24 md:pt-16 pt-8">
           <div className="container px-8 mx-auto xl:px-5 ">
             <div className="max-w-[800px] w-[100%]  mx-auto md:mt-0 mt-[320px] sm:mt-[300px]">
               <h2 className="text-[#47525E] font-[600]  md:text-[24px] text-[20px] mb-0 pb-0 flex flex-col">
@@ -272,6 +319,7 @@ const PastTransactions = () => {
             </div>
           </div>
         </div>
+        )}
         <div className="bg-[#ebebeb4d] py-16 ">
           <div className="container px-8 mx-auto xl:px-5 ">
             <div className="max-w-[800px] w-[100%]  mx-auto">

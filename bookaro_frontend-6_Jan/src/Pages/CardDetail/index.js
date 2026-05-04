@@ -15,7 +15,9 @@ import { Button, Dialog } from "@headlessui/react";
 import { active_plan_success } from "../../actions/activePlan";
 import environment from "../../environment";
 
-const stripePromise = loadStripe(environment.stripe_public_key);
+const stripePromise = environment?.stripe_public_key
+  ? loadStripe(environment.stripe_public_key)
+  : null;
 // const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const CardDetail = () => {
@@ -162,12 +164,18 @@ const CardDetail = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative">
-            <Elements stripe={stripePromise}>
-              <AddNewCard
-                onClose={() => setIsModalOpen(false)}
-                getCards={getCards}
-              />
-            </Elements>
+            {stripePromise ? (
+              <Elements stripe={stripePromise}>
+                <AddNewCard
+                  onClose={() => setIsModalOpen(false)}
+                  getCards={getCards}
+                />
+              </Elements>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded">
+                Stripe is not configured. Set <code>REACT_APP_STRIPE_PUBLIC_KEY</code> in <code>.env</code>.
+              </div>
+            )}
           </div>
         </div>
       )}

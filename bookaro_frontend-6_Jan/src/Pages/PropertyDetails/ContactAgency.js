@@ -54,32 +54,37 @@ const ContactAgency = ({
   };
   const validate = () => {
     const newErrors = {};
-    if (!agency.fName.trim()) {
+    const fName = String(agency.fName ?? "").trim();
+    const lName = String(agency.lName ?? "").trim();
+    const claimMessage = String(agency.claimMessage ?? "").trim();
+    const phone = String(agency.phone ?? "").trim();
+    const email = String(agency.email ?? "").trim();
+    if (!fName) {
       newErrors.fName = "First name is required.";
-    } else if (!/^[A-Za-z ]{2,50}$/.test(agency.fName.trim())) {
+    } else if (!/^[A-Za-z ]{2,50}$/.test(fName)) {
       newErrors.fName =
         "First name must be alphabetic, can include spaces, and be between 2 to 50 characters.";
     }
-    if (!agency.lName.trim()) {
+    if (!lName) {
       newErrors.lName = "Last name is required.";
-    } else if (!/^[A-Za-z ]{2,50}$/.test(agency.lName.trim())) {
+    } else if (!/^[A-Za-z ]{2,50}$/.test(lName)) {
       newErrors.lName =
         "Last name must be alphabetic, can include spaces, and be between 2 to 50 characters.";
     }
-    if (!agency.claimMessage.trim()) {
+    if (!claimMessage) {
       newErrors.claimMessage = "Message is required.";
     }
-    if (!agency.phone.trim()) {
+    if (!phone) {
       newErrors.phone = "Phone number is required.";
-    } else if (!/^\d{10,}$/.test(agency.phone.trim())) {
+    } else if (!/^\d{10,}$/.test(phone)) {
       newErrors.phone = "Phone number must be at least 10 digits.";
     }
-    if (!agency.email.trim()) {
+    if (!email) {
       newErrors.email = "Email is required.";
     } else if (
-      !/^\S+@\S+\.\S+$/.test(agency.email.trim()) ||
-      agency.email.length < 5 ||
-      agency.email.length > 50
+      !/^\S+@\S+\.\S+$/.test(email) ||
+      email.length < 5 ||
+      email.length > 50
     ) {
       newErrors.email = "Email must be a valid format";
     }
@@ -225,7 +230,7 @@ const ContactAgency = ({
       },
       showLoaderOnConfirm: true,
       preConfirm: (reason) => {
-        if (!reason || reason.trim() === "") {
+        if (!String(reason ?? "").trim()) {
           Swal.showValidationMessage("Please provide a reason for the report");
           return false;
         }

@@ -10,6 +10,8 @@ import ManageVisitSlot from "./ManageVisitSlot";
 import PropLeadSidebar from "./PropLeadSidebar";
 import datepipeModel from "../../models/datepipemodel";
 import socket from "../../config/ChatSocket/socket";
+import AiAvatarButton from "../../components/common/AiAvatarButton";
+import AiChatWindow from "../../components/common/AiChatWindow";
 
 const RealEstateTransactionOwner = () => {
   const { user } = useSelector((state) => state);
@@ -22,9 +24,23 @@ const RealEstateTransactionOwner = () => {
   const [totalCard, setTotalCard] = useState(0);
   const [filteredData, setFilteredData] = useState([]);
   const [offerStatus, setOfferStatus] = useState(false);
-console.log(offerStatus, "offerStatus")
   const [applicationAccepted, setApplicationAccepted] = useState(false);
-  console.log(applicationAccepted, "applicationAccepted")
+  // AI chat state
+  const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [aiUnreadCount, setAiUnreadCount] = useState(0);
+
+  // Poll for AI unread messages
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const res = await ApiClient.get("ai-agent/unread-count");
+        if (res?.success) setAiUnreadCount(res.data?.count || 0);
+      } catch {}
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, []);
   const handleClickProperty = (item) => {
     if (!ownerPlan) return;
     let propertyId = item?._id;
@@ -472,6 +488,18 @@ console.log(offerStatus, "offerStatus")
           </div>
         </div>
       </div>
+      {/* ── AI Assistant (floating button + chat window) ───────────────── */}
+      <AiAvatarButton
+        onClick={() => { setAiChatOpen((o) => !o); setAiUnreadCount(0); }}
+        unreadCount={aiUnreadCount}
+        isOpen={aiChatOpen}
+      />
+      <AiChatWindow
+        isOpen={aiChatOpen}
+        onClose={() => setAiChatOpen(false)}
+        propertyId={selectedProperty?._id}
+        propertyTitle={selectedProperty?.propertyTitle}
+      />
     </PageLayout>
   );
 };

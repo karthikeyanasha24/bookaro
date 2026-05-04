@@ -30,6 +30,32 @@ import PropertyCardHome from "./Property/PropertyCardHome";
 import { login_success } from "../actions/user";
 import UpgradePlan from "../components/common/Modal/UpgradePlan";
 
+// FAQ Item Component
+const FAQItem = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border border-[#ddd] rounded-[12px] overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full px-6 py-4 flex items-center justify-between font-[600] text-[16px] transition ${
+          isOpen
+            ? "bg-[#976DD0] text-white"
+            : "bg-[#f0f0f0] text-[#47525E] hover:bg-[#e8e8e8]"
+        }`}
+      >
+        <span>{question}</span>
+        <span className="text-[20px]">{isOpen ? "−" : "+"}</span>
+      </button>
+      {isOpen && (
+        <div className="px-6 py-4 bg-white text-[#47525E] text-[14px] border-t border-[#ddd]">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Home = () => {
   const { user } = useSelector((state) => state);
   const activePlan = useSelector((state) => state.activePlan);
@@ -1021,6 +1047,230 @@ const Home = () => {
             </div>
           </section>
 
+          {/* How It Works - Seller Journey Section */}
+          <section className="py-14 lg:py-16 bg-white">
+            <div className="container-fluid 2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px] mx-auto">
+              <div className="grid grid-cols-12">
+                <div className="col-span-12 mb-[40px]">
+                  <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600]">
+                    How It Works - For Sellers
+                    <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
+                  </h2>
+                </div>
+              </div>
+
+              {/* Horizontal Timeline - Desktop/Tablet */}
+              <div className="hidden md:grid grid-cols-12 items-center mb-10">
+                {[
+                  { step: 1, title: "List in Directory", icon: "📋" },
+                  { step: 2, title: "Test with Off-Market", icon: "🔍" },
+                  { step: 3, title: "Publish on Market", icon: "📢" },
+                  { step: 4, title: "Transaction Tool", icon: "✓" },
+                  { step: 5, title: "Transfer Ownership", icon: "📝" },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex flex-col items-center col-span-12 md:col-span-2">
+                    <div className="flex flex-col items-center flex-1 w-full">
+                      <div className="w-[60px] h-[60px] rounded-full bg-[#976DD0] text-white flex items-center justify-center font-bold text-[24px] mb-3">
+                        {item.step}
+                      </div>
+                      <p className="text-[#47525E] font-[600] text-center text-[14px]">{item.title}</p>
+                    </div>
+                    {idx < 4 && (
+                      <div className="hidden md:block w-full h-[2px] bg-[#976DD0] mt-3 flex-1"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Vertical Timeline - Mobile */}
+              <div className="md:hidden grid grid-cols-12 gap-4 mb-10">
+                {[
+                  { step: 1, title: "List in Directory" },
+                  { step: 2, title: "Test with Off-Market" },
+                  { step: 3, title: "Publish on Market" },
+                  { step: 4, title: "Transaction Tool" },
+                  { step: 5, title: "Transfer Ownership" },
+                ].map((item, idx) => (
+                  <div key={idx} className="col-span-12 flex items-center">
+                    <div className="w-[45px] h-[45px] rounded-full bg-[#976DD0] text-white flex items-center justify-center font-bold text-[18px] flex-shrink-0">
+                      {item.step}
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <p className="text-[#47525E] font-[600] text-[14px]">{item.title}</p>
+                    </div>
+                    {idx < 4 && (
+                      <div className="absolute left-[22px] w-[2px] h-[40px] bg-[#976DD0] mt-[50px]"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* How It Works - Buyer Journey Section */}
+          <section className="py-14 lg:py-16 bg-[#f9f9f9]">
+            <div className="container-fluid 2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px] mx-auto">
+              <div className="grid grid-cols-12 gap-8">
+                {/* Left: Steps */}
+                <div className="col-span-12 md:col-span-6">
+                  <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] mb-[40px]">
+                    How It Works - For Buyers
+                    <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
+                  </h2>
+
+                  <div className="space-y-6">
+                    {[
+                      { step: 1, title: "Browse Directory", desc: "Explore thousands of properties in our comprehensive directory" },
+                      { step: 2, title: "Create Opportunity", desc: "Submit your interest and connect with property owners" },
+                      { step: 3, title: "Plan Transaction", desc: "Use our tools to negotiate and finalize the deal" },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex">
+                        <div className="w-[50px] h-[50px] rounded-full bg-[#976DD0] text-white flex items-center justify-center font-bold text-[20px] flex-shrink-0">
+                          {item.step}
+                        </div>
+                        <div className="ml-6">
+                          <h4 className="text-[#47525E] font-[600] text-[16px] mb-2">{item.title}</h4>
+                          <p className="text-[#47525E] text-[14px]">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right: Value Proposition */}
+                <div className="col-span-12 md:col-span-6 flex flex-col justify-center">
+                  <div className="bg-white p-8 rounded-[12px] shadow-md">
+                    <h3 className="text-[#47525E] font-[600] text-[20px] mb-4">
+                      Why Choose Bookaroo?
+                    </h3>
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start">
+                        <span className="text-[#976DD0] font-bold mr-3">✓</span>
+                        <span className="text-[#47525E] text-[14px]">Access exclusive off-market properties</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-[#976DD0] font-bold mr-3">✓</span>
+                        <span className="text-[#47525E] text-[14px]">Connect directly with property owners</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-[#976DD0] font-bold mr-3">✓</span>
+                        <span className="text-[#47525E] text-[14px]">Transparent and secure transactions</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-[#976DD0] font-bold mr-3">✓</span>
+                        <span className="text-[#47525E] text-[14px]">Save time with integrated tools</span>
+                      </li>
+                    </ul>
+                    <button
+                      onClick={() => {
+                        if (user.loggedIn) {
+                          navigate("/serach-alert");
+                        } else {
+                          setloginModal(true);
+                        }
+                      }}
+                      className="w-full bg-[#976DD0] text-white py-3 rounded-[50px] font-[600] hover:bg-[#7a5ba6] transition"
+                    >
+                      {user.loggedIn ? "Start Browsing" : "Sign Up to Browse"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Testimonials Section */}
+          <section className="py-14 lg:py-16 bg-white">
+            <div className="container-fluid 2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px] mx-auto">
+              <div className="grid grid-cols-12">
+                <div className="col-span-12 mb-[40px]">
+                  <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600]">
+                    What Our Users Say
+                    <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
+                  </h2>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-12 gap-6">
+                {[
+                  {
+                    name: "Marie Dubois",
+                    quote: "Bookaroo made selling my property incredibly easy. I found the perfect buyer in just 3 weeks!",
+                    role: "Property Seller",
+                  },
+                  {
+                    name: "Jean Martin",
+                    quote: "The off-market feature gave me access to properties I couldn't find anywhere else. Highly recommend!",
+                    role: "Home Buyer",
+                  },
+                  {
+                    name: "Sophie Lambert",
+                    quote: "Best platform for real estate professionals. The transaction tools saved us so much time and confusion.",
+                    role: "Real Estate Agent",
+                  },
+                ].map((testimonial, idx) => (
+                  <div key={idx} className="col-span-12 md:col-span-4 bg-[#f9f9f9] p-6 rounded-[12px]">
+                    <div className="flex items-center mb-4">
+                      <div className="w-[50px] h-[50px] rounded-full bg-[#976DD0] text-white flex items-center justify-center font-bold">
+                        {testimonial.name[0]}
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-[#47525E] font-[600] text-[14px]">{testimonial.name}</h4>
+                        <p className="text-[#7BBEB8] text-[12px]">{testimonial.role}</p>
+                      </div>
+                    </div>
+                    <p className="text-[#47525E] text-[14px] italic">"{testimonial.quote}"</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ Section */}
+          <section className="py-14 lg:py-16 bg-[#f9f9f9]">
+            <div className="container-fluid 2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px] mx-auto">
+              <div className="grid grid-cols-12">
+                <div className="col-span-12 mb-[40px]">
+                  <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600]">
+                    Frequently Asked Questions
+                    <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
+                  </h2>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12">
+                  <div className="space-y-3">
+                    {[
+                      {
+                        question: "How do I list my property on Bookaroo?",
+                        answer: "Simply create an account, click 'List my property' and fill in your property details. You can add photos, pricing, and specify if you're open to off-market proposals.",
+                      },
+                      {
+                        question: "Is it really free to list?",
+                        answer: "Yes! Listing your property is completely free. We only charge when you complete a transaction, and our fees are transparent.",
+                      },
+                      {
+                        question: "What is the Off-Market feature?",
+                        answer: "Off-Market allows property owners to test buyer interest before officially listing. Potential buyers can make offers, and you can negotiate privately.",
+                      },
+                      {
+                        question: "How safe are transactions on Bookaroo?",
+                        answer: "We use industry-standard encryption and secure payment processing. Our transaction tools include escrow options and legal document management.",
+                      },
+                      {
+                        question: "Can I use Bookaroo as a buyer without listing?",
+                        answer: "Absolutely! You can browse our directory, create opportunities, and connect with sellers without ever listing a property.",
+                      },
+                    ].map((faq, idx) => (
+                      <FAQItem key={idx} question={faq.question} answer={faq.answer} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {properties?.length > 0 && (
             <section className="py-14 lg:py-16 bg-white">
               <div className="container-fluid  2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px]">
@@ -1318,794 +1568,6 @@ const Home = () => {
               </div>
             </section>
           )}
-          <section className="py-14 lg:py-16 bg-white">
-            <div className="container-fluid  2xl:ps-[120px] xl:ps-[90px] md:ps-[40px] ps-[20px]">
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  mb-[40px]">
-                  <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                    Pourquoi Bookaroo
-                    <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
-                  </h2>
-                  <p className="text-[#969FAA] max-w-2xl mt-3">
-                    Faire du temps un allié pour acheteur et vendeur dans le
-                    cadre d'un projet immobilier et simplifier le processus de
-                    vente d'un bien de particulier à particulier.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  ">
-                  <div className="flex gap-10 items-center xl:flex-row flex-col">
-                    <div className="xl:w-[20%] w-[100%] ps-0">
-                      <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Acheteurs
-                      </p>
-                      <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Anticipez votre projet immobilier
-                      </p>
-                      <p className="text-[#47525E] font-bold mb-3 text-[16x] xl:max-w-[200px] w-full">
-                        Parce que le temps ne devrait plus être un facteur de
-                        stress dans votre projet immobilier mais un allié.
-                      </p>
-                      <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Voir les biens
-                      </button>
-                    </div>
-                    <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tl-[400px] md:rounded-bl-[400px] rounded-tl-[100px] rounded-bl-[100px]  xl:pl-[150px] py-[100px] md:pl-[80px] pl-[50px] pe-[40px] md:h-[500px] h-[100%] ">
-                      <p className="text-[#47525E] mb-10 font-[600] ms-8">
-                        Votre nouvelle plateforme fait entrer le marché de
-                        l'immobilier dans un nouveau paradigme : celui de
-                        l'anticipation
-                      </p>
-                      <ul className=" flex flex-wrap ">
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/calendar.png"
-                            className="w-[22px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className=" text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Anticiper votre projet d'achat
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] max-w-[300px] ">
-                              N'achetez plus un bien simplement parce qu'il est
-                              disponible et correspond plus ou moins à vos
-                              critères. En anticipant votre projet, vous pourrez
-                              trouver le biens de vos rêves dans notre annuaire
-                              exhaustif.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/arrow.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className=" text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Plus de flexibilité dans la transaction
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] max-w-[300px] ">
-                              Anticiper vous permet de négocier avec le
-                              propriétaire afin de définir une date et les
-                              conditions de la transaction dans les mois ou
-                              années à venir.
-                            </p>
-                          </div>
-                        </li>
-
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/hand.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className=" text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Préparer sereinement votre financement
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] max-w-[300px] ">
-                              Vous avez maintenant plusieurs mois ou années pour
-                              travailler avec votre banque, pour épargner afin
-                              de sécuriser l'obtention de votre financement à la
-                              date fixée avec le vendeur.
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section className="py-14 lg:py-16 bg-white">
-            <div className="container-fluid    md:pe-[30px] xl:pe-[40px] pe-[20px]">
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  ">
-                  <div className="flex gap-10 items-center xl:flex-row flex-col-reverse">
-                    <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tr-[400px] md:rounded-br-[400px] rounded-tr-[100px] rounded-br-[100px]  xl:pl-[60px] py-[40px] pl-[50px] pe-[40px] md:md:h-[500px] h-[100%] h-[100%]">
-                      <p className="text-[#47525E] mb-10 font-[600] xl:max-w-[100%] max-w-[600px]">
-                        Votre plateforme réinvente et simplifie le cycle de la
-                        possession puis de la mise en vente d'un bien immobilier
-                      </p>
-                      <div className="flex ">
-                        <ul className=" flex flex-col lg:hidden">
-                          <li className="flex items-start h-1/5 w-[22px]  pe-2 after:block after:h-full after:w-[7px] after:content-[''] after:bg-[#DBD7E7] after:absolute after:-bottom-[20px] relative after:left-1/2 after:-translate-x-1/2 after:z-[0]  ">
-                            <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                              <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                            </p>
-                          </li>
-                          <li className="flex items-start h-1/5 w-[22px]  pe-2 after:block after:h-full after:w-[7px] after:content-[''] after:bg-[#DBD7E7] after:absolute after:-bottom-[20px] relative after:left-1/2 after:-translate-x-1/2 after:z-[0]   ">
-                            <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                              <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                            </p>
-                          </li>
-                          <li className="flex items-start h-1/5 w-[22px]  pe-2 after:block after:h-full after:w-[7px] after:content-[''] after:bg-[#DBD7E7] after:absolute after:-bottom-[20px] relative after:left-1/2 after:-translate-x-1/2 after:z-[0]   ">
-                            <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                              <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                            </p>
-                          </li>
-                          <li className="flex items-start h-1/5 w-[22px]  pe-2 after:block after:h-full after:w-[7px] after:content-[''] after:bg-[#DBD7E7] after:absolute after:-bottom-[20px] relative after:left-1/2 after:-translate-x-1/2 after:z-[0]   ">
-                            <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                              <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                            </p>
-                          </li>
-                          <li className="flex items-start h-1/5 w-[22px]  pe-2  relative   ">
-                            <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                              <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                            </p>
-                          </li>
-                        </ul>
-                        <div className="lg:flex-col flex flex-row ">
-                          <ul className=" sm:flex flex-wrap hidden ">
-                            <li className="flex lg:justify-start justify-center items-start lg:w-1/5 w-full lg:my-4 my-0 pe-2">
-                              <img
-                                src="assets/img/icons/home_one.png"
-                                className="w-[30px] lg:mt-[3px] mt-0 lg:me-3 me-0"
-                              />
-                            </li>
-                            <li className="flex lg:justify-start justify-center items-start lg:w-1/5 w-full lg:my-4 my-0 pe-2">
-                              <img
-                                src="assets/img/icons/home_two.png"
-                                className="w-[30px] lg:mt-[3px] mt-0 lg:me-3 me-0"
-                              />
-                            </li>
-                            <li className="flex lg:justify-start justify-center items-start lg:w-1/5 w-full lg:my-4 my-0 pe-2">
-                              <img
-                                src="assets/img/icons/home_three.png"
-                                className="w-[30px] lg:mt-[3px] mt-0 lg:me-3 me-0"
-                              />
-                            </li>
-                            <li className="flex lg:justify-start justify-center items-start lg:w-1/5 w-full lg:my-4 my-0 pe-2">
-                              <img
-                                src="assets/img/icons/home_four.png"
-                                className="w-[30px] lg:mt-[3px] mt-0 lg:me-3 me-0"
-                              />
-                            </li>
-                            <li className="flex lg:justify-start justify-center items-start lg:w-1/5 w-full lg:my-4 my-0 pe-2">
-                              <img
-                                src="assets/img/icons/hand.png"
-                                className="w-[30px] lg:mt-[3px] mt-0 lg:me-3 me-0"
-                              />
-                            </li>
-                          </ul>
-                          <ul className=" lg:flex flex-wrap  hidden">
-                            <li className="flex items-start md:w-1/5 w-full my-4 pe-2 after:block after:h-[7px] after:w-full after:content-[''] after:bg-[#DBD7E7] after:absolute after:top-1/2 relative after:left-[15px] after:-translate-y-1/2 after:z-[0]  ">
-                              <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                                <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                              </p>
-                            </li>
-                            <li className="flex items-start md:w-1/5 w-full my-4 pe-2 after:block after:h-[7px] after:w-full after:content-[''] after:bg-[#DBD7E7] after:absolute after:top-1/2 relative after:left-[15px] after:-translate-y-1/2 after:z-[0] ">
-                              <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                                <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                              </p>
-                            </li>
-                            <li className="flex items-start md:w-1/5 w-full my-4 pe-2 after:block after:h-[7px] after:w-full after:content-[''] after:bg-[#DBD7E7] after:absolute after:top-1/2 relative after:left-[15px] after:-translate-y-1/2 after:z-[0] ">
-                              <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                                <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                              </p>
-                            </li>
-                            <li className="flex items-start md:w-1/5 w-full my-4 pe-2 after:block after:h-[7px] after:w-full after:content-[''] after:bg-[#DBD7E7] after:absolute after:top-1/2 relative after:left-[15px] after:-translate-y-1/2 after:z-[0] ">
-                              <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                                <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                              </p>
-                            </li>
-                            <li className="flex items-start md:w-1/5 w-full my-4 pe-2  relative  ">
-                              <p className=" bg-[#D0C3E1] shrink-0 w-[22px] h-[22px] rounded-[50px] flex items-center justify-center z-[1]">
-                                <span className="rounded-[50px] flex items-center justify-center  p-1 w-[12px] bg-[#976DD0] h-[12px] block"></span>
-                              </p>
-                            </li>
-                          </ul>
-                          <ul className=" flex flex-wrap sm:ms-0 ms-3">
-                            <li className="flex items-start lg:w-1/5 w-full lg:h-unset h-1/5 lg:my-4 my-0 lg:mb-0 mb-2 xl:pe-10 lg:pe-5">
-                              <div>
-                                <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Publiez votre bien sur notre annuaire
-                                </h4>
-                                <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Créez le profil Bookaroo de votre bien
-                                  immobilier pour accroitre sa visibilité et
-                                  générer des leads acheteurs.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start lg:w-1/5 w-full lg:h-unset h-1/5 lg:my-4 lg:mb-0 mb-2 my-0 xl:pe-10 lg:pe-5">
-                              <div>
-                                <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Testez votre bien avec le Off-Market
-                                </h4>
-                                <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Vendez votre bien immobilier au plus offrant
-                                  et sans les conraintes du marché public.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start lg:w-1/5 w-full lg:h-unset h-1/5 lg:my-4 lg:mb-0 mb-2 my-0 xl:pe-10 lg:pe-5">
-                              <div>
-                                <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Publiez votre bien sur le marché public
-                                </h4>
-                                <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Publiez d'un simple clic votre bien sur de
-                                  nombreuses plateformes d'annonces
-                                  immobilières.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start lg:w-1/5 w-full lg:my-4 lg:h-unset h-1/5 lg:mb-0 mb-2 my-0 xl:pe-10 lg:pe-5">
-                              <div>
-                                <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Réalisez la vente grâce à notre outil
-                                  transactionnel
-                                </h4>
-                                <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Vendez votre bien immobilier seul et en toute
-                                  simplicité ou accompagné mais sans commission
-                                  onéreuse.
-                                </p>
-                              </div>
-                            </li>
-                            <li className="flex items-start lg:w-1/5 w-full lg:my-4 lg:h-unset h-1/5 my-0 lg:mb-0  xl:pe-10 lg:pe-5">
-                              <div>
-                                <h4 className="text-[#7542B9] font-bold text-[15px]">
-                                  Transférez la propriété du profil Bookaroo du
-                                  bien
-                                </h4>
-                                <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                                  Transferez la propriété du profil Bookaroo à
-                                  son nouveau propriétaire après la vente.
-                                </p>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="xl:w-[20%] w-[100%] 2xl:ps-[70px] xl:ps-[40px] lg:ps-[40px] ps-[40px] ">
-                      <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Vendeurs
-                      </p>
-                      <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Vendez votre bien au meilleur prix sans commissions.
-                      </p>
-                      <p className="text-[#47525E] font-bold mb-3 text-[16x]  xl:max-w-[200px] w-full">
-                        Parce qu'avec notre plateforme vous disposez de
-                        multiples possibilités pour vendre votre bien par vous
-                        même et sans complexité.
-                      </p>
-                      <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Mettre en vente
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section className="py-14 lg:py-16 bg-white">
-            <div className="container-fluid  2xl:ps-[120px] xl:ps-[90px] md:ps-[40px] ps-[20px]">
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  mb-[40px]">
-                  <h2 className="text-[#47525E] lg:text-[25px] text-[20px] font-[600] ">
-                    Pourquoi Bookaroo est indispensable pour les acheteurs et
-                    les vendeurs
-                    <span className="bg-[#976DD0] w-[35px] h-[6px] rounded-[10px] block"></span>
-                  </h2>
-                  <p className="text-[#969FAA] max-w-2xl mt-3">
-                    Une plateforme unique qui offre une multitude d'outils et de
-                    services pour aider les particuliers à réaliser sereinement
-                    leur transaction immobilière.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  ">
-                  <div className="flex gap-10 items-center xl:flex-row flex-col">
-                    <div className="xl:w-[20%] w-[100%]">
-                      <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Un large choix
-                      </p>
-                      <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Annuaire exhaustif des biens immobiliers
-                      </p>
-                      <p className="text-[#47525E] font-bold mb-3 text-[16x]  w-full">
-                        Nous avons vocation à référencer 100% des biens
-                        immobiliers existant pour un marché donné.
-                      </p>
-                      <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Voir les biens
-                      </button>
-                    </div>
-                    <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tl-[400px] md:rounded-bl-[400px] rounded-tl-[100px] rounded-bl-[100px]  xl:pl-[150px] py-[60px] md:pl-[80px] pl-[50px] pe-[40px] md:h-[500px] h-[100%] ">
-                      <p className="text-[#47525E] mb-10 font-[600] ms-8">
-                        Bookaroo propose la base de données de biens immobiliers
-                        la plus complète du marché
-                      </p>
-                      <ul className=" flex flex-wrap ">
-                        <li className="flex items-start md:w-1/2 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/home-c.png"
-                            className="w-[22px] mt-[3px] me-3 shrink-0"
-                          />
-                          <div className="">
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Profil social d'un bien
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full ">
-                              Le profil d'un bien a été pensé pour générer des
-                              interactions entre le propriétaire et les
-                              acheteurs potentiels (messages directs, like,
-                              follow).
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start md:w-1/2 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/infinity.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Une large sélection de biens
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              En anticipant votre projet, vous pourrez choisir
-                              le bien qui correspond à l'ensemble de vos
-                              critères dans notre large base de données de
-                              biens.
-                            </p>
-                          </div>
-                        </li>
-
-                        <li className="flex items-start md:w-1/2 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/wallet.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Information accrue
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Le contenu partagé sur le profil du bien contribue
-                              à accroitre sa valeur (travaux réalisés, budget
-                              mensuel, attractivité, rating social, revenus
-                              générés…).
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start md:w-1/2 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/cart.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Information accrue
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Le contenu partagé sur le profil du bien contribue
-                              à accroitre sa valeur (travaux réalisés, budget
-                              mensuel, attractivité, rating social, revenus
-                              générés…).
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section className="py-14 lg:py-16 bg-white">
-            <div className="container-fluid md:pe-[30px] xl:pe-[40px] pe-[20px]">
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  ">
-                  <div className="flex gap-10 items-center xl:flex-row flex-col-reverse">
-                    <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tr-[400px] md:rounded-br-[400px] rounded-tr-[100px] rounded-br-[100px]  xl:pl-[60px] py-[60px] pl-[50px] pe-[40px] lg:h-[500px] h-[100%]">
-                      <p className="text-[#47525E] mb-10 font-[600] xl:max-w-[100%] max-w-[600px]">
-                        Un outil de pilotage de votre transaction immobilière
-                        depuis la publication jusqu'à la signature de la vente
-                      </p>
-                      <div className="flex lg:gap-4 gap-0 lg:flex-nowrap flex-wrap">
-                        <div className="md:w-1/3 w-full">
-                          <p className="text-[#47525E] text-[14px] font-[600] mb-4">
-                            Vendez seul, mais bien accompagné grâce à notre
-                            plateforme qui intègre tout ce dont vous avez besoin
-                            pour travailler comme un pro !
-                          </p>
-                          <ul>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Contenu éducatif et formation à la vente{" "}
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Parcours de vente orchestré
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Partage automatique de documents
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Plannification de visites
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Messagerie interne{" "}
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Critère de selection des candidats{" "}
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] lg:mb-3 mb-2 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Multi-diffusion de votre annonce
-                            </li>
-                          </ul>
-                        </div>
-                        <div className="md:w-1/3 w-full">
-                          <p className="text-[#47525E] text-[14px] font-[600] mb-4">
-                            Vous voulez vendre sans payer une commission
-                            d'intermédiation tout en bébéficiant des mêmes
-                            services ? Optez pour nos services à la carte.{" "}
-                          </p>
-                          <ul>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Estimation gratuite de la valeur de votre bien
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>{" "}
-                              Rédaction de vos annonces
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Prises de vue professionnelles de votre bien
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Analyse de la solidité financière des candidats
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Réalisation des visites{" "}
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Constitution du dossier legal vendeur{" "}
-                            </li>
-                            <li className="text-[#47525E] font-[400] lg:text-[14px] text-[13px] mb-3 flex items-center">
-                              <span className="w-[7px] h-[7px] block bg-[#976DD0] rounded-[50px] me-2"></span>
-                              Réalisation de l'état des lieux
-                            </li>
-                          </ul>
-                        </div>
-                        <div className="md:w-1/3 w-full">
-                          <img
-                            src="assets/img/image_card.png"
-                            className="xl:max-w-[300px] lg:max-w-[200px] max-w-[200px] "
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="xl:w-[20%] w-[100%] 2xl:ps-[70px] xl:ps-[40px] lg:ps-[40px] ps-[40px] ">
-                      <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Transaction simplifiée
-                      </p>
-                      <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Outil de pilotage de transaction immobilière
-                      </p>
-                      <p className="text-[#47525E] font-bold mb-3 text-[16x]  w-full">
-                        Parce que vendre son bien immobilier seul ne devrait pas
-                        être un parcours du combattant générateur de stress.
-                      </p>
-                      <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        En savoir plus
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section className="py-14 lg:py-16 bg-white">
-            <div className="container-fluid  2xl:ps-[120px] xl:ps-[90px] md:ps-[70px] ps-[40px]">
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  ">
-                  <div className="flex gap-10 items-center xl:flex-row flex-col">
-                    <div className="xl:w-[20%] w-[100%]">
-                      <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Définir le prix juste
-                      </p>
-                      <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Historique des transactions immobilières
-                      </p>
-                      <p className="text-[#47525E] font-bold mb-3 text-[16x] w-full">
-                        Consulter l'historiques des transactions immobilières
-                        pour définir la meilleure stratégie
-                      </p>
-                      <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Parcourir les transactions
-                      </button>
-                    </div>
-                    <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tl-[400px] md:rounded-bl-[400px] rounded-tl-[100px] rounded-bl-[100px]  xl:pl-[150px] py-[60px] md:pl-[80px] pl-[50px] pe-[40px] md:h-[500px] h-[100%]">
-                      <p className="text-[#47525E] mb-10 font-[600] ms-8 ">
-                        Retrouvez le prix de toutes les transactions
-                        immobilières des 15 dernières années en France
-                      </p>
-                      <ul className=" flex flex-wrap ">
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/pin.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Définir votre prix de vente
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full ">
-                              Vous souhaitez mettre en vente votre bien
-                              immobilier au bon prix ? N'hésitez pas à consulter
-                              l'historique des transactions aux caractéristiques
-                              similaires.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/spiral.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Acheter au juste prix
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              En consultant l'historiques des transactions
-                              similaires vous pourrez mettre en perspective le
-                              prix de vente proposé par le vendeur.
-                            </p>
-                          </div>
-                        </li>
-
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/hand.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Recherches multi-critères
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Parcourez les transactions historiques en filtrant
-                              selon l'année de la transaction, la localisation,
-                              la taille et le type de bien, le nombre de pièces
-                              et le prix de vente.
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section className="py-14 lg:py-16 bg-white">
-            <div className="container-fluid md:pe-[30px] xl:pe-[40px] pe-[20px]">
-              <div className="grid grid-cols-12 ">
-                <div className="col-span-12  ">
-                  <div className="flex gap-10 items-center xl:flex-row flex-col-reverse">
-                    <div className="bg-[#ECE3F2] xl:w-[80%] w-[100%] md:rounded-tr-[400px] md:rounded-br-[400px] rounded-tr-[100px] rounded-br-[100px]  xl:pl-[60px] py-[60px] pl-[50px] pe-[40px] md:h-[500px] h-[100%]">
-                      <p className="text-[#47525E] mb-10 font-[600] xl:max-w-[100%] max-w-[600px]">
-                        Votre plateforme réinvente et simplifie le cycle de la
-                        possession puis de la mise en vente d'un bien immobilier
-                      </p>
-                      <ul className=" flex flex-wrap ">
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/pin.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Agence immobilières
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full ">
-                              Faites-vous accompagner par une agence locale pour
-                              la vente de votre bien immobilier.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/spiral.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Chasseurs d'appartement
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Gagnez du temps en confiant la recherche de votre
-                              bien à un professionnel de la chasse immobilière.
-                            </p>
-                          </div>
-                        </li>
-
-                        <li className="flex items-start md:w-1/3 w-full my-4 pe-2">
-                          <img
-                            src="assets/img/icons/hand.png"
-                            className="w-[30px] mt-[3px] me-3"
-                          />
-                          <div>
-                            <h4 className="text-[#7542B9] font-bold text-[15px] mb-1 ">
-                              Courtier
-                            </h4>
-                            <p className="text-[#47525E] lg:text-[14px] text-[14px] lg:max-w-[300px] w-full">
-                              Grâce à nos partenaires courtier, trouver les
-                              meilleurs taux pour financer votre projet
-                              immobilier.
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="xl:w-[20%] w-[100%] 2xl:ps-[70px] xl:ps-[40px] lg:ps-[40px] ps-[40px] ">
-                      <p className="text-[#7BBEB8] text-[22px] mb-3  font-[600]">
-                        Se faire accompagner
-                      </p>
-                      <p className="text-[#976DD0] font-[600] text-[20px] mb-3 xl:max-w-[200px] w-full">
-                        Annuaire des professionnels de l'immo
-                      </p>
-                      <p className="text-[#47525E] font-bold mb-3 text-[16x]  w-full">
-                        Retrouvez des partenaires de confiance pour vous
-                        accompagner dans votre projet immobilier.
-                      </p>
-                      <button className="bg-black px-10 py-1.5 rounded-[50px] text-white w-fit">
-                        Trouver un professionnel
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <section className="bg-[#976DD0] py-14 lg:py-16">
-            <div className="container-fluid  2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px]">
-              <h2 className="text-white lg:text-[23px] text-[20px] font-[600] mx-auto  max-w-[600px] w-full">
-                Pourquoi devrais-je référencer mon bien sur Bookaroo ?
-                <span className="bg-white w-[35px] h-[6px] rounded-[10px] block "></span>
-              </h2>
-              <div className="grid grid-cols-12 md:gap-10 gap-0 mt-20">
-                <div className="flex items-start lg:col-span-4 md:col-span-6 col-span-12 my-5">
-                  <img
-                    src="assets/img/icons/stars.png"
-                    className="w-[20px] me-2 mt-[2px]"
-                  />
-                  <div className="text-white">
-                    <h4 className="font-[600] mb-1">Gagner en visibilité</h4>
-                    <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      En étant référencé sur Bookaroo, votre bien immobilier
-                      sera reconnu et répertorié par les algorithmes des moteurs
-                      de recherche. Ainsi votre bien sera plus facilement
-                      trouvable par les personnes recherchant un bien
-                      correspondnat au votre
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start lg:col-span-4 md:col-span-6 col-span-12 my-5">
-                  <img
-                    src="assets/img/icons/user.png"
-                    className="w-[20px] me-2 mt-[2px]"
-                  />
-                  <div className="text-white">
-                    <h4 className="font-[600] mb-1">Générer des leads</h4>
-                    <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      A travers le profil Bookaroo de votre bien, vous recevrez
-                      de nombreuses sollicitations de la part de personne
-                      interessées par votre bien. Vous constituerez ainsi une
-                      base d'acheteurs potentiels pour une vente future.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start lg:col-span-4 md:col-span-6 col-span-12 my-5">
-                  <img
-                    src="assets/img/icons/dollar-bill.png"
-                    className="w-[20px] me-2 mt-[2px]"
-                  />
-                  <div className="text-white">
-                    <h4 className="font-[600] mb-1">
-                      Accroitre la valeur de votre bien
-                    </h4>
-                    <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      Les informations que vous partagerez sur le profil de
-                      votre bien ainsi que les données de traffic sur le profil
-                      (like, visites, follower, messages) vont accroitre la
-                      désirabilité de votre bien et donc sa valeur.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start lg:col-span-4 md:col-span-6 col-span-12 my-5">
-                  <img
-                    src="assets/img/icons/right-arrow.png"
-                    className="w-[20px] me-2 mt-[2px]"
-                  />
-                  <div className="text-white">
-                    <h4 className="font-[600] mb-1">
-                      Mise en vente/location simplifiée
-                    </h4>
-                    <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      En créant le profil Bookaroo de votre bien immobilier vous
-                      pourrez par la suite publier en un clic une annonce d
-                      emise en vente ou location sur des centaines de
-                      plateformes de petites annonces.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start lg:col-span-4 md:col-span-6 col-span-12 my-5">
-                  <img
-                    src="assets/img/icons/mask.png"
-                    className="w-[20px] me-2 mt-[2px]"
-                  />
-                  <div className="text-white">
-                    <h4 className="font-[600] mb-1">Tester le Off-market</h4>
-                    <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      Avoir un profil Bookaroo pour votre bien vous donne la
-                      possibilité de tester le Off-Market et ainsi recevoir des
-                      propositions spontanées d'achat de votre bien.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start lg:col-span-4 md:col-span-6 col-span-12 my-5">
-                  <img
-                    src="assets/img/icons/fast-forward.png"
-                    className="w-[20px] me-2 mt-[2px]"
-                  />
-                  <div className="text-white">
-                    <h4 className="font-[600] mb-1">Vendre plus vite</h4>
-                    <p className="font-[400] text-[14px] md:max-w-[300px] w-full">
-                      Un bien référencé sur Bookaroo se vend plus vite car sa
-                      présence sur la plateforme à permis de générer une demande
-                      continue dans le temps et non satisfaite.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mx-auto mt-14">
-                <p className="text-white text-center font-[600]">
-                  C'est 100% gratuit et ça le restera !
-                </p>
-                <button className="bg-[#343F4B] text-white px-4 py-2 rounded-[50px] mx-auto flex items-center justify-center mt-3">
-                  Référencer mon bien
-                </button>
-              </div>
-            </div>
-          </section>
 
           {/* <button onClick={() => setIsOpen(true)} className="hidden">Open dialog</button> */}
           <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
@@ -2123,6 +1585,110 @@ const Home = () => {
           </Dialog>
           <BlogSection />
           <QuickSearch />
+
+          {/* ===== FOOTER ===== */}
+          <footer className="bg-[#2D1B4E] text-white pt-14 pb-6">
+            <div className="container-fluid 2xl:px-[120px] xl:px-[60px] md:px-[40px] px-[20px] mx-auto">
+              <div className="grid grid-cols-12 gap-8 mb-10">
+
+                {/* Brand Column */}
+                <div className="col-span-12 md:col-span-4">
+                  <h3 className="text-[22px] font-bold mb-3">
+                    <span className="text-[#976DD0]">Book</span>aroo
+                  </h3>
+                  <p className="text-[#C4B5D9] text-[14px] leading-relaxed max-w-[280px] mb-5">
+                    The LinkedIn of Real Estate. Connect buyers, sellers and agents in one transparent marketplace.
+                  </p>
+                  <div className="flex gap-3">
+                    <a href="#" className="w-[36px] h-[36px] rounded-full bg-[#976DD0] flex items-center justify-center hover:bg-[#7a5ba6] transition text-[14px]">f</a>
+                    <a href="#" className="w-[36px] h-[36px] rounded-full bg-[#976DD0] flex items-center justify-center hover:bg-[#7a5ba6] transition text-[14px]">in</a>
+                    <a href="#" className="w-[36px] h-[36px] rounded-full bg-[#976DD0] flex items-center justify-center hover:bg-[#7a5ba6] transition text-[14px]">tw</a>
+                  </div>
+                </div>
+
+                {/* Platform Links */}
+                <div className="col-span-6 md:col-span-2">
+                  <h4 className="text-[15px] font-[600] mb-4 text-[#976DD0]">Platform</h4>
+                  <ul className="space-y-2">
+                    {[
+                      { label: "Browse Properties", path: "/properties" },
+                      { label: "Off-Market", path: "/" },
+                      { label: "List My Property", path: "/property1" },
+                      { label: "Renter File", path: "/renter-file" },
+                      { label: "Buyer File", path: "/buyer-file" },
+                    ].map((link, i) => (
+                      <li key={i}>
+                        <a
+                          onClick={() => navigate(link.path)}
+                          className="text-[#C4B5D9] text-[13px] hover:text-white cursor-pointer transition"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Company Links */}
+                <div className="col-span-6 md:col-span-2">
+                  <h4 className="text-[15px] font-[600] mb-4 text-[#976DD0]">Company</h4>
+                  <ul className="space-y-2">
+                    {[
+                      { label: "About Bookaroo", path: "/" },
+                      { label: "Plans & Pricing", path: "/plan" },
+                      { label: "Market Insights", path: "/market-insight" },
+                      { label: "Blog", path: "/blogs" },
+                      { label: "Help Center", path: "/help" },
+                    ].map((link, i) => (
+                      <li key={i}>
+                        <a
+                          onClick={() => navigate(link.path)}
+                          className="text-[#C4B5D9] text-[13px] hover:text-white cursor-pointer transition"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Contact / Newsletter */}
+                <div className="col-span-12 md:col-span-4">
+                  <h4 className="text-[15px] font-[600] mb-4 text-[#976DD0]">Stay Informed</h4>
+                  <p className="text-[#C4B5D9] text-[13px] mb-4">
+                    Get the latest real estate news and Bookaroo updates in your inbox.
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      placeholder="Your email address"
+                      className="flex-1 bg-[#3D2A60] border border-[#5A4080] rounded-[50px] px-4 py-2 text-white text-[13px] placeholder-[#8E7AB0] outline-none focus:border-[#976DD0]"
+                    />
+                    <button className="bg-[#976DD0] hover:bg-[#7a5ba6] transition text-white rounded-[50px] px-4 py-2 text-[13px] font-[600] whitespace-nowrap">
+                      Subscribe
+                    </button>
+                  </div>
+                  <p className="text-[#8E7AB0] text-[12px] mt-3">
+                    📍 France &nbsp;|&nbsp; 📧 contact@bookaroo.fr
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Bar */}
+              <div className="border-t border-[#3D2A60] pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+                <p className="text-[#8E7AB0] text-[12px]">
+                  © {new Date().getFullYear()} Bookaroo — All rights reserved.
+                </p>
+                <div className="flex gap-4">
+                  <a href="#" className="text-[#8E7AB0] text-[12px] hover:text-white transition">Privacy Policy</a>
+                  <a href="#" className="text-[#8E7AB0] text-[12px] hover:text-white transition">Terms of Use</a>
+                  <a href="#" className="text-[#8E7AB0] text-[12px] hover:text-white transition">Cookie Settings</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+          {/* ===== END FOOTER ===== */}
+
         </div>
       </PageLayout>
     </>

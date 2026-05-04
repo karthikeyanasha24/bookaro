@@ -5,7 +5,9 @@ import ApiClient from '../methods/api/apiClient';
 import { CardElement, useStripe, useElements, Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import environment from "../environment";
-const stripePromise = loadStripe(environment.stripe_public_key);
+const stripePromise = environment?.stripe_public_key
+    ? loadStripe(environment.stripe_public_key)
+    : null;
 const PaymentForm = () => {
     const user = useSelector((state) => state.user);
     const stripe = useStripe();
@@ -51,9 +53,15 @@ const Payment = () => {
     return (
         <PageLayout>
             <div>
-                <Elements stripe={stripePromise}>
-                    <PaymentForm />
-                </Elements>
+                {stripePromise ? (
+                    <Elements stripe={stripePromise}>
+                        <PaymentForm />
+                    </Elements>
+                ) : (
+                    <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded">
+                        Stripe is not configured. Set <code>REACT_APP_STRIPE_PUBLIC_KEY</code> in <code>.env</code>.
+                    </div>
+                )}
             </div>
         </PageLayout>
     );

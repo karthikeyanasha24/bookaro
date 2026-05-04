@@ -26,8 +26,8 @@ const Html = ({
   clear,
   Logout,
   particularData,
+  sidebarWidth,
 }) => {
-  const location = useLocation()
   const logos = () => {
     let value = "/assets/img/logo.png";
     return value;
@@ -35,33 +35,23 @@ const Html = ({
   return (
     <nav
       component="header"
-      className={`${location.pathname == "/dashboard" ? "min-sidebar w-[calc(100%-50px)]" : isOpen ? "min-sidebar w-[calc(100%-50px)]" : "w-[calc(100%-280px)] sidebar-h"
-        } shadow-btn py-1.5 bg-[#f8f9fa] border-b  fixed transition-[width] duration-300 ml-auto right-0 z-10 flex items-center h-[71px] !px-5
-      `}
+      className="shadow-btn py-1.5 bg-[#f8f9fa] border-b fixed transition-all duration-300 right-0 z-30 flex items-center h-[71px] !px-5 overflow-visible"
+      style={{ left: sidebarWidth }}
     >
       {/* <h4 className="ms-2 text-[22px] font-medium">{particularData?.[0]?.name}</h4> */}
-      {isOpen && <img src={logos()} className="w-[160px]" />}
-      {location.pathname == "/dashboard" && <img src={logos()} className="w-[160px]" />}
-      {location.pathname != "/dashboard" && <button
+      <img src={logos()} className="w-[160px]" />
+      <button
         onClick={toggle}
-        className=" shrink-0  "
+        aria-label={isOpen ? "Expand sidebar" : "Collapse sidebar"}
+        title={isOpen ? "Expand sidebar" : "Collapse sidebar"}
+        className="ml-3 shrink-0 w-9 h-9 rounded-full border border-[#d6c8ec] bg-white text-[#976DD0] hover:bg-[#f5effd] transition-all duration-200 shadow-sm flex items-center justify-center"
       >
-        {!isOpen ? (
-          <div className="absolute -left-[18px] h-7 w-7 p-1 rounded-lg  !text-primary shadow-btn hover:shadow-none top-[23px]">
-            <p className="bg-[#996dca1f] w-[22px] h-[22px] absolute -z-[2] rounded-full left-[14px] top-[3px]"></p>
-
-            <FaLongArrowAltLeft className="w-full h-full text-[10px] text-[#976DD0]" />
-          </div>
-          // <FiMenu className="w-full h-full" />
+        {isOpen ? (
+          <FaLongArrowAltRight className="text-[13px]" />
         ) : (
-          <div className="absolute -left-[8px] h-7 w-7 p-1 rounded-lg  !text-primary shadow-btn hover:shadow-none top-[23px]">
-            <p className="bg-[#996dca1f] w-[22px] h-[22px] absolute -z-[2] rounded-full left-[12px] top-[3px]"></p>
-
-            <FaLongArrowAltRight className="w-full h-full text-[10px] text-[#976DD0]" />
-          </div>
-
+          <FaLongArrowAltLeft className="text-[13px]" />
         )}
-      </button>}
+      </button>
 
       {/* <div className="flex items-center gap-4 ml-auto">
         <Menu as="div" className="relative">

@@ -474,7 +474,7 @@ const Estimation = () => {
 
   return (
     <PageLayout>
-      <section className="bg-[#976DD0]/40 pb-10 min-h-[calc(100vh-200px)]">
+      <section className="bg-[#F7F3FC] pb-10 min-h-[calc(100vh-200px)]">
         <Swiper
           onSwiper={(swiper) => {
             setSwiperInstance(swiper);
@@ -497,13 +497,13 @@ const Estimation = () => {
           {data?.length > 0 ? (
             data.map((item, index) => (
               <SwiperSlide key={`${item._id || item.id}-${index}`}>
-                <div className="container mx-auto px-5">
-                  <div className="relative mb-6 sm:mt-10 flex flex-wrap gap-y-2 justify-between items-center sm:block">
-                    <h5 className="text-[20px] font-[600] sm:text-center">
+                <div className="container mx-auto px-5 pt-4 md:pt-7">
+                  <div className="relative mb-5 flex flex-wrap gap-y-2 justify-between items-center sm:block">
+                    <h5 className="text-[34px] leading-[38px] font-[700] text-[#2D1B4E] sm:text-center">
                       Peer To Peer Estimation
                     </h5>
                     <button
-                      className="sm:absolute right-0 top-0 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[6px] px-4 py-1.5 text-[#fff]"
+                      className="sm:absolute right-0 top-2 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[8px] px-4 py-2 text-[#fff] text-[13px] font-[600]"
                       onClick={(e) => open()}
                     >
                       Edit Location <FaLocationDot />
@@ -511,7 +511,7 @@ const Estimation = () => {
                   </div>
                   <div className="md:flex items-start gap-4 ">
                     <div className="md:w-[70%] mb-5 md:mb-0">
-                      <div className="bg-[#fff] md:flex  md:h-[526px] rounded-[20px]">
+                      <div className="bg-[#fff] md:flex md:h-[526px] rounded-[18px] border border-[#ECE7F4] shadow-sm">
                         <div className="w-[100%] rounded-[20px] overflow-hidden lg:w-[50%] xl:w-[65%] h-[450px] md:h-[100%] relative estimation-slider property_list">
                           <NewImageSlider
                             images={item?.images}
@@ -670,7 +670,7 @@ const Estimation = () => {
                     </div>
 
                     <div className="md:w-[30%]">
-                      <div className="h-full bg-[#fff] rounded-[20px] ml-auto p-4">
+                      <div className="h-full bg-[#fff] rounded-[18px] ml-auto p-4 border border-[#ECE7F4] shadow-sm">
                         <h4 className="text-center text-[18px] font-[600] leading-tight text-[#5A5A5A]">
                           What do you think about this property?
                         </h4>
@@ -889,19 +889,55 @@ const Estimation = () => {
           ) : (
             <>
               <div className="relative mb-6 sm:mt-10 flex flex-wrap gap-y-2 justify-between items-center sm:block">
-                <h5 className="text-[20px] font-[600] sm:text-center">
+                <h5 className="text-[34px] leading-[38px] font-[700] text-[#2D1B4E] sm:text-center">
                   Peer To Peer Estimation
                 </h5>
                 <button
-                  className="sm:absolute right-0 top-0 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[6px] px-4 py-1.5 text-[#fff]"
+                  className="sm:absolute right-0 top-2 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[8px] px-4 py-2 text-[#fff] text-[13px] font-[600]"
                   onClick={(e) => open()}
                 >
                   Edit Location <FaLocationDot />
                 </button>
               </div>
-
-              <div className="text-center  min-h-[calc(100vh-200px)] flex items-center justify-center">
-                {isLoading ? 'Loading properties...' : 'No Data'}
+              <div className="md:flex items-start gap-4 min-h-[calc(100vh-260px)]">
+                <div className="md:w-[70%] mb-5 md:mb-0">
+                  <div className="bg-[#fff] md:flex md:h-[526px] rounded-[18px] border border-[#ECE7F4] shadow-sm overflow-hidden">
+                    <div className="w-[100%] lg:w-[50%] xl:w-[65%] h-[260px] md:h-full bg-gradient-to-br from-[#B79AD9] to-[#8E6DC7] flex items-center justify-center text-white text-[14px] font-[600]">
+                      Property image preview
+                    </div>
+                    <div className="flex-1 p-5">
+                      <h4 className="text-[#5A5A5A] text-[20px] font-[600]">No property available yet</h4>
+                      <p className="text-[#8B93A1] text-[14px] mt-1">
+                        Local database has no peer-to-peer estimation records right now.
+                      </p>
+                      <div className="mt-4 space-y-2 text-[14px] text-[#6B7280]">
+                        <p><span className="font-[600] text-[#47525E]">Reference price:</span> -</p>
+                        <p><span className="font-[600] text-[#47525E]">Price/sqm:</span> -</p>
+                        <p><span className="font-[600] text-[#47525E]">Avg yearly revenue:</span> -</p>
+                        <p><span className="font-[600] text-[#47525E]">Social rating:</span> -</p>
+                      </div>
+                      <div className="mt-6 text-[13px] text-[#976DD0] font-[600]">
+                        {isLoading ? "Loading properties..." : "Waiting for local property data"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="md:w-[30%]">
+                  <div className="h-full bg-[#fff] rounded-[18px] ml-auto p-4 border border-[#ECE7F4] shadow-sm">
+                    <h4 className="text-center text-[18px] font-[600] text-[#5A5A5A]">
+                      What do you think about this property?
+                    </h4>
+                    <p className="text-center text-[13px] text-[#8B93A1] mt-2">
+                      Estimation controls will appear once property data is available.
+                    </p>
+                    <div className="mt-4 bg-[#F7F3FC] rounded-[12px] p-3">
+                      <p className="text-[12px] text-[#6B7280]">Tip</p>
+                      <p className="text-[13px] text-[#47525E] mt-1">
+                        Use populated API/local DB data to get the full interactive estimation panel.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </>
           )}

@@ -23,7 +23,9 @@ export const imagePath = (path, dummy) => {
         dummy || "/assets/img/placeholder.png";
 }
 export const capLetter = (value) => {
-    return value?.charAt(0)?.toUpperCase() + value?.slice(1)?.toLowerCase();
+    if (value == null || value === "") return "";
+    const s = String(value);
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
 export const generateDynamicString = (obj) => {
     const formatted = [];

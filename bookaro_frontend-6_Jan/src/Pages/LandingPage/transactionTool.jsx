@@ -92,28 +92,25 @@ const TransactionTool = () => {
     ]
     return (
         <PageLayout>
-            <section className="bg-[#976DD0]/30 py-12 md:py-16">
+            <section className="bg-white py-12 md:py-16">
                 <div className="container px-5 mx-auto">
                     <div class="w-full">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center">
                             <div className="order-2 md:order-1 text-center md:!text-start">
-                                <p class="text font-semibold text-[#976DD0] font-medium mb-2">
-                                    AI Transaction managing tool
+                                <p class="inline-flex items-center border border-[#E8E0F4] rounded-full px-3 py-1 text-[12px] font-semibold text-[#976DD0] mb-3">
+                                    Discover features
                                 </p>
 
-                                <h1 class="md:max-w-md text-xl md:text-2xl lg:text-3xl font-semibold text-gray-900 leading-snug mb-4">
-                                    The only AI Boosted tool to secure
-                                    and ease the transaction process
-                                    both for seller and buyer
+                                <h1 class="md:max-w-xl text-[30px] leading-[38px] lg:text-[44px] lg:leading-[52px] font-[700] text-[#18181B] mb-4">
+                                    The only AI powered tool that secures and simplifies transactions for sellers and buyers
                                 </h1>
 
-                                <p class="mb-4 md:max-w-md font-[400]">
-                                    The transaction monitoring tool guides you through all steps of your
-                                    transaction from lead selection to contract signing with customized
-                                    guidance and automated actions to save you time.
+                                <p class="mb-5 md:max-w-xl text-[#4B5563] text-[15px] leading-[24px]">
+                                    Our transaction workflow guides you from prospect qualification to contract signature
+                                    with smart recommendations and automated actions that save time.
                                 </p>
 
-                                <button class="px-9 py-1 bg-transparent text-[#976DD0] rounded-full  border border-[#976DD0] transition"
+                                <button class="px-9 py-2 bg-[#976DD0] text-white rounded-full border border-[#976DD0] transition hover:opacity-90"
                                     onClick={(e) => {
                                         if (user?.loggedIn) {
                                             Navigate("/real-estate-transaction-owner")
@@ -122,14 +119,14 @@ const TransactionTool = () => {
                                         }
                                     }}
                                 >
-                                    {user?.loggedIn ? " Go To Transcation Tool" : "Sell My Property"}
+                                    {user?.loggedIn ? "Open transaction tool" : "Sign up and discover"}
                                 </button>
                             </div>
                             <div class="flex justify-center order-1 md:order-2">
                                 <img
                                     src="/assets/img/transaction-tool.png"
                                     alt="Dashboard mockup"
-                                    class="w-[380px] "
+                                    class="w-[430px] rounded-[22px] border border-[#EEE7F7] shadow-sm"
                                 />
                             </div>
 
@@ -138,7 +135,7 @@ const TransactionTool = () => {
 
                 </div>
             </section>
-            <section className="py-12">
+            <section className="py-12 bg-[#FCFBFE]">
                 <div className="container px-5 mx-auto">
                     <div className="text-center max-w-xl mx-auto">
                         <h2 className="text-2xl font-semibold mb-2">Main Features</h2>

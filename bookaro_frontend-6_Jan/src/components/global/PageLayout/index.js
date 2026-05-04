@@ -1,5 +1,5 @@
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { GoDotFill } from "react-icons/go";
 import { IoMdMenu } from "react-icons/io";
@@ -7,6 +7,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 import socket from "../../../config/ChatSocket/socket";
 import { notificationListener } from "../../../config/Firebase/FirebaseAuth";
 import { removePropData } from "../../../models/string.model";
@@ -16,9 +17,16 @@ import ApiClient from "../../../methods/api/apiClient";
 import UpgradePlan from "../../common/Modal/UpgradePlan";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { login_success, logout } from "../../../actions/user";
+import Sidebar from "../sidebar";
 
 const PageLayout = ({ children }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(220);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : false
+  );
   const [projectData, setProjectData] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,51 +64,55 @@ const PageLayout = ({ children }) => {
     });
   };
 
-  const projectMenus = [
-    {
-      head: "",
-      sub: [{ name: "My project", url: "/project" }],
-    },
-    {
-      head: "Home Seeker",
-      sub: [
-        { name: "Search alerts", url: "/serach-alert" },
-        { name: "Properties Followed", url: "/followed-properties" },
-        { name: "Interacted Properties", url: "/properties?favourites=true" },
-        { name: "Renter application file", url: "/renter-file" },
-        { name: "Buyer File", url: "/buyer-file" },
-        {
-          name: "Manage real estate transaction",
-          url: "/real-estate-transaction-searcher",
-        },
-        {
-          name: "P2P Estimation",
-          url: "/estimation",
-        },
-      ],
-    },
-    {
-      head: "Owner space",
-      sub: [
-        { name: "My property", url: "/my-properties" },
-        { name: "List a property", url: "/property1" },
-        { name: "Seller file", url: "/seller-file" },
-        {
-          name: "Manage real estate transaction",
-          url: "/real-estate-transaction-owner",
-        },
-        {
-          name: "Manage P2P Estimation",
-          url: "/social-estimation",
-        },
-      ],
-    },
-  ];
+  const projectMenus = useMemo(
+    () => [
+      {
+        head: "",
+        sub: [{ name: t("pageLayout.myProject"), url: "/project" }],
+      },
+      {
+        head: t("pageLayout.homeSeeker"),
+        sub: [
+          { name: t("sidebar.searchAlerts"), url: "/serach-alert" },
+          { name: t("sidebar.propertiesFollowed"), url: "/followed-properties" },
+          { name: t("pageLayout.interactedProperties"), url: "/properties?favourites=true" },
+          { name: t("pageLayout.renterApplicationFile"), url: "/renter-file" },
+          { name: t("sidebar.buyerFile"), url: "/buyer-file" },
+          {
+            name: t("pageLayout.manageRealEstateTransaction"),
+            url: "/real-estate-transaction-searcher",
+          },
+          {
+            name: t("sidebar.p2pEstimation"),
+            url: "/estimation",
+          },
+        ],
+      },
+      {
+        head: t("pageLayout.ownerSpace"),
+        sub: [
+          { name: t("pageLayout.myPropertySingular"), url: "/my-properties" },
+          { name: t("pageLayout.listProperty"), url: "/property1" },
+          { name: t("sidebar.sellerFile"), url: "/seller-file" },
+          {
+            name: t("pageLayout.manageRealEstateTransaction"),
+            url: "/real-estate-transaction-owner",
+          },
+          {
+            name: t("pageLayout.manageP2pEstimation"),
+            url: "/social-estimation",
+          },
+        ],
+      },
+    ],
+    [t]
+  );
 
-  const accountMenu = [
+  const accountMenu = useMemo(
+    () => [
     {
-      name: "Account",
-      title: "Account",
+      name: t("pageLayout.account"),
+      title: t("pageLayout.account"),
       image: (
         <img src="/assets/img/header/account.png" className="w-[20px]" alt="" />
       ),
@@ -117,7 +129,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Personal information
+                {t("pageLayout.personalInformation")}
               </li>
               {user?.accountType == "pro" && <li
                 onClick={() => {
@@ -127,7 +139,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Company profile
+                {t("settings.companyProfile")}
               </li>}
 
               <li
@@ -139,7 +151,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Notifications
+                {t("pageLayout.notifications")}
               </li>
               <li
                 onClick={() => {
@@ -149,7 +161,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Password
+                {t("pageLayout.password")}
               </li>
               <li
                 onClick={() => {
@@ -159,7 +171,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Phone Number
+                {t("pageLayout.phoneNumber")}
               </li>
               <li
                 onClick={() => {
@@ -169,7 +181,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Help Center
+                {t("pageLayout.helpCenter")}
               </li>
               <li
                 onClick={() => {
@@ -179,27 +191,30 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Logout
+                {t("pageLayout.logout")}
               </li>
             </>
           </ul>
         </>
       ),
     },
-  ]
+  ],
+    [t, user?.accountType]
+  );
 
-  const menus = [
+  const menus = useMemo(
+    () => [
     {
-      name: "Plans",
-      title: "Plans",
+      name: t("pageLayout.plans"),
+      title: t("pageLayout.plans"),
       image: (
         <img src="/assets/img/header/bulb.png" className="w-[20px]" alt="" />
       ),
       url: "/plan",
     },
     {
-      name: "Market Insight",
-      title: "Market Insight",
+      name: t("pageLayout.marketInsight"),
+      title: t("pageLayout.marketInsight"),
       image: (
         <img src="/assets/img/header/home.png" className="w-[20px]" alt="" />
       ),
@@ -217,7 +232,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Historical Transaction
+                {t("pageLayout.historicalTransaction")}
               </li>
               <li
                 onClick={() => {
@@ -228,7 +243,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Professional Repository
+                {t("pageLayout.professionalRepository")}
               </li>
               <li
                 onClick={() => {
@@ -238,7 +253,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Building Permits
+                {t("sidebar.buildingPermits")}
               </li>
             </>
           </ul>
@@ -247,8 +262,8 @@ const PageLayout = ({ children }) => {
     },
 
     {
-      name: "Learning Center",
-      title: "Learning center",
+      name: t("pageLayout.learningCenter"),
+      title: t("sidebar.learningCenter"),
       image: (
         <img src="/assets/img/header/bulb.png" className="w-[20px]" alt="" />
       ),
@@ -266,7 +281,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Written Training
+                {t("sidebar.writtenTraining")}
               </li>
               <li
                 onClick={() => {
@@ -276,7 +291,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Video Training
+                {t("sidebar.videoTraining")}
               </li>
             </>
           </ul>
@@ -284,8 +299,8 @@ const PageLayout = ({ children }) => {
       ),
     },
     {
-      name: "Innovative Services",
-      title: "Innovative Services",
+      name: t("pageLayout.innovativeServices"),
+      title: t("pageLayout.innovativeServices"),
       image: (
         <img src="/assets/img/header/hands.png" className="w-[20px]" alt="" />
       ),
@@ -303,7 +318,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Directory
+                {t("pageLayout.directory")}
               </li>
               <li
                 onClick={() => {
@@ -314,7 +329,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Off-Market
+                {t("pageLayout.offMarket")}
               </li>
               <li
                 onClick={() => {
@@ -324,7 +339,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                P2P Estimation
+                {t("sidebar.p2pEstimation")}
               </li>
               <li
                 onClick={() => {
@@ -334,7 +349,7 @@ const PageLayout = ({ children }) => {
               >
                 <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
                 <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
-                Transaction Tool
+                {t("pageLayout.transactionTool")}
               </li>
             </>
           </ul>
@@ -344,8 +359,8 @@ const PageLayout = ({ children }) => {
     ...(user?.loggedIn
       ? [
         {
-          name: "My project",
-          title: "My project",
+          name: t("pageLayout.myProject"),
+          title: t("pageLayout.myProject"),
           image: (
             <img src="/assets/img/header/home.png" className="w-[20px]" alt="" />
           ),
@@ -353,7 +368,7 @@ const PageLayout = ({ children }) => {
             <>
               <ul className="bg-white py-4 pe-4 ps-2 rounded-[10px] absolute w-[200px] shadow-md border border-[#00000024] right-0">
                 {projectMenus.map((head, i) => (
-                  <>
+                  <Fragment key={`project-group-${i}`}>
                     {head.head && (
                       <li
                         key={i}
@@ -364,7 +379,7 @@ const PageLayout = ({ children }) => {
                     )}
                     {head.sub.map((itm, ii) => (
                       <li
-                        key={ii}
+                        key={`project-item-${i}-${ii}-${itm.url || itm.name}`}
                         onClick={() => {
                           navigate(itm.url);
                           setProjectData("");
@@ -376,7 +391,7 @@ const PageLayout = ({ children }) => {
                         {itm.name}
                       </li>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </ul>
             </>
@@ -386,101 +401,107 @@ const PageLayout = ({ children }) => {
       ]
       : []),
 
-  ];
+  ],
+    [t, user?.loggedIn, projectMenus]
+  );
 
-
-  const mobMenus = [
+  const mobMenus = useMemo(
+    () => [
     {
-      name: "Plans",
+      name: t("pageLayout.plans"),
       link: "/plan",
       img: "/assets/img/header/bulb.png",
     },
     {
-      name: "Market Insights",
+      name: t("pageLayout.marketInsightsMobile"),
       img: "/assets/img/header/home.png",
       menu: [
         {
-          name: "Historical Transaction",
+          name: t("pageLayout.historicalTransaction"),
           link: "/past-transactions",
         },
         {
-          name: "Professional Repository",
+          name: t("pageLayout.professionalRepository"),
           link: "/real-estate-pros",
         },
         {
-          name: "Building Permits",
+          name: t("sidebar.buildingPermits"),
           link: "/building-permit",
         },
       ],
     },
     {
-      name: "Innovative Services",
+      name: t("pageLayout.innovativeServices"),
       link: "/real-estate-pros",
       img: "/assets/img/header/hands.png",
       menu: [
         {
-          name: "Directory",
+          name: t("pageLayout.directory"),
           link: "/real-estate-transaction-owner",
         },
         {
-          name: "Off-Market",
+          name: t("pageLayout.offMarket"),
           link: "/real-estate-transaction-owner",
         },
         {
-          name: "P2P Estimation",
+          name: t("sidebar.p2pEstimation"),
           link: "/real-estate-transaction-owner",
         },
         {
-          name: "Transaction Tool",
+          name: t("pageLayout.transactionTool"),
           link: "/real-estate-transaction-owner",
         },
       ],
     },
     {
-      name: "Real Estate pros",
+      name: t("pageLayout.realEstatePros"),
       link: "/real-estate-pros",
       img: "/assets/img/header/home.png",
     },
     {
-      name: "My project",
+      menuKey: "myProject",
+      name: t("pageLayout.myProject"),
+      link: "/project",
       img: "/assets/img/header/home.png",
       menu: [
         {
           head: "",
-          sub: [{ name: "My project", url: "/project" }],
+          sub: [{ name: t("pageLayout.myProject"), url: "/project" }],
         },
         {
-          head: "Home Seeker",
+          head: t("pageLayout.homeSeeker"),
           sub: [
-            { name: "Search alerts", url: "/serach-alert" },
-            { name: "Properties Followed", url: "/followed-properties" },
+            { name: t("sidebar.searchAlerts"), url: "/serach-alert" },
+            { name: t("sidebar.propertiesFollowed"), url: "/followed-properties" },
             {
-              name: "Interacted Properties",
+              name: t("pageLayout.interactedProperties"),
               url: "/properties?favourites=true",
             },
-            { name: "Renter application file", url: "/renter-file" },
-            { name: "Buyer File", url: "/buyer-file" },
+            { name: t("pageLayout.renterApplicationFile"), url: "/renter-file" },
+            { name: t("sidebar.buyerFile"), url: "/buyer-file" },
             {
-              name: "Manage real estate transaction",
+              name: t("pageLayout.manageRealEstateTransaction"),
               url: "/real-estate-transaction-searcher",
             },
           ],
         },
         {
-          head: "Owner space",
+          head: t("pageLayout.ownerSpace"),
           sub: [
-            { name: "My property", url: "/my-properties" },
-            { name: "List a property", url: "/property1" },
-            { name: "Seller file", url: "/seller-file" },
+            { name: t("pageLayout.myPropertySingular"), url: "/my-properties" },
+            { name: t("pageLayout.listProperty"), url: "/property1" },
+            { name: t("sidebar.sellerFile"), url: "/seller-file" },
             {
-              name: "Manage real estate transaction",
+              name: t("pageLayout.manageRealEstateTransaction"),
               url: "/real-estate-transaction-owner",
             },
           ],
         },
       ],
     },
-  ];
+  ],
+    [t]
+  );
   // const getNotifications = () => {
   //   const dto = {
   //     sendToId: user?._id,
@@ -577,6 +598,15 @@ const PageLayout = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const onResize = () => setIsDesktop(window.innerWidth >= 1024);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const contentOffset = user?.loggedIn && isDesktop ? sidebarWidth : 0;
+
   const handleProperty = () => {
     if (user.loggedIn) {
       if (propertyTotal >= activePlan?.[0]?.numberOfProperty) {
@@ -615,13 +645,23 @@ const PageLayout = ({ children }) => {
                   }}
                   className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold md:block hidden"
                 >
-                  {propertyLoader ? "Loading..." : "List a property"}
+                  {propertyLoader ? t("common.loading") : t("pageLayout.listProperty")}
                 </button>
               </div>
 
               {/* only for mobile */}
               <div className="flex items-center lg:hidden ">
-                <div className="">
+                <div className="flex items-center gap-2">
+                  {user?.loggedIn && (
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileSidebarOpen(true)}
+                      className="rounded-md px-2 py-1 text-sm font-medium text-black border border-[#E6E6E6]"
+                      aria-label="Open app sidebar"
+                    >
+                      <IoMdMenu />
+                    </button>
+                  )}
                   <div className="flex items-center justify-center">
                     <button
                       type="button"
@@ -692,7 +732,7 @@ const PageLayout = ({ children }) => {
                                         : "text-[#47525E]"
                                         }`}
                                     >
-                                      List a property
+                                      {t("pageLayout.listProperty")}
                                     </p>
                                   </li>
                                   {/* {mobMenus.map((itm, i) => (
@@ -746,7 +786,7 @@ const PageLayout = ({ children }) => {
                                             />
                                           </Disclosure.Button>
                                           <Disclosure.Panel className="px-2 text-sm text-gray-500">
-                                            {itm.name === "My project" ? (
+                                            {itm.menuKey === "myProject" ? (
                                               <ul>
                                                 {itm.menu.map((res, index) => (
                                                   <li
@@ -855,14 +895,14 @@ const PageLayout = ({ children }) => {
                       to="/login"
                       className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold ms-2 inline-block"
                     >
-                      Login
+                      {t("pageLayout.login")}
                     </Link>
 
                     <Link
                       to="/Signup"
                       className="bg-white border border-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-[#47525E] font-bold ms-2 inline-block"
                     >
-                      Sign Up
+                      {t("pageLayout.signup")}
                     </Link>
                   </div>
                 )}
@@ -1016,14 +1056,14 @@ const PageLayout = ({ children }) => {
                         to="/login"
                         className="bg-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-white font-bold ms-2 inline-block"
                       >
-                        Login
+                        {t("pageLayout.login")}
                       </Link>
 
                       <Link
                         to="/Signup"
                         className="bg-white border border-[#976DD0] text-[14px] rounded-[50px] py-[6px] px-[14px] text-[#47525E] font-bold ms-2 inline-block"
                       >
-                        Sign Up
+                        {t("pageLayout.signup")}
                       </Link>
                     </li>
                   )}
@@ -1033,193 +1073,225 @@ const PageLayout = ({ children }) => {
           </nav>
         </header>
 
-        <main className="pageContent pb-24">{children}</main>
+        {/* Sidebar — visible only for logged-in users on desktop */}
+        {user?.loggedIn && (
+          <Sidebar
+            mobileOpen={isMobileSidebarOpen}
+            onMobileClose={() => setIsMobileSidebarOpen(false)}
+            onWidthChange={setSidebarWidth}
+          />
+        )}
 
-        <footer className="bg-black	xl:py-12 xl:px-20 px-8 py-6">
-          <div className="container items-center mx-auto">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 text-center flex items-center justify-center flex-col">
-                <h4 className="text-white font-[600] mb-5 text-[18px]">
-                  Find us on:
-                </h4>
-                <ul className="flex items-center mb-5">
-                  <li className=" text-center cursor-pointer lg:px-7 px-2">
-                    <a href="#" className="">
-                      <img
-                        src="assets/img/footer/ins.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/fb.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/twitter.png"
-                        alt=""
-                        className="text-white w-[20px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/linkedin.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                  <li className="  text-center cursor-pointer lg:px-7 px-2  ">
-                    <a href="#">
-                      <img
-                        src="assets/img/footer/youtube.png"
-                        alt=""
-                        className="text-white w-[25px]"
-                      />
-                    </a>
-                  </li>
-                </ul>
-                <p className="h-[1px] bg-white w-full block mt-5"></p>
-              </div>
+        <main
+          className="pageContent pb-24 transition-all duration-300"
+          style={{ marginLeft: contentOffset }}
+        >
+          {children}
+        </main>
 
-              <div className="col-span-12 mt-3   ">
-                <div className="grid grid-cols-12 gap-2">
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      COMPANY
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Who are we?
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p
-                          onClick={() =>
-                            window.open(
-                              "/contact-us",
-                              "_blank",
-                              "noopener,noreferrer"
-                            )
-                          }
-                          className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
-                        >
-                          Contact us
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          We are hiring
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Press
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      OUR APPS
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Discover our apps
-                        </p>
-                      </li>
-                      <li className="flex items-center">
-                        <a href="#">
-                          <img
-                            src="assets/img/footer/apple.png"
-                            alt=""
-                            className="text-white w-[25px]"
-                          />
-                        </a>
-                        <a href="#" className="ms-5">
-                          <img
-                            src="assets/img/footer/android.png"
-                            alt=""
-                            className="text-white w-[24px]"
-                          />
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      PRO SERVICES
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Services for pros
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
-                          Client access
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-span-12 lg:col-span-3">
-                    <h2 className="text-white font-bold text-lg mb-2">
-                      MORE SERVICES
-                    </h2>
-                    <ul>
-                      <li className=" text-gray-300 group">
-                        <p
-                          onClick={() => navigate("/prolist")}
-                          className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
-                        >
-                          Real estate pro repository
-                        </p>
-                      </li>
-                      <li className=" text-gray-300 group">
-                        <p
-                          onClick={() => navigate("/past-transation-list")}
-                          className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
-                        >
-                          Past transaction repository
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-span-12 ">
-                <p className="h-[1px] bg-white w-full block mt-5"></p>
-                <h5 className="text-white font-normal text-center w-full block font-bold  mt-10">
-                  Bookaroo SAS - 2024
-                </h5>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  Cookies setting
-                </p>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  Terms and conditions of use
-                </p>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  General Data Protection Policy
-                </p>
-                <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
-                  How our site works
-                </p>
+        <footer
+          className={`transition-all duration-300 ${user?.loggedIn ? "bg-white border-t border-[#EDE8F5] py-4 px-4 lg:px-8" : "bg-black xl:py-12 xl:px-20 px-8 py-6"}`}
+          style={{ marginLeft: contentOffset }}
+        >
+          {user?.loggedIn ? (
+            <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-between">
+              <p className="text-[#47525E] text-[13px] font-[500]">
+                Bookaroo SAS - 2024
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 text-[12px] text-[#6B7280]">
+                <span className="hover:text-[#976DD0] cursor-pointer">{t("pageLayout.cookies")}</span>
+                <span className="text-[#D1D5DB]">|</span>
+                <span className="hover:text-[#976DD0] cursor-pointer">{t("pageLayout.terms")}</span>
+                <span className="text-[#D1D5DB]">|</span>
+                <span className="hover:text-[#976DD0] cursor-pointer">{t("pageLayout.privacy")}</span>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="container items-center mx-auto">
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12 text-center flex items-center justify-center flex-col">
+                  <h4 className="text-white font-[600] mb-5 text-[18px]">
+                    Find us on:
+                  </h4>
+                  <ul className="flex items-center mb-5">
+                    <li className=" text-center cursor-pointer lg:px-7 px-2">
+                      <a href="#" className="">
+                        <img
+                          src="assets/img/footer/ins.png"
+                          alt=""
+                          className="text-white w-[25px]"
+                        />
+                      </a>
+                    </li>
+                    <li className="  text-center cursor-pointer lg:px-7 px-2  ">
+                      <a href="#">
+                        <img
+                          src="assets/img/footer/fb.png"
+                          alt=""
+                          className="text-white w-[25px]"
+                        />
+                      </a>
+                    </li>
+                    <li className="  text-center cursor-pointer lg:px-7 px-2  ">
+                      <a href="#">
+                        <img
+                          src="assets/img/footer/twitter.png"
+                          alt=""
+                          className="text-white w-[20px]"
+                        />
+                      </a>
+                    </li>
+                    <li className="  text-center cursor-pointer lg:px-7 px-2  ">
+                      <a href="#">
+                        <img
+                          src="assets/img/footer/linkedin.png"
+                          alt=""
+                          className="text-white w-[25px]"
+                        />
+                      </a>
+                    </li>
+                    <li className="  text-center cursor-pointer lg:px-7 px-2  ">
+                      <a href="#">
+                        <img
+                          src="assets/img/footer/youtube.png"
+                          alt=""
+                          className="text-white w-[25px]"
+                        />
+                      </a>
+                    </li>
+                  </ul>
+                  <p className="h-[1px] bg-white w-full block mt-5"></p>
+                </div>
+
+                <div className="col-span-12 mt-3   ">
+                  <div className="grid grid-cols-12 gap-2">
+                    <div className="col-span-12 lg:col-span-3">
+                      <h2 className="text-white font-bold text-lg mb-2">
+                        COMPANY
+                      </h2>
+                      <ul>
+                        <li className=" text-gray-300 group">
+                          <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
+                            Who are we?
+                          </p>
+                        </li>
+                        <li className=" text-gray-300 group">
+                          <p
+                            onClick={() =>
+                              window.open(
+                                "/contact-us",
+                                "_blank",
+                                "noopener,noreferrer"
+                              )
+                            }
+                            className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
+                          >
+                            Contact us
+                          </p>
+                        </li>
+                        <li className=" text-gray-300 group">
+                          <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
+                            We are hiring
+                          </p>
+                        </li>
+                        <li className=" text-gray-300 group">
+                          <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
+                            Press
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="col-span-12 lg:col-span-3">
+                      <h2 className="text-white font-bold text-lg mb-2">
+                        OUR APPS
+                      </h2>
+                      <ul>
+                        <li className=" text-gray-300 group">
+                          <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
+                            Discover our apps
+                          </p>
+                        </li>
+                        <li className="flex items-center">
+                          <a href="#">
+                            <img
+                              src="assets/img/footer/apple.png"
+                              alt=""
+                              className="text-white w-[25px]"
+                            />
+                          </a>
+                          <a href="#" className="ms-5">
+                            <img
+                              src="assets/img/footer/android.png"
+                              alt=""
+                              className="text-white w-[24px]"
+                            />
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="col-span-12 lg:col-span-3">
+                      <h2 className="text-white font-bold text-lg mb-2">
+                        PRO SERVICES
+                      </h2>
+                      <ul>
+                        <li className=" text-gray-300 group">
+                          <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
+                            Services for pros
+                          </p>
+                        </li>
+                        <li className=" text-gray-300 group">
+                          <p className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]">
+                            Client access
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="col-span-12 lg:col-span-3">
+                      <h2 className="text-white font-bold text-lg mb-2">
+                        MORE SERVICES
+                      </h2>
+                      <ul>
+                        <li className=" text-gray-300 group">
+                          <p
+                            onClick={() => navigate("/prolist")}
+                            className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
+                          >
+                            Real estate pro repository
+                          </p>
+                        </li>
+                        <li className=" text-gray-300 group">
+                          <p
+                            onClick={() => navigate("/past-transation-list")}
+                            className="text-gray-300 group-hover:text-white cursor-pointer mb-2 xl:text-[16px] text-[14px]"
+                          >
+                            Past transaction repository
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-12 ">
+                  <p className="h-[1px] bg-white w-full block mt-5"></p>
+                  <h5 className="text-white font-normal text-center w-full block font-bold  mt-10">
+                    Bookaroo SAS - 2024
+                  </h5>
+                  <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
+                    Cookies setting
+                  </p>
+                  <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
+                    Terms and conditions of use
+                  </p>
+                  <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
+                    General Data Protection Policy
+                  </p>
+                  <p className="text-gray-300 font-normal text-center w-full block xl:text-[16px] text-[14px] my-2">
+                    How our site works
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </footer>
       </div>
     </>

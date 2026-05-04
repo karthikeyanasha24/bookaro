@@ -11,7 +11,8 @@ const BlogSection = () => {
     const getBlogs = () => {
         ApiClient.get("blogs/listing", { page: 1, count: 4 }).then((res) => {
             if (res.success) {
-                setBlogs(res?.data);
+                const rows = res?.data ?? res?.Data;
+                setBlogs(Array.isArray(rows) ? rows : []);
             }
         });
     };
@@ -39,10 +40,15 @@ const BlogSection = () => {
                                 <div className="grid grid-cols-12 gap-4">
                                     {blogs?.map((itm, i) => (
                                         <div
+                                            key={itm?._id || itm?.id || i}
                                             onClick={() => navigateToDetail(itm)}
                                             className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 bg-white h-[420px] rounded-[10px]">
                                             <img
-                                                src={`${environment.api}img/${itm?.images[0]}`}
+                                                src={
+                                                  itm?.images?.[0]
+                                                    ? `${environment.api}img/${itm.images[0]}`
+                                                    : "/assets/img/placeholder.png"
+                                                }
                                                 alt=""
                                                 className="rounded-tl-[10px] rounded-tr-[10px] h-[240px] w-full object-cover"
                                                 onError={(e) => {

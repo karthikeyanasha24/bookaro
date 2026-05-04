@@ -55,7 +55,6 @@ const PropertyDetails = () => {
   const [buyPlanModal, setbuyPlanModal] = useState(false);
   const [detail, setDetail] = useState();
   const [data, setData] = useState();
-  console.log(data, "===")
   const [amenities, setAmenities] = useState([]);
   const [dropdownOptions, setdropdownOptions] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -94,7 +93,15 @@ const PropertyDetails = () => {
   const getKwhValue = () => {
     ApiClient.get("user/emiision-detail")?.then((res) => {
       if (res.success) {
-        setKwh(res?.data);
+        const raw = res?.data;
+        const n =
+          typeof raw === "number"
+            ? raw
+            : raw && typeof raw === "object"
+              ? raw.kwh
+              : raw;
+        const parsed = Number(n);
+        setKwh(Number.isFinite(parsed) ? parsed : 0.2516);
       }
     });
   };

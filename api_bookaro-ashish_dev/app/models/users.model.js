@@ -74,14 +74,61 @@ module.exports = (mongoose) => {
       declarativeRenterFiles: {
         postalCode: String,
         InvestOption: { type: String, enum: ["primary", "secondary", "rentalProperty", "business", "mix"] },
-        BuyOption: { type: String, enum: ["alone", "two", "sci"] }
+        BuyOption: { type: String, enum: ["alone", "two", "sci"] },
+        employmentStatus: String,
+        monthlyIncome: String,
+        numberOfOccupants: String,
+        currentHousing: String,
+        reasonForMoving: String,
+        desiredMoveDate: String,
+        hasPets: String,
+        hasGuarantor: String,
+        employmentDuration: String,
+        receivesHousingBenefit: String,
+        desiredRentalDuration: String,
+        lookingInCity: String
       },
       sellerFiles: Object,
       buyerFiles: Object,
       declarativeBuyerFiles: {
         postalCode: String,
         InvestOption: { type: String, enum: ["primary", "secondary", "rentalProperty", "business", "mix"] },
-        BuyOption: { type: String, enum: ["alone", "two", "sci"] }
+        BuyOption: { type: String, enum: ["alone", "two", "sci"] },
+        // Existing fields (kept for backward compatibility)
+        financingMethod: String,
+        preApprovalStatus: String,
+        isFirstTimeBuyer: String,
+        downPayment: String,
+        currentHousing: String,
+        alreadySoldPrevious: String,
+        workingWithAgent: String,
+        openToOffMarket: String,
+        numberOfBuyers: String,
+        lookingInCity: String,
+        // New Phase 3 fields
+        budgetRange: String,
+        propertyType: String,
+        desiredArea: String,
+        numberOfRooms: String,
+        financingStatus: String,
+        mortgagePreApproved: String,
+        employmentStatus: String,
+        monthlyIncome: String,
+        purchaseTimeline: String,
+        alreadySoldProperty: String,
+        searchDuration: String,
+        buyerPriority: String,
+      },
+      // Onboarding data (Phase 2)
+      onboardingComplete: { type: Boolean, default: false },
+      onboardingData: {
+        profileType: String,
+        projectTimeline: String,
+        budget: String,
+        propertyType: String,
+        location: String,
+        goals: [String],
+        notifications: String,
       },
       documentGrade: { type: String, enum: ["A", "B", "C", "D", "E", "Any"], default: "Any" },
       isDocumentVerified: { type: Boolean, default: false, default: false },
@@ -106,6 +153,7 @@ module.exports = (mongoose) => {
       weeklyCampaignUsage: { type: Number, },
       monthlyCampaignUsage: { type: Number, }, //depends acc to plan
       isImported: { type: Boolean }, //if true key to identify if the user is imported via csv
+      isAiBot: { type: Boolean, default: false }, // true for the Bookaroo AI assistant bot user
     },
 
     { timestamps: true }

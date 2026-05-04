@@ -89,6 +89,41 @@ const Step10 = ({
     return true;
   };
 
+  const mergeGeoFromStep1Local = (payload) => {
+    try {
+      const raw = localStorage.getItem("step1");
+      if (!raw) return payload;
+      const s1 = JSON.parse(raw);
+      const locOk = (loc) =>
+        loc &&
+        loc.lat != null &&
+        loc.lng != null &&
+        Number.isFinite(Number(loc.lat)) &&
+        Number.isFinite(Number(loc.lng));
+      if (!locOk(payload.location) && locOk(s1.location)) {
+        payload.location = { ...s1.location, ...payload.location };
+      }
+      if (
+        (!payload.newlocation?.coordinates || payload.newlocation.coordinates.length < 2) &&
+        s1?.newlocation?.coordinates?.length >= 2
+      ) {
+        payload.newlocation = s1.newlocation;
+      }
+      const rndOk = (r) =>
+        r &&
+        r.lat != null &&
+        r.lng != null &&
+        Number.isFinite(Number(r.lat)) &&
+        Number.isFinite(Number(r.lng));
+      if (!rndOk(payload.randomLocation) && rndOk(s1.randomLocation)) {
+        payload.randomLocation = { ...s1.randomLocation, ...payload.randomLocation };
+      }
+    } catch {
+      /* ignore */
+    }
+    return payload;
+  };
+
   const handleSubmit = () => {
     if (!validate()) return;
     let method = "post";
@@ -110,6 +145,7 @@ const Step10 = ({
         })),
       add_more_step: false,
     };
+    mergeGeoFromStep1Local(value);
     if (value?.energymode == "") {
       delete value.energymode;
     }
@@ -130,6 +166,30 @@ const Step10 = ({
     }
     if (value?.investment?.length == 0 || value?.investment[0] == "") {
       delete value.investment
+    }
+    // API schema allows only sale | rent | directory (legacy UI used "offmarket")
+    if (value?.propertyType === "offmarket") {
+      value.propertyType = "sale";
+    }
+    const lat = value?.location?.lat;
+    const lng = value?.location?.lng;
+    const coordsOk =
+      value?.newlocation?.type === "Point" &&
+      Array.isArray(value?.newlocation?.coordinates) &&
+      value.newlocation.coordinates.length >= 2 &&
+      Number.isFinite(Number(value.newlocation.coordinates[0])) &&
+      Number.isFinite(Number(value.newlocation.coordinates[1]));
+    if (
+      !coordsOk &&
+      lat != null &&
+      lng != null &&
+      Number.isFinite(Number(lat)) &&
+      Number.isFinite(Number(lng))
+    ) {
+      value.newlocation = {
+        type: "Point",
+        coordinates: [Number(lng), Number(lat)],
+      };
     }
     delete value.Expenses;
     delete value.school1;

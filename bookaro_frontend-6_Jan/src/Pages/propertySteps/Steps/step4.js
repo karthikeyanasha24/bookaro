@@ -518,7 +518,10 @@ const Step4 = ({
                 </label>
                 <div className="flex items-center flex-wrap">
                   {situation?.map((option) => (
-                    <div className="flex items-center me-4">
+                    <div
+                      key={option.id ?? option.label}
+                      className="flex items-center me-4"
+                    >
                       <Checkbox
                         checked={formData.situation?.includes(option.label)}
                         onChange={() =>
@@ -954,7 +957,10 @@ const Step4 = ({
                   </div>
                   <div className="flex items-center flex-wrap mt-5 xl:w-[500px] w-[100%] ">
                     {investmentPurposes.map((option) => (
-                      <div className="flex items-center  my-2 w-1/2 ">
+                      <div
+                        key={option.id}
+                        className="flex items-center  my-2 w-1/2 "
+                      >
                         <Checkbox
                           checked={formData.investment?.includes(option.id)}
                           onChange={() => {

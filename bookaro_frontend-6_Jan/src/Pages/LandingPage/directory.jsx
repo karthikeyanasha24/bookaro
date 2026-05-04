@@ -62,22 +62,28 @@ const Directory = () => {
     ];
     return (
         <PageLayout>
-            <section className="bg-[#976DD0]/30 py-12">
+            <section className="bg-white py-12">
                 <div className="container px-5 mx-auto">
                     <div className="flex flex-col-reverse lg:flex-row items-center gap-5">
                         <div className="max-w-xl lg:max-w-lg">
-                            <h5 className="text-[16px] font-[600] text-[#976DD0] mb-1">Real estate Directory</h5>
-                            <h1 className="text-[28px] font-[600] leading-tight mb-4">All existing real estate properties of <br />  <span
+                            <h5 className="inline-flex items-center border border-[#E8E0F4] rounded-full px-3 py-1 text-[12px] font-semibold text-[#976DD0] mb-3">Discover features</h5>
+                            <h1 className="text-[46px] leading-[52px] font-[700] text-[#18181B] mb-4">Our partner real estate agents support you with no mandate and no commission</h1>
+                            <p className="text-[15px] mb-4 text-[#4B5563] leading-[24px]">If you are owner, seller, or buyer, access on-demand professional services to secure each action in your project.</p>
+                            <h2 className="text-[24px] font-[700] leading-tight mb-4">All existing real estate properties of <br />  <span
                                 className={`text-primary !text-[28px] border-[#976DD0] transition-opacity duration-500 ${fade ? "opacity-100" : "opacity-0"
                                     }`}
                             >
                                 {texts[index]}
-                            </span> listed in the same place</h1>
-                            <p className="text-[15px] mb-4">By listing all real estate properties that are not for sale or rental, our Real Estate Directory let you anticipate your project and find today the property you will buy in 6 months or in 2 years!</p>
-                            <button className="text-sm border border-[#976DD0] hover:bg-[#976DD0] hover:text-[#fff] rounded-full px-6 py-1.5 text-[#976DD0]" onClick={() => history("/properties?propertyType=directory")}>Browse Directory</button>
+                            </span> listed in the same place</h2>
+                            <div className="flex gap-2 mt-3 flex-wrap">
+                                {["Manage visits", "Market value", "Commercialize"].map((chip) => (
+                                    <span key={chip} className="px-3 py-1 border border-[#E6DDF4] rounded-[6px] text-[11px] text-[#6B7280]">{chip}</span>
+                                ))}
+                            </div>
+                            <button className="text-sm bg-[#976DD0] hover:opacity-90 rounded-full px-6 py-2 text-white mt-4" onClick={() => history("/prolist")}>View services a la carte</button>
                         </div>
                         <div className="w-full">
-                            <img src="/assets/img/directory-landing.png" alt="img" className="w-auto h-auto sm:max-w-sm lg:max-w-xl mx-auto" />
+                            <img src="/assets/img/directory-landing.png" alt="img" className="w-auto h-auto sm:max-w-sm lg:max-w-xl mx-auto rounded-full object-cover" />
                         </div>
                     </div>
                 </div>

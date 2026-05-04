@@ -50,6 +50,12 @@ const normalizeEstType = (type) => {
   return map[type?.trim()] || type?.trim();
 };
 
+const ensureDirectory = (dirPath) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+};
+
 const excelStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./public/static");
@@ -64,7 +70,9 @@ const uploadExcel = multer({ storage: excelStorage, limits: { fileSize: 5242880 
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./public/img");
+    const imageDir = path.resolve(__dirname, "../../public/img");
+    ensureDirectory(imageDir);
+    cb(null, imageDir);
   },
   filename: (req, file, cb) => {
     // console.log(file);
@@ -89,7 +97,9 @@ var upload = multer({ storage: storage });
 
 var fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./public/document");
+    const documentDir = path.resolve(__dirname, "../../public/document");
+    ensureDirectory(documentDir);
+    cb(null, documentDir);
   },
   filename: (req, file, cb) => {
     console.log(file);
@@ -102,7 +112,9 @@ var uploadJson = multer({ storage: fileStorage });
 
 const videoStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./public/videos");
+    const videosDir = path.resolve(__dirname, "../../public/videos");
+    ensureDirectory(videosDir);
+    cb(null, videosDir);
   },
   filename: (req, file, cb) => {
     var ext = file.originalname.split(".").pop(); // Get the file extension from original filename
@@ -115,7 +127,9 @@ const uploadVideo = multer({ storage: videoStorage });
 
 const audioStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./public/audios");
+    const audiosDir = path.resolve(__dirname, "../../public/audios");
+    ensureDirectory(audiosDir);
+    cb(null, audiosDir);
   },
   filename: (req, file, cb) => {
     var ext = file.originalname.split(".").pop(); // Get the file extension from original filename

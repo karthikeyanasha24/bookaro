@@ -3,6 +3,7 @@ const Transaction = db.pastTransaction;
 const User = db.users;
 const constants = require("../utls/constants");
 const mongoose = require("mongoose");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
 
 module.exports = {
   transactionList: async (req, res) => {
@@ -202,6 +203,10 @@ module.exports = {
       }
 
       const result = await Transaction.aggregate([...pipeline]);
+      const optUid = aiAgentTriggers.optionalUserIdFromAuthHeader(req);
+      if (optUid) {
+        setImmediate(() => aiAgentTriggers.onPastTransactionsVisit(optUid));
+      }
       return res.status(200).json({
         success: true,
         data: result,

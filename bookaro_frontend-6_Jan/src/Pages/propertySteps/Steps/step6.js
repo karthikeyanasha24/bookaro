@@ -229,8 +229,16 @@ const Step6 = ({
                     defaultValue={formData?.images[0]?.amenity || ""}
                   >
                     <option value="">Select Amenity...</option>
-                    {amenitiesOptions.map((amenity) => (
-                      <option key={amenity.id} value={amenity.value}>
+                    {amenitiesOptions.map((amenity, amenityIndex) => (
+                      <option
+                        key={
+                          amenity?.id ||
+                          amenity?.value ||
+                          amenity?.name ||
+                          `amenity-${amenityIndex}`
+                        }
+                        value={amenity.value}
+                      >
                         {amenity.name}
                       </option>
                     ))}
@@ -298,8 +306,16 @@ const Step6 = ({
                     defaultValue={image.amenity || ""}
                   >
                     <option value="">Select Amenity...</option>
-                    {amenitiesOptions.map((amenity) => (
-                      <option key={amenity.id} value={amenity.value}>
+                    {amenitiesOptions.map((amenity, amenityIndex) => (
+                      <option
+                        key={
+                          amenity?.id ||
+                          amenity?.value ||
+                          amenity?.name ||
+                          `amenity-${amenityIndex}`
+                        }
+                        value={amenity.value}
+                      >
                         {amenity.name}
                       </option>
                     ))}

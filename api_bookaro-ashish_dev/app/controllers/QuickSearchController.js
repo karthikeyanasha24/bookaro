@@ -1,4 +1,5 @@
 const db = require("../models");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
 let mongoose = require("mongoose");
 const constants = require("../utls/constants");
 const { listing, detail } = require("./CategoriesController");
@@ -13,13 +14,20 @@ module.exports = {
         const { propertyType, city, type } = req.body;
         try {
             let lcity = city.toLowerCase()
+            const uid = req.identity && req.identity._id ? req.identity._id : null;
+            const priorUserSearches =
+                uid ? await db.quickSearch.countDocuments({ userId: uid, isDeleted: false }) : 1;
             const newQuickSearch = new db.quickSearch({
                 propertyType,
                 city: lcity,
                 type,
+                userId: uid || undefined,
             });
 
             const savedQuickSearch = await newQuickSearch.save();
+            if (uid && priorUserSearches === 0) {
+                setImmediate(() => aiAgentTriggers.onFirstQuickSearch(uid));
+            }
             res.status(201).json({
                 success: true,
                 message: "Data Saved Succesfully",

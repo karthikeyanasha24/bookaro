@@ -50,5 +50,6 @@ router.use("/presetSearches",require("./presetSearches.routes.js"));
 router.use("/agencyReviews",require("./agencyReviews.routes.js"));
 router.use("/adminSettings",require("./adminSettings.routes.js"));
 router.use("/support",require("./support.routes.js"));
+router.use("/ai-agent", require("./aiAgent.routes.js"));
 
 module.exports = router;

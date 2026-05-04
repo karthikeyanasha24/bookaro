@@ -112,8 +112,11 @@ const WorkingHourDetails = () => {
                             <CompanySidebar />
                             <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8 ">
                                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                                    Manage your company profile
+                                    Opening hours
                                 </h2>
+                                <p className="text-[#6B7280] text-[14px] mb-4">
+                                    Configure availability and working time rules shown to your clients.
+                                </p>
                                 <div className="p-10 md:px-14 px-8  border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
                                     <form onSubmit={handleSubmit} className="flex    flex-col ">
                                         <div className="">

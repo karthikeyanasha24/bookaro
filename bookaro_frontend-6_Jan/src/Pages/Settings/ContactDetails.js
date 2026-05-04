@@ -73,8 +73,11 @@ const ContactDetails = () => {
                             <CompanySidebar />
                             <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                                 <h2 className=" text-[#47525E] text-[26px] font-bold mb-6">
-                                    Manage your company profile
+                                    Contact details
                                 </h2>
+                                <p className="text-[#6B7280] text-[14px] mb-4">
+                                    Define the contact channels customers can use to reach your company.
+                                </p>
                                 <div className="p-10 xl:px-14 lg:px-8 px-8 h-[92%] border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0 ">
                                     <form onSubmit={handleSubmit} className="flex  flex-col h-full">
                                         <div>

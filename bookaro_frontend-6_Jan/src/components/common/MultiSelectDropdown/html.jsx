@@ -3,7 +3,7 @@ import Select from "react-select";
 
 const Html = ({ options, selectedValues, handleChange, displayValue, id, placeholder, className, required, closeMenuOnSelect,selectAll }) => {
   let _options = options?.map((itm) => {
-    return { value: itm.id, label: itm[displayValue] };
+    return { value: itm.id, label: String(itm?.[displayValue] ?? "") };
   });
 
   if (_options?.length > 1 && options?.length - selectedValues?.length > 1 && selectAll) {

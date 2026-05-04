@@ -197,7 +197,15 @@ module.exports = (mongoose) => {
             pricePerSqm: { type: Number },
             shareCount: { type: Number, default: 0 },
             propertyViewerCount: { type: Number, default: 0 },
-            directoryPurchaseProsals: { type: String, enum: ["sale", "rent", "both"] }
+            directoryPurchaseProsals: { type: String, enum: ["sale", "rent", "both"] },
+            qrCode: {
+                token: { type: String, default: "" },
+                trackUrl: { type: String, default: "" },
+                imageDataUrl: { type: String, default: "" },
+                scanCount: { type: Number, default: 0 },
+                lastScannedAt: { type: Date, default: null },
+                createdAt: { type: Date, default: null }
+            }
         },
         { timestamps: true }
     );

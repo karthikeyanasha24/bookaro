@@ -68,6 +68,10 @@ db.agencyReviews = require("./agencyReviews.model.js")(mongoose)
 db.adminSettings = require("./adminSettings.model.js")(mongoose)
 db.supports = require("./support.model.js")(mongoose)
 db.claimOwnerships = require("./claimOwnerships.model.js")(mongoose)
+db.aiAgentFired = require("./aiAgentFired.model.js")(mongoose)
+db.userAiEngagement = require("./userAiEngagement.model.js")(mongoose)
+db.aiConversations = require("./aiConversations.model.js")(mongoose)
+db.aiConversationConfig = require("./aiConversationConfig.model.js")(mongoose)
 
 
 module.exports = db;

@@ -34,7 +34,9 @@ import { IoMdClose } from "react-icons/io";
 import { login_success } from "../../actions/user";
 
 const SocialEstimation = () => {
-  const stripePromise = loadStripe(environment.stripe_public_key);
+  const stripePromise = environment?.stripe_public_key
+    ? loadStripe(environment.stripe_public_key)
+    : null;
   const chartRef = useRef(null);
   const camppaginchartRef = useRef(null);
   const params = new URLSearchParams(window.location.search);
@@ -2831,12 +2833,18 @@ const SocialEstimation = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative">
-            <Elements stripe={stripePromise}>
-              <AddNewCard
-                onClose={() => setIsModalOpen(false)}
-                getCards={getPaymentCards}
-              />
-            </Elements>
+            {stripePromise ? (
+              <Elements stripe={stripePromise}>
+                <AddNewCard
+                  onClose={() => setIsModalOpen(false)}
+                  getCards={getPaymentCards}
+                />
+              </Elements>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded">
+                Stripe is not configured. Set <code>REACT_APP_STRIPE_PUBLIC_KEY</code> in <code>.env</code>.
+              </div>
+            )}
           </div>
         </div>
       )}

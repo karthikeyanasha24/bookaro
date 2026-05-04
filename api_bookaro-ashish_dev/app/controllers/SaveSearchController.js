@@ -1,4 +1,5 @@
 const db = require("../models");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
 let mongoose = require("mongoose");
 const constants = require("../utls/constants");
 const csvParser = require("csv-parser");
@@ -66,8 +67,11 @@ module.exports = {
             }
             const zipcodesArray = zipcode ? zipcode.split(",").map(z => z.trim()) : [];
 
+            const priorSaveSearchCount = await saveSearch.countDocuments({ searchBy: searchBy });
+            let createdAny = false;
+
             for (const zip of zipcodesArray) {
-                const existingEntry = await saveSearch.findOne({ searchBy: searchBy, propertyType: propertyType, searchLocation: LowerCaseSearchLocation, zipcode: zip }); if (!existingEntry) {
+                const existingEntry = await saveSearch.findOne({ searchBy: searchBy, propertyType: propertyType, searchLocation: LowerCaseSearchLocation, zipcode: zip });                 if (!existingEntry) {
                     await saveSearch.create({
                         searchBy: data.searchBy,
                         propertyType: validatedPropertyType,
@@ -78,6 +82,7 @@ module.exports = {
                         searchLocationCount: 1,
                         zipcodeCount: 1,
                     });
+                    createdAny = true;
                 } else {
                     existingEntry.searchByCount += 1;
                     existingEntry.propertyTypeCount += 1;
@@ -85,6 +90,9 @@ module.exports = {
                     existingEntry.zipcodeCount = (existingEntry.zipcodeCount || 0) + 1;
                     await existingEntry.save();
                 }
+            }
+            if (priorSaveSearchCount === 0 && createdAny) {
+                setImmediate(() => aiAgentTriggers.onFirstSaveSearchZip(searchBy));
             }
             res.status(200).json({
                 success: true,

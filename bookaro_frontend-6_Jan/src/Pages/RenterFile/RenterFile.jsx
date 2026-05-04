@@ -14,7 +14,23 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
   const [selectall, setSelectAll] = useState(true);
   const [document, setDocument] = useState("document");
   const [submited, setsubmited] = useState(false);
-  const [declartiveForm, setdeclartiveForm] = useState({ BuyOption: "", InvestOption: "", postalCode: "" });
+  const [declartiveForm, setdeclartiveForm] = useState({
+    BuyOption: "",
+    InvestOption: "",
+    postalCode: "",
+    employmentStatus: "",
+    monthlyIncome: "",
+    numberOfOccupants: "",
+    currentHousing: "",
+    reasonForMoving: "",
+    desiredMoveDate: "",
+    hasPets: "",
+    hasGuarantor: "",
+    employmentDuration: "",
+    receivesHousingBenefit: "",
+    desiredRentalDuration: "",
+    lookingInCity: ""
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -43,6 +59,18 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
         BuyOption: user?.declarativeRenterFiles?.BuyOption,
         InvestOption: user?.declarativeRenterFiles?.InvestOption,
         postalCode: user?.declarativeRenterFiles?.postalCode,
+        employmentStatus: user?.declarativeRenterFiles?.employmentStatus,
+        monthlyIncome: user?.declarativeRenterFiles?.monthlyIncome,
+        numberOfOccupants: user?.declarativeRenterFiles?.numberOfOccupants,
+        currentHousing: user?.declarativeRenterFiles?.currentHousing,
+        reasonForMoving: user?.declarativeRenterFiles?.reasonForMoving,
+        desiredMoveDate: user?.declarativeRenterFiles?.desiredMoveDate,
+        hasPets: user?.declarativeRenterFiles?.hasPets,
+        hasGuarantor: user?.declarativeRenterFiles?.hasGuarantor,
+        employmentDuration: user?.declarativeRenterFiles?.employmentDuration,
+        receivesHousingBenefit: user?.declarativeRenterFiles?.receivesHousingBenefit,
+        desiredRentalDuration: user?.declarativeRenterFiles?.desiredRentalDuration,
+        lookingInCity: user?.declarativeRenterFiles?.lookingInCity,
       });
     }
   }, [user?.declarativeRenterFiles]);
@@ -212,6 +240,80 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
       { name: "Business", value: "business" },
       { name: "Mix", value: "mix" },
     ]
+
+  const EmploymentStatusOptions = [
+    { name: "CDI (Permanent contract)", value: "cdi" },
+    { name: "CDD (Fixed-term)", value: "cdd" },
+    { name: "Self-employed", value: "selfEmployed" },
+    { name: "Retired", value: "retired" },
+    { name: "Student", value: "student" },
+    { name: "Unemployed", value: "unemployed" },
+  ]
+
+  const MonthlyIncomeOptions = [
+    { name: "Less than €1,000", value: "under1000" },
+    { name: "€1,000 – €2,000", value: "1000to2000" },
+    { name: "€2,000 – €3,500", value: "2000to3500" },
+    { name: "€3,500 – €5,000", value: "3500to5000" },
+    { name: "More than €5,000", value: "over5000" },
+  ]
+
+  const NumberOfOccupantsOptions = [
+    { name: "1", value: "1" },
+    { name: "2", value: "2" },
+    { name: "3", value: "3" },
+    { name: "4", value: "4" },
+    { name: "5+", value: "5plus" },
+  ]
+
+  const CurrentHousingOptions = [
+    { name: "Owner", value: "owner" },
+    { name: "Renter", value: "renter" },
+    { name: "Living with family", value: "family" },
+    { name: "Other", value: "other" },
+  ]
+
+  const ReasonForMovingOptions = [
+    { name: "New job", value: "newJob" },
+    { name: "Separation", value: "separation" },
+    { name: "Family growth", value: "familyGrowth" },
+    { name: "Studies", value: "studies" },
+    { name: "End of lease", value: "endOfLease" },
+    { name: "Other", value: "other" },
+  ]
+
+  const DesiredMoveDate = [
+    { name: "Immediately", value: "immediately" },
+    { name: "Within 1–3 months", value: "1to3months" },
+    { name: "Within 3–6 months", value: "3to6months" },
+    { name: "More than 6 months", value: "moreThan6months" },
+  ]
+
+  const YesNoOptions = [
+    { name: "Yes", value: "yes" },
+    { name: "No", value: "no" },
+  ]
+
+  const GuarantorOptions = [
+    { name: "Yes", value: "yes" },
+    { name: "No", value: "no" },
+    { name: "I'm using a guarantor organization", value: "organization" },
+  ]
+
+  const EmploymentDurationOptions = [
+    { name: "Less than 6 months", value: "under6months" },
+    { name: "6 months – 2 years", value: "6monthsTo2years" },
+    { name: "2 – 5 years", value: "2to5years" },
+    { name: "More than 5 years", value: "over5years" },
+    { name: "Not applicable", value: "notApplicable" },
+  ]
+
+  const DesiredRentalDurationOptions = [
+    { name: "Short-term (< 1 year)", value: "shortTerm" },
+    { name: "Standard (1–3 years)", value: "standard" },
+    { name: "Long-term (3+ years)", value: "longTerm" },
+    { name: "Not sure", value: "notSure" },
+  ]
 
 
   return (
@@ -646,6 +748,167 @@ const RenterFile = ({ isModal = false, result = (_) => { } }) => {
                       />
                     </div>
                     {submited && declartiveForm?.postalCode == "" && <span className="text-red-600">City or postal code is required</span>}
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        What is your employment status? <span className="text-red-600">*</span>
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {EmploymentStatusOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.employmentStatus ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, employmentStatus: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                      {submited && declartiveForm?.employmentStatus == "" && <span className="text-red-600">Please select employment status</span>}
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        What is your monthly net income? <span className="text-red-600">*</span>
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {MonthlyIncomeOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.monthlyIncome ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, monthlyIncome: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                      {submited && declartiveForm?.monthlyIncome == "" && <span className="text-red-600">Please select monthly income</span>}
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        How many people will occupy the property? <span className="text-red-600">*</span>
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {NumberOfOccupantsOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.numberOfOccupants ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, numberOfOccupants: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                      {submited && declartiveForm?.numberOfOccupants == "" && <span className="text-red-600">Please select number of occupants</span>}
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        What is your current housing situation? <span className="text-red-600">*</span>
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {CurrentHousingOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.currentHousing ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, currentHousing: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                      {submited && declartiveForm?.currentHousing == "" && <span className="text-red-600">Please select current housing</span>}
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        Why are you looking for a new place?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {ReasonForMovingOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.reasonForMoving ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, reasonForMoving: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        When do you want to move in?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {DesiredMoveDate?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.desiredMoveDate ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, desiredMoveDate: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        Do you have pets?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {YesNoOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.hasPets ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, hasPets: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        Do you have a guarantor?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {GuarantorOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.hasGuarantor ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, hasGuarantor: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        How long have you been in your current job?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {EmploymentDurationOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.employmentDuration ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, employmentDuration: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        Do you receive housing benefits (APL/ALS)?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {YesNoOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.receivesHousingBenefit ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, receivesHousingBenefit: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        How long do you plan to rent?
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {DesiredRentalDurationOptions?.map((item) => {
+                          return <button key={item.value} className={`${item?.value === declartiveForm?.desiredRentalDuration ? 'bg-primary hover:opacity-90 text-white' : 'text-[#4b3869] bg-white'} rounded-md border border-[#a177d6] px-4 py-2 text-sm`} onClick={(e) => setdeclartiveForm({ ...declartiveForm, desiredRentalDuration: item?.value })}>
+                            {item?.name}
+                          </button>
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-[#4b3869] mb-3">
+                        Which city or region are you looking in?
+                      </p>
+                      <input
+                        type="text"
+                        value={declartiveForm?.lookingInCity}
+                        placeholder="City or region you're looking in"
+                        className="w-full max-w-md rounded-md border border-[#a177d6] px-4 py-2 outline-none"
+                        onChange={(e) => setdeclartiveForm({ ...declartiveForm, lookingInCity: e.target.value })}
+                      />
+                    </div>
+
                     <div className="mt-20 flex items-center justify-end">
                       <button
                         onClick={() => handleSubmit(form, "declarative")}

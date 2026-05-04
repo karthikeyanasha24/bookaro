@@ -94,8 +94,11 @@ const CompanyLogo = () => {
                             <CompanySidebar />
                             <div className="xl:col-span-8 lg:col-span-7 col-span-12 md:mt-0 mt-8">
                                 <h2 className="text-[#47525E] text-[26px] font-bold mb-6">
-                                    Manage your company profile
+                                    Logo and cover image
                                 </h2>
+                                <p className="text-[#6B7280] text-[14px] mb-4">
+                                    Upload your brand visuals shown on public profile and professional listings.
+                                </p>
                                 <div className="p-10 xl:px-14 lg:px-8 px-8 h-[92%] border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0">
                                     <div className='flex  flex-col h-full'>
                                         <div>

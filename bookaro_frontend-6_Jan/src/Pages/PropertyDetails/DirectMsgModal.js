@@ -123,12 +123,13 @@ const DirectMsgModal = ({
   }, []);
 
   const sendMessage = () => {
-    if (!msg.trim() || !roomId) return;
+    const text = String(msg ?? "").trim();
+    if (!text || !roomId) return;
     const payload = {
       room_id: roomId,
       propertyId:property_id || detail?.id || detail?._id,
       user_id: user?._id,
-      content: msg.trim() ,
+      content: text,
       type: "TEXT",
     };
     socket.emit("send-message", payload);

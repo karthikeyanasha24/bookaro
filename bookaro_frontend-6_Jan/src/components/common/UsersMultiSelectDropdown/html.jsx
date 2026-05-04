@@ -21,8 +21,8 @@ const Html = ({ options, selectedValues, handleChange, displayValue, id }) => {
     options: groupedMembers[level].map((member) => {
       return {
         value: member.id,
-        label: member.name,
-        email: member.email,
+        label: String(member?.name ?? ""),
+        email: String(member?.email ?? ""),
       };
     }),
   }));

@@ -32,8 +32,12 @@ const Layout = memo(function Layout({ children }) {
   const history = useNavigate();
   const location = useLocation();
   const scrollRef = useRef(null);
-  const [isOpen, setIsopen] = useState(false);
+  const [isOpen, setIsopen] = useState(() => {
+    const saved = localStorage.getItem("admin_sidebar_collapsed");
+    return saved === null ? false : saved === "true";
+  });
   const dispatch = useDispatch()
+  const sidebarWidth = isOpen ? 64 : 260;
   // const [reviewPropCount, setReviewPropCount] = useState(0);
   const Logout = () => {
     dispatch(logout());
@@ -59,13 +63,13 @@ const Layout = memo(function Layout({ children }) {
   const menus = [
     {
       name: "Dashboard",
-      icon: <MdDashboard className="text-white text-[16px]" />,
+      icon: <MdDashboard className="shrink-0 text-[18px]" />,
       url: "/dashboard",
       key: "",
     },
     {
       name: "Staff",
-      icon: <RiUser2Fill className="text-white text-[16px]" />,
+      icon: <RiUser2Fill className="shrink-0 text-[18px]" />,
       url: "/staff",
       key: "readstaff",
       menu: [
@@ -79,7 +83,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Users",
-      icon: <FaUserAlt className="text-white text-[16px]" />,
+      icon: <FaUserAlt className="shrink-0 text-[18px]" />,
       url: "/user",
       key: "readuser",
       menu: [
@@ -99,7 +103,7 @@ const Layout = memo(function Layout({ children }) {
 
     {
       name: "School",
-      icon: <BiSolidSchool className="text-white text-[16px]" />,
+      icon: <BiSolidSchool className="shrink-0 text-[18px]" />,
       url: "/schoolproperty",
       tab: "school-property",
       key: "readschoolproperty",
@@ -115,7 +119,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Document Verification",
-      icon: <MdDomainVerification className="text-white text-[16px]" />,
+      icon: <MdDomainVerification className="shrink-0 text-[18px]" />,
       url: "/verification",
       tab: "user-verification",
       key: "readverification",
@@ -131,7 +135,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Funnel Videos",
-      icon: <FaVideo className="text-white text-[16px]" />,
+      icon: <FaVideo className="shrink-0 text-[18px]" />,
       url: "/funnelvideo",
       tab: "funnel-video",
       key: "readvideos",
@@ -147,7 +151,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Company",
-      icon: <PiToolboxFill className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <PiToolboxFill className="shrink-0 text-[18px]" />,
       url: "/company",
       key: "readcompany",
       menu: [
@@ -161,7 +165,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Amenities",
-      icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <MdFeaturedPlayList className="shrink-0 text-[18px]" />,
       url: "/amenities",
       key: "readamenities",
       menu: [
@@ -175,7 +179,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Forms",
-      icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <MdFeaturedPlayList className="shrink-0 text-[18px]" />,
       url: "/category-form",
       key: "readform",
       menu: [
@@ -190,7 +194,7 @@ const Layout = memo(function Layout({ children }) {
 
     {
       name: "Blogs",
-      icon: <FaBlogger className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <FaBlogger className="shrink-0 text-[18px]" />,
       url: "/blog",
       key: "readblogs",
       menu: [
@@ -217,7 +221,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Content Management",
-      icon: <FaFile className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <FaFile className="shrink-0 text-[18px]" />,
       url: "/contentmanagement",
       key: "readcontentmanagement",
       menu: [
@@ -231,7 +235,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Properties",
-      icon: <RiHomeWifiFill className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <RiHomeWifiFill className="shrink-0 text-[18px]" />,
       url: "/property",
       // key: "readproperties",
       menu: [
@@ -298,7 +302,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Enquiry",
-      icon: <RiContactsBook3Fill className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <RiContactsBook3Fill className="shrink-0 text-[18px]" />,
       url: "/enquiry",
       // key: "readfaq",
       menu: [
@@ -312,7 +316,7 @@ const Layout = memo(function Layout({ children }) {
     },
     // {
     //   name: "Preset Searches",
-    //   icon: <RiContactsBook3Fill className="text-[#fff] shrink-0 text-[16px]" />,
+    //   icon: <RiContactsBook3Fill className="shrink-0 text-[18px]" />,
     //   url: "/presetSearch",
     //   // key: "readfaq",
     //   menu: [
@@ -326,7 +330,7 @@ const Layout = memo(function Layout({ children }) {
     // },
     {
       name: "Reviews",
-      icon: <MdReviews className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <MdReviews className="shrink-0 text-[18px]" />,
       url: "/review",
       // key: "readfaq",
       menu: [
@@ -347,7 +351,7 @@ const Layout = memo(function Layout({ children }) {
 
     {
       name: "Services",
-      icon: <MdHomeRepairService className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <MdHomeRepairService className="shrink-0 text-[18px]" />,
       url: "/service",
       // key: "readfaq",
       menu: [
@@ -361,7 +365,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Setting",
-      icon: <MdHomeRepairService className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <MdHomeRepairService className="shrink-0 text-[18px]" />,
       url: "/admin-setting",
       // key: "readfaq",
       menu: [
@@ -375,7 +379,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "FAQ",
-      icon: <FaCircleQuestion className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <FaCircleQuestion className="shrink-0 text-[18px]" />,
       url: "/faq",
       // key: "readfaq",
       menu: [
@@ -389,7 +393,7 @@ const Layout = memo(function Layout({ children }) {
     },
     {
       name: "Plans",
-      icon: <TbCircleDotFilled className="text-[#fff] shrink-0 text-[16px]" />,
+      icon: <TbCircleDotFilled className="shrink-0 text-[18px]" />,
       url: "/plan",
       menu: [
         {
@@ -417,6 +421,10 @@ const Layout = memo(function Layout({ children }) {
     // getProps()
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("admin_sidebar_collapsed", String(isOpen));
+  }, [isOpen]);
+
   const logowhite = () => {
     let value = "/assets/img/logo.png";
     return value;
@@ -441,128 +449,33 @@ const Layout = memo(function Layout({ children }) {
   return (
     <>
       <div component="layout">
-        {/* <div onClick={(e) => router()} id="routerDiv"></div> */}
-        <Header isOpen={isOpen} setIsOpen={setIsopen} particularData={particularData} />
-        <div className={`main-wrapper flex ${isOpen ? "active-sidebar" : ""}`}>
-          <div
-            className={
-              location.pathname != "/dashboard"
-                ? "main-sidebar  transition-[width] duration-300 flex"
-                : "main-sidebar  transition-[width] duration-300 flex sidebar-minimize"
-            }
-          >
-            <div className="w-[50px] h-screen bg-[#976DD0] fixed ">
-              {/* <img src={logos()} className="" /> */}
-
-              <Sidebar isOpen={isOpen} menus={menus} />
+        {/* Fills gap above sidebar (header starts at sidebarWidth; this keeps brand column continuous) */}
+        <div
+          className="fixed left-0 top-0 z-[25] flex items-center justify-center border-b border-white/15 bg-[#976DD0] px-2 shadow-sm"
+          style={{ width: sidebarWidth, height: 71 }}
+          aria-hidden="true"
+        >
+          {isOpen ? (
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/95 p-1 shadow-sm" title="Bookaroo">
+              <img src="/assets/img/logo.png" alt="" className="h-7 w-7 object-contain" />
             </div>
-            {location.pathname != "/dashboard" && (
-              <div className={isOpen ? "sidebar-hide d-none" : "bg-white ml-[49px] sidebar-brand text-center  w-[230px] h-full"} >
-
-
-                <div className="h-[71px]  border-b p-[9px] flex justify-between">
-                  <img src={logos()} className="" />
-                  {/* <h4 className="ms-2 text-[22px] font-medium">{particularData?.[0]?.name}</h4> */}
-                </div>
-
-                {particularData.map((data) => (
-                  <>
-                    <ul>
-                      {data?.menu?.map((tab) => {
-                        return (
-                          <li className="m-2 ">
-                            <NavLink
-                              to={tab.url}
-                              className={
-                                location.pathname != tab.url
-                                  ? "flex items-center py-2 px-3 block text-[#413e3e] text-[14px] text-left rounded-md"
-                                  : "bg-[#7bbeb82e] flex items-center py-2 px-3 block text-[#413e3e] text-[14px] text-left rounded-md"
-                              }
-                            >
-                              {tab?.icon}
-                              {tab?.name}
-                            </NavLink>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </>
-                ))}
-
-                {location.pathname.includes("/profile") && (
-                  <ul>
-                    <li className="m-2 ">
-                      <NavLink
-                        to={"/profile"}
-                        className={
-                          location.pathname != "/profile"
-                            ? "flex items-center py-2 px-3 block text-[#413e3e] text-[14px] text-left rounded-md"
-                            : "bg-[#7bbeb82e] flex items-center py-2 px-3 block text-[#413e3e] text-[14px] text-left rounded-md"
-                        }
-                      >
-                        <CgProfile className="me-2" />
-                        Profile
-                      </NavLink>
-                    </li>
-                    <li className="m-2 ">
-                      <NavLink
-                        to={"/profile/change-password"}
-                        className={
-                          location.pathname != "/profile/change-password"
-                            ? "flex items-center py-2 px-3 block text-[#413e3e] text-[14px] text-left rounded-md"
-                            : "bg-[#7bbeb82e] flex items-center py-2 px-3 block text-[#413e3e] text-[14px] text-left rounded-md"
-                        }
-                      >
-                        <FiLock className="me-2" />
-
-                        Change Password
-                      </NavLink>
-                    </li>
-                    <li className="m-2 ">
-                      <span
-                        // id="logoutBtn"
-                        onClick={() => Logout()}
-                        className={classNames(
-                          "block w-full px-3 py-2 text-left text-sm  flex items-center gap-2 cursor-pointer text-[#976DD0]"
-                        )}
-                      >
-                        <LuLogOut /> Logout
-                      </span>
-                    </li>
-
-                  </ul>
-                )}
-
-                {user?.logo ? (
-                  <div
-                    className="flex justify-center"
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <img
-                      src={methodModel.userImg(user?.logo || "")}
-                      alt="photo"
-                      width="40"
-                      height="40"
-                      style={{
-                        width: "40px",
-                        marginBottom: "2px",
-                        height: "40px",
-                        borderRadius: "50%",
-                      }}
-                    />
-                  </div>
-                ) : null}
-              </div>
-            )}
-          </div>
+          ) : (
+            <div className="w-full max-w-[220px] rounded-[10px] bg-white/95 p-2 shadow-sm">
+              <img src="/assets/img/logo.png" alt="Bookaroo" className="h-7 w-full max-w-[200px] object-contain object-left" />
+            </div>
+          )}
+        </div>
+        <Header isOpen={isOpen} setIsOpen={setIsopen} particularData={particularData} sidebarWidth={sidebarWidth} />
+        <div className="main-wrapper">
+          <aside
+            className="main-sidebar transition-[width] duration-300 fixed left-0 bg-[#976DD0]"
+            style={{ top: 71, height: "calc(100vh - 71px)", width: sidebarWidth, zIndex: 20 }}
+          >
+            <Sidebar isOpen={isOpen} menus={menus} />
+          </aside>
           <main
-            className={
-              location.pathname != "/dashboard" ? "main" : "main-add main"
-            }
+            className="main"
+            style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
           >
             <div ref={scrollRef} className="mainarea">{children}</div>
           </main>

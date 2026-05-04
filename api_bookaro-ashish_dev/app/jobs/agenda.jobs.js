@@ -1,4 +1,6 @@
 const db = require("../models");
+const aiAgentTriggers = require("../services/aiAgentTriggers.service");
+const aiOrchestrator = require("../services/aiOrchestrator.service");
 
 module.exports = (agenda, db) => {
   agenda.define("deactivate-trial-plan", async (job) => {
@@ -56,4 +58,24 @@ module.exports = (agenda, db) => {
   //   }
   // });
 
+  agenda.define("weekly-ai-agent-digests", async () => {
+    try {
+      await aiAgentTriggers.weeklyLeadDigests();
+      await aiAgentTriggers.weeklyOwnerDigests();
+      // Also run enhanced orchestrator digests (stores in AI chat history)
+      await aiOrchestrator.runWeeklyOwnerDigests(db);
+    } catch (err) {
+      console.error("weekly-ai-agent-digests", err);
+    }
+  });
+
+  agenda.define("ai-agent-owner-no-interest-scan", async () => {
+    try {
+      await aiAgentTriggers.maybeNotifyOwnerNoInterest2Weeks();
+      // Also run orchestrator no-interest scan
+      await aiOrchestrator.runNoInterestScan(db);
+    } catch (err) {
+      console.error("ai-agent-owner-no-interest-scan", err);
+    }
+  });
 };

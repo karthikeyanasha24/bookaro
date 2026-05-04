@@ -219,7 +219,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
   };
 
   const loadSchoolOptions = debounce((inputValue, callback) => {
-    if (inputValue.trim() !== "") {
+    if (String(inputValue ?? "").trim() !== "") {
       SchoolhHighschoolList({ search: inputValue }).then((options) => {
         callback(options);
       });
@@ -228,7 +228,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
     }
   }, 1000);
   const loadCollegeOptions = debounce((inputValue, callback) => {
-    if (inputValue.trim() !== "") {
+    if (String(inputValue ?? "").trim() !== "") {
       SchoolCollegeList({ search: inputValue }).then((options) => {
         callback(options);
       });
@@ -237,7 +237,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
     }
   }, 1000);
   const loadPrimaryOptions = debounce((inputValue, callback) => {
-    if (inputValue.trim() !== "") {
+    if (String(inputValue ?? "").trim() !== "") {
       SchoolPrimaryschoolList({ search: inputValue }).then((options) => {
         callback(options);
       });
@@ -246,7 +246,7 @@ const Step8 = ({ step1, setActiveTabIndex, formData, setFormData, id }) => {
     }
   }, 1000);
   const loadElementryOptions = debounce((inputValue, callback) => {
-    if (inputValue.trim() !== "") {
+    if (String(inputValue ?? "").trim() !== "") {
       SchoolElementaryschoolList({ search: inputValue }).then((options) => {
         callback(options);
       });

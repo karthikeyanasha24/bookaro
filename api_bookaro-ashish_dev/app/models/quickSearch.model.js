@@ -35,6 +35,7 @@ module.exports = (mongoose) => {
             },
             city: { type: String },
             type: { type: String },
+            userId: { type: Schema.Types.ObjectId, ref: "users" },
             isDeleted: { type: Boolean, default: false }
         },
         { timestamps: true }

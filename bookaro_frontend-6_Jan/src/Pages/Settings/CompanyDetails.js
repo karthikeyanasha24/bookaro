@@ -115,8 +115,11 @@ const CompanyDetails = () => {
                         <div className="grid grid-cols-12 lg:gap-12  gap-0">
                             <CompanySidebar />
                             <div className="xl:col-span-8 lg:col-span-7 col-span-12">
-                                <h2 class=" text-[#47525E] text-[26px] font-bold mb-6">Company Details
+                                <h2 class=" text-[#47525E] text-[26px] font-bold mb-6">Company details
                                 </h2>
+                                <p className="text-[#6B7280] text-[14px] mb-4">
+                                    Set legal and address details used for directory visibility and trust checks.
+                                </p>
                                 <div className="p-10 xl:px-14 lg:px-8 px-8 h-[92%] border border-[#976DD0] rounded-[10px] mt-10 lg:mt-0 ">
                                     <div className="flex items-center">
                                         {formData?.companyLogo ?

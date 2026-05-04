@@ -1,5 +1,5 @@
 import { applyMiddleware, createStore, compose } from 'redux';
-import { persistStore } from 'redux-persist';
+import persistStore from 'redux-persist/es/persistStore';
 import {thunk} from 'redux-thunk';
 import reducers from '../reducers';
 

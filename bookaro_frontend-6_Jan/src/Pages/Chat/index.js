@@ -1,7 +1,8 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoSend } from "react-icons/io5";
+import { BsRobot } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import PageLayout from "../../components/global/PageLayout";
 import socket from "../../config/ChatSocket/socket";
@@ -10,6 +11,18 @@ import loader from "../../methods/loader";
 import { imagePath, stringSeprator } from "../../models/string.model";
 import ChatScreen from "./ChatScreen";
 import Swal from "sweetalert2";
+import AiChatWindow from "../../components/common/AiChatWindow";
+
+// Special sentinel object representing the AI bot in the contacts list
+const AI_BOT_CONTACT = {
+  _id: "__ai_bot__",
+  isAiBot: true,
+  user_details: {
+    fullName: "Bookaroo AI Assistant",
+    accountType: "AI",
+    image: null,
+  },
+};
 
 const Chat = () => {
   const { user } = useSelector((state) => state);
@@ -32,6 +45,20 @@ const Chat = () => {
   const [showLoading, setShowLoading] = useState(false);
   const [editMode, setEditMode] = useState(false)
   const [editItem, setEditItem] = useState({})
+  // AI chat state
+  const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [aiUnreadCount, setAiUnreadCount] = useState(0);
+
+  // Fetch AI unread count on mount
+  useEffect(() => {
+    const fetchAiUnread = async () => {
+      try {
+        const res = await ApiClient.get("ai-agent/unread-count");
+        if (res?.success) setAiUnreadCount(res.data?.count || 0);
+      } catch {}
+    };
+    fetchAiUnread();
+  }, []);
 
   const scrollBottom = () => {
     setTimeout(() => {
@@ -81,7 +108,8 @@ const Chat = () => {
     const value = event.target.value.toLowerCase();
     setSearchProp(value);
     const filtered = myProps?.filter((item) =>
-      item?.propertyTitle?.toLowerCase().includes(value) || item?.property_address.toLowerCase().includes(value)
+      item?.propertyTitle?.toLowerCase().includes(value) ||
+      item?.property_address?.toLowerCase()?.includes(value)
     );
     setFilteredProps(filtered);
   };
@@ -108,13 +136,25 @@ const Chat = () => {
       if (res.success) {
         const self = res?.data?.data?.find(itm => itm?._id === user?._id);
         setMySelf(self);
-        const exceptMe = res?.data?.data?.filter(itm => itm?._id !== user?._id);
+        // Filter out self AND the AI bot DB user (we show it as our own sentinel entry)
+        const exceptMe = res?.data?.data?.filter(
+          itm => itm?._id !== user?._id
+            && !itm?.user_details?.isAiBot
+            && itm?.user_details?.email !== 'ai-agent@bookaroo.com'
+        );
+        // Always add AI bot as first contact (with unread badge)
+        const aiBotEntry = {
+          ...AI_BOT_CONTACT,
+          unread_count: aiUnreadCount,
+          property_id: activeProp?.property_id || activeProp?._id,
+          createdAt: new Date(),
+        };
         if (activeProp?.property_addedby === user?._id) {
-          setUsers(exceptMe);
+          setUsers([aiBotEntry, ...exceptMe]);
           if (exceptMe?.length === 1) setActiveUser(exceptMe[0])
         } else {
           const onlyOwner = exceptMe?.find(el => el?.user_id === activeProp?.property_addedby);
-          setUsers(onlyOwner ? [onlyOwner] : []);
+          setUsers(onlyOwner ? [aiBotEntry, onlyOwner] : [aiBotEntry]);
           if (onlyOwner) setActiveUser(onlyOwner)
         }
       }
@@ -159,7 +199,8 @@ const Chat = () => {
   };
 
   const sendMessage = () => {
-    if (!msg.trim() || !activeUser.room_id) return;
+    if (activeUser?.isAiBot) return; // AI chat handled by AiChatWindowInline
+    if (!String(msg ?? "").trim() || !activeUser.room_id) return;
     const payload = {
       room_id: userType() === "owner" ? activeUser?.room_id?.[0] : mySelf?.room_id?.[0],
       propertyId: activeUser.property_id,
@@ -188,6 +229,8 @@ const Chat = () => {
   };
 
   useEffect(() => {
+    // Never join a socket room for the AI bot sentinel
+    if (activeUser?.isAiBot) return;
     if (activeUser?.room_id?.[0] && user?._id) {
       joinGroup();
     }
@@ -310,6 +353,7 @@ const Chat = () => {
   }, [messages, totalMsg, showLoading, page]);
 
   useEffect(() => {
+    if (activeUser?.isAiBot) return; // AI handles its own history
     if (activeUser.room_id) getChat();
     setMessages([])
     resetFilter()
@@ -432,11 +476,58 @@ const Chat = () => {
                               <ul className="overflow-auto h-[410px] pe-3">
                                 {filteredUsers?.length > 0 ?
                                   filteredUsers?.map(itm => {
+                                    // ── AI Bot entry ──────────────────────────
+                                    if (itm?.isAiBot) {
+                                      const isActive = activeUser?._id === "__ai_bot__";
+                                      return (
+                                        <li
+                                          key="ai-bot"
+                                          onClick={() => {
+                                            resetFilter();
+                                            setActiveUser(itm);
+                                            setAiChatOpen(true);
+                                            setAiUnreadCount(0);
+                                          }}
+                                          className={`${isActive ? "bg-[#F1EDF6]" : ""} flex border-b border-[#D5D5D5] p-2 cursor-pointer hover:bg-[#f8f0ff] transition-colors`}
+                                        >
+                                          <div
+                                            className="flex items-center justify-center rounded-full me-3 flex-shrink-0"
+                                            style={{
+                                              width: 40, height: 40,
+                                              background: "linear-gradient(135deg, #7c3aed, #9b59b6)",
+                                            }}
+                                          >
+                                            <BsRobot size={20} color="#fff" />
+                                          </div>
+                                          <div className="cursor-pointer w-full">
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-[#7c3aed] h-[20px] leading-[20px] font-[600] 2xl:text-[15px] text-[14px]">
+                                                Bookaroo AI
+                                              </span>
+                                              {aiUnreadCount > 0 && (
+                                                <span className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full" style={{ background: "#7c3aed" }}>
+                                                  {aiUnreadCount}
+                                                </span>
+                                              )}
+                                            </div>
+                                            <p className="text-[#828282] h-[20px] leading-[20px] text-[13px]">
+                                              Real estate assistant
+                                            </p>
+                                            <p className="text-[#9b59b6] text-[11px]">
+                                              Ask about pricing, market data…
+                                            </p>
+                                          </div>
+                                        </li>
+                                      );
+                                    }
+
+                                    // ── Regular user entry ─────────────────────
                                     return (
                                       <li
                                         onClick={() => {
                                           resetFilter()
                                           setActiveUser(itm)
+                                          setAiChatOpen(false)
                                         }}
                                         className={`${itm?.user_id === activeUser?.user_id ? "bg-[#F1EDF6]" : ""} flex border-b border-[#D5D5D5] p-2`}>
                                         <img alt=""
@@ -473,22 +564,51 @@ const Chat = () => {
                   </div>
                 </div>
                 <div className="xl:col-span-8 lg:col-span-7 col-span-12 h-[558px]">
-                  <ChatScreen
-                    messages={messages}
-                    totalMsg={totalMsg}
-                    showLoading={showLoading}
-                    chatContainerRef={chatContainerRef}
-                    activeUser={activeUser}
-                    handleEdit={handleEdit}
-                    deleteMsg={deleteMsg}
-                    msgRef={msgRef}
-                    msg={msg}
-                    setMsg={setMsg}
-                    editMode={editMode}
-                    handleUpdateMsg={handleUpdateMsg}
-                    sendMessage={sendMessage}
-                    sendFiles={sendFiles}
-                  />
+                  {/* Show AI chat window inline when AI bot is selected */}
+                  {aiChatOpen && activeUser?._id === "__ai_bot__" ? (
+                    <div
+                      className="flex flex-col rounded-[7px] overflow-hidden"
+                      style={{ height: "558px", border: "1.5px solid #e8d5ff", background: "#fff" }}
+                    >
+                      {/* AI Chat Header */}
+                      <div
+                        className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
+                        style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9b59b6 100%)" }}
+                      >
+                        <div className="flex items-center justify-center rounded-full" style={{ width: 36, height: 36, background: "rgba(255,255,255,0.18)" }}>
+                          <BsRobot size={20} color="#fff" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white text-sm">Bookaroo AI Assistant</p>
+                          <p className="text-white text-xs opacity-75">
+                            {activeProp?.propertyTitle ? `Re: ${activeProp.propertyTitle.substring(0, 35)}` : "Real estate assistant"}
+                          </p>
+                        </div>
+                      </div>
+                      {/* Inline AI Chat Content */}
+                      <AiChatWindowInline
+                        propertyId={activeProp?.property_id || activeProp?._id}
+                        propertyTitle={activeProp?.propertyTitle}
+                      />
+                    </div>
+                  ) : (
+                    <ChatScreen
+                      messages={messages}
+                      totalMsg={totalMsg}
+                      showLoading={showLoading}
+                      chatContainerRef={chatContainerRef}
+                      activeUser={activeUser}
+                      handleEdit={handleEdit}
+                      deleteMsg={deleteMsg}
+                      msgRef={msgRef}
+                      msg={msg}
+                      setMsg={setMsg}
+                      editMode={editMode}
+                      handleUpdateMsg={handleUpdateMsg}
+                      sendMessage={sendMessage}
+                      sendFiles={sendFiles}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -496,6 +616,125 @@ const Chat = () => {
         </div>
       </div>
     </PageLayout>
+  );
+};
+
+// Inline AI chat for Messages section (no floating behaviour)
+const AiChatWindowInline = ({ propertyId, propertyTitle }) => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const endRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const scrollToBottom = () => {
+    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
+  };
+
+  useEffect(() => {
+    loadHistory();
+    setTimeout(() => inputRef.current?.focus(), 150);
+  }, [propertyId]);
+
+  const loadHistory = async () => {
+    try {
+      const params = { page: 1, count: 40 };
+      if (propertyId) params.propertyId = propertyId;
+      const res = await ApiClient.get("ai-agent/history", params);
+      if (res?.success) {
+        setMessages(res.data.data || []);
+        scrollToBottom();
+      }
+    } catch {}
+  };
+
+  const sendMessage = async () => {
+    if (!String(input ?? "").trim() || isLoading) return;
+    const userMsg = String(input ?? "").trim();
+    setInput("");
+    const tempId = `t_${Date.now()}`;
+    const loadId = `l_${Date.now()}`;
+    setMessages((p) => [...p, { _id: tempId, role: "user", content: userMsg, createdAt: new Date() }]);
+    setMessages((p) => [...p, { _id: loadId, role: "ai", content: "__loading__", createdAt: new Date() }]);
+    setIsLoading(true);
+    scrollToBottom();
+    try {
+      const payload = { message: userMsg };
+      if (propertyId) payload.propertyId = propertyId;
+      const res = await ApiClient.post("ai-agent/message", payload);
+      setMessages((p) => {
+        const f = p.filter((m) => m._id !== loadId);
+        if (res?.success && res.data?.aiResponse) {
+          return [...f, { _id: `a_${Date.now()}`, role: "ai", content: res.data.aiResponse, createdAt: new Date() }];
+        }
+        return f;
+      });
+    } catch {} finally {
+      setIsLoading(false);
+      scrollToBottom();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  };
+
+  return (
+    <>
+      {/* Messages list */}
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3" style={{ background: "#f7f3ff", flex: 1 }}>
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12">
+            <BsRobot size={44} color="#7c3aed" style={{ opacity: 0.35 }} />
+            <p className="text-sm text-gray-500 mt-3">Ask me anything about your property, pricing, or the selling process.</p>
+          </div>
+        )}
+        {messages.map((msg) => {
+          const isAi = msg.role === "ai";
+          return (
+            <div key={msg._id} className={`flex ${isAi ? "justify-start" : "justify-end"}`}>
+              {isAi && (
+                <div className="flex items-end justify-center mr-2 flex-shrink-0" style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#9b59b6)" }}>
+                  <BsRobot size={14} color="#fff" style={{ marginBottom: 4 }} />
+                </div>
+              )}
+              <div style={{ maxWidth: "76%", background: isAi ? "#fff" : "linear-gradient(135deg,#7c3aed,#9b59b6)", color: isAi ? "#1a1a2e" : "#fff", borderRadius: isAi ? "0 12px 12px 12px" : "12px 0 12px 12px", padding: "10px 14px", fontSize: 13, lineHeight: 1.5, boxShadow: isAi ? "0 1px 4px rgba(0,0,0,0.08)" : "0 2px 8px rgba(124,58,237,0.25)" }}>
+                {msg.content === "__loading__" ? (
+                  <div className="flex gap-1 items-center py-1">
+                    <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                ) : msg.content}
+              </div>
+            </div>
+          );
+        })}
+        <div ref={endRef} />
+      </div>
+      {/* Input */}
+      <div className="flex items-center gap-2 px-3 py-3 flex-shrink-0" style={{ background: "#fff", borderTop: "1px solid #ede9fe" }}>
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Ask about pricing, selling tips, market data…"
+          rows={1}
+          className="flex-1 resize-none rounded-xl px-3 py-2 text-sm outline-none"
+          style={{ background: "#f7f3ff", border: "1.5px solid #ddd6fe", maxHeight: 80, lineHeight: 1.4 }}
+          disabled={isLoading}
+        />
+        <button
+          onClick={sendMessage}
+          disabled={!String(input ?? "").trim() || isLoading}
+          className="flex items-center justify-center rounded-xl"
+          style={{ width: 40, height: 40, flexShrink: 0, background: !String(input ?? "").trim() || isLoading ? "#e5d9fb" : "linear-gradient(135deg,#7c3aed,#9b59b6)", color: "#fff" }}
+        >
+          <IoSend size={18} />
+        </button>
+      </div>
+    </>
   );
 };
 

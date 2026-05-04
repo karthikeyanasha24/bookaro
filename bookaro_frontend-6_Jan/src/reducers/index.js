@@ -1,6 +1,6 @@
 /*********** Reduceres defined here *********/
 
-import { persistCombineReducers } from 'redux-persist';
+import persistCombineReducers from 'redux-persist/es/persistCombineReducers';
 import storage from 'redux-persist/es/storage'; // default: localStorage if web, AsyncStorage if react-native
 import user from './modules/user';
 import loader from './modules/loader';

@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Frontend=self.webpackChunkBookaroo_Frontend||[]).push([[5214],{95214:(e,o,r)=>{r.r(o),r.d(o,{getDashboardOverview:()=>n});var a=r(32111);const n=async function(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"day";const o=await a.A.get("dashboard/overview",{period:e},"",!0);return null!==o&&void 0!==o&&o.success?o:a.A.get("api/dashboard/overview",{period:e},"",!0)}}}]);
+//# sourceMappingURL=5214.f5743100.chunk.js.map
