@@ -1,18 +1,48 @@
+const fs = require("fs");
+const path = require("path");
 const axios = require("axios");
 const db = require("../models");
 const { JWT } = require("google-auth-library");
 
-const serviceAccount = require("../../google-services.json");
+const credPath = path.join(__dirname, "../../google-services.json");
+
+/** Load Firebase service account; never throw at module load (Render has no gitignored JSON). */
+function loadServiceAccount() {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  if (raw && typeof raw === "string" && raw.trim()) {
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn("[FcmServices] FIREBASE_SERVICE_ACCOUNT_JSON is invalid JSON:", e.message);
+    }
+  }
+  if (!fs.existsSync(credPath)) {
+    console.warn(
+      "[FcmServices] No FCM credentials: set FIREBASE_SERVICE_ACCOUNT_JSON (Render secret) or add google-services.json locally. Push notifications disabled."
+    );
+    return null;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(credPath, "utf8"));
+  } catch (e) {
+    console.warn("[FcmServices] Could not read google-services.json:", e.message);
+    return null;
+  }
+}
+
+const serviceAccount = loadServiceAccount();
 
 function getAccessToken() {
+  if (!serviceAccount) {
+    return Promise.reject(new Error("FCM credentials not configured"));
+  }
   try {
     const SCOPES = "https://www.googleapis.com/auth/firebase.messaging";
     return new Promise(function (resolve, reject) {
-      const key = serviceAccount;
       const jwtClient = new JWT(
-        key.client_email,
+        serviceAccount.client_email,
         null,
-        key.private_key,
+        serviceAccount.private_key,
         SCOPES,
         null
       );
@@ -30,7 +60,22 @@ function getAccessToken() {
   }
 }
 
+function fcmApiUrl() {
+  const projectId = serviceAccount && serviceAccount.project_id;
+  if (!projectId) return null;
+  return `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+}
+
 exports.send_fcm_push_notification = async (data) => {
+  if (!serviceAccount) {
+    console.warn("[FcmServices] Skipping FCM send: credentials not configured");
+    return null;
+  }
+  const url = fcmApiUrl();
+  if (!url) {
+    console.warn("[FcmServices] Missing project_id in service account JSON");
+    return null;
+  }
   try {
     let access = await getAccessToken();
     let payload = {
@@ -53,7 +98,6 @@ exports.send_fcm_push_notification = async (data) => {
         "Content-Type": "application/json",
       },
     };
-    const url = "https://fcm.googleapis.com/v1/projects/bookaroo-1cd88/messages:send";
     const response = await axios.post(url, payload, config);
     let all_unread_notification = await db.notifications.countDocuments({
       sendTo: data.sendTo,
@@ -73,6 +117,4 @@ exports.send_fcm_push_notification = async (data) => {
     );
     return "Error sending FCM notification";
   }
-  //}
 };
-
