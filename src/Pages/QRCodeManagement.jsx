@@ -1,9 +1,15 @@
 
 import React, { useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FiX } from 'react-icons/fi';
 import { FiDownload, FiTrash } from 'react-icons/fi';
 import PageLayout from '../components/global/PageLayout';
 import Table from '../components/Table';
+
 const QRCodeManagement = () => {
+  // Pagination front
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   // Modale viewer
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerImg, setViewerImg] = useState(null);
@@ -16,6 +22,12 @@ const QRCodeManagement = () => {
       chill.style.maxHeight = flyer.clientHeight + 'px';
     }
   }, []);
+  // i18n
+  const { t, i18n } = useTranslation();
+
+  // Recherche
+  const [search, setSearch] = useState("");
+
   // Demo data for table
   const data = useMemo(() => [
     {
@@ -47,6 +59,32 @@ const QRCodeManagement = () => {
       lastScan: '2024-04-09',
     },
   ], []);
+
+
+  // Filtrage local (en attendant l'API)
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return data;
+    const lower = search.toLowerCase();
+    return data.filter(row =>
+      row.property?.title?.toLowerCase().includes(lower) ||
+      row.property?.location?.toLowerCase().includes(lower)
+    );
+  }, [data, search]);
+
+  // Pagination locale
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredData.slice(start, start + pageSize);
+  }, [filteredData, page, pageSize]);
+
+  // Callback pour la Table
+  const handleTableChange = ({ event, value }) => {
+    if (event === 'page') setPage(value);
+    if (event === 'count') {
+      setPageSize(value);
+      setPage(1);
+    }
+  };
 
   const columns = [
     {
@@ -188,6 +226,7 @@ const QRCodeManagement = () => {
             <p style={{ color: '#555', fontSize: '1.1rem', marginBottom: 32 }}>
               QR Code let you bring easily potential buyers or renters from other platforms, into your Bookaroo transaction pipeline to ease your transaction process.
             </p>
+
             {showExplainer && (
               <div style={{ position: 'relative', display: 'flex', gap: 32, background: '#fff', borderRadius: 16, padding: '32px 32px', justifyContent: 'space-between', flexWrap: 'wrap', overflow: 'visible', boxSizing: 'border-box', marginBottom: 40 }}>
                 {/* Bouton croix pour fermer l'explainer, positionné sur le coin de la forme blanche */}
@@ -239,7 +278,7 @@ const QRCodeManagement = () => {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box' }}>
                   <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>2</div>
                   <div>
-                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Share on platforms</div>
+                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Share it on other platforms</div>
                     <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Add your poster and property profile URL to other platforms. Leads can scan and visit your Bookaroo profile.</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, rowGap: 12, justifyContent: 'flex-start', maxWidth: 260 }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
@@ -266,7 +305,7 @@ const QRCodeManagement = () => {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box' }}>
                   <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>3</div>
                   <div>
-                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Track your leads</div>
+                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Sale or rent with ease on AnyHomes</div>
                     <div style={{
                       color: '#555',
                       fontSize: '1rem',
@@ -297,12 +336,70 @@ const QRCodeManagement = () => {
             )}
             {/* Espace réservé même si explainer masqué */}
             {!showExplainer && <div style={{marginBottom: 40}} />}
+            {/* Titre au-dessus du tableau */}
+            <div style={{ margin: '40px 0 16px 0' }}>
+              <span style={{ fontWeight: 700, color: '#111', fontSize: '1.5rem', display: 'block' }}>
+                {t('manageQRCodes', 'Gérer mes QR Codes')}
+              </span>
+            </div>
+            {/* Zone de recherche juste au-dessus du tableau */}
+            <div style={{ marginBottom: 24, maxWidth: 420 }}>
+              <label htmlFor="search-property" style={{ display: 'block', fontWeight: 500, color: '#444', marginBottom: 8 }}>
+                {t('searchProperty', 'Rechercher un bien')}
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="search-property"
+                  type="text"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder={t('searchPlaceholder', 'Entrez un nom de bien ou une localisation')}
+                  style={{
+                    width: '100%',
+                    padding: '10px 40px 10px 14px',
+                    borderRadius: 10,
+                    border: '1px solid #bbb',
+                    fontSize: '1rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                {search && (
+                  <button
+                    type="button"
+                    aria-label={t('clear', 'Effacer')}
+                    onClick={() => setSearch("")}
+                    style={{
+                      position: 'absolute',
+                      right: 8,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      margin: 0,
+                      cursor: 'pointer',
+                      color: '#aaa',
+                      fontSize: 22,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <FiX />
+                  </button>
+                )}
+              </div>
+            </div>
             <div>
               <Table
-                data={data}
+                data={paginatedData}
                 columns={columns}
-                total={data.length}
-                nodata="No properties found"
+                total={filteredData.length}
+                page={page}
+                count={pageSize}
+                result={handleTableChange}
+                nodata={t('common.noResults', 'Aucun résultat trouvé')}
                 className="overflow-x-auto"
               />
             </div>

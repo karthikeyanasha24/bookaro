@@ -132,33 +132,31 @@ const Table = ({
               </div>
             )}
 
-            {/* Pagination */}
-            {count < total && (
-              <div className="paginationWrapper flex items-center justify-between mt-15 px-4">
-                <p className="w-96 text-sm text-gray-500">
-                  Show{" "}
-                  <select
-                    value={pageSize}
-                    onChange={handlePageSizeChange}
-                    className="border rounded-md px-2 py-1"
-                  >
-                    {/* Dynamically generated options */}
-                    {generateOptions().map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>{" "}
-                  from {total} data
-                </p>
-                <Pagination
-                  currentPage={page}
-                  totalSize={total}
-                  sizePerPage={pageSize}
-                  changeCurrentPage={handlePaginate}
-                />
-              </div>
-            )}
+            {/* Pagination (toujours affichée) */}
+            <div className="paginationWrapper flex items-center justify-between mt-15 px-4">
+              <p className="w-96 text-sm text-gray-500">
+                Show{" "}
+                <select
+                  value={pageSize}
+                  onChange={handlePageSizeChange}
+                  className="border rounded-md px-2 py-1"
+                >
+                  {/* Dynamically generated options */}
+                  {generateOptions().map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>{" "}
+                from {total} data
+              </p>
+              <Pagination
+                currentPage={page}
+                totalSize={total}
+                sizePerPage={pageSize}
+                changeCurrentPage={handlePaginate}
+              />
+            </div>
           </>
         ) : (
           // <div className="p-4 text-center">{nodata}</div>
