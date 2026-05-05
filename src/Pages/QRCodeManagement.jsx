@@ -5,6 +5,8 @@ import { FiX } from 'react-icons/fi';
 import { FiDownload, FiTrash } from 'react-icons/fi';
 import PageLayout from '../components/global/PageLayout';
 import Table from '../components/Table';
+import './Dashboard/dashboard.css';
+import './QRCodeManagement.local.css';
 
 const QRCodeManagement = () => {
   // Pagination front
@@ -14,13 +16,22 @@ const QRCodeManagement = () => {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerImg, setViewerImg] = useState(null);
 
-  // Synchronise la hauteur de Chill avec celle du flyer sans déformation
-  useEffect(() => {
+  // Synchronise la hauteur de Chill avec celle du flyer sans déformation, après chargement
+  // Synchronise la hauteur de Chill avec celle du flyer, sans déformer l'image
+  const syncChillHeight = () => {
     const flyer = document.getElementById('flyer-demo-img');
     const chill = document.getElementById('chill-img');
     if (flyer && chill) {
-      chill.style.maxHeight = flyer.clientHeight + 'px';
+      chill.style.height = flyer.clientHeight + 'px';
+      chill.style.maxHeight = '';
+      chill.style.width = 'auto'; // préserve le ratio
     }
+  };
+
+  useEffect(() => {
+    syncChillHeight();
+    window.addEventListener('resize', syncChillHeight);
+    return () => window.removeEventListener('resize', syncChillHeight);
   }, []);
   // i18n
   const { t, i18n } = useTranslation();
@@ -158,7 +169,15 @@ const QRCodeManagement = () => {
     },
   ];
 
-  const [showExplainer, setShowExplainer] = useState(true);
+  // Persistance de l'état de l'explainer
+  const [showExplainer, setShowExplainer] = useState(() => {
+    const stored = localStorage.getItem('showExplainer');
+    return stored === null ? true : stored === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('showExplainer', showExplainer);
+  }, [showExplainer]);
 
   return (
     <PageLayout>
@@ -219,7 +238,7 @@ const QRCodeManagement = () => {
           />
         </div>
       )}
-      <section className="dashboard-page">
+       <section className="dashboard-page">
         <div className="dashboard-container">
           <div style={{marginBottom: 40}}>
             <h1 style={{ fontSize: '2.2rem', fontWeight: 700, marginBottom: 8, color: '#222' }}>QR Code management</h1>
@@ -264,7 +283,7 @@ const QRCodeManagement = () => {
                     <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Generate a QR Code for your property. The poster will include your property cover image and the QR Code.</div>
                     <img
                       id="flyer-demo-img"
-                      style={{ width: 500, borderRadius: 8, maxWidth: '100%', height: 'auto', border: '2px solid #976dd0', cursor: 'pointer' }}
+                      style={{ width: 500, borderRadius: 8, maxWidth: '100%', height: 'auto', border: '1px solid #bbb', cursor: 'pointer' }}
                       src="/assets/img/flyer-demo2.jpeg"
                       alt="QR flyer demo"
                       onClick={e => {
@@ -281,22 +300,22 @@ const QRCodeManagement = () => {
                     <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Share it on other platforms</div>
                     <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Add your poster and property profile URL to other platforms. Leads can scan and visit your Bookaroo profile.</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, rowGap: 12, justifyContent: 'flex-start', maxWidth: 260 }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: 4, height: 44, width: 70 }}>
                         <img src="/assets/img/leboncoin.png" alt="Leboncoin" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
                       </span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: 4, height: 44, width: 70 }}>
                         <img src="/assets/img/seloger.png" alt="SeLoger" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
                       </span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: 4, height: 44, width: 70 }}>
                         <img src="/assets/img/pap.png" alt="PAP" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
                       </span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: 4, height: 44, width: 70 }}>
                         <img src="/assets/img/linkedin.png" alt="LinkedIn" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
                       </span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: 4, height: 44, width: 70 }}>
                         <img src="/assets/img/facebook.png" alt="Facebook" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
                       </span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: 4, height: 44, width: 70 }}>
                         <img src="/assets/img/instagram.png" alt="Instagram" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
                       </span>
                     </div>
@@ -322,12 +341,13 @@ const QRCodeManagement = () => {
                     }}>
                       Monitor scans and engagement from your dashboard. All leads are centralized for easy follow-up.
                     </div>
-                    <div style={{ width: 'auto', maxWidth: '100%', minWidth: 0, marginTop: 12, position: 'relative', padding: 0, marginLeft: 0, display: 'block', alignSelf: 'flex-start' }}>
+                    <div style={{ width: 'auto', maxWidth: '100%', minWidth: 0, marginTop: 12, position: 'relative', padding: 0, marginLeft: 0, display: 'block' }}>
                       <img 
                         src="/assets/img/Chill.jpeg"
                         alt="Chill"
                         id="chill-img"
-                        style={{ width: 266, height: 'auto', borderRadius: 10.56, objectFit: 'contain', display: 'block', marginLeft: 0, padding: 0, alignSelf: 'flex-start' }}
+                        style={{ width: 'auto', height: 'auto', objectFit: 'contain', display: 'block', marginLeft: 0, padding: 0, borderRadius: '8px !important' }}
+                        onLoad={syncChillHeight}
                       />
                     </div>
                   </div>

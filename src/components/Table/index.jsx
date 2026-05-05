@@ -135,11 +135,11 @@ const Table = ({
             {/* Pagination (toujours affichée) */}
             <div className="paginationWrapper flex items-center justify-between mt-15 px-4">
               <p className="w-96 text-sm text-gray-500">
-                Show{" "}
+                Show
                 <select
                   value={pageSize}
                   onChange={handlePageSizeChange}
-                  className="border rounded-md px-2 py-1"
+                  className="border rounded-md px-2 py-1 mx-2"
                 >
                   {/* Dynamically generated options */}
                   {generateOptions().map((option) => (
@@ -147,15 +147,18 @@ const Table = ({
                       {option}
                     </option>
                   ))}
-                </select>{" "}
-                from {total} data
+                </select>
+                properties per page
               </p>
-              <Pagination
-                currentPage={page}
-                totalSize={total}
-                sizePerPage={pageSize}
-                changeCurrentPage={handlePaginate}
-              />
+              <div className="flex items-center gap-2 ml-auto">
+                <Pagination
+                  currentPage={page}
+                  totalSize={total}
+                  sizePerPage={pageSize}
+                  changeCurrentPage={handlePaginate}
+                />
+                <span className="text-gray-500 text-sm whitespace-nowrap">Page {page}/{Math.max(1, Math.ceil(total / pageSize))}</span>
+              </div>
             </div>
           </>
         ) : (

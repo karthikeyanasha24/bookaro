@@ -41,15 +41,28 @@ Permettre la génération, le téléchargement et le suivi des QR Codes pour cha
 ---
 
 ## 4. To Do Frontend
-- [ ] Créer la section QR Code sur la fiche bien
-- [ ] Bouton Générer QR Code (si non existant)
-- [ ] Bouton Télécharger PDF (si existant)
-- [ ] Affichage QR code image
-- [ ] Affichage compteur téléchargements
+- [x] Page centrale QR Code listant tous les biens (pas liée à un propertyId unique)
+- [x] Bloc explicatif (explainer) masquable et persistant (localStorage)
+- [x] Section "How it works" avec étapes, images, et logos plateformes (Leboncoin, SeLoger, PAP, LinkedIn, Facebook, Instagram)
+- [x] Recherche locale sur les biens (champ de recherche au-dessus du tableau)
+- [x] Pagination locale toujours visible sous le tableau
+- [x] Affichage du flyer QR Code en miniature, avec agrandissement modal au clic
+- [x] Affichage compteur de scans/téléchargements
+- [x] Affichage date du dernier scan
+- [x] Bouton Télécharger PDF (action à brancher sur l'API)
+- [x] Bouton Supprimer QR Code (action à brancher sur l'API)
+- [x] UI/UX conforme dashboard (marges, styles, responsive)
+- [x] Intégration multilingue (i18n)
+- [ ] Génération de flyer QR Code (modal/drawer avec choix photo, métriques, preview, validation)
+- [ ] Sélection de la photo du bien lors de la génération
+- [ ] Sélection des métriques à afficher sur le flyer
+- [ ] Aperçu dynamique du flyer avant génération
+- [ ] Téléchargement réel (PDF, PNG, JPG) via API
+- [ ] Suppression réelle d’un flyer via API
+- [ ] Gestion loading/erreur/success sur toutes les actions
 - [ ] Gestion droits (propriétaire/admin)
-- [ ] Intégration multilingue
-- [ ] Gestion loading/erreur/success
-- [ ] (Admin) Tableau de suivi QR Codes
+- [ ] (Admin) Tableau de suivi QR Codes (vue globale)
+- [ ] Gestion du refresh local après suppression/génération
 
 ---
 
@@ -66,6 +79,16 @@ Permettre la génération, le téléchargement et le suivi des QR Codes pour cha
 ---
 
 ## 6. Notes
+- Les fonctionnalités suivantes ont été ajoutées par rapport à la spec initiale :
+	- Bloc explainer masquable et persistant
+	- Modal d’agrandissement du flyer QR Code
+	- Recherche locale et pagination toujours visible
+	- Affichage des logos plateformes dans l’explainer
+	- UI/UX dashboard unifiée (marges, styles, responsive)
+	- Gestion fine des images (Chill, flyer, logos)
+	- Intégration multilingue complète (i18n)
+
+À chaque évolution, mettre à jour ce fichier pour garder la trace des ajouts UI/UX et des écarts avec la spec initiale.
 - Tous les endpoints nécessitent authentification.
 - Les URLs retournées sont relatives ou absolues selon le stockage.
 - Le PDF inclut le QR code, la photo, et les infos du bien.
