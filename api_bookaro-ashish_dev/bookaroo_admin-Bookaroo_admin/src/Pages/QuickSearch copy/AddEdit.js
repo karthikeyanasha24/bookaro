@@ -1,0 +1,198 @@
+import { Tooltip } from "antd";
+import { useEffect, useState } from "react";
+import { FaLocationDot } from "react-icons/fa6";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import FormControl from "../../components/common/FormControl";
+import Layout from "../../components/global/layout";
+import ApiClient from "../../methods/api/apiClient";
+import loader from "../../methods/loader";
+import methodModel from "../../methods/methods";
+import shared from "./shared";
+import { FaStar } from "react-icons/fa";
+import GooglePlaceAutoComplete from "../../components/common/GooglePlaceAutoComplete";
+import addressModel from "../../models/address.model";
+
+const AddEdit = () => {
+  const { id } = useParams();
+  const [form, setform] = useState({
+    propertyType: "",
+    type: "",
+    city: "",
+  });
+  const navigate = useNavigate();
+  const [submitted, setSubmitted] = useState(false);
+  const formValidation = [
+    { key: "propertyType", required: true },
+    { key: "type", required: true },
+    { key: "city", required: true },
+  ];
+
+  useEffect(() => {
+    if (id) {
+      loader(true);
+      ApiClient.get(shared.detailApi, { id }).then((res) => {
+        if (res.success) {
+          setform({
+            propertyType: res?.data?.propertyType || "",
+            type: res?.data?.type || "",
+            city: res?.data?.city || "",
+            id: res?.data?.id || res?.data?._id,
+          });
+        }
+        loader(false);
+      });
+    }
+  }, [id]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    let invalid = methodModel.getFormError(formValidation, form);
+    if (invalid) return;
+    let method = "post";
+    let url = shared.addApi;
+    let value = { ...form };
+    if (id) {
+      // method = "put";
+      url = shared.editApi;
+    } else {
+      delete value.id;
+    }
+    loader(true);
+    ApiClient.allApi(url, value, method).then((res) => {
+      if (res.success) {
+        navigate(`/${shared.url}`);
+      }
+      loader(false);
+    });
+  };
+  const addressResult = async (e) => {
+    let address = {};
+    if (e.place) {
+      address = await addressModel.getAddress(e.place);
+    }
+    setform({
+      ...form,
+      city: address?.city,
+      // address: e.value,
+      // location: {
+      //   lng: address?.lng,
+      //   lat: address?.lat,
+      // },
+    });
+  };
+
+  return (
+    <>
+      <Layout>
+        <form onSubmit={handleSubmit}>
+          <div className="flex items-center mb-8">
+            <Tooltip placement="top" title="Back">
+              <Link
+                to={`/${shared.url}`}
+                className="!px-4  py-2 flex items-center justify-center bg-[#976DD0] text-white rounded-lg shadow-btn hover:bg-[#976DD0] border transition-all  mr-3"
+              >
+                <i className="fa fa-angle-left text-lg"></i>
+              </Link>
+            </Tooltip>
+            <div>
+              <h3 className="text-lg lg:text-2xl font-semibold text-[#111827]">
+                {form && form.id ? "Edit" : "Add"} {shared.addTitle}
+              </h3>
+              <p class="text-xs lg:text-sm font-normal text-[#75757A]">
+                Here you can add the {shared.addTitle?.toLowerCase()}
+              </p>
+            </div>
+          </div>
+          <div className="shadow-box overflow-hidden rounded-lg bg-white  gap-4">
+            <div>
+              <h4 className="p-4 border-b  font-medium rounded-[5px] rounded-bl-[0] rounded-br-[0] flex items-center text-[#976DD0] ">
+                <div className=" me-3 bg-[#996dca21] p-3 rounded-md">
+                  <FaStar className="text-[18px]" />
+                </div>
+                {shared.addTitle}
+              </h4>
+            </div>
+            <div className="grid grid-cols-12 p-4 gap-4">
+              <div className="lg:col-span-6 col-span-12 flex  mb-5  flex-col ">
+                <FormControl
+                  type="select"
+                  name="name"
+                  label="Goal"
+                  placeholder="Select goal"
+                  value={form.propertyType}
+                  options={[
+                    { name: "For sale", id: "sale", },
+                    { name: "For rent", id: "rent", },
+                    // { name: "Off-Market", id: "offmarket", },
+                    { name: "List in Directory", id: "directory", },
+                    { name: "Past Transaction", id: "transaction", },
+                  ]}
+                  onChange={(e) => {
+                    setform({ ...form, propertyType: e });
+                  }}
+                  required
+                  theme="search"
+                  className="border_none"
+                />
+                {submitted && !form.propertyType && (
+                  <div className="text-red-600 text-[13px] block">
+                    Goal is required
+                  </div>
+                )}
+              </div>
+              <div className="lg:col-span-6 col-span-12 flex  mb-5  flex-col ">
+                <FormControl
+                  type="select"
+                  name="name"
+                  label="Property Type"
+                  value={form.type}
+                  options={[
+                    { name: "Apartment", id: "apartment", },
+                    { name: "House", id: "house", },
+                    { name: "Castle", id: "castle", },
+                    { name: "Building", id: "building", },
+                    { name: "Farm", id: "farm", },
+                  ]}
+                  onChange={(e) => {
+                    setform({ ...form, type: e });
+                  }}
+                  required
+                  theme="search"
+                  className="border_none"
+                />
+                {submitted && !form.type && (
+                  <div className="text-red-600 text-[13px] block">
+                    Property type is required
+                  </div>
+                )}
+              </div>
+              <div className="lg:col-span-6 col-span-12 flex  mb-5  flex-col ">
+                Enter city
+                <GooglePlaceAutoComplete
+                  value={form.city}
+                  result={addressResult}
+                  placeholder="Enter address..."
+                  id="address"
+                />
+                {submitted && !form.city && (
+                  <div className="d-block text-red-600">City is required</div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <button
+              type="submit"
+              className="text-white bg-[#EB6A59] bg-[#EB6A59] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-5 mb-2"
+            >
+              {form && form?.id ? "Update" : "Save"}
+            </button>
+          </div>
+        </form>
+      </Layout>
+    </>
+  );
+};
+
+export default AddEdit;

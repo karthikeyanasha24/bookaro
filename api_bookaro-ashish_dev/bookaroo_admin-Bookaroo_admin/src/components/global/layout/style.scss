@@ -1,0 +1,74 @@
+@import '../../../scss/mixins';
+
+.main-wrapper {
+  background-color: #eee;
+}
+
+.editLogo {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+
+  >i {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+.logocls {
+  width: 100%;
+  max-width: 170px !important;
+  margin-left: 10px;
+}
+
+.dash-title {
+  position: relative;
+  background-color: #f6f8fb;
+  padding: 11px 19px;
+  font-size: 28px;
+  line-height: normal;
+  border-radius: 6px;
+  margin-bottom: 30px;
+
+  .total {
+    font-size: 14px;
+    float: right;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+}
+
+.main-sidebar {
+  z-index: 1;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  border-right: 1px solid rgba(151, 109, 208, 0.35);
+}
+@media (max-width: 767px) {
+  .main-wrapper main.main {
+    width: calc(100% - 50px);
+  }
+
+  .main-sidebar{
+    min-width: auto !important;
+  }
+ 
+  .sidebar-h {
+    width: calc(100% - 50px) !important;
+    left: 50px !important;
+    right: unset !important;
+    margin: unset !important;
+}
+
+}
+
+@media (max-width: 467px) {
+  .form-row.uploaded-image-row>div {
+    max-width: 50%;
+
+    .uploaded-image img {
+      height: 100px;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.profileImage {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+}
+
+.profileImageLabel {
+    margin: 0;
+    position: relative;
+
+    >i {
+        position: absolute;
+        bottom: -3px;
+        right: -3px;
+    }
+}
+
+
+
+p.bg-light.rounded.py-2.fieldcls {
+    background-color: #976DD02b !important;
+
+}
+
+.ViewUser {
+    // font-weight: 500;
+    color: #202020;
+    font-weight: 600;
+    font-size: 36px;
+    margin-bottom: 32px;
+}
