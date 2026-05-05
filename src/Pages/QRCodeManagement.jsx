@@ -120,6 +120,8 @@ const QRCodeManagement = () => {
     },
   ];
 
+  const [showExplainer, setShowExplainer] = useState(true);
+
   return (
     <PageLayout>
       {/* Image Viewer Modal */}
@@ -186,93 +188,124 @@ const QRCodeManagement = () => {
             <p style={{ color: '#555', fontSize: '1.1rem', marginBottom: 32 }}>
               QR Code let you bring easily potential buyers or renters from other platforms, into your Bookaroo transaction pipeline to ease your transaction process.
             </p>
-
-            <div style={{ display: 'flex', gap: 32, background: '#f8f9fb', borderRadius: 16, padding: '32px 32px', justifyContent: 'space-between', flexWrap: 'wrap', overflow: 'hidden', boxSizing: 'border-box' }}>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box', padding: 0 }}>
-                <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>1</div>
-                <div>
-                  <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Create your QR Code</div>
-                  <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Generate a QR Code for your property. The poster will include your property cover image and the QR Code.</div>
-                  <img
-                    id="flyer-demo-img"
-                    style={{ width: 500, borderRadius: 8, maxWidth: '100%', height: 'auto', border: '2px solid #976dd0', cursor: 'pointer' }}
-                    src="/assets/img/flyer-demo2.jpeg"
-                    alt="QR flyer demo"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setViewerImg('/assets/img/flyer-demo2.jpeg');
-                      setViewerOpen(true);
-                    }}
-                  />
-                </div>
-              </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>2</div>
-                <div>
-                  <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Share on platforms</div>
-                  <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Add your poster and property profile URL to other platforms. Leads can scan and visit your Bookaroo profile.</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, rowGap: 12, justifyContent: 'flex-start', maxWidth: 260 }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
-                      <img src="/assets/img/leboncoin.png" alt="Leboncoin" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
-                      <img src="/assets/img/seloger.png" alt="SeLoger" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
-                      <img src="/assets/img/pap.png" alt="PAP" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
-                      <img src="/assets/img/linkedin.png" alt="LinkedIn" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
-                      <img src="/assets/img/facebook.png" alt="Facebook" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
-                      <img src="/assets/img/instagram.png" alt="Instagram" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>3</div>
-                <div>
-                  <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Track your leads</div>
-                  <div style={{
-                    color: '#555',
-                    fontSize: '1rem',
-                    marginBottom: 12,
-                    maxWidth: '100%',
-                    width: '100%',
-                    minWidth: 0,
-                    wordBreak: 'break-word',
-                    whiteSpace: 'normal',
-                    overflowWrap: 'break-word',
-                    boxSizing: 'border-box',
-                    padding: 0,
-                    margin: 0
-                  }}>
-                    Monitor scans and engagement from your dashboard. All leads are centralized for easy follow-up.
-                  </div>
-                  <div style={{ width: 'auto', maxWidth: '100%', minWidth: 0, marginTop: 12, position: 'relative', padding: 0, marginLeft: 0, display: 'block', alignSelf: 'flex-start' }}>
-                    <img 
-                      src="/assets/img/Chill.jpeg"
-                      alt="Chill"
-                      id="chill-img"
-                      style={{ width: 266, height: 'auto', borderRadius: 10.56, objectFit: 'contain', display: 'block', marginLeft: 0, padding: 0, alignSelf: 'flex-start' }}
+            {showExplainer && (
+              <div style={{ position: 'relative', display: 'flex', gap: 32, background: '#fff', borderRadius: 16, padding: '32px 32px', justifyContent: 'space-between', flexWrap: 'wrap', overflow: 'visible', boxSizing: 'border-box', marginBottom: 40 }}>
+                {/* Bouton croix pour fermer l'explainer, positionné sur le coin de la forme blanche */}
+                <button
+                  onClick={() => setShowExplainer(false)}
+                  style={{
+                    position: 'absolute',
+                    top: -20,
+                    right: -20,
+                    background: '#fff',
+                    color: '#976dd0',
+                    border: '2px solid #f8f9fb',
+                    boxShadow: '0 2px 8px #0002',
+                    borderRadius: 24,
+                    width: 40,
+                    height: 40,
+                    fontSize: 24,
+                    cursor: 'pointer',
+                    zIndex: 10,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: 1,
+                    padding: 0
+                  }}
+                  aria-label="Fermer l'explication"
+                >
+                  ×
+                </button>
+                {/* ...existing explainer content... */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box', padding: 0 }}>
+                  <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>1</div>
+                  <div>
+                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Create your QR Code</div>
+                    <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Generate a QR Code for your property. The poster will include your property cover image and the QR Code.</div>
+                    <img
+                      id="flyer-demo-img"
+                      style={{ width: 500, borderRadius: 8, maxWidth: '100%', height: 'auto', border: '2px solid #976dd0', cursor: 'pointer' }}
+                      src="/assets/img/flyer-demo2.jpeg"
+                      alt="QR flyer demo"
+                      onClick={e => {
+                        e.stopPropagation();
+                        setViewerImg('/assets/img/flyer-demo2.jpeg');
+                        setViewerOpen(true);
+                      }}
                     />
                   </div>
                 </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box' }}>
+                  <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>2</div>
+                  <div>
+                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Share on platforms</div>
+                    <div style={{ color: '#555', fontSize: '1rem', marginBottom: 12 }}>Add your poster and property profile URL to other platforms. Leads can scan and visit your Bookaroo profile.</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, rowGap: 12, justifyContent: 'flex-start', maxWidth: 260 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                        <img src="/assets/img/leboncoin.png" alt="Leboncoin" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                        <img src="/assets/img/seloger.png" alt="SeLoger" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                        <img src="/assets/img/pap.png" alt="PAP" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                        <img src="/assets/img/linkedin.png" alt="LinkedIn" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                        <img src="/assets/img/facebook.png" alt="Facebook" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #0001', padding: 4, height: 44, width: 70 }}>
+                        <img src="/assets/img/instagram.png" alt="Instagram" style={{ height: 36, width: 'auto', maxWidth: 62, display: 'block' }} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, maxWidth: 420, width: '100%', boxSizing: 'border-box' }}>
+                  <div style={{ width: 32, height: 32, background: '#976dd0', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', marginBottom: 12 }}>3</div>
+                  <div>
+                    <div style={{ fontWeight: 600, color: '#976dd0', marginBottom: 6, fontSize: '1.1rem' }}>Track your leads</div>
+                    <div style={{
+                      color: '#555',
+                      fontSize: '1rem',
+                      marginBottom: 12,
+                      maxWidth: '100%',
+                      width: '100%',
+                      minWidth: 0,
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
+                      overflowWrap: 'break-word',
+                      boxSizing: 'border-box',
+                      padding: 0,
+                      margin: 0
+                    }}>
+                      Monitor scans and engagement from your dashboard. All leads are centralized for easy follow-up.
+                    </div>
+                    <div style={{ width: 'auto', maxWidth: '100%', minWidth: 0, marginTop: 12, position: 'relative', padding: 0, marginLeft: 0, display: 'block', alignSelf: 'flex-start' }}>
+                      <img 
+                        src="/assets/img/Chill.jpeg"
+                        alt="Chill"
+                        id="chill-img"
+                        style={{ width: 266, height: 'auto', borderRadius: 10.56, objectFit: 'contain', display: 'block', marginLeft: 0, padding: 0, alignSelf: 'flex-start' }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
+            )}
+            {/* Espace réservé même si explainer masqué */}
+            {!showExplainer && <div style={{marginBottom: 40}} />}
+            <div>
+              <Table
+                data={data}
+                columns={columns}
+                total={data.length}
+                nodata="No properties found"
+                className="overflow-x-auto"
+              />
             </div>
-          </div>
-          <div>
-            <Table
-              data={data}
-              columns={columns}
-              total={data.length}
-              nodata="No properties found"
-              className="overflow-x-auto"
-            />
           </div>
         </div>
       </section>
