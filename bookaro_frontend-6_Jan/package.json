@@ -106,9 +106,10 @@
     "cross-env": "^10.0.0"
   },
   "overrides": {
-    "ajv": "^8.17.1",
     "fork-ts-checker-webpack-plugin": {
-      "schema-utils": "2.7.1"
+      "schema-utils": "2.7.1",
+      "ajv": "6.12.6",
+      "ajv-keywords": "3.5.2"
     },
     "babel-loader": { "schema-utils": "2.7.1" },
     "file-loader": { "schema-utils": "2.7.1" }
