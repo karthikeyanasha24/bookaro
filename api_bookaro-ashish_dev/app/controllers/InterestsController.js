@@ -143,6 +143,16 @@ module.exports = {
                 data.interestType = interestType;
                 const saveInterest = await db.interestTransactions.create(data)
 
+                // AI: notify owner to respond fast to the new purchase offer
+                setImmediate(() =>
+                  aiAgentTriggers.onOfferReceivedByOwner(
+                    property.addedBy.toString(),
+                    propertyId,
+                    makeAnOfferInterestCreate._id.toString(),
+                    makeOfferAmount
+                  )
+                );
+
                 if (property.autoInvite && !allSlotsBooked) {
                     funnelStatus = "invite user for a visit";
                 }
@@ -732,8 +742,8 @@ module.exports = {
             }
 
             if (req.body.funnelStatus === "review submit by user" && review && typeof review === "object") {
-                const addreview = db.reviews.create({
-                    userId: interest.buyerId,
+                await db.reviews.create({
+                    userId: interest.buyerId?._id ?? interest.buyerId,
                     propertyId: interest.propertyId,
                     interestId: interestId,
                     location: review?.location,
@@ -750,6 +760,47 @@ module.exports = {
             data.addedBy = req.identity.id;
 
             const createInterestTransaction = await db.interestTransactions.create(data)
+
+            // ── AI agent hooks ────────────────────────────────────────────────────
+            // One setImmediate block covers all 5 funnel signals.
+            // We resolve IDs here (before setImmediate) while the populated objects
+            // are still in scope; the async work happens off the hot path.
+            {
+              const _txRef   = createInterestTransaction._id.toString();
+              const _ownerId = findProperty.addedBy?._id?.toString() ?? findProperty.addedBy?.toString();
+              const _buyerId = interest.buyerId?._id?.toString()       ?? interest.buyerId?.toString();
+              const _propId  = propertyId?.toString();
+              const _intId   = interestId?.toString();
+              const _fs      = funnelStatus;
+
+              setImmediate(async () => {
+                try {
+                  switch (_fs) {
+                    case "visit accept by user":
+                      await aiAgentTriggers.onVisitBookedOwnerPrep(_ownerId, _propId, _intId);
+                      await aiAgentTriggers.onVisitBookedBuyerPrep(_buyerId, _propId, _intId);
+                      break;
+                    case "review submit by user":
+                      await aiAgentTriggers.onVisitReviewSubmittedToOwner(_ownerId, _propId, _intId);
+                      break;
+                    case "offer refused by owner":
+                      await aiAgentTriggers.onOfferRefusedToBuyer(_buyerId, _propId, _intId, _txRef);
+                      break;
+                    case "offer accept by owner":
+                      await aiAgentTriggers.onOfferAcceptedOwner(_ownerId, _propId, _intId, _txRef);
+                      await aiAgentTriggers.onOfferAcceptedBuyer(_buyerId, _propId, _intId, _txRef);
+                      break;
+                    // "owner accept the application" / "owner reject the application"
+                    // are rental funnel equivalents — hook here when copy is approved.
+                    default:
+                      break;
+                  }
+                } catch (aiErr) {
+                  console.error("[InterestsController] AI trigger error:", _fs, aiErr.message);
+                }
+              });
+            }
+            // ─────────────────────────────────────────────────────────────────────
 
             const updatedInterest = await db.interests.findByIdAndUpdate(
                 interestId,

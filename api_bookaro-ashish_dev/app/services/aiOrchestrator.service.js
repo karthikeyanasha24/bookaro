@@ -317,8 +317,21 @@ async function getOrCreateAiChatRoom(userId, propertyId) {
   return { roomId: room._id.toString(), botId };
 }
 
-/** Deliver AI message to the chat room + notification */
-async function deliverAiMessage(userId, propertyId, content, title, triggerKey, contextSnapshot) {
+/**
+ * Deliver AI message to the chat room + notification.
+ *
+ * @param {string}      userId
+ * @param {string|null} propertyId
+ * @param {string}      content
+ * @param {string|null} title
+ * @param {string|null} triggerKey
+ * @param {object|null} contextSnapshot
+ * @param {object}      [opts]
+ * @param {string}      [opts.source="static"]     - "static" | "openai" | "yves"
+ * @param {string}      [opts.interestId=null]
+ * @param {string}      [opts.transactionRef=null]
+ */
+async function deliverAiMessage(userId, propertyId, content, title, triggerKey, contextSnapshot, opts = {}) {
   const bot = await getAiBotUser();
 
   // 1. Store in AI conversations history
@@ -337,15 +350,36 @@ async function deliverAiMessage(userId, propertyId, content, title, triggerKey, 
   });
 
   // 3. Create in-app notification
+  const notifTitle = title || "New message from Bookaroo AI";
   await db.notifications.create({
     sendTo: new mongoose.Types.ObjectId(userId),
     sendBy: botId,
     property_id: propertyId ? new mongoose.Types.ObjectId(propertyId) : undefined,
     status: "unread",
     type: "ai_agent_trigger",
-    title: title || "New message from Bookaroo AI",
+    title: notifTitle,
     message: content.substring(0, 200),
   });
+
+  // 4. Audit log — fire-and-forget so it never blocks delivery.
+  setImmediate(() =>
+    db.aiCommunicationLog
+      .create({
+        userId: new mongoose.Types.ObjectId(userId),
+        triggerKey: triggerKey || "MANUAL",
+        propertyId: propertyId ? new mongoose.Types.ObjectId(propertyId) : null,
+        interestId: opts.interestId ? new mongoose.Types.ObjectId(opts.interestId) : null,
+        transactionRef: opts.transactionRef || null,
+        channel: "chat",   // orchestrator path always delivers to chat + notification
+        title: notifTitle,
+        body: content,
+        metadata: contextSnapshot && typeof contextSnapshot === "object" ? contextSnapshot : null,
+        source: opts.source || "static",
+      })
+      .catch((logErr) =>
+        console.error("[aiOrchestrator] log write failed:", triggerKey, logErr.message)
+      )
+  );
 
   return { roomId, botId };
 }
@@ -387,9 +421,14 @@ async function fireTrigger(triggerKey, userId, propertyId = null, extraContext =
 
     let aiContent = await callOpenAI(staticCopy.message, systemPrompt, contextStr);
     const finalContent = aiContent || staticCopy.message;
+    const source = aiContent ? "openai" : "static";
 
     // Deliver
-    await deliverAiMessage(userId, propertyId, finalContent, staticCopy.title, triggerKey, mergedCtx);
+    await deliverAiMessage(userId, propertyId, finalContent, staticCopy.title, triggerKey, mergedCtx, {
+      source,
+      interestId: extraContext.interestId || null,
+      transactionRef: extraContext.transactionRef || null,
+    });
 
     // Mark as fired (once triggers only)
     await markFired(userId, triggerKey, propertyId);
@@ -452,12 +491,13 @@ async function handleUserReply(userId, propertyId, userMessage) {
     }
 
     // Fallback
+    const replySource = !!aiContent ? "openai" : "static";
     if (!aiContent) {
       aiContent = "I understand your question. Based on current market conditions in France, I recommend consulting with a local notary or real estate professional for the most accurate advice specific to your situation.";
     }
 
     // Store and deliver AI response
-    await deliverAiMessage(userId, propertyId, aiContent, null, null, ctx);
+    await deliverAiMessage(userId, propertyId, aiContent, null, "USER_REPLY", ctx, { source: replySource });
 
     return aiContent;
   } catch (e) {

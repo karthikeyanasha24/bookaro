@@ -72,6 +72,7 @@ db.aiAgentFired = require("./aiAgentFired.model.js")(mongoose)
 db.userAiEngagement = require("./userAiEngagement.model.js")(mongoose)
 db.aiConversations = require("./aiConversations.model.js")(mongoose)
 db.aiConversationConfig = require("./aiConversationConfig.model.js")(mongoose)
+db.aiCommunicationLog = require("./aiCommunicationLog.model.js")(mongoose)
 
 
 module.exports = db;

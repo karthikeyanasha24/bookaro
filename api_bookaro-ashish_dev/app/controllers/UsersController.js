@@ -8,7 +8,6 @@ const jwt = require("jsonwebtoken");
 const constants = require("../utls/constants");
 const Emails = require("../Emails/onBoarding");
 const helper = require("../utls/helper");
-const aiAgentTriggers = require("../services/aiAgentTriggers.service");
 const aiOrchestrator = require("../services/aiOrchestrator.service");
 
 function generateOTP() {
@@ -1764,8 +1763,7 @@ module.exports = {
           userInfo.access_token = token;
 
           setImmediate(() => {
-            aiAgentTriggers.onAccountWelcome(data1._id);
-            // Enhanced AI orchestrator welcome (stored in AI chat history)
+            // Single path: orchestrator writes to aiConversations + chat + notification + aiCommunicationLog.
             aiOrchestrator.fireTrigger(aiOrchestrator.TRIGGER.ACCOUNT_WELCOME, data1._id.toString(), null).catch(console.error);
           });
 
@@ -2662,7 +2660,7 @@ module.exports = {
             lastLogin: new Date(),
           }
         );
-        setImmediate(() => aiAgentTriggers.onAccountWelcome(registeredUser._id));
+        setImmediate(() => aiOrchestrator.fireTrigger(aiOrchestrator.TRIGGER.ACCOUNT_WELCOME, registeredUser._id.toString(), null).catch(console.error));
         return res.status(200).json({
           success: true,
           message: constants.onBoarding.LOGIN_SUCCESS,

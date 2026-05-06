@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const db = require("../models");
 
 const TRIGGER = {
+  // ── Onboarding / search ───────────────────────────────────────────────────
   ACCOUNT_WELCOME: "ACCOUNT_WELCOME",
   FIRST_QUICKSEARCH_SAVED_SEARCH: "FIRST_QUICKSEARCH_SAVED_SEARCH",
   FIRST_SAVESSEARCH_ZIP: "FIRST_SAVESSEARCH_ZIP",
@@ -10,14 +11,40 @@ const TRIGGER = {
   P2P_AFTER_PAST_TX: "P2P_AFTER_PAST_TX",
   PAST_TX_AREA_HINT: "PAST_TX_AREA_HINT",
   AGENCIES_EXCLUSIVE_LISTINGS: "AGENCIES_EXCLUSIVE_LISTINGS",
+
+  // ── First interest ────────────────────────────────────────────────────────
   RENTER_FILE_INTEREST: "RENTER_FILE_INTEREST",
   BUYER_FILE_INTEREST: "BUYER_FILE_INTEREST",
   OWNER_LEAD_MANAGEMENT_TIP: "OWNER_LEAD_MANAGEMENT_TIP",
   OWNER_NO_INTEREST_14D: "OWNER_NO_INTEREST_14D",
+
+  // ── Visit lifecycle ───────────────────────────────────────────────────────
   VISIT_PREP_LEAD: "VISIT_PREP_LEAD",
+  OWNER_VISIT_BOOKED_PREP: "OWNER_VISIT_BOOKED_PREP",     // slot confirmed → owner showcase tips
+  BUYER_VISIT_BOOKED_PREP: "BUYER_VISIT_BOOKED_PREP",     // slot confirmed → buyer visit questions
+  OWNER_VISIT_REVIEW_FEEDBACK: "OWNER_VISIT_REVIEW_FEEDBACK", // buyer submitted review → owner improvement tips
+
+  // ── Offer / decision funnel ───────────────────────────────────────────────
+  OWNER_OFFER_RECEIVED: "OWNER_OFFER_RECEIVED",               // buyer made offer → owner: respond fast
+  BUYER_OFFER_REFUSED: "BUYER_OFFER_REFUSED",                 // owner refused → buyer: negotiation tips (repeatable)
+  OWNER_OFFER_ACCEPTED_NEXT_STEPS: "OWNER_OFFER_ACCEPTED_NEXT_STEPS", // presale prep for owner (repeatable)
+  BUYER_OFFER_ACCEPTED_NEXT_STEPS: "BUYER_OFFER_ACCEPTED_NEXT_STEPS", // presale + mortgage steps for buyer (repeatable)
 };
 
-async function tryFireOnce(userId, triggerKey, propertyId, getCopy) {
+/**
+ * Fire a trigger once per user/property pair.
+ *
+ * @param {string|ObjectId} userId
+ * @param {string}          triggerKey  - One of the TRIGGER constants
+ * @param {string|ObjectId|null} propertyId
+ * @param {function}        getCopy     - Returns { title, message }
+ * @param {object}          [opts]
+ * @param {string}          [opts.source="static"]      - "static" | "openai" | "yves"
+ * @param {string|ObjectId} [opts.interestId=null]
+ * @param {string}          [opts.transactionRef=null]
+ * @param {object}          [opts.metadata=null]        - Extra context for the log
+ */
+async function tryFireOnce(userId, triggerKey, propertyId, getCopy, opts = {}) {
   if (!userId || !triggerKey) return false;
   try {
     const uid = new mongoose.Types.ObjectId(userId);
@@ -26,6 +53,7 @@ async function tryFireOnce(userId, triggerKey, propertyId, getCopy) {
       triggerKey,
       propertyId: propertyId ? new mongoose.Types.ObjectId(propertyId) : null,
     };
+    // Unique index on aiAgentFired rejects duplicates — that's the dedup gate.
     await db.aiAgentFired.create(q);
     const { title, message } = getCopy();
     await db.notifications.create({
@@ -37,10 +65,78 @@ async function tryFireOnce(userId, triggerKey, propertyId, getCopy) {
       title,
       message,
     });
+
+    // Audit log — fire-and-forget so it never blocks the request or the caller.
+    setImmediate(() =>
+      db.aiCommunicationLog
+        .create({
+          userId: uid,
+          triggerKey,
+          propertyId: propertyId ? new mongoose.Types.ObjectId(propertyId) : null,
+          interestId: opts.interestId ? new mongoose.Types.ObjectId(opts.interestId) : null,
+          transactionRef: opts.transactionRef || null,
+          channel: "notification",
+          title,
+          body: message,
+          metadata: opts.metadata || null,
+          source: opts.source || "static",
+        })
+        .catch((logErr) =>
+          console.error("[aiAgentTriggers] log write failed:", triggerKey, logErr.message)
+        )
+    );
+
     return true;
   } catch (e) {
     if (e && e.code === 11000) return false;
     console.error("[aiAgentTriggers] tryFireOnce", triggerKey, e.message || e);
+    return false;
+  }
+}
+
+/**
+ * Fire without the aiAgentFired dedup gate.
+ * Use for events that can legitimately repeat on the same property/interest
+ * (e.g. offer refused → counter-offer → refused again).
+ * Always delivers one notification + one aiCommunicationLog row.
+ *
+ * Same opts signature as tryFireOnce.
+ */
+async function fireAlways(userId, triggerKey, propertyId, getCopy, opts = {}) {
+  if (!userId || !triggerKey) return false;
+  try {
+    const uid = new mongoose.Types.ObjectId(userId);
+    const { title, message } = getCopy();
+    await db.notifications.create({
+      sendTo: uid,
+      sendBy: uid,
+      property_id: propertyId || undefined,
+      status: "unread",
+      type: "ai_agent_trigger",
+      title,
+      message,
+    });
+    setImmediate(() =>
+      db.aiCommunicationLog
+        .create({
+          userId: uid,
+          triggerKey,
+          propertyId: propertyId ? new mongoose.Types.ObjectId(propertyId) : null,
+          interestId: opts.interestId ? new mongoose.Types.ObjectId(opts.interestId) : null,
+          transactionRef: opts.transactionRef || null,
+          channel: "notification",
+          title,
+          body: message,
+          metadata: opts.metadata || null,
+          source: opts.source || "static",
+        })
+        .catch((logErr) =>
+          console.error("[aiAgentTriggers] log write failed:", triggerKey, logErr.message)
+        )
+    );
+    return true;
+  } catch (e) {
+    console.error("[aiAgentTriggers] fireAlways", triggerKey, e.message || e);
     return false;
   }
 }
@@ -70,13 +166,17 @@ function optionalUserIdFromAuthHeader(req) {
   }
 }
 
+/**
+ * Returns { text, source } so the caller can record whether the message
+ * came from OpenAI or from the static fallback.
+ */
 async function maybeGenerateVisitPrepMessage(property) {
   const staticText =
     "Before your visit: confirm the route and parking, bring ID and a short list of questions, check room sizes and natural light, ask about charges and works planned, and note anything you want verified later. You can request documents from the owner or agency after the visit.";
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return staticText;
+    return { text: staticText, source: "static" };
   }
   const title = property?.propertyTitle || "the property";
   const city = property?.city || property?.location?.city || "";
@@ -101,10 +201,10 @@ async function maybeGenerateVisitPrepMessage(property) {
       }
     );
     const text = res.data?.choices?.[0]?.message?.content?.trim();
-    return text || staticText;
+    return text ? { text, source: "openai" } : { text: staticText, source: "static" };
   } catch (e) {
     console.error("[aiAgentTriggers] OpenAI visit prep", e.message || e);
-    return staticText;
+    return { text: staticText, source: "static" };
   }
 }
 
@@ -215,11 +315,14 @@ async function onOwnerFirstLeadTip(ownerId, propertyId) {
 }
 
 async function onVisitInviteToLead(buyerId, property) {
-  const msg = await maybeGenerateVisitPrepMessage(property);
-  return tryFireOnce(buyerId, TRIGGER.VISIT_PREP_LEAD, property._id, () => ({
-    title: "Prepare for your visit",
-    message: msg,
-  }));
+  const { text: msg, source } = await maybeGenerateVisitPrepMessage(property);
+  return tryFireOnce(
+    buyerId,
+    TRIGGER.VISIT_PREP_LEAD,
+    property._id,
+    () => ({ title: "Prepare for your visit", message: msg }),
+    { source }
+  );
 }
 
 async function maybeNotifyOwnerNoInterest2Weeks() {
@@ -283,14 +386,28 @@ async function weeklyLeadDigests() {
 
     if (!lines.length) continue;
 
+    const weeklyLeadTitle = "Weekly update — properties you follow";
+    const weeklyLeadBody = lines.join(" ");
     await db.notifications.create({
       sendTo: bid,
       sendBy: bid,
       status: "unread",
       type: "ai_agent_trigger",
-      title: "Weekly update — properties you follow",
-      message: lines.join(" "),
+      title: weeklyLeadTitle,
+      message: weeklyLeadBody,
     });
+    setImmediate(() =>
+      db.aiCommunicationLog
+        .create({
+          userId: bid,
+          triggerKey: "WEEKLY_LEAD_DIGEST",
+          channel: "notification",
+          title: weeklyLeadTitle,
+          body: weeklyLeadBody,
+          source: "static",
+        })
+        .catch((e) => console.error("[aiAgentTriggers] log write failed: WEEKLY_LEAD_DIGEST", e.message))
+    );
     await db.userAiEngagement.findOneAndUpdate(
       { userId: bid },
       {
@@ -328,14 +445,28 @@ async function weeklyOwnerDigests() {
       );
     }
 
+    const weeklyOwnerTitle = "Weekly performance — your listings";
+    const weeklyOwnerBody = parts.join(" ");
     await db.notifications.create({
       sendTo: oid,
       sendBy: oid,
       status: "unread",
       type: "ai_agent_trigger",
-      title: "Weekly performance — your listings",
-      message: parts.join(" "),
+      title: weeklyOwnerTitle,
+      message: weeklyOwnerBody,
     });
+    setImmediate(() =>
+      db.aiCommunicationLog
+        .create({
+          userId: oid,
+          triggerKey: "WEEKLY_OWNER_DIGEST",
+          channel: "notification",
+          title: weeklyOwnerTitle,
+          body: weeklyOwnerBody,
+          source: "static",
+        })
+        .catch((e) => console.error("[aiAgentTriggers] log write failed: WEEKLY_OWNER_DIGEST", e.message))
+    );
     await db.userAiEngagement.findOneAndUpdate(
       { userId: oid },
       {
@@ -351,19 +482,166 @@ async function weeklyOwnerDigests() {
   }
 }
 
+// ─── Visit lifecycle handlers ─────────────────────────────────────────────────
+
+/**
+ * Owner receives coaching when a buyer confirms a visit slot.
+ * Dedup: once per (owner, propertyId) — one prep message per deal is enough.
+ */
+async function onVisitBookedOwnerPrep(ownerId, propertyId, interestId) {
+  return tryFireOnce(
+    ownerId,
+    TRIGGER.OWNER_VISIT_BOOKED_PREP,
+    propertyId,
+    () => ({
+      title: "Visit booked — how to make it count",
+      message:
+        "A buyer has confirmed a visit slot. Prepare the space: declutter, ensure good natural light, and have the seller file and diagnostics ready to hand over. Be ready to answer questions on monthly charges, co-ownership rules, works completed, and the energy rating (DPE). A well-prepared owner closes visits into offers much faster.",
+    }),
+    { interestId }
+  );
+}
+
+/**
+ * Buyer receives visit prep coaching when they confirm a slot.
+ * Different tone from auto-invite prep — shorter, confirms the booking rather than hyping it.
+ * Dedup: once per (buyer, propertyId).
+ */
+async function onVisitBookedBuyerPrep(buyerId, propertyId, interestId) {
+  return tryFireOnce(
+    buyerId,
+    TRIGGER.BUYER_VISIT_BOOKED_PREP,
+    propertyId,
+    () => ({
+      title: "Visit confirmed — what to check on the day",
+      message:
+        "Your visit is confirmed. Bring ID, plan your route and parking in advance, and arrive a few minutes early. Key questions to ask: monthly co-ownership charges, any planned works, energy rating (DPE), last tax notices, and reasons for selling. Take notes and photos — multiple visits blur together quickly. If you're serious, ask to see the full seller file before making an offer.",
+    }),
+    { interestId }
+  );
+}
+
+/**
+ * Owner gets actionable improvement tips after a buyer submits a visit review.
+ * Dedup: once per (owner, propertyId) — the pattern is clear after one review.
+ */
+async function onVisitReviewSubmittedToOwner(ownerId, propertyId, interestId) {
+  return tryFireOnce(
+    ownerId,
+    TRIGGER.OWNER_VISIT_REVIEW_FEEDBACK,
+    propertyId,
+    () => ({
+      title: "Visit reviewed — use it to improve",
+      message:
+        "A buyer just submitted a visit review. Check their ratings on condition, natural light, area, and information quality — these tell you exactly what to address before the next visit. Improving on low-rated areas (often staging, lighting, or providing clearer pricing context) directly increases your offer rate.",
+    }),
+    { interestId }
+  );
+}
+
+// ─── Offer / decision funnel handlers ─────────────────────────────────────────
+
+/**
+ * Owner is nudged to respond fast when a buyer submits a purchase offer.
+ * Dedup: once per (owner, propertyId) — first offer tip per listing is enough;
+ * subsequent offers on the same property don't need the coaching again.
+ */
+async function onOfferReceivedByOwner(ownerId, propertyId, interestId, offerAmount) {
+  return tryFireOnce(
+    ownerId,
+    TRIGGER.OWNER_OFFER_RECEIVED,
+    propertyId,
+    () => ({
+      title: "New purchase offer — respond quickly",
+      message:
+        "A buyer has submitted a purchase offer. Responding within 24 hours signals seriousness and keeps the buyer engaged. Before deciding: review their buyer file and financial credentials, compare the amount to similar recent sales in the area, and consider how long your property has been listed. You can accept, counter-offer, or decline.",
+    }),
+    { interestId, metadata: { offerAmount } }
+  );
+}
+
+/**
+ * Buyer gets negotiation guidance after their offer is refused.
+ * Uses fireAlways — offer can be refused multiple times on the same deal
+ * (e.g. initial offer refused, counter-offer refused again).
+ */
+async function onOfferRefusedToBuyer(buyerId, propertyId, interestId, transactionRef) {
+  return fireAlways(
+    buyerId,
+    TRIGGER.BUYER_OFFER_REFUSED,
+    propertyId,
+    () => ({
+      title: "Offer not accepted — here's how to respond",
+      message:
+        "Your offer was not accepted. You still have options: submit a revised offer closer to the asking price, add flexibility on the moving date, or attach your complete buyer file to demonstrate financial credibility. Most deals close after one or two rounds of negotiation — a polite counter-offer keeps the dialogue open. Ask the owner what conditions would make an offer acceptable.",
+    }),
+    { interestId, transactionRef }
+  );
+}
+
+/**
+ * Owner receives presale contract guidance after accepting an offer.
+ * Uses fireAlways — in theory an owner could accept different offers
+ * on the same property if prior deals fall through.
+ */
+async function onOfferAcceptedOwner(ownerId, propertyId, interestId, transactionRef) {
+  return fireAlways(
+    ownerId,
+    TRIGGER.OWNER_OFFER_ACCEPTED_NEXT_STEPS,
+    propertyId,
+    () => ({
+      title: "Offer accepted — prepare the presale contract",
+      message:
+        "Now that you've accepted the offer, the next step is the preliminary sale agreement (compromis de vente), typically signed within 5–7 days. Key items to include: agreed sale price, deposit amount (usually 5–10%), any conditions precedent (mortgage clause, diagnostics compliance), and a target notary signing date. Make sure your diagnostics file is complete — the buyer will want it before signing.",
+    }),
+    { interestId, transactionRef }
+  );
+}
+
+/**
+ * Buyer receives next-steps guidance after their offer is accepted.
+ * Uses fireAlways for the same reason as onOfferAcceptedOwner.
+ */
+async function onOfferAcceptedBuyer(buyerId, propertyId, interestId, transactionRef) {
+  return fireAlways(
+    buyerId,
+    TRIGGER.BUYER_OFFER_ACCEPTED_NEXT_STEPS,
+    propertyId,
+    () => ({
+      title: "Your offer was accepted — next steps",
+      message:
+        "Congratulations! Next: sign the preliminary sale agreement (compromis de vente) — usually within 5–7 days. You will pay a deposit of 5–10% of the agreed price. Start your mortgage process immediately if you haven't already: banks need 45–60 days and the compromis has a deadline. Request the full diagnostics file and seller documents if not already shared. Your buyer file on Bookaroo can speed up the bank's due diligence.",
+    }),
+    { interestId, transactionRef }
+  );
+}
+
 module.exports = {
   TRIGGER,
   tryFireOnce,
+  fireAlways,
   optionalUserIdFromAuthHeader,
+  // ── Onboarding / search ──────────────────────────────────────────────────
   onAccountWelcome,
   onFirstQuickSearch,
   onFirstSaveSearchZip,
   onFirstPropertyForSaleListed,
   onPastTransactionsVisit,
   recordProfileView,
+  // ── First interest ───────────────────────────────────────────────────────
   onBuyerInterestInterest,
   onOwnerFirstLeadTip,
+  // ── Visit lifecycle ──────────────────────────────────────────────────────
   onVisitInviteToLead,
+  onVisitBookedOwnerPrep,
+  onVisitBookedBuyerPrep,
+  onVisitReviewSubmittedToOwner,
+  // ── Offer funnel ─────────────────────────────────────────────────────────
+  onOfferReceivedByOwner,
+  onOfferRefusedToBuyer,
+  onOfferAcceptedOwner,
+  onOfferAcceptedBuyer,
+  // ── Scheduled jobs ───────────────────────────────────────────────────────
   maybeNotifyOwnerNoInterest2Weeks,
   weeklyLeadDigests,
   weeklyOwnerDigests,
