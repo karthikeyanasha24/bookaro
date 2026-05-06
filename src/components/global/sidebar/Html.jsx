@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { HiChevronLeft, HiChevronRight, HiChevronDown } from "react-icons/hi2";
-import { MdDashboard, MdSearch, MdEmail, MdFavorite, MdPerson, MdTrendingUp, MdBook, MdCalculate, MdLocalOffer, MdBusiness, MdHome, MdWarning, MdSettings, MdHelpCenter, MdTimeline } from "react-icons/md";
+import { MdDashboard, MdSearch, MdEmail, MdFavorite, MdPerson, MdTrendingUp, MdBook, MdCalculate, MdLocalOffer, MdBusiness, MdHome, MdWarning, MdSettings, MdHelpCenter, MdTimeline, MdStorefront, MdShoppingCart, MdSpaceDashboard } from "react-icons/md";
 import { FaRocket, FaHeadset, FaBullseye } from "react-icons/fa";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ const SECTION_ROUTES = {
   transactionMgmt: ["/real-estate-transaction-searcher", "/real-estate-transaction-owner"],
   propertySeeker: ["/serach-alert", "/followed-properties", "/properties?favourites=true", "/renter-file", "/buyer-file"],
   properties: ["/my-properties", "/seller-file", "/property/qr-code"],
+  marketplace: ["/marketplace", "/marketplace/orders", "/pro/marketplace"],
 };
 
 const Html = ({
@@ -154,7 +155,7 @@ const Html = ({
       <nav className="sidebar-menu">
         {/* Main Items */}
         <div className="menu-section">
-          <MenuItem icon={FaRocket} label={t('navigation.onboarding')} url="#" isCollapsed={!isOpen} />
+          <MenuItem icon={FaRocket} label={t('navigation.onboarding')} url="/onboarding" isCollapsed={!isOpen} />
           <MenuItem icon={MdDashboard} label={t('navigation.dashboard')} url="/dashboard" isCollapsed={!isOpen} />
           <MenuItem icon={MdSearch} label={t('navigation.searchProperties')} url="/properties?search=true" isCollapsed={!isOpen} />
           <MenuItem icon={MdEmail} label={t('navigation.messages')} url="/chat" isCollapsed={!isOpen} />
@@ -162,6 +163,26 @@ const Html = ({
         </div>
 
         <div className="menu-divider"></div>
+
+        {/* Pro de l'immobilier à la carte — Marketplace */}
+        <div className="menu-section expandable">
+          <SectionHeader
+            icon={MdStorefront}
+            label={t('navigation.proImmobilierALaCarte')}
+            sectionId="marketplace"
+            isCollapsed={!isOpen}
+          />
+          {shouldShowSectionItems("marketplace") && (
+            <div className="section-items">
+              <MenuItem icon={MdSearch} label={t('navigation.marketplaceList')} url="/marketplace" isCollapsed={!isOpen} />
+              <MenuItem icon={MdFavorite} label={t('navigation.marketplaceFavorites')} url="/marketplace?favorites=true" isCollapsed={!isOpen} />
+              <MenuItem icon={MdShoppingCart} label={t('navigation.marketplaceOrders')} url="/marketplace/orders" isCollapsed={!isOpen} />
+              {user?.accountType === 'pro' && (
+                <MenuItem icon={MdSpaceDashboard} label={t('navigation.proDashboard')} url="/pro/marketplace" isCollapsed={!isOpen} />
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Market Insights Section */}
         <div className="menu-section expandable">

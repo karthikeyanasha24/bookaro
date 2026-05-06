@@ -35,6 +35,7 @@ function App() {
     { url: "/signup/pro", path: "Signup/prologin" }, // Auth Page Routes
     { url: "/change-password", path: "ChangePassword" }, // Auth Page Routes
     { url: "/login", path: "Login" },
+    { url: "/onboarding", path: "Onboarding" },
     { url: "/otpverify", path: "Otpverify" },
     { url: "/reset-email", path: "ResetEmail" },
     { url: "/reset-new-email", path: "ResetNewEmail" },
@@ -83,6 +84,10 @@ function App() {
     { url: "/past-transactions", path: "PastTransactions" },
     { url: "/past-transation-list", path: "PastTransectionList" },
     { url: "/real-estate-pros", path: "RealEstatePros" },
+    { url: "/marketplace", path: "Marketplace" },
+    { url: "/marketplace/:id", path: "Marketplace/ServiceDetail" },
+    { url: "/marketplace/orders", path: "MarketplaceOrders" },
+    { url: "/pro/marketplace", path: "ProMarketplace" },
     { url: "/prolist", path: "Prolist" },
     { url: "/company-details", path: "CompanyDetails" },
     { url: "/blogs", path: "Blogs" },

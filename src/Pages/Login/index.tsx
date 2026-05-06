@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login_success } from "../../actions/user";
 import AuthLayout from "../../components/AuthLayout";
+import { getPostLoginRoute } from "../../components/onboarding/onboarding.hook";
 import { requestForToken } from "../../config/Firebase/FirebaseAuth";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
@@ -58,7 +59,7 @@ const Login = () => {
   // 2. Redirection immédiate si loggé (mock ou réel)
   useEffect(() => {
     if (user && user.loggedIn) {
-      navigate("/dashboard");
+      navigate(getPostLoginRoute());
     }
   }, [user, navigate]);
 
@@ -113,7 +114,7 @@ const Login = () => {
         token: "mock-token",
       }));
       toast.success("Connexion réussie (mode autonome)");
-      navigate("/dashboard");
+      navigate(getPostLoginRoute());
     }, 500);
   };
 
