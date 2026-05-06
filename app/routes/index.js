@@ -52,4 +52,9 @@ router.use("/adminSettings",require("./adminSettings.routes.js"));
 router.use("/support",require("./support.routes.js"));
 router.use("/adminDashboard", require("./adminDashboard.routes.js"));
 
+// ── Marketplace de services ────────────────────────────────────────────────
+router.use("/marketplace", require("../modules/services-marketplace/routes/public"));
+router.use("/pro/marketplace", require("../modules/services-marketplace/routes/pro"));
+router.use("/admin/marketplace", require("../modules/services-marketplace/routes/admin"));
+
 module.exports = router;

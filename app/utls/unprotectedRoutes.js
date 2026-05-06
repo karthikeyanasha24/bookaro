@@ -86,6 +86,9 @@ module.exports = {
     "/support/add",
     "/support/list",
     "/support/delete",
-    "/user/delete-by-credentials"
+    "/user/delete-by-credentials",
+    // Marketplace — routes publiques (pas d'auth requise)
+    "/marketplace/services",
+    "/marketplace/categories"
   ],
 };

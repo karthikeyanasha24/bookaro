@@ -47,6 +47,9 @@ module.exports = (mongoose) => {
       },
       status: { type: String, default: "active" },
       stripe_subscriptionId: String,
+      // Stripe Connect — marketplace de services
+      stripeConnectAccountId: { type: String, default: null },
+      stripeConnectActive: { type: Boolean, default: false },
       property: String,
       propertyFor: String,
       isDeleted: { type: Boolean, default: false },

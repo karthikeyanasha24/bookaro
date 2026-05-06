@@ -37,6 +37,13 @@ app.use(cors(corsOptions));
 
 app.options('*', cors(corsOptions)); // for preflight support
 
+// ── Stripe Webhook (doit être AVANT express.json pour avoir le raw body) ────
+app.post(
+  '/webhook/stripe',
+  express.raw({ type: 'application/json' }),
+  require('./app/modules/services-marketplace/webhooks/stripeWebhook'),
+);
+
 app.use(express.json());
 let socketService = require('./app/services/sockets')
 
