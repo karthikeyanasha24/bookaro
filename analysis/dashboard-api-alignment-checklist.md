@@ -1,4 +1,4 @@
-# Dashboard API Alignment Checklist
+La pnon c'# Dashboard API Alignment Checklist
 
 Objectif: finaliser le passage du dashboard en mode API reel, avec un contrat stable section par section.
 
@@ -55,6 +55,19 @@ Champs minimaux attendus par le front:
 Definition of done:
 - [ ] Le clic carte ouvre la timeline du bien depuis la data API.
 - [ ] Pas de data hardcodee de secours visible.
+
+## NOTE IMPORTANTE - Gestion des données fictives (mock)
+
+- Une fois le backend branché sur le front, il faudra s'assurer que chaque section du dashboard affiche automatiquement les données mock (issues de `dashboard.mocks.js`) si aucune donnée n'est remontée par le backend pour cette section.
+- Un sticker "Données fictives" doit être affiché à côté du titre de chaque section concernée lorsque des données mock sont utilisées.
+- Lors de la première visite de la page dashboard (après branchement backend), une popup doit informer l'utilisateur que des données fictives sont affichées si c'est le cas.
+- Cette logique doit être maintenue même après la mise en production du backend, pour garantir une UX cohérente en cas d'absence de données réelles.
+
+### Texte de la popup à afficher lors de la première visite (données fictives)
+
+- Message : « Les données fictives seront progressivement remplacées par vos propres données »
+- Bouton : « J'ai compris » (ferme la popup)
+- Cette popup doit apparaître uniquement lors de la première visite de la page dashboard si des données fictives sont affichées.
 
 ## P1 - Qualite de contrat (stabilisation)
 

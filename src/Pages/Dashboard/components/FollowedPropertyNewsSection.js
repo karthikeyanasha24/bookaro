@@ -217,11 +217,14 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
   const [openShareId, setOpenShareId] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
+  let isMockData = false;
+  let source = Array.isArray(section?.items) && section.items.length > 0
+    ? section.items
+    : DEFAULT_NEWS_ITEMS;
+  if (!Array.isArray(section?.items) || section.items.length === 0) {
+    isMockData = true;
+  }
   const newsGroups = useMemo(() => {
-    const source = Array.isArray(section?.items) && section.items.length > 0
-      ? section.items
-      : DEFAULT_NEWS_ITEMS;
-
     const sortedItems = [...source]
       .sort((a, b) => {
         const dateA = new Date(a?.occurredAt || 0).getTime();
@@ -285,6 +288,7 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
     return `${window.location.origin}${path}`;
   };
 
+
   const handleShareClick = async (event, item) => {
     event.preventDefault();
     event.stopPropagation();
@@ -305,9 +309,12 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
       }
       return;
     }
-
-    setOpenShareId((prev) => (prev === newsId ? null : newsId));
+    const subject = encodeURIComponent(text);
+    const body = encodeURIComponent(`${text}\n${shareUrl}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`, "_self");
+    setOpenShareId(null);
   };
+
 
   const shareByEmail = (item) => {
     const text = shareTextFor(item);

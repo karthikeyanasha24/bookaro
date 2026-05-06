@@ -14,7 +14,20 @@ const getTodoKey = (item, index) => {
 };
 
 const TodoListSection = ({ section, loading, error, t }) => {
-  const items = section?.items || [];
+  let items = section?.items || [];
+  let isMockData = false;
+  // Inject mock todos if user has no todos
+  if (!items.length) {
+    try {
+      // Chargement dynamique pour éviter le bundle inutile
+      // eslint-disable-next-line global-require
+      const { mockDashboardOverview } = require("../dashboard.mocks");
+      items = mockDashboardOverview.sections.todoList.items || [];
+      isMockData = true;
+    } catch (e) {
+      // fallback: rien
+    }
+  }
   const [completionMap, setCompletionMap] = useState({});
   const [now, setNow] = useState(Date.now());
   const [isStorageReady, setIsStorageReady] = useState(false);
@@ -105,6 +118,19 @@ const TodoListSection = ({ section, loading, error, t }) => {
       loading={loading}
       error={error}
       alwaysVisible
+      headerRight={isMockData ? (
+        <span style={{
+          background: '#f3e8ff',
+          color: '#7c3aed',
+          borderRadius: '12px',
+          padding: '2px 10px',
+          fontSize: '13px',
+          fontWeight: 500,
+          marginLeft: 12,
+          alignSelf: 'center',
+          border: '1px solid #e9d5ff',
+        }}>Données fictives</span>
+      ) : undefined}
     >
       {visibleItems.length === 0 ? (
         <p className="dashboard-subtitle" style={{ fontSize: "14px", color: "#6b7280" }}>

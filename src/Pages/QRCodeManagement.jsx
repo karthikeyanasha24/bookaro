@@ -1,5 +1,6 @@
 
 import React, { useMemo, useEffect, useState } from 'react';
+import QRCodeFlyerModal from '../components/QRCodeFlyerModal';
 import { useTranslation } from 'react-i18next';
 import { FiX } from 'react-icons/fi';
 import { FiDownload, FiTrash } from 'react-icons/fi';
@@ -10,6 +11,8 @@ import './QRCodeManagement.local.css';
 
 const QRCodeManagement = () => {
   // Pagination front
+    // Modale QR Code Flyer
+    const [flyerModalOpen, setFlyerModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   // Modale viewer
@@ -69,6 +72,22 @@ const QRCodeManagement = () => {
       scanCount: 7,
       lastScan: '2024-04-09',
     },
+    // Ligne sans QR code généré
+    {
+      id: 3,
+      property: {
+        title: 'Villa à la mer',
+        status: 'À louer',
+        rooms: 6,
+        surface: 180,
+        location: '06160 Antibes',
+        imageUrl: '/assets/img/dashboard/attractivity/attractivity-3.jpg',
+      },
+      flyer: null,
+      scanCount: null,
+      lastScan: null,
+      noQr: true,
+    },
   ], []);
 
 
@@ -123,48 +142,71 @@ const QRCodeManagement = () => {
       key: 'flyer',
       name: 'Flyer',
       render: (row) => (
-        <img
-          src={row.flyer}
-          alt="Flyer"
-          style={{ width: 60, borderRadius: 6, cursor: 'pointer' }}
-          onClick={e => {
-            e.stopPropagation();
-            setViewerImg(row.flyer);
-            setViewerOpen(true);
-          }}
-        />
+        row.flyer ? (
+          <img
+            src={row.flyer}
+            alt="Flyer"
+            style={{ width: 60, borderRadius: 6, cursor: 'pointer' }}
+            onClick={e => {
+              e.stopPropagation();
+              setViewerImg(row.flyer);
+              setViewerOpen(true);
+            }}
+          />
+        ) : null
       ),
     },
     {
       key: 'scanCount',
       name: 'Scan Count',
-      render: (row) => row.scanCount,
+      render: (row) => row.scanCount ?? null,
     },
     {
       key: 'lastScan',
       name: 'Dernier scan',
-      render: (row) => row.lastScan,
+      render: (row) => row.lastScan ?? null,
     },
     {
       key: 'actions',
       name: 'Actions',
       render: (row) => (
-        <div style={{ display: 'flex', gap: 12 }}>
+        row.noQr ? (
           <button
-            title="Télécharger"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#986dcd', padding: 4 }}
-            onClick={e => { e.stopPropagation(); /* TODO: implement download logic */ }}
+            className="btn btn-primary"
+            style={{
+              background: '#976dd0',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 999,
+              fontWeight: 600,
+              fontSize: 14,
+              padding: '8px 18px',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px #976dd033',
+              transition: 'background 0.2s',
+            }}
+            onClick={e => { e.stopPropagation(); setFlyerModalOpen(true); }}
           >
-            <FiDownload size={20} />
+            Generate QR Code
           </button>
-          <button
-            title="Supprimer"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e57373', padding: 4 }}
-            onClick={e => { e.stopPropagation(); /* TODO: implement delete logic */ }}
-          >
-            <FiTrash size={20} />
-          </button>
-        </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button
+              title="Télécharger"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#986dcd', padding: 4 }}
+              onClick={e => { e.stopPropagation(); /* TODO: implement download logic */ }}
+            >
+              <FiDownload size={20} />
+            </button>
+            <button
+              title="Supprimer"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e57373', padding: 4 }}
+              onClick={e => { e.stopPropagation(); /* TODO: implement delete logic */ }}
+            >
+              <FiTrash size={20} />
+            </button>
+          </div>
+        )
       ),
     },
   ];
@@ -181,6 +223,8 @@ const QRCodeManagement = () => {
 
   return (
     <PageLayout>
+      {/* Modale QR Code Flyer */}
+      <QRCodeFlyerModal open={flyerModalOpen} onClose={() => setFlyerModalOpen(false)} />
       {/* Image Viewer Modal */}
       {viewerOpen && (
         <div style={{

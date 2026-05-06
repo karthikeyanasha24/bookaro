@@ -19,7 +19,19 @@ const METRIC_CONFIG = [
 ];
 
 const PropertyAttractivitySection = ({ section, loading, error, period, onPeriodChange, t }) => {
-  const cards = section?.cards || [];
+  let cards = section?.cards || [];
+  let isMockData = false;
+  // Inject mock data if no backend data
+  if (!cards.length) {
+    try {
+      // eslint-disable-next-line global-require
+      const { mockDashboardOverview } = require("../dashboard.mocks");
+      cards = mockDashboardOverview.sections.propertyAttractivity.cards || [];
+      isMockData = true;
+    } catch (e) {
+      // fallback: rien
+    }
+  }
 
   const resolvePropertyId = (card) => {
     return card?.property?._id || card?.property?.id || card?.propertyId;
@@ -45,12 +57,27 @@ const PropertyAttractivitySection = ({ section, loading, error, period, onPeriod
       loading={loading}
       error={error}
       headerRight={
-        <select className="section-period-select" value={period} onChange={(e) => onPeriodChange(e.target.value)}>
-          <option value="day">{t("dashboard.periods.day", "Day")}</option>
-          <option value="week">{t("dashboard.periods.week", "Week")}</option>
-          <option value="month">{t("dashboard.periods.month", "Month")}</option>
-          <option value="year">{t("dashboard.periods.year", "Year")}</option>
-        </select>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <select className="section-period-select" value={period} onChange={(e) => onPeriodChange(e.target.value)}>
+            <option value="day">{t("dashboard.periods.day", "Day")}</option>
+            <option value="week">{t("dashboard.periods.week", "Week")}</option>
+            <option value="month">{t("dashboard.periods.month", "Month")}</option>
+            <option value="year">{t("dashboard.periods.year", "Year")}</option>
+          </select>
+          {isMockData && (
+            <span style={{
+              background: '#f3e8ff',
+              color: '#7c3aed',
+              borderRadius: '12px',
+              padding: '2px 10px',
+              fontSize: '13px',
+              fontWeight: 500,
+              marginLeft: 12,
+              alignSelf: 'center',
+              border: '1px solid #e9d5ff',
+            }}>Données fictives</span>
+          )}
+        </div>
       }
     >
       {cards.length === 0 ? (
