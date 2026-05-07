@@ -66,82 +66,134 @@ const HowItWorksSection = () => {
             <h2 className="text-2xl sm:text-3xl font-semibold">
               Comment ça fonctionne ? Passez en mode pilote automatique
             </h2>
-            <p className="text-gray-600 mt-3 max-w-2xl mx-auto text-[15px]">
+            <p className="text-gray-600 mt-3 mb-12 max-w-2xl mx-auto text-[15px]">
               Depuis la création de votre annonce jusqu'à la signature, AnyHomes
               vous guide étape par étape avec des fonctionnalités innovantes.
             </p>
+            {/* Ligne de 3 colonnes pictos */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-12">
+              {/* Colonne 1 */}
+              <div className="flex flex-col items-center w-56">
+                <MdDevices className="w-8 h-8 text-[#976DD0] mb-2" />
+                <span className="text-black text-base font-medium whitespace-nowrap">Fonctionnalités digitales</span>
+              </div>
+              {/* Colonne 2 */}
+              <div className="flex flex-col items-center w-56">
+                <PiBrain className="w-8 h-8 text-[#976DD0] mb-2" />
+                <span className="text-black text-base font-medium whitespace-nowrap">Coach immobilier IA</span>
+              </div>
+              {/* Colonne 3 */}
+              <div className="flex flex-col items-center w-56">
+                <MdSupportAgent className="w-8 h-8 text-[#976DD0] mb-2" />
+                <span className="text-black text-base font-medium whitespace-nowrap">Agent immobilier à la demande</span>
+              </div>
+            </div>
 
-            {/* 3 colonnes pictos + texte */}
-            <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-6">
-              <div className="flex flex-col items-center w-56">
-                <span className="bg-[#f3eaff] text-[#976DD0] rounded-full p-3 mb-2">
-                  <MdDevices className="w-8 h-8" />
-                </span>
-                <span className="text-[15px] font-medium text-gray-800 text-center">Fonctionnalités digitales</span>
+            {/* Marge basse supplémentaire après la ligne de pictos */}
+            <div className="mb-12"></div>
+
+                      {/* Double espace avant la première étape de l'explainer */}
+                      <div className="mb-[120px]"></div>
+          </div>
+
+          {/* Première ligne de l'explainer */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-start gap-8 relative mb-20">
+            {/* Bloc arrondi à gauche */}
+            <div className="bg-[#F3ECFA] rounded-3xl shadow-lg border border-gray-100 p-6 w-full max-w-xs flex flex-col items-center relative sm:ml-0 ml-auto">
+              {/* Image appartement paysage, grande, centrée */}
+              <img src="/assets/img/Apartment.jpg" alt="Appartement" className="mx-auto w-full h-44 object-cover rounded-2xl mb-4" />
+              {/* Texte sous l'image, aligné à gauche */}
+              <div className="w-full text-left">
+                <div className="text-black text-[15px] leading-snug mb-1">
+                  Appartement, 4 pièces, 75018 Paris<br/>
+                  95m2, 3 chambres
+                </div>
+                <div className="font-bold text-black text-[15px]">Annuaire des biens immobiliers</div>
               </div>
-              <div className="flex flex-col items-center w-56">
-                <span className="bg-[#f3eaff] text-[#976DD0] rounded-full p-3 mb-2">
-                  <PiBrain className="w-8 h-8" />
-                </span>
-                <span className="text-[15px] font-medium text-gray-800 text-center">Coach immobilier IA</span>
+              {/* Rond violet centré bas + flèche */}
+              <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full bg-[#976DD0] flex items-center justify-center text-white font-bold text-lg shadow-lg border-4 border-white z-10 translate-y-12">
+                  1
+                </div>
+                {/* Flèche SVG */}
+                <svg width="2" height="40" viewBox="0 0 2 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="1" y1="0" x2="1" y2="36" stroke="#976DD0" strokeWidth="2" />
+                  <polygon points="0,36 2,36 1,40" fill="#976DD0" />
+                </svg>
               </div>
-              <div className="flex flex-col items-center w-56">
-                <span className="bg-[#f3eaff] text-[#976DD0] rounded-full p-3 mb-2">
-                  <MdSupportAgent className="w-8 h-8" />
-                </span>
-                <span className="text-[15px] font-medium text-gray-800 text-center">Agent immobilier à la carte</span>
+            </div>
+
+            {/* Contenu à droite */}
+            <div className="flex-1 flex flex-col items-start max-w-lg pr-0 sm:pr-5">
+              <div className="text-2xl font-semibold mb-2 text-left w-full">Publiez le profil de votre bien</div>
+              <div className="text-gray-600 mb-2 max-w-[320px] text-left w-full pl-0 ml-0">Publiez anonymement le profil de votre bien sur l'annuaire AnyHomes avec toutes les informations nécessaires pour le mettre en valeur (revenus, travaux réalisés, notes AirBnB...)</div>
+              <Link to="/fonctionnalites/property-profile" className="font-bold text-[#976DD0] hover:underline mb-4 text-left w-full block">En savoir plus</Link>
+              <div className="flex flex-col gap-3 w-full">
+                {/* Rectangle 1 */}
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdSupportAgent className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Rédaction annonce</span>
+                </div>
+                {/* Rectangle 2 */}
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <PiBrain className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Aide rédaction</span>
+                </div>
+                {/* Rectangle 3 */}
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <PiBrain className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Aide mise en valeur</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Timeline verticale alternée */}
-          <div className="relative max-w-4xl mx-auto">
-            {/* Ligne verticale centrale */}
-            <div className="hidden sm:block absolute left-1/2 top-0 h-full w-1 -translate-x-1/2 bg-[#e5d6f7] z-0" style={{ minHeight: '100%' }} />
-            <ol className="flex flex-col gap-12 relative z-10">
-              {steps.map((s, i) => {
-                // Alternance gauche/centre/droite
-                const align = i % 2 === 0 ? 'left' : 'right';
-                return (
-                  <li key={s.n} className="relative flex sm:items-center">
-                    {/* Bloc gauche */}
-                    {align === 'left' && (
-                      <div className="flex-1 flex justify-end pr-8">
-                        <StepCard s={s} align="right" />
-                      </div>
-                    )}
-                    {/* Timeline + numéro */}
-                    <div className="flex flex-col items-center z-10">
-                      <div className="w-12 h-12 rounded-full bg-[#f3eaff] border-2 border-[#976DD0] flex items-center justify-center text-[#976DD0] font-bold text-lg mb-2">
-                        {s.icon}
-                      </div>
-                      <div className="w-7 h-7 rounded-full bg-[#976DD0] text-white flex items-center justify-center font-bold text-base absolute top-1 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-white shadow">{s.n}</div>
-                      {/* Connecteur vertical sauf dernier */}
-                      {i < steps.length - 1 && (
-                        <div className="hidden sm:block w-1 h-16 bg-[#e5d6f7] mt-2" />
-                      )}
-                    </div>
-                    {/* Bloc droite */}
-                    {align === 'right' && (
-                      <div className="flex-1 flex justify-start pl-8">
-                        <StepCard s={s} align="left" />
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
+          <div className="mb-[120px]"></div>
+          {/* Deuxième ligne de l'explainer (copie à personnaliser) */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-end gap-8 relative mb-20">
+            {/* Bloc arrondi à gauche */}
+            <div className="bg-[#F3ECFA] rounded-3xl shadow-lg border border-gray-100 p-6 w-full max-w-xs flex flex-col items-center relative sm:ml-0 ml-auto">
+              {/* Image P2P HIW, centrée, sans texte */}
+              <img src="/assets/img/P2PHIW.png" alt="P2P Estimation" className="mx-auto w-full h-44 object-cover rounded-2xl mb-4" />
+              {/* Rond violet centré bas + flèche */}
+              <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full bg-[#976DD0] flex items-center justify-center text-white font-bold text-lg shadow-lg border-4 border-white z-10 translate-y-12">
+                  2
+                </div>
+                {/* Flèche SVG */}
+                <svg width="2" height="40" viewBox="0 0 2 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="1" y1="0" x2="1" y2="36" stroke="#976DD0" strokeWidth="2" />
+                  <polygon points="0,36 2,36 1,40" fill="#976DD0" />
+                </svg>
+              </div>
+            </div>
 
+            {/* Contenu à droite */}
+            <div className="flex-1 flex flex-col items-start max-w-lg text-left">
+              <div className="text-2xl font-semibold mb-2 max-w-xs">Vous voulez connaitre la valeur perçue de votre bien&nbsp;?</div>
+              <div className="text-gray-600 mb-2 max-w-[320px]">Lancez anonymement une campagne de Peer-To-Peer estimation et les membres de la communauté estimeront votre bien et vous donneront des conseil pour mieux le valoriser.</div>
+              <a href="/fonctionnalites/p2p-estimation" className="font-bold text-black hover:underline mb-4">En savoir plus</a>
+              <div className="flex flex-col gap-3 w-full">
+                {/* Rectangle 1 */}
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdDevices className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">P2P Estimation</span>
+                </div>
+                {/* Rectangle 2 */}
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdDevices className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Transactions historiques</span>
+                </div>
+                {/* Rectangle 3 */}
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdSupportAgent className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Estimation offerte</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-center mt-10">
-            <Link
-              to="/signup"
-              className="inline-flex items-center bg-[#976DD0] hover:bg-[#7e54bd] text-white font-medium rounded-full px-6 py-3 transition"
-            >
-              Démarrer gratuitement
-            </Link>
-          </div>
+          {/* ...reste de la section... */}
         </div>
       </section>
     </>
