@@ -149,8 +149,7 @@ const HowItWorksSection = () => {
           </div>
 
           <div className="mb-[120px]"></div>
-          {/* Deuxième ligne de l'explainer (copie à personnaliser) */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-end gap-8 relative mb-20">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-end gap-8 relative mb-40">
             {/* Bloc arrondi à gauche */}
             <div className="bg-[#F3ECFA] rounded-3xl shadow-lg border border-gray-100 p-6 w-full max-w-xs flex flex-col items-center relative sm:ml-0 ml-auto">
               {/* Image P2P HIW, centrée, sans texte */}
@@ -193,7 +192,112 @@ const HowItWorksSection = () => {
             </div>
           </div>
 
-          {/* ...reste de la section... */}
+          {/* Étape 3 (duplication de l'étape 1, placeholders) */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-start gap-8 relative mb-40">
+            <div className="bg-[#F3ECFA] rounded-3xl shadow-lg border border-gray-100 p-6 w-full max-w-xs flex flex-col items-center relative sm:ml-0 ml-auto">
+              <img src="/assets/img/placeholder1.png" alt="Placeholder 1" className="mx-auto w-full h-44 object-cover rounded-2xl mb-4" />
+              <div className="w-full text-left">
+                <div className="text-black text-[15px] leading-snug mb-1">Placeholder contenu visuel étape 3</div>
+                <div className="font-bold text-black text-[15px]">Placeholder titre étape 3</div>
+              </div>
+              <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full bg-[#976DD0] flex items-center justify-center text-white font-bold text-lg shadow-lg border-4 border-white z-10 translate-y-12">3</div>
+                <svg width="2" height="40" viewBox="0 0 2 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="1" y1="0" x2="1" y2="36" stroke="#976DD0" strokeWidth="2" />
+                  <polygon points="0,36 2,36 1,40" fill="#976DD0" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col items-start max-w-lg pr-0 sm:pr-5">
+              <div className="text-2xl font-semibold mb-2 text-left w-full">Placeholder titre principal étape 3</div>
+              <div className="text-gray-600 mb-2 max-w-[320px] text-left w-full pl-0 ml-0">Placeholder description étape 3</div>
+              <a className="font-bold text-[#976DD0] hover:underline mb-4 text-left w-full block">Lien placeholder étape 3</a>
+              <div className="flex flex-col gap-3 w-full">
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdSupportAgent className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 1</span>
+                </div>
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <PiBrain className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 2</span>
+                </div>
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <PiBrain className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Étape 4 (duplication de l'étape 2, placeholders) */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-end gap-8 relative mb-40">
+            <div className="bg-[#F3ECFA] rounded-3xl shadow-lg border border-gray-100 p-6 w-full max-w-xs flex flex-col items-center relative sm:ml-0 ml-auto">
+              <img src="/assets/img/placeholder2.png" alt="Placeholder 2" className="mx-auto w-full h-44 object-cover rounded-2xl mb-4" />
+              <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full bg-[#976DD0] flex items-center justify-center text-white font-bold text-lg shadow-lg border-4 border-white z-10 translate-y-12">4</div>
+                <svg width="2" height="40" viewBox="0 0 2 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="1" y1="0" x2="1" y2="36" stroke="#976DD0" strokeWidth="2" />
+                  <polygon points="0,36 2,36 1,40" fill="#976DD0" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col items-start max-w-lg text-left">
+              <div className="text-2xl font-semibold mb-2 max-w-xs">Placeholder titre principal étape 4</div>
+              <div className="text-gray-600 mb-2 max-w-[320px]">Placeholder description étape 4</div>
+              <a className="font-bold text-black hover:underline mb-4">Lien placeholder étape 4</a>
+              <div className="flex flex-col gap-3 w-full">
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdDevices className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 1</span>
+                </div>
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdDevices className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 2</span>
+                </div>
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdSupportAgent className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Étape 5 (placeholder, manuel) */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-start gap-8 relative mb-40">
+            <div className="bg-[#F3ECFA] rounded-3xl shadow-lg border border-gray-100 p-6 w-full max-w-xs flex flex-col items-center relative sm:ml-0 ml-auto">
+              <img src="/assets/img/placeholder1.png" alt="Placeholder 5" className="mx-auto w-full h-44 object-cover rounded-2xl mb-4" />
+              <div className="w-full text-left">
+                <div className="text-black text-[15px] leading-snug mb-1">Placeholder contenu visuel étape 5</div>
+                <div className="font-bold text-black text-[15px]">Placeholder titre étape 5</div>
+              </div>
+              <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full bg-[#976DD0] flex items-center justify-center text-white font-bold text-lg shadow-lg border-4 border-white z-10 translate-y-12">5</div>
+                <svg width="2" height="40" viewBox="0 0 2 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="1" y1="0" x2="1" y2="36" stroke="#976DD0" strokeWidth="2" />
+                  <polygon points="0,36 2,36 1,40" fill="#976DD0" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col items-start max-w-lg pr-0 sm:pr-5">
+              <div className="text-2xl font-semibold mb-2 text-left w-full">Placeholder titre principal étape 5</div>
+              <div className="text-gray-600 mb-2 max-w-[320px] text-left w-full pl-0 ml-0">Placeholder description étape 5</div>
+              <a className="font-bold text-[#976DD0] hover:underline mb-4 text-left w-full block">Lien placeholder étape 5</a>
+              <div className="flex flex-col gap-3 w-full">
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <MdSupportAgent className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 1 étape 5</span>
+                </div>
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <PiBrain className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 2 étape 5</span>
+                </div>
+                <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">
+                  <PiBrain className="w-5 h-5 text-[#976DD0]" />
+                  <span className="text-black text-[14px]">Placeholder 3 étape 5</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </>

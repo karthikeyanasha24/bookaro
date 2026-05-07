@@ -37,14 +37,44 @@ const PersonaSection = () => {
           </p>
         </div>
 
+
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {personas.map((p) => (
-            <div
-              key={p.title}
-              className="p-6 rounded-2xl border border-gray-100 hover:border-[#976DD0]/40 hover:shadow-sm transition"
-            >
-              <h3 className="font-semibold mb-2 text-[#976DD0]">{p.title}</h3>
-              <p className="text-gray-600 text-[14px]">{p.text}</p>
+          {personas.map((p, idx) => (
+            <div key={p.title} className="flex flex-col items-center h-full">
+              {/* Première forme */}
+              <div className="p-6 rounded-2xl border border-gray-100 hover:border-[#976DD0]/40 hover:shadow-sm transition w-full bg-white min-h-32 flex flex-col justify-center flex-1">
+                <h3 className="font-semibold mb-2 text-[#976DD0]">{p.title}</h3>
+                <p className="text-gray-600 text-[14px]">{p.text}</p>
+              </div>
+              {/* Trait vertical en points ronds */}
+              <div className="flex justify-center w-full my-2">
+                <svg width="8" height="40" viewBox="0 0 8 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {[0, 8, 16, 24, 32].map((y) => (
+                    <circle key={y} cx="4" cy={y + 2} r="2" fill="#976DD0" />
+                  ))}
+                </svg>
+              </div>
+              {/* Deuxième forme */}
+              <div className="flex items-center bg-[#F8F5FC] rounded-2xl border border-gray-100 shadow-sm p-4 w-full mt-0">
+                {/* Image ronde à gauche */}
+                <div className="flex-shrink-0">
+                  <img src={`/assets/img/persona${idx+1}.jpg`} alt="" className="w-14 h-14 rounded-full object-cover border-2 border-[#976DD0]/30" />
+                </div>
+                {/* Bloc texte à droite */}
+                <div className="ml-4 flex-1">
+                  <div className="font-semibold text-[#976DD0] text-[15px] mb-1">Titre secondaire {p.title}</div>
+                  <div className="text-gray-600 text-[13px] mb-1">Texte secondaire pour {p.title}.</div>
+                  <div className="font-bold text-black text-[13px] mb-1">Texte gras pour {p.title}</div>
+                  {/* 5 étoiles */}
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} width="18" height="18" viewBox="0 0 20 20" fill="#FFD700" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="10,1 12.59,7.36 19.51,7.64 14,12.14 15.82,18.99 10,15.27 4.18,18.99 6,12.14 0.49,7.64 7.41,7.36" />
+                      </svg>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>

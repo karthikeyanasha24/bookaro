@@ -4,15 +4,11 @@
   align-items: center;
 }
 
-.lang-toggle {
+ .lang-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
   background: transparent;
-  border: 1px solid #cbd5e0;
-  border-radius: 4px;
   cursor: pointer;
   font-size: 18px;
   transition: all 0.2s ease;
@@ -20,7 +16,6 @@
 }
 
 .lang-toggle:hover {
-  border-color: #976DD0;
   background: rgba(151, 109, 208, 0.05);
 }
 
