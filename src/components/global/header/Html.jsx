@@ -28,10 +28,19 @@ const Html = ({
 
   return (
     <nav
-      className={`min-sidebar ${headerWidthClass} shadow-btn py-1.5 bg-[#f8f9fa] border-b fixed transition-[width] duration-300 ml-auto right-0 z-10 flex items-center h-[71px] !px-5`}
+      className={`min-sidebar ${headerWidthClass} shadow-btn py-1.5 bg-[#f8f9fa] border-b fixed transition-[width] duration-300 ml-auto right-0 z-40 flex items-center h-[71px] !px-5`}
     >
 
       {/* Bouton toggle sidebar supprimé du header, seul celui du sidebar reste */}
+
+      {/* CTA création de bien — décalé à droite du toggle de la sidebar */}
+      <button
+        onClick={() => (window.location.href = '/property/add')}
+        className="ml-8 bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[13px] font-semibold px-4 py-2 rounded-full transition-colors shadow-sm"
+        title="Créer le profil de mon bien"
+      >
+        Créer le profil de mon bien
+      </button>
 
       <div className="flex items-center gap-4 ml-auto">
         {Number(messageCount) > 0 && (

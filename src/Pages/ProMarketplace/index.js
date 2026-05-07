@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getProServices, getProOrders, acceptOrder, deliverOrder, getStripeStatus, startStripeOnboard } from '../../methods/api/marketplaceApi';
+import { getProServices, getProOrders, acceptOrder, deliverOrder, getStripeStatus, startStripeOnboard, getCategories } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
+import CityAutocomplete from '../../components/common/CityAutocomplete';
+
+const InputRow = ({ label, children, className = '' }) => (
+  <div className={`flex flex-col gap-1 ${className}`}>
+    <label className="text-[11px] text-gray-500 font-medium flex items-center gap-1">
+      <span className="text-[#976DD0]">⋙</span> {label}
+    </label>
+    {children}
+  </div>
+);
 
 /* ─── Traductions ── */
 const T = {
@@ -27,6 +37,8 @@ const T = {
     // Modal création
     modalTitle: 'Proposer un service',
     charTitle: 'Caractéristiques du service',
+    svcTitle: 'Titre du service',
+    svcTitlePh: 'Ex : Pack 10 visites accompagnées',
     cat: 'Catégorie',
     subcat: 'Sous-catégorie',
     svcName: 'Service',
@@ -35,7 +47,7 @@ const T = {
     radius: 'Rayon',
     qty: 'Quantité',
     price: 'Prix',
-    svcType: 'Type de service',
+    svcType: 'Modalité',
     descTitle: 'Présentation du service',
     d1: "Qu'est-ce que ce service va vous apporter ?",
     d2: 'Description du service rendu',
@@ -69,6 +81,8 @@ const T = {
     refresh: '↺',
     modalTitle: 'Offer a service',
     charTitle: 'Service characteristics',
+    svcTitle: 'Service title',
+    svcTitlePh: 'E.g. 10-visit accompanied pack',
     cat: 'Category',
     subcat: 'Sub-category',
     svcName: 'Service',
@@ -77,7 +91,7 @@ const T = {
     radius: 'Radius',
     qty: 'Quantity',
     price: 'Price',
-    svcType: 'Service type',
+    svcType: 'Modality',
     descTitle: 'Service description',
     d1: 'What will this service bring?',
     d2: 'Description of the service',
@@ -107,16 +121,46 @@ const ORD_STATUS_STYLE = {
 };
 
 /* ─── Modal création service (image 2) ── */
+const DEFAULT_TRANSACTIONS = ['Acheter', 'Vendre', 'Louer', 'Gérer'];
+const DEFAULT_SERVICES = ['Visites', 'Estimation', 'Négociation', 'Recherche de bien', 'Analyse acheteur', 'Prise de photo', 'Dossier vendeur', 'Recherche de financement', 'Visite virtuelle'];
+
 function CreateServiceModal({ lang, onClose }) {
   const t = T[lang];
+  const [transactions, setTransactions] = useState(DEFAULT_TRANSACTIONS);
+  const [serviceTypes, setServiceTypes] = useState(DEFAULT_SERVICES);
   const [form, setForm] = useState({
-    category: 'Vendre', subcategory: 'Commercialiser', service: 'Visite de biens',
-    tarif: 'Forfait', zone: 'Lille', radius: '5', qty: 'Pack 10 visites',
-    price: '300', type: 'Distance', isFree: false,
+    category: 'Acheter', subcategory: 'Visites', service: 'Visites',
+    title: '', tarif: 'Forfait', zone: 'Lille', radius: '5', qty: 'Pack 10 visites',
+    price: '300', type: 'Présentiel', isFree: false,
     d1: '', d2: '', d3: '', d4: '',
   });
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // Charger les catégories définies par l'admin (fallback liste locale)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await getCategories(lang);
+        const list = res?.categories || res?.data || res;
+        if (!cancelled && Array.isArray(list) && list.length > 0) {
+          const trans = [];
+          const svcs = [];
+          list.forEach(c => {
+            const label = c.label || c.name_fr || c.name || c.title;
+            if (!label) return;
+            const grp = c.group || c.type || (c.is_transaction ? 'Transaction' : 'Service');
+            if (grp === 'Transaction') trans.push(label);
+            else svcs.push(label);
+          });
+          if (trans.length > 0) setTransactions(trans);
+          if (svcs.length > 0) setServiceTypes(svcs);
+        }
+      } catch { /* fallback */ }
+    })();
+    return () => { cancelled = true; };
+  }, [lang]);
 
   const handleSave = async (draft = false) => {
     setLoading(true);
@@ -124,14 +168,7 @@ function CreateServiceModal({ lang, onClose }) {
     setTimeout(() => { setLoading(false); onClose(); }, 800);
   };
 
-  const InputRow = ({ label, children }) => (
-    <div className="flex flex-col gap-1">
-      <label className="text-[11px] text-gray-500 font-medium flex items-center gap-1">
-        <span className="text-[#976DD0]">⊙</span> {label}
-      </label>
-      {children}
-    </div>
-  );
+
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
@@ -145,20 +182,26 @@ function CreateServiceModal({ lang, onClose }) {
           {/* Caractéristiques */}
           <div>
             <p className="font-bold text-[#47525E] text-sm mb-3">{t.charTitle}</p>
+            <div className="mb-3">
+              <InputRow label={t.svcTitle}>
+                <input value={form.title} onChange={e => set('title', e.target.value)} maxLength={60} placeholder={t.svcTitlePh} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]" />
+                <span className="text-[10px] text-gray-400 mt-0.5">{(form.title || '').length}/60</span>
+              </InputRow>
+            </div>
             <div className="grid grid-cols-3 gap-3">
               <InputRow label={t.cat}>
                 <select value={form.category} onChange={e => set('category', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  <option>Vendre</option><option>Acheter</option><option>Louer</option>
+                  {transactions.map(o => <option key={o}>{o}</option>)}
                 </select>
               </InputRow>
               <InputRow label={t.subcat}>
                 <select value={form.subcategory} onChange={e => set('subcategory', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  <option>Commercialiser</option><option>Estimer</option><option>Diagnostiquer</option>
+                  {serviceTypes.map(o => <option key={o}>{o}</option>)}
                 </select>
               </InputRow>
               <InputRow label={t.svcName}>
                 <select value={form.service} onChange={e => set('service', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  <option>Visite de biens</option><option>Estimation</option><option>Rédaction annonce</option><option>Prise de photo</option>
+                  {serviceTypes.map(o => <option key={o}>{o}</option>)}
                 </select>
               </InputRow>
               <InputRow label={t.tarif}>
@@ -166,15 +209,31 @@ function CreateServiceModal({ lang, onClose }) {
                   <option>Forfait</option><option>Unitaire</option><option>Au temps passé</option>
                 </select>
               </InputRow>
-              <InputRow label={t.zone}>
-                <div className="flex gap-1">
-                  <input value={form.zone} onChange={e => set('zone', e.target.value)} className="flex-1 border border-gray-200 rounded-lg px-2 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]" placeholder="Ville" />
-                  <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 text-[12px]">
-                    <span className="text-gray-400">{t.radius}</span>
-                    <input value={form.radius} onChange={e => set('radius', e.target.value)} className="w-8 text-[13px] focus:outline-none" /> km
-                  </div>
-                </div>
+              <InputRow label={t.svcType}>
+                <select value={form.type} onChange={e => set('type', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
+                  <option>Présentiel</option><option>À distance</option>
+                </select>
               </InputRow>
+              {form.type !== 'À distance' && (
+                <InputRow label={t.zone} className="col-span-2">
+                  <div className="flex gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CityAutocomplete
+                        value={form.zone}
+                        onChange={(v) => set('zone', v)}
+                        onSelect={(p) => set('zone', p.city || p.formatted)}
+                        placeholder="Ville ou code postal"
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 text-[12px] shrink-0">
+                      <span className="text-gray-400">{t.radius}</span>
+                      <input value={form.radius} onChange={e => set('radius', e.target.value)} className="w-10 text-[13px] focus:outline-none text-right" />
+                      <span className="text-gray-400">km</span>
+                    </div>
+                  </div>
+                </InputRow>
+              )}
               <InputRow label={t.qty}>
                 <input value={form.qty} onChange={e => set('qty', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]" placeholder="Pack 10 visites" />
               </InputRow>
@@ -189,11 +248,6 @@ function CreateServiceModal({ lang, onClose }) {
                     <span className="px-2 text-gray-400 text-sm">€</span>
                   </div>
                 )}
-              </InputRow>
-              <InputRow label={t.svcType}>
-                <select value={form.type} onChange={e => set('type', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  <option>Distance</option><option>Présentiel</option>
-                </select>
               </InputRow>
             </div>
             {/* Service offert */}

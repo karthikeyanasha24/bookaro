@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-input-2/lib/style.css";
 import "react-quill/dist/quill.snow.css";
@@ -30,7 +30,8 @@ function App() {
   // const { t } = useTranslation();
   const routes = [
     { url: "*", path: "NotFoundPage" }, // Not Found Page
-    { url: "/", path: "Home" },
+    { url: "/", path: "HomeMarketing" }, // Nouvelle vitrine publique
+    { url: "/home-legacy", path: "Home" }, // Ancienne home (sauvegarde, à retirer plus tard)
     { url: "/signup", path: "Signup" }, // Auth Page Routes
     { url: "/signup/pro", path: "Signup/prologin" }, // Auth Page Routes
     { url: "/change-password", path: "ChangePassword" }, // Auth Page Routes
@@ -85,6 +86,7 @@ function App() {
     { url: "/past-transation-list", path: "PastTransectionList" },
     { url: "/real-estate-pros", path: "RealEstatePros" },
     { url: "/marketplace", path: "Marketplace" },
+    { url: "/marketplace/favorites", path: "Marketplace/Favorites" },
     { url: "/marketplace/:id", path: "Marketplace/ServiceDetail" },
     { url: "/marketplace/orders", path: "MarketplaceOrders" },
     { url: "/pro/marketplace", path: "ProMarketplace" },
@@ -131,6 +133,18 @@ function App() {
     { url: "/delete-user", path: "DeleteUser" },
   ];
 
+  // Cache stable des composants lazy : évite que chaque navigation
+  // recrée un nouveau composant et fasse apparaître le fallback Suspense
+  // (effet "toute l'app se recharge").
+  const routesWithElements = useMemo(
+    () => routes.map((itm: any) => ({
+      ...itm,
+      Element: itm.path ? lazy(() => import(`./Pages/${itm.path}`)) : null,
+    })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   return (
     <>
       <Provider store={store}>
@@ -150,20 +164,22 @@ function App() {
           >
             <Router>
               <Routes>
-                {routes.map((itm: any, index) => {
-                  const Element = lazy(() => import(`./Pages/${itm.path}`));
+                {routesWithElements.map((itm: any, index) => {
+                  const Element = itm.Element;
                   return (
                     <Route
                       path={itm.url}
                       key={index}
                       element={
                         itm.path ? (
-                          <PageRouter
-                            url={itm.url}
-                            auth={itm.auth ? true : false}
-                          >
-                            <Element />
-                          </PageRouter>
+                          <Suspense fallback={null}>
+                            <PageRouter
+                              url={itm.url}
+                              auth={itm.auth ? true : false}
+                            >
+                              <Element />
+                            </PageRouter>
+                          </Suspense>
                         ) : (
                           itm.element
                         )
@@ -191,20 +207,22 @@ function App() {
             >
               <Router>
                 <Routes>
-                  {routes.map((itm: any, index) => {
-                    const Element = lazy(() => import(`./Pages/${itm.path}`));
+                  {routesWithElements.map((itm: any, index) => {
+                    const Element = itm.Element;
                     return (
                       <Route
                         path={itm.url}
                         key={index}
                         element={
                           itm.path ? (
-                            <PageRouter
-                              url={itm.url}
-                              auth={itm.auth ? true : false}
-                            >
-                              <Element />
-                            </PageRouter>
+                            <Suspense fallback={null}>
+                              <PageRouter
+                                url={itm.url}
+                                auth={itm.auth ? true : false}
+                              >
+                                <Element />
+                              </PageRouter>
+                            </Suspense>
                           ) : (
                             itm.element
                           )

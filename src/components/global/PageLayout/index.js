@@ -1,5 +1,5 @@
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useContext, createContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { GoDotFill } from "react-icons/go";
@@ -21,7 +21,22 @@ import Sidebar from "../sidebar";
 import LanguageSwitcher from "../../../LanguageSwitcher";
 import Header from "../header";
 
+// Context permettant de détecter qu'on est déjà à l'intérieur d'un PageLayout
+// (le PageLayout racine est mont\u00e9 dans App.tsx au-dessus du Router et ne d\u00e9monte
+//  jamais ; les PageLayout imbriqu\u00e9s dans les pages se contentent de rendre
+//  leurs enfants pour \u00e9viter le clignotement).
+const PageLayoutContext = createContext(false);
+
 const PageLayout = ({ children }) => {
+  const insideLayout = useContext(PageLayoutContext);
+  if (insideLayout) {
+    // D\u00e9j\u00e0 un PageLayout racine au-dessus -> juste passer le contenu.
+    return <>{children}</>;
+  }
+  return <PageLayoutContext.Provider value={true}><PageLayoutInner>{children}</PageLayoutInner></PageLayoutContext.Provider>;
+};
+
+const PageLayoutInner = ({ children }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

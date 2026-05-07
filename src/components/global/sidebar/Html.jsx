@@ -12,7 +12,7 @@ const SECTION_ROUTES = {
   transactionMgmt: ["/real-estate-transaction-searcher", "/real-estate-transaction-owner"],
   propertySeeker: ["/serach-alert", "/followed-properties", "/properties?favourites=true", "/renter-file", "/buyer-file"],
   properties: ["/my-properties", "/seller-file", "/property/qr-code"],
-  marketplace: ["/marketplace", "/marketplace/orders", "/pro/marketplace"],
+  marketplace: ["/marketplace", "/marketplace/favorites", "/marketplace/orders", "/pro/marketplace"],
 };
 
 const Html = ({
@@ -140,7 +140,9 @@ const Html = ({
 
       <div className="sidebar-top-row">
         {isOpen && (
-          <img src="/assets/img/logo.png" alt="Logo" className="sidebar-logo" style={{ width: 140 }} />
+          <NavLink to="/" title="Retour à la vitrine AnyHomes">
+            <img src="/assets/img/anyhomes-logo-white.png" alt="AnyHomes" className="sidebar-logo" style={{ width: 140, cursor: 'pointer' }} />
+          </NavLink>
         )}
         <button
           onClick={onToggle}
@@ -159,12 +161,11 @@ const Html = ({
           <MenuItem icon={MdDashboard} label={t('navigation.dashboard')} url="/dashboard" isCollapsed={!isOpen} />
           <MenuItem icon={MdSearch} label={t('navigation.searchProperties')} url="/properties?search=true" isCollapsed={!isOpen} />
           <MenuItem icon={MdEmail} label={t('navigation.messages')} url="/chat" isCollapsed={!isOpen} />
-          <MenuItem icon={FaHeadset} label={t('navigation.onDemandRealtors')} url="#" isCollapsed={!isOpen} />
         </div>
 
         <div className="menu-divider"></div>
 
-        {/* Pro de l'immobilier à la carte — Marketplace */}
+        {/* Services immo à la carte — Marketplace */}
         <div className="menu-section expandable">
           <SectionHeader
             icon={MdStorefront}
@@ -175,7 +176,7 @@ const Html = ({
           {shouldShowSectionItems("marketplace") && (
             <div className="section-items">
               <MenuItem icon={MdSearch} label={t('navigation.marketplaceList')} url="/marketplace" isCollapsed={!isOpen} />
-              <MenuItem icon={MdFavorite} label={t('navigation.marketplaceFavorites')} url="/marketplace?favorites=true" isCollapsed={!isOpen} />
+              <MenuItem icon={MdFavorite} label={t('navigation.marketplaceFavorites')} url="/marketplace/favorites" isCollapsed={!isOpen} />
               <MenuItem icon={MdShoppingCart} label={t('navigation.marketplaceOrders')} url="/marketplace/orders" isCollapsed={!isOpen} />
               {user?.accountType === 'pro' && (
                 <MenuItem icon={MdSpaceDashboard} label={t('navigation.proDashboard')} url="/pro/marketplace" isCollapsed={!isOpen} />

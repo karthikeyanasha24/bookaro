@@ -71,6 +71,14 @@ export const acceptOrder = (orderId, lang = 'fr') =>
 export const deliverOrder = (orderId, lang = 'fr') =>
   request('POST', `/pro/marketplace/orders/${orderId}/deliver`, null, lang);
 
+// ─── Service requests ("Faire une demande") ────────────────────────────────
+
+export const createServiceRequest = (payload, lang = 'fr') =>
+  request('POST', '/marketplace/requests', payload, lang);
+
+export const getMyServiceRequests = (lang = 'fr') =>
+  request('GET', '/marketplace/requests/mine', null, lang);
+
 export const getStripeStatus = (lang = 'fr') =>
   request('GET', '/pro/marketplace/stripe/status', null, lang);
 
