@@ -428,7 +428,7 @@ export default function SoldServices() {
                             {order.status === 'cancellation_requested' && (
                               <button onClick={() => setCancelReviewOrder(order)} className="text-black font-bold hover:underline text-left">Répondre</button>
                             )}
-                            <button onClick={() => setIncidentOrder(order)} className="text-black font-bold hover:underline text-left">Problème ?</button>
+                            <button onClick={() => setIncidentOrder(order)} className="text-black font-bold hover:underline text-left whitespace-nowrap">Problème ?</button>
                           </div>
                         </td>
                       </tr>
