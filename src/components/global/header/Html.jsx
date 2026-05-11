@@ -35,7 +35,7 @@ const Html = ({
 
       {/* CTA création de bien — décalé à droite du toggle de la sidebar */}
       <button
-        onClick={() => (window.location.href = '/property/add')}
+        onClick={() => (window.location.href = '/property1')}
         className="ml-8 bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[13px] font-semibold px-4 py-2 rounded-full transition-colors shadow-sm"
         title="Créer le profil de mon bien"
       >

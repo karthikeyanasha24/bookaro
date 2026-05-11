@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { getProServices, getProOrders, acceptOrder, deliverOrder, getStripeStatus, startStripeOnboard, getCategories } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
 import CityAutocomplete from '../../components/common/CityAutocomplete';
@@ -48,6 +49,7 @@ const T = {
     qty: 'Quantité',
     price: 'Prix',
     svcType: 'Modalité',
+    email: 'Email',
     descTitle: 'Présentation du service',
     d1: "Qu'est-ce que ce service va vous apporter ?",
     d2: 'Description du service rendu',
@@ -92,6 +94,7 @@ const T = {
     qty: 'Quantity',
     price: 'Price',
     svcType: 'Modality',
+    email: 'Email',
     descTitle: 'Service description',
     d1: 'What will this service bring?',
     d2: 'Description of the service',
@@ -124,8 +127,10 @@ const ORD_STATUS_STYLE = {
 const DEFAULT_TRANSACTIONS = ['Acheter', 'Vendre', 'Louer', 'Gérer'];
 const DEFAULT_SERVICES = ['Visites', 'Estimation', 'Négociation', 'Recherche de bien', 'Analyse acheteur', 'Prise de photo', 'Dossier vendeur', 'Recherche de financement', 'Visite virtuelle'];
 
+
 function CreateServiceModal({ lang, onClose }) {
   const t = T[lang];
+  const user = useSelector(state => state.user);
   const [transactions, setTransactions] = useState(DEFAULT_TRANSACTIONS);
   const [serviceTypes, setServiceTypes] = useState(DEFAULT_SERVICES);
   const [form, setForm] = useState({
@@ -133,6 +138,7 @@ function CreateServiceModal({ lang, onClose }) {
     title: '', tarif: 'Forfait', zone: 'Lille', radius: '5', qty: 'Pack 10 visites',
     price: '300', type: 'Présentiel', isFree: false,
     d1: '', d2: '', d3: '', d4: '',
+    email: user?.email || '',
   });
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -189,6 +195,19 @@ function CreateServiceModal({ lang, onClose }) {
               </InputRow>
             </div>
             <div className="grid grid-cols-3 gap-3">
+                            {/* Champ numéro de téléphone ici si existant */}
+                            {/* Champ email ajouté juste après */}
+                            <InputRow label={t.email || 'Email'} className="col-span-3">
+                              <input
+                                type="email"
+                                value={form.email}
+                                onChange={e => set('email', e.target.value)}
+                                className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0] w-full"
+                                placeholder={t.email || 'Email'}
+                                autoComplete="email"
+                                required
+                              />
+                            </InputRow>
               <InputRow label={t.cat}>
                 <select value={form.category} onChange={e => set('category', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
                   {transactions.map(o => <option key={o}>{o}</option>)}

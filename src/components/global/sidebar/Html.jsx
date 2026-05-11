@@ -179,7 +179,10 @@ const Html = ({
               <MenuItem icon={MdFavorite} label={t('navigation.marketplaceFavorites')} url="/marketplace/favorites" isCollapsed={!isOpen} />
               <MenuItem icon={MdShoppingCart} label={t('navigation.marketplaceOrders')} url="/marketplace/orders" isCollapsed={!isOpen} />
               {user?.accountType === 'pro' && (
-                <MenuItem icon={MdSpaceDashboard} label={t('navigation.proDashboard')} url="/pro/marketplace" isCollapsed={!isOpen} />
+                <>
+                  <MenuItem icon={MdSpaceDashboard} label={t('navigation.proDashboard')} url="/pro/marketplace" isCollapsed={!isOpen} />
+                  <MenuItem icon={MdShoppingCart} label="Services vendus" url="/pro/marketplace/sold-services" isCollapsed={!isOpen} />
+                </>
               )}
             </div>
           )}

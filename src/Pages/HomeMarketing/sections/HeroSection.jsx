@@ -9,7 +9,15 @@ import { FaStar } from "react-icons/fa";
  */
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#c9b3e8] via-[#b89adf] to-[#a87fd9] text-gray-900 -mt-[100px] pt-[100px]">
+    <section
+      className="relative overflow-hidden text-gray-900 -mt-[100px] pt-[100px]"
+      style={{
+        backgroundImage: `url('/assets/img/Background%20Landing%20Page.jpeg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <div className="container mx-auto px-5 pt-10 lg:pt-14 pb-10 text-center">
         {/* Social proof */}
         <div className="inline-flex items-center gap-2 bg-white text-gray-700 rounded-full px-3 py-1 mb-6 shadow-sm">
@@ -22,13 +30,13 @@ const HeroSection = () => {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-semibold leading-tight max-w-3xl mx-auto mb-5 text-gray-900">
+        <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-semibold leading-tight max-w-3xl mx-auto mb-5 text-white">
           Vendre ou acheter seul mais bien accompagné, grâce à un mix
           <br className="hidden sm:block" /> Humain, IA et Digital
         </h1>
 
         {/* Subtitle */}
-        <p className="text-gray-800 text-[15px] sm:text-[16px] max-w-2xl mx-auto mb-8">
+        <p className="text-white text-[15px] sm:text-[16px] max-w-2xl mx-auto mb-8">
           Notre outil de pilotage de transaction immobilière vous guide à
           chaque étape. Besoin d'un coup de pouce ? Des pros de l'immobilier
           disponibles à la demande sans commissions.
@@ -38,7 +46,7 @@ const HeroSection = () => {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             to="/signup"
-            className="inline-flex items-center justify-center border border-[#976DD0] text-[#976DD0] hover:bg-[#976DD0]/10 font-medium rounded-full px-7 py-3 transition bg-white/40"
+            className="inline-flex items-center justify-center bg-white text-black font-medium rounded-full px-7 py-3 transition shadow hover:bg-gray-100"
           >
             Explorer la plateforme
           </Link>

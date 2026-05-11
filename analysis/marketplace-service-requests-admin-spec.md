@@ -1,3 +1,29 @@
+# Gestion des incidents sur services vendus (PRO)
+
+## 1. Signalement d’incident par le pro
+- Depuis l’écran « Services vendus », le pro clique sur « Problème ? » pour un service donné.
+- Une modal s’ouvre : champ texte pour décrire le problème rencontré.
+- À la soumission :
+  - L’admin reçoit une notification (backend : openLitigation).
+  - Le service concerné reçoit un sticker « Incident » rouge dans la liste pro.
+
+## 2. Affichage côté admin panel
+- Section dédiée « Incidents services vendus  ».
+- Pour chaque incident :
+  - Toutes les infos du service (snapshot complet : titre, description, client, bien, prix, etc.).
+  - Description du problème rédigée par le pro.
+  - Statut de traitement (à venir : non traité, en cours, résolu).
+- Possibilité de filtrer/chercher par pro, client, date, statut.
+- Affichage du sticker « Incident » sur la ligne concernée dans toutes les vues admin où le service apparaît.
+
+## 3. Notification admin
+- À chaque nouveau signalement, notification en temps réel ou via badge sur la section incidents.
+
+## 4. Historique
+- Historique des incidents et actions admin (à venir).
+
+---
+À compléter lors de l’implémentation côté admin.
 # Marketplace — Demandes de service (admin panel)
 
 > **Statut :** Spécifications. Backend implémenté, UI admin à construire.

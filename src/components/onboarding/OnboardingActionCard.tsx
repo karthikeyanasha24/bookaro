@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   MdSell, MdHome, MdBusiness, MdCalculate, MdTimeline, MdHeadset,
   MdBook, MdDescription, MdChat, MdSearch, MdPerson, MdFavorite, MdEmail,
@@ -34,9 +34,30 @@ interface Props {
   completion: CompletionState | undefined;
 }
 
+
 const OnboardingActionCard: React.FC<Props> = ({ action, completion }) => {
   const isDone = completion === 'done';
   const Icon = ACTION_ICONS[action.id];
+
+  const navigate = useNavigate();
+
+  // Custom handler for "Vendre mon bien"
+  const handleSellClick = () => {
+    localStorage.setItem('step1', JSON.stringify({ propertyType: 'sale' }));
+    navigate('/property3');
+  };
+
+  // Custom handler for "Louer mon bien"
+  const handleRentClick = () => {
+    localStorage.setItem('step1', JSON.stringify({ propertyType: 'rent' }));
+    navigate('/property3');
+  };
+
+  // Custom handler for "Référencer mon bien"
+  const handleDirectoryClick = () => {
+    localStorage.setItem('step1', JSON.stringify({ propertyType: 'directory' }));
+    navigate('/property3');
+  };
 
   return (
     <div
@@ -68,12 +89,35 @@ const OnboardingActionCard: React.FC<Props> = ({ action, completion }) => {
 
       {/* CTA */}
       {action.isAvailable ? (
-        <Link
-          to={action.targetRoute}
-          className="mt-auto self-center inline-flex items-center px-4 py-1.5 rounded-full bg-[#976DD0] text-white text-[12px] font-medium hover:bg-[#7f58b5] transition-colors whitespace-nowrap"
-        >
-          {action.ctaLabel}
-        </Link>
+        action.id === 'put_property_for_sale' ? (
+          <button
+            onClick={handleSellClick}
+            className="mt-auto self-center inline-flex items-center px-4 py-1.5 rounded-full bg-[#976DD0] text-white text-[12px] font-medium hover:bg-[#7f58b5] transition-colors whitespace-nowrap"
+          >
+            {action.ctaLabel}
+          </button>
+        ) : action.id === 'put_property_for_rent' ? (
+          <button
+            onClick={handleRentClick}
+            className="mt-auto self-center inline-flex items-center px-4 py-1.5 rounded-full bg-[#976DD0] text-white text-[12px] font-medium hover:bg-[#7f58b5] transition-colors whitespace-nowrap"
+          >
+            {action.ctaLabel}
+          </button>
+        ) : action.id === 'publish_property_directory' ? (
+          <button
+            onClick={handleDirectoryClick}
+            className="mt-auto self-center inline-flex items-center px-4 py-1.5 rounded-full bg-[#976DD0] text-white text-[12px] font-medium hover:bg-[#7f58b5] transition-colors whitespace-nowrap"
+          >
+            {action.ctaLabel}
+          </button>
+        ) : (
+          <Link
+            to={action.targetRoute}
+            className="mt-auto self-center inline-flex items-center px-4 py-1.5 rounded-full bg-[#976DD0] text-white text-[12px] font-medium hover:bg-[#7f58b5] transition-colors whitespace-nowrap"
+          >
+            {action.ctaLabel}
+          </Link>
+        )
       ) : (
         <span className="mt-auto self-center inline-flex items-center px-4 py-1.5 rounded-full bg-gray-100 text-gray-400 text-[12px] font-medium cursor-not-allowed whitespace-nowrap">
           Bientôt disponible

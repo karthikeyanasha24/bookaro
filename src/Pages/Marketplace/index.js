@@ -226,6 +226,7 @@ function AuthRequiredModal({ onClose }) {
 
 function ServiceRequestModal({ user, lang, categories, onClose, onDone }) {
   const [phone, setPhone] = useState(user?.mobileNo || user?.phone || '');
+  const [email, setEmail] = useState(user?.email || '');
   const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -239,7 +240,7 @@ function ServiceRequestModal({ user, lang, categories, onClose, onDone }) {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!phone.trim() || !categoryId || !description.trim()) {
+    if (!phone.trim() || !email.trim() || !categoryId || !description.trim()) {
       setError('Tous les champs sont obligatoires.');
       return;
     }
@@ -247,7 +248,7 @@ function ServiceRequestModal({ user, lang, categories, onClose, onDone }) {
     try {
       const selected = reqCategories.find(c => (c.id || c._id) === categoryId);
       const categoryName = selected?.label || selected?.name || '';
-      const res = await createServiceRequest({ phone: phone.trim(), categoryId, categoryName, description: description.trim(), lang }, lang);
+      const res = await createServiceRequest({ phone: phone.trim(), email: email.trim(), categoryId, categoryName, description: description.trim(), lang }, lang);
       if (res?.success) {
         setSuccess(true);
         setTimeout(() => { onDone && onDone(); onClose(); }, 1500);
@@ -284,6 +285,18 @@ function ServiceRequestModal({ user, lang, categories, onClose, onDone }) {
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="06 12 34 56 78"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]"
+              />
+            </div>
+            <div>
+              <label className="text-[12px] text-[#47525E] font-semibold mb-1 block">Email *</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="exemple@email.com"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]"
+                autoComplete="email"
+                required
               />
             </div>
             <div>
@@ -331,25 +344,56 @@ function ServiceRequestModal({ user, lang, categories, onClose, onDone }) {
 
 function ContactModal({ pro, onClose }) {
   const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  const user = useSelector(state => state.user);
+  const [selectedProperty, setSelectedProperty] = useState('');
+  const [customMessage, setCustomMessage] = useState('');
+  // Utilise les biens mockés ou ceux du user si dispo
+  const properties = user?.properties && user.properties.length > 0 ? user.properties : MOCK_USER_PROPERTIES;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-[320px] p-6" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl shadow-xl w-[340px] p-6" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[15px] font-bold text-[#47525E]">Contacter {pro.name}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
         </div>
         <div className="flex flex-col gap-3">
-          {/* Option 1 : Messagerie */}
-          <a
-            href="/chat"
-            className="flex items-center gap-3 border border-[#976DD0] rounded-xl px-4 py-3 hover:bg-[#F2ECF8] transition-colors"
-          >
-            <span className="text-[#976DD0] text-xl">💬</span>
-            <div>
-              <p className="text-[13px] font-semibold text-[#976DD0]">Messagerie de l'app</p>
-              <p className="text-[11px] text-gray-400">Envoyer un message via AnyHomes</p>
+          {/* Option 1 : Messagerie interne avec dropdown des biens et message */}
+          <div className="border border-[#976DD0] rounded-xl px-4 py-3">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-[#976DD0] text-xl">💬</span>
+              <div>
+                <p className="text-[13px] font-semibold text-[#976DD0]">Messagerie interne AnyHomes</p>
+                <p className="text-[11px] text-gray-400">Choisissez le bien concerné</p>
+              </div>
             </div>
-          </a>
+            <select
+              value={selectedProperty}
+              onChange={e => setSelectedProperty(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white focus:outline-none focus:ring-2 focus:ring-[#976DD0] mb-2"
+            >
+              <option value="">— Aucun bien spécifique —</option>
+              {properties.map(p => (
+                <option key={p._id} value={p._id}>{p.title}</option>
+              ))}
+              <option value="not-listed">Bien non listé</option>
+            </select>
+            <textarea
+              value={customMessage}
+              onChange={e => setCustomMessage(e.target.value)}
+              rows={2}
+              maxLength={500}
+              placeholder="Votre message au professionnel..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] resize-none focus:outline-none focus:ring-2 focus:ring-[#976DD0] mb-2"
+            />
+            <a
+              href={`/chat?property=${encodeURIComponent(selectedProperty)}&msg=${encodeURIComponent(customMessage)}`}
+              className="block w-full mt-2 text-center bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full px-4 py-2 text-[13px] font-semibold transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ouvrir la messagerie
+            </a>
+          </div>
           {/* Option 2 : Téléphone */}
           {isMobile ? (
             <a
@@ -370,6 +414,19 @@ function ContactModal({ pro, onClose }) {
                 <p className="text-[13px] font-bold text-[#976DD0] tracking-wide">{pro.phone}</p>
               </div>
             </div>
+          )}
+          {/* Option 3 : Email */}
+          {pro.email && (
+            <a
+              href={`mailto:${pro.email}`}
+              className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3 hover:bg-gray-50 transition-colors"
+            >
+              <span className="text-gray-600 text-xl">✉️</span>
+              <div>
+                <p className="text-[13px] font-semibold text-[#47525E]">Email</p>
+                <p className="text-[11px] text-gray-400">{pro.email}</p>
+              </div>
+            </a>
           )}
         </div>
       </div>
@@ -452,6 +509,7 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
       return Array.isArray(arr) && arr.includes(svcId);
     } catch { return false; }
   });
+  const [showContact, setShowContact] = useState(false);
   const toggleSaved = () => {
     setSaved(prev => {
       const next = !prev;
@@ -484,15 +542,24 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
   const zone = isDistance ? t.distance : (svc.zone_covered || (svc.city ? `${svc.city} +5 KM` : "Lille +5 KM"));
   const qty = svc.quantity_label || svc.quantity || "Pack 10 visites";
 
+  // Gestion du clic sur la carte (hors favoris et footer)
+  const cardRef = useRef();
+  const handleCardClick = (e) => {
+    // Ne pas ouvrir la modale si clic sur le bouton favoris ou footer
+    if (e.target.closest('.card-footer') || e.target.closest('.card-fav')) return;
+    onView(svc);
+  };
+
   return (
-    <div className="relative bg-white border border-[#D5D5D5] rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-      {/* Tag Top agent — centré horizontalement, collé en haut, coins bas arrondis */}
+    <div ref={cardRef} className="relative bg-white border border-[#D5D5D5] rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col cursor-pointer" onClick={handleCardClick}>
+      {showContact && <ContactModal pro={svc.provider || { name: provName, phone: svc.provider?.phone, email: svc.provider?.email }} onClose={() => setShowContact(false)} />}
+      {/* Tag Top agent */}
       <span className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#343F4B] text-white text-[12px] font-semibold px-3 py-1 rounded-b-md z-10">
         {t.topAgent}
       </span>
-      <div className="flex items-center justify-end px-5 pt-3 pb-1">
+      <div className="flex items-center justify-end px-5 pt-3 pb-1 card-fav">
         <button
-          onClick={toggleSaved}
+          onClick={e => { e.stopPropagation(); toggleSaved(); }}
           aria-label={saved ? 'Retirer des favoris' : 'Ajouter aux favoris'}
           className="bg-transparent p-0 leading-none transition-transform hover:scale-110"
         >
@@ -540,13 +607,13 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
           <div className="flex items-center gap-1.5"><MdLocationOn className="text-[14px] text-black shrink-0" /><span>{zone}</span></div>
           <div className="flex items-center gap-1.5"><MdOutlineInventory2 className="text-[14px] text-black shrink-0" /><span>{qty}</span></div>
         </div>
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-          <button onClick={() => onView(svc)} className="text-[11px] border border-[#976DD0] text-[#976DD0] rounded-full px-3 py-1 hover:bg-[#F2ECF8] transition-colors">
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100 card-footer">
+          <button onClick={e => { e.stopPropagation(); setShowContact(true); }} className="text-[11px] border border-[#976DD0] text-[#976DD0] rounded-full px-3 py-1 hover:bg-[#F2ECF8] transition-colors">
             {t.contact}
           </button>
           <div className="flex items-center gap-2">
             <span className="font-bold text-[#976DD0] text-[13px]">{price > 0 ? `${price} €` : t.free}</span>
-            <button onClick={() => onBuy(svc)} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[11px] font-semibold px-3 py-1.5 rounded-full transition-colors">
+            <button onClick={e => { e.stopPropagation(); onBuy(svc); }} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[11px] font-semibold px-3 py-1.5 rounded-full transition-colors">
               {price > 0 ? t.buy : t.book}
             </button>
           </div>
@@ -572,8 +639,16 @@ export function ServiceModal({ svc, lang, onClose, onBuy }) {
     { icon: "✅", title: t.q3, text: desc },
     { icon: "🔒", title: t.q4, text: t.payNote },
   ];
+  const [showContact, setShowContact] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const user = useSelector((state) => state.user);
+  const isLogged = !!(user && (user._id || user.id)) || !!localStorage.getItem('token');
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      {showContact && (
+        <ContactModal pro={svc.provider || { name: provName, phone: svc.provider?.phone, email: svc.provider?.email }} onClose={() => setShowContact(false)} />
+      )}
+      {showAuth && <AuthRequiredModal onClose={() => setShowAuth(false)} />}
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4 flex flex-col">
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
           <button className="flex items-center gap-1.5 text-[13px] font-semibold text-[#47525E] border border-gray-200 rounded-lg px-3 py-1.5">
@@ -630,7 +705,13 @@ export function ServiceModal({ svc, lang, onClose, onBuy }) {
           </div>
         </div>
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-          <button className="border border-[#976DD0] text-[#976DD0] text-sm font-semibold px-4 py-2 rounded-full hover:bg-[#F2ECF8] transition-colors">
+          <button
+            onClick={() => {
+              if (!isLogged) setShowAuth(true);
+              else setShowContact(true);
+            }}
+            className="border border-[#976DD0] text-[#976DD0] text-sm font-semibold px-4 py-2 rounded-full hover:bg-[#F2ECF8] transition-colors"
+          >
             Contacter {provName.split(" ")[0]}
           </button>
           <div className="flex items-center gap-3">
@@ -677,12 +758,40 @@ export function BuyModal({ svc, lang, onClose, onDone }) {
   const handle = async () => {
     setLoading(true);
     try {
+      // Création du snapshot contractuel du service
+      const service_snapshot = {
+        _id: svc._id,
+        title_fr: svc.title_fr,
+        title_en: svc.title_en,
+        title: svc.title,
+        description_fr: svc.description_fr,
+        description_en: svc.description_en,
+        description: svc.description,
+        tarification_type: svc.tarification_type,
+        price_ttc: svc.price_ttc,
+        price: svc.price,
+        zone_covered: svc.zone_covered,
+        quantity_label: svc.quantity_label,
+        quantity: svc.quantity,
+        provider: svc.provider,
+        // Sections contractuelles
+        section_service: lang === "fr" ? (svc.title_fr || svc.title) : (svc.title_en || svc.title),
+        section_benefit: lang === "fr" ? t.q1 : T.en.q1,
+        section_benefit_text: lang === "fr" ? (svc.description_fr || svc.description) : (svc.description_en || svc.description),
+        section_description: lang === "fr" ? t.q2 : T.en.q2,
+        section_description_text: lang === "fr" ? (svc.description_fr || svc.description) : (svc.description_en || svc.description),
+        section_deliverable: lang === "fr" ? t.q3 : T.en.q3,
+        section_deliverable_text: lang === "fr" ? (svc.description_fr || svc.description) : (svc.description_en || svc.description),
+        section_billing: lang === "fr" ? t.q4 : T.en.q4,
+        section_billing_text: lang === "fr" ? t.payNote : T.en.payNote,
+      };
       const payload = {
         service_id: svc._id,
         quantity: qty,
         message: msg || undefined,
         property_id: propertyId || undefined,
         is_booking: isFree ? true : undefined,
+        service_snapshot,
       };
       const res = await createOrder(payload, lang);
       const orderId = res?.order?._id || res?._id;

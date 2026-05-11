@@ -90,6 +90,7 @@ function App() {
     { url: "/marketplace/:id", path: "Marketplace/ServiceDetail" },
     { url: "/marketplace/orders", path: "MarketplaceOrders" },
     { url: "/pro/marketplace", path: "ProMarketplace" },
+    { url: "/pro/marketplace/sold-services", path: "ProMarketplace/SoldServices" },
     { url: "/prolist", path: "Prolist" },
     { url: "/company-details", path: "CompanyDetails" },
     { url: "/blogs", path: "Blogs" },

@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getMyOrders, confirmDelivery, openLitigation, postReview } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
+// Modal uniforme pour signaler un incident (même design que pro, couleur violette)
+function IncidentModal({ order, onClose, onSubmit }) {
+  // ...existing code...
+  // À compléter avec le vrai JSX si besoin, sinon laisser vide ou retourner null
+  return null;
+}
 
 /* ─── helpers localStorage ── */
 export const saveOrderId = (id) => {
@@ -37,7 +43,7 @@ const T = {
     oui: 'OUI',
     non: 'NON',
     saveDraft: 'Enregistrer brouillon',
-    activate: 'Créer et activer',
+    activate: 'Soumettre',
     rateBtn: 'Evaluer',
   },
   en: {
@@ -174,6 +180,92 @@ function RatingModal({ order, lang, onClose, onSubmit }) {
   );
 }
 
+/* ─── Aperçu rapide d'un service (modal) ── */
+function ServiceSnapshotModal({ order, onClose }) {
+  if (!order) return null;
+  const svc = order.service_snapshot || order.service || {};
+  const client = order.client || {};
+  const prop = order.property || {};
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4 flex flex-col">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+          <span className="font-bold text-[#47525E] text-base">{svc.title_fr || svc.title_en || svc.title || 'Service'}</span>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+        </div>
+        <div className="px-6 py-4 overflow-y-auto max-h-[72vh] space-y-6">
+          {/* Bien concerné */}
+          {order.property && (
+            <div className="mb-2">
+              <h3 className="text-sm font-bold text-[#47525E] mb-1">Bien concerné</h3>
+              <div className="text-[13px] text-gray-700">{order.property.title || '-'}</div>
+            </div>
+          )}
+          {/* Présentation du service */}
+          <div>
+            <h3 className="text-sm font-bold text-[#47525E] mb-1">Présentation du service</h3>
+            <div className="text-[13px] text-gray-700 mb-2">{svc.section_service || svc.title_fr || svc.title_en || svc.title || '-'}</div>
+          </div>
+          {/* Qu'est-ce que ce service va vous apporter */}
+          <div>
+            <h3 className="text-sm font-bold text-[#47525E] mb-1">Qu'est-ce que ce service va vous apporter ?</h3>
+            <div className="text-[13px] text-gray-700 mb-2">{svc.section_benefit_text || '-'}</div>
+          </div>
+          {/* Description du service rendu */}
+          <div>
+            <h3 className="text-sm font-bold text-[#47525E] mb-1">Description du service rendu</h3>
+            <div className="text-[13px] text-gray-700 mb-2">{svc.section_description_text || '-'}</div>
+          </div>
+          {/* Ce que vous obtiendrez */}
+          <div>
+            <h3 className="text-sm font-bold text-[#47525E] mb-1">Ce que vous obtiendrez</h3>
+            <div className="text-[13px] text-gray-700 mb-2">{svc.section_deliverable_text || '-'}</div>
+          </div>
+          {/* Facturation */}
+          <div>
+            <h3 className="text-sm font-bold text-[#47525E] mb-1">Facturation</h3>
+            <div className="text-[13px] text-gray-700 mb-2">{svc.section_billing_text || '-'}</div>
+          </div>
+          {/* Infos complémentaires */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            <span className="bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">Prix: {svc.price_ttc ?? svc.price ?? order.totalTTC ?? order.total ?? '-'} €</span>
+            {svc.zone_covered && <span className="bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">{svc.zone_covered}</span>}
+            {svc.tarification_type && <span className="bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">{svc.tarification_type}</span>}
+          </div>
+          {/* Client */}
+          <div className="mt-4">
+            <h3 className="text-sm font-bold text-[#47525E] mb-1">Client</h3>
+            <div className="flex items-start gap-3">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center text-white text-xl font-bold shrink-0">
+                {client.name?.charAt(0) || '?'}
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-[#47525E] text-sm">{client.name || '-'}</p>
+                <p className="text-xs text-gray-400 mb-1">{client.email || '-'}</p>
+              </div>
+            </div>
+          </div>
+          {/* Section Service finalisé */}
+          {order.status === 'delivered_by_pro' && order.attachments && order.attachments.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-bold text-[#47525E] mb-1">Service finalisé</h3>
+              { (order.deliveredAt || order.delivery_date) && (
+                <div className="text-[13px] text-gray-500 mb-2">Date de finalisation: {new Date(order.deliveredAt || order.delivery_date).toLocaleString('fr-FR')}</div>
+              ) }
+              <ul className="list-disc ml-5">
+                {order.attachments.map((file, idx) => (
+                  <li key={idx}><a href={file.url} target="_blank" rel="noopener noreferrer" className="text-[#976DD0] underline">{file.name}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Ligne tableau ── */
 function OrderRow({ order, lang, onRate, onAction }) {
   const t = T[lang];
@@ -187,6 +279,7 @@ function OrderRow({ order, lang, onRate, onAction }) {
   const isDelivered = order.status === 'delivered_by_pro';
   const isConfirmed = order.status === 'confirmed_by_buyer';
   const isCancelled = ['cancelled','refunded'].includes(order.status);
+  const hasIncident = order.status === 'litigation_opened' || order.incident_opened;
   const paymentLabel = (isDelivered || isConfirmed) ? (isConfirmed ? t.payment.paid : t.payment.pending) : null;
 
   return (
@@ -216,7 +309,12 @@ function OrderRow({ order, lang, onRate, onAction }) {
           <span className="text-[12px]">{provName}</span>
         </div>
       </td>
-      <td className="py-3 px-3 whitespace-nowrap font-medium">{num}</td>
+      <td className="py-3 px-3 whitespace-nowrap font-medium">
+        {num}
+        {hasIncident && (
+          <span className="ml-2 inline-block bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full align-middle">Incident</span>
+        )}
+      </td>
       <td className="py-3 px-3 whitespace-nowrap">{price}</td>
       {/* Statut */}
       <td className="py-3 px-3">
@@ -313,19 +411,29 @@ const MOCK_ORDERS = [
   },
 ];
 
+// Alias pour tests locaux (utilisé quand REACT_APP_DEBUG_MOCK_USER === 'true')
+const MOCK_CLIENT_ORDERS = MOCK_ORDERS;
+
 export default function MarketplaceOrders() {
   const [lang, setLang] = useState('fr');
   const t = T[lang];
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [ratingOrder, setRatingOrder] = useState(null);
+  const [viewOrder, setViewOrder] = useState(null);
+  const [incidentOrder, setIncidentOrder] = useState(null);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMyOrders(lang);
-      const list = res?.orders || res?.data || [];
-      setOrders(list.length > 0 ? list : MOCK_ORDERS);
+      let orders = [];
+      if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+        orders = MOCK_CLIENT_ORDERS;
+      } else {
+        const res = await getMyOrders(lang);
+        orders = res?.orders || res?.data || [];
+      }
+      setOrders(orders.length > 0 ? orders : MOCK_ORDERS);
     } catch (e) { console.error(e); setOrders(MOCK_ORDERS); }
     finally { setLoading(false); }
   }, [lang]);
@@ -333,27 +441,27 @@ export default function MarketplaceOrders() {
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
   const handleAction = async (type, order) => {
-    if (type === 'release') {
+    if (type === 'see') {
+      setViewOrder(order);
+    } else if (type === 'release') {
       try { await confirmDelivery(order._id, lang); fetchOrders(); } catch {}
     } else if (type === 'issue') {
-      const reason = window.prompt('Raison du litige :');
-      if (reason) { try { await openLitigation(order._id, reason, lang); fetchOrders(); } catch {} }
+      setIncidentOrder(order);
     }
   };
 
   return (
     <PageLayout>
       <div className="bg-[#f3f5f9] min-h-full py-[22px] px-[22px] pb-24">
-      <div className="max-w-[1120px] mx-auto">
-        <div className="flex items-start justify-between mb-4">
-          <div>
+        <div className="max-w-[1120px] mx-auto">
+          <>
             <h1 className="text-xl font-bold text-[#47525E]">{t.title}</h1>
             <p className="text-[13px] text-gray-400">{t.sub}</p>
-          </div>
-          <div className="flex gap-2 items-center">
-            <button onClick={fetchOrders} className="text-[13px] border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-50 text-[#47525E]">{t.refresh}</button>
-            <button onClick={() => setLang(l => l === 'fr' ? 'en' : 'fr')} className="text-xs border border-gray-300 rounded px-2 py-1 hover:bg-gray-100 text-[#47525E]">{t.switchLang}</button>
-          </div>
+            <div className="flex gap-2 items-center">
+              <button onClick={fetchOrders} className="text-[13px] border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-50 text-[#47525E]">{t.refresh}</button>
+              <button onClick={() => setLang(l => l === 'fr' ? 'en' : 'fr')} className="text-xs border border-gray-300 rounded px-2 py-1 hover:bg-gray-100 text-[#47525E]">{t.switchLang}</button>
+            </div>
+          </>
         </div>
 
         {loading ? (
@@ -385,12 +493,22 @@ export default function MarketplaceOrders() {
             </table>
           </div>
         )}
-      </div>
 
-      {ratingOrder && (
-        <RatingModal order={ratingOrder} lang={lang} onClose={() => setRatingOrder(null)} onSubmit={() => { setRatingOrder(null); fetchOrders(); }} />
-      )}
+        {ratingOrder && (
+          <RatingModal order={ratingOrder} lang={lang} onClose={() => setRatingOrder(null)} onSubmit={() => { setRatingOrder(null); fetchOrders(); }} />
+        )}
+        {viewOrder && (
+          <ServiceSnapshotModal order={viewOrder} lang={lang} onClose={() => setViewOrder(null)} />
+        )}
+        {incidentOrder && (
+          <IncidentModal order={incidentOrder} onClose={() => setIncidentOrder(null)} onSubmit={async ({ description }) => {
+            await openLitigation(incidentOrder._id, description, lang);
+            setIncidentOrder(null);
+            fetchOrders();
+          }} />
+        )}
       </div>
     </PageLayout>
   );
 }
+
