@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/adminController');
+const requestCtrl = require('../controllers/serviceRequestController');
 const seedMarketplace = require('../seed/seedMarketplace');
 const {
   validateCreateCategory,
@@ -41,5 +42,9 @@ router.post('/seed', async (req, res) => {
     return res.status(500).json({ success: false, message: 'Erreur seed', error: err.message });
   }
 });
+
+// Demandes de service (admin)
+router.get('/requests', requestCtrl.adminListRequests);
+router.patch('/requests/:id/status', requestCtrl.adminUpdateStatus);
 
 module.exports = router;
