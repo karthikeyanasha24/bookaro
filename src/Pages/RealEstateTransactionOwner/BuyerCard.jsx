@@ -38,6 +38,7 @@ import {
 import { FaArrowRight, FaLock, FaRegCirclePlay } from "react-icons/fa6";
 import ReactStars from "react-rating-stars-component";
 import { GoCheckCircleFill } from "react-icons/go";
+import { Link } from 'react-router-dom';
 import { BiSolidOffer } from "react-icons/bi";
 import { FaRegArrowAltCircleRight } from "react-icons/fa";
 import methodModel from "../../methods/methods";
@@ -1585,14 +1586,14 @@ export default function BuyerCard({
                 </MenuButton>
                 <MenuItems className="bg-white border p-2 px-4 rounded-[12px]">
                   <MenuItem>
-                    <a className="block text-[14px] py-1" href="/profile/Account">
+                    <Link className="block text-[14px] py-1" to="/profile/Account">
                       Settings
-                    </a>
+                    </Link>
                   </MenuItem>
                   <MenuItem>
-                    <a className="block text-[14px] py-1" href="/help">
+                    <Link className="block text-[14px] py-1" to="/help">
                       Support
-                    </a>
+                    </Link>
                   </MenuItem>
                   {/* <MenuItem>
                     <a className="block text-[14px] py-1" href="/license">
@@ -1615,7 +1616,7 @@ export default function BuyerCard({
 
             </div>
             {user?.planId == "" && (card?.buyerId?.isDocumentVerified || card?.buyerId?.isDeclDocumentVerified) && <div className="text-center mt-1">
-              <a href="/plan" className="text-[#976DD0] text-[14px] underline">Purchase Plan</a>
+              <Link to="/plan" className="text-[#976DD0] text-[14px] underline">Purchase Plan</Link>
             </div>}
 
           </div>

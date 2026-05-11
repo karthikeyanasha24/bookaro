@@ -179,7 +179,7 @@ const HowItWorksSection = () => {
             <div className="flex-1 flex flex-col items-start max-w-lg text-left">
               <div className="text-2xl font-semibold mb-2 max-w-xs">Vous voulez connaitre la valeur perçue de votre bien&nbsp;?</div>
               <div className="text-gray-600 mb-2 max-w-[320px]">Lancez anonymement une campagne de Peer-To-Peer estimation et les membres de la communauté estimeront votre bien et vous donneront des conseil pour mieux le valoriser.</div>
-              <a href="/fonctionnalites/p2p-estimation" className="font-bold text-black hover:underline mb-4">En savoir plus</a>
+              <Link to="/fonctionnalites/p2p-estimation" className="font-bold text-black hover:underline mb-4">En savoir plus</Link>
               <div className="flex flex-col gap-3 w-full">
                 {/* Rectangle 1 */}
                 <div className="flex items-center bg-[#F6F6F6] rounded-lg shadow border border-gray-100 px-2 py-2 gap-2 w-1/2">

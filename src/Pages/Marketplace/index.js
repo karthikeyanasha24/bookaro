@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-  const navigate = useNavigate();
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MdSearch, MdLocationOn, MdKeyboardArrowDown, MdPerson, MdStorefront, MdWorkOutline, MdRateReview, MdOutlineSell, MdOutlineInventory2 } from 'react-icons/md';
 import { PiStarFill, PiStar } from 'react-icons/pi';
@@ -215,12 +213,12 @@ function AuthRequiredModal({ onClose }) {
           Pour faire une demande de service, vous devez d'abord créer un compte ou vous connecter.
         </p>
         <div className="flex flex-col gap-2">
-          <a href="/login" className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[13px] font-semibold px-4 py-2.5 rounded-full text-center transition-colors">
+          <Link to="/login" onClick={onClose} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[13px] font-semibold px-4 py-2.5 rounded-full text-center transition-colors">
             Se connecter
-          </a>
-          <a href="/register" className="border border-[#976DD0] text-[#976DD0] text-[13px] font-semibold px-4 py-2.5 rounded-full text-center hover:bg-[#F2ECF8] transition-colors">
+          </Link>
+          <Link to="/register" onClick={onClose} className="border border-[#976DD0] text-[#976DD0] text-[13px] font-semibold px-4 py-2.5 rounded-full text-center hover:bg-[#F2ECF8] transition-colors">
             Créer un compte
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -914,6 +912,7 @@ export default function Marketplace() {
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const dropdownRef = useRef(null);
   const agentRef = useRef(null);
+  const navigate = useNavigate();
 
   // Charger les catégories définies par l'admin (fallback sur la liste locale)
   useEffect(() => {

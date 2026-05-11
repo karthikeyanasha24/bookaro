@@ -1,4 +1,5 @@
 import DashboardSection from "./DashboardSection";
+import { Link } from 'react-router-dom';
 import { FiCalendar, FiMapPin, FiSquare } from "react-icons/fi";
 import { FaDoorOpen } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
@@ -101,9 +102,9 @@ const PastTransactionsSection = ({ section, loading, error, t }) => {
             ))}
           </div>
           <div className="dashboard-button-center past-transactions-button-center">
-            <a href="/past-transactions" className="dashboard-button">
+            <Link to="/past-transactions" className="dashboard-button">
               {t("dashboard.cta.browseTransactions", "Parcourir les transactions")}
-            </a>
+            </Link>
           </div>
         </>
       )}

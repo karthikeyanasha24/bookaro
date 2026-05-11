@@ -1,5 +1,6 @@
 import DashboardSection from "./DashboardSection";
 import { FiClock, FiFileText, FiPlay } from "react-icons/fi";
+import { Link } from 'react-router-dom';
 
 const fallbackImages = [
   "/assets/img/dashboard/attractivity/attractivity-1.jpg",
@@ -32,7 +33,7 @@ const TrainingCenterSection = ({ section, loading, error, t }) => {
             : t("dashboard.training.mediaType.written", "ecrit");
 
           return (
-          <a key={item.id} href={item.route} className="training-card">
+          <Link key={item.id} to={item.route} className="training-card">
             <div className="training-card-head">
               <div className="training-author-wrap">
                 <img
@@ -75,10 +76,10 @@ const TrainingCenterSection = ({ section, loading, error, t }) => {
           );
         })}
       </div>
-      <div className="dashboard-button-center training-button-center">
-        <a href="/training" className="dashboard-button">
+          <div className="dashboard-button-center training-button-center">
+        <Link to="/training" className="dashboard-button">
           {t("dashboard.cta.browseTraining", "Parcourir les formations")}
-        </a>
+        </Link>
       </div>
     </DashboardSection>
   );
