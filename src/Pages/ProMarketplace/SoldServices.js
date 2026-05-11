@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getProOrders, deliverOrder, openLitigation } from '../../methods/api/marketplaceApi';
+import { getProOrders, deliverOrder, openLitigation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
 import { MOCK_PRO_ORDERS } from '../../mocks/marketplaceOrders.mock';
 import { uploadFiles } from '../../methods/api/upload';
 import PageLayout from '../../components/global/PageLayout';
@@ -367,14 +367,14 @@ export default function SoldServices() {
       {cancelReviewOrder && (
         <ProCancelReviewModal order={cancelReviewOrder} onClose={() => setCancelReviewOrder(null)} onAccept={async () => {
           try {
-            await fetch(`/api/marketplace/orders/${cancelReviewOrder._id}/cancellation/accept`, { method: 'POST' });
+            try { await acceptCancellation(cancelReviewOrder._id); } catch (e) { console.warn(e); }
           } catch (e) { console.warn(e); }
           // optimistic update: mark cancelled
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: 'cancelled' } : o));
           setCancelReviewOrder(null);
         }} onReject={async () => {
           try {
-            await fetch(`/api/marketplace/orders/${cancelReviewOrder._id}/cancellation/reject`, { method: 'POST' });
+            try { await rejectCancellation(cancelReviewOrder._id); } catch (e) { console.warn(e); }
           } catch (e) { console.warn(e); }
           // optimistic: revert to previous status if available
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: o.cancellationRequest?.previousStatus || 'accepted_by_pro' } : o));

@@ -54,6 +54,16 @@ export const openLitigation = (orderId, reason, lang = 'fr') =>
 export const postReview = (payload, lang = 'fr') =>
   request('POST', '/marketplace/reviews', payload, lang);
 
+// ─── Cancellation flow (buyer requests, pro accepts/rejects) ──────────────
+export const requestCancellation = (orderId, payload = {}, lang = 'fr') =>
+  request('POST', `/marketplace/orders/${orderId}/cancellation-request`, payload, lang);
+
+export const acceptCancellation = (orderId, lang = 'fr') =>
+  request('POST', `/pro/marketplace/orders/${orderId}/cancellation/accept`, null, lang);
+
+export const rejectCancellation = (orderId, lang = 'fr') =>
+  request('POST', `/pro/marketplace/orders/${orderId}/cancellation/reject`, null, lang);
+
 // ─── Pro (auth requise) ────────────────────────────────────────────────────
 
 export const getProDashboard = (lang = 'fr') =>

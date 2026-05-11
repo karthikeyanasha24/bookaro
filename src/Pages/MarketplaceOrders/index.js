@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getMyOrders, confirmDelivery, openLitigation, postReview } from '../../methods/api/marketplaceApi';
+import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
 // Modal uniforme pour signaler un incident (même design que pro, couleur violette)
 function IncidentModal({ order, onClose, onSubmit }) {
@@ -622,9 +622,9 @@ export default function MarketplaceOrders() {
           }} />
         )}
         {cancelOrder && (
-          <CancelRequestModal order={cancelOrder} onClose={() => setCancelOrder(null)} onSubmit={async ({ reason }) => {
+            <CancelRequestModal order={cancelOrder} onClose={() => setCancelOrder(null)} onSubmit={async ({ reason }) => {
             try {
-              await fetch(`/api/marketplace/orders/${cancelOrder._id}/cancellation-request`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
+              await requestCancellation(cancelOrder._id, { reason }, lang);
             } catch (e) { console.warn(e); }
             setOrders(prev => prev.map(o => o._id === cancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'client' } } : o));
             setCancelOrder(null);
