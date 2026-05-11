@@ -72,7 +72,7 @@ const TrainingCenterSection = ({ section, loading, error, t }) => {
               <FiClock className="training-duration-icon" aria-hidden="true" />
               <span>{duration}</span>
             </p>
-          </a>
+          </Link>
           );
         })}
       </div>
