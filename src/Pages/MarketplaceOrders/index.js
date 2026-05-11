@@ -117,6 +117,25 @@ const STATUS_STYLE = {
   'Cancelled': 'text-red-500',
 };
 
+// Pale badge backgrounds per internal status (use pale colors, black text except cancellation)
+const STATUS_BADGE = {
+  pending_payment: 'bg-yellow-50 text-black',
+  paid: 'bg-green-50 text-black',
+  accepted_by_pro: 'bg-blue-50 text-black',
+  delivered_by_pro: 'bg-indigo-50 text-black',
+  confirmed_by_buyer: 'bg-indigo-50 text-black',
+  cancelled: 'bg-red-50 text-black',
+  refunded: 'bg-red-50 text-black',
+  litigation_opened: 'bg-orange-50 text-black',
+  cancellation_requested: 'bg-black text-white',
+};
+
+const PAYMENT_BADGE = {
+  paid: 'bg-green-50 text-black',
+  pending: 'bg-yellow-50 text-black',
+  refunded: 'bg-red-50 text-black',
+};
+
 /* ─── Stars interactives ── */
 function Stars({ value = 0, onChange, size = 28 }) {
   const [hover, setHover] = useState(0);
@@ -421,19 +440,22 @@ function OrderRow({ order, lang, onRate, onAction }) {
       <td className="py-3 px-3 whitespace-nowrap">{price}</td>
           {/* Statut */}
           <td className="py-3 px-3">
-            {order.status === 'cancellation_requested' ? (
-              <span className="inline-block bg-black text-white rounded-full px-3 py-1 text-[11px]">{t.cancellation_requested || 'Annulation demandée'}</span>
-            ) : (
-              <span className={`font-medium ${STATUS_STYLE[statusLabel] || 'text-gray-500'}`}>{statusLabel}</span>
-            )}
+            {(() => {
+              const cls = STATUS_BADGE[order.status] || 'bg-gray-50 text-black';
+              return (
+                <span className={`inline-block ${cls} rounded-full px-3 py-1 text-[11px] font-semibold`}>{statusLabel}</span>
+              );
+            })()}
           </td>
       <td className="py-3 px-3 whitespace-nowrap">{dateLivraison}</td>
       {/* Paiement */}
       <td className="py-3 px-3">
         {paymentLabel && (
-          <span className={`text-[11px] font-semibold px-2 py-1 rounded-full ${paymentLabel === t.payment.pending || paymentLabel === 'En attente' ? 'bg-[#976DD0] text-white' : 'bg-gray-100 text-gray-600'}`}>
-            {paymentLabel}
-          </span>
+          (() => {
+            const key = order.payment_status || (paymentLabel === t.payment.pending ? 'pending' : 'paid');
+            const cls = PAYMENT_BADGE[key] || 'bg-gray-50 text-black';
+            return <span className={`inline-block ${cls} rounded-full px-3 py-1 text-[11px] font-semibold`}>{paymentLabel}</span>;
+          })()
         )}
       </td>
       {/* Actions */}

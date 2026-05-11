@@ -244,6 +244,19 @@ export default function SoldServices() {
   const [incidentOrder, setIncidentOrder] = useState(null);
   const [cancelReviewOrder, setCancelReviewOrder] = useState(null);
 
+  const STATUS_BADGE = {
+    pending_payment: 'bg-yellow-50 text-black',
+    paid: 'bg-green-50 text-black',
+    accepted_by_pro: 'bg-blue-50 text-black',
+    delivered_by_pro: 'bg-indigo-50 text-black',
+    confirmed_by_buyer: 'bg-indigo-50 text-black',
+    cancelled: 'bg-red-50 text-black',
+    refunded: 'bg-red-50 text-black',
+    litigation_opened: 'bg-orange-50 text-black',
+    cancellation_requested: 'bg-black text-white',
+  };
+  const PAYMENT_BADGE = { paid: 'bg-green-50 text-black', pending: 'bg-yellow-50 text-black', refunded: 'bg-red-50 text-black' };
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
@@ -325,15 +338,20 @@ export default function SoldServices() {
                         <td className="py-3 px-3">{client.name || '-'}</td>
                         <td className="py-3 px-3 whitespace-nowrap font-medium">{num}</td>
                         <td className="py-3 px-3 whitespace-nowrap">{price}</td>
-                        <td className="py-3 px-3">
-                          {order.status === 'cancellation_requested' ? (
-                            <button onClick={() => setCancelReviewOrder(order)} className="inline-block bg-red-100 text-red-600 text-[11px] font-bold px-3 py-1 rounded-full">Annulation demandée</button>
-                          ) : (
-                            statusLabel
-                          )}
-                        </td>
+                        <td className="py-3 px-3">{
+                          (() => {
+                            const cls = STATUS_BADGE[order.status] || 'bg-gray-50 text-black';
+                            return <span className={`inline-block ${cls} rounded-full px-3 py-1 text-[11px] font-semibold`}>{statusLabel}</span>;
+                          })()
+                        }</td>
                         <td className="py-3 px-3 whitespace-nowrap">{dateLivraison}</td>
-                        <td className="py-3 px-3">{paymentLabel}</td>
+                        <td className="py-3 px-3">{
+                          (() => {
+                            const key = order.payment_status || (paymentLabel === 'En attente' ? 'pending' : 'paid');
+                            const cls = PAYMENT_BADGE[key] || 'bg-gray-50 text-black';
+                            return <span className={`inline-block ${cls} rounded-full px-3 py-1 text-[11px] font-semibold`}>{paymentLabel}</span>;
+                          })()
+                        }</td>
                         <td className="py-3 px-3">
                           <div className="flex flex-col gap-0.5 text-[12px]">
                             <button onClick={() => setSubmitOrder(order)} className="text-[#976DD0] hover:underline text-left font-bold">Soumettre</button>
