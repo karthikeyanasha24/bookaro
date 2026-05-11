@@ -343,6 +343,7 @@ function OrderRow({ order, lang, onRate, onAction }) {
   const isCancelled = ['cancelled','refunded','cancellation_requested'].includes(order.status);
   const hasIncident = order.status === 'litigation_opened' || order.incident_opened;
   const paymentLabel = (isDelivered || isConfirmed) ? (isConfirmed ? t.payment.paid : t.payment.pending) : null;
+  const showIssue = ['pending_payment','paid','accepted_by_pro'].includes(order.status) || (order.status === 'delivered_by_pro' && order.payment_status !== 'paid');
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50/50 text-[13px] text-[#47525E]">
@@ -411,10 +412,12 @@ function OrderRow({ order, lang, onRate, onAction }) {
               <button onClick={() => onAction('release', order)} className="text-[#976DD0] hover:underline text-left font-medium">
                 {t.actions.release}
               </button>
-              <button onClick={() => onAction('issue', order)} className="text-red-400 hover:underline text-left">
-                {t.actions.issue}
-              </button>
             </>
+          )}
+          {showIssue && (
+            <button onClick={() => onAction('issue', order)} className="text-red-400 hover:underline text-left">
+              {t.actions.issue}
+            </button>
           )}
           {isConfirmed && (
             <>
