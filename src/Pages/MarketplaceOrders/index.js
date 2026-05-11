@@ -25,6 +25,8 @@ const T = {
     empty: 'Aucun achat pour l\'instant.',
     cols: { date:'Date achat', service:'Service', bien:'Bien concerné', pro:'Prestataire', num:'N° Commande', tarif:'Tarif payé', statut:'Statut service', livraison:'Date livraison', paiement:'Paiement prestataire' },
     status: { pending_payment:'En cours', paid:'En cours', accepted_by_pro:'En cours', delivered_by_pro:'Terminé', confirmed_by_buyer:'Terminé', cancelled:'Annulé', refunded:'Annulé', litigation_opened:'En cours' },
+    // cancellation
+    cancellation_requested: 'Annulation demandée',
     payment: { pending:'En attente', paid:'Payé' },
     actions: { cancel:'Annuler', see:'Voir', release:'Libérer les fonds', issue:'Problème ?', invoice:'Facture' },
     noDate: '-',
@@ -53,6 +55,7 @@ const T = {
     empty: 'No purchases yet.',
     cols: { date:'Date', service:'Service', bien:'Property', pro:'Provider', num:'Order #', tarif:'Price paid', statut:'Status', livraison:'Delivery date', paiement:'Provider payment' },
     status: { pending_payment:'In progress', paid:'In progress', accepted_by_pro:'In progress', delivered_by_pro:'Completed', confirmed_by_buyer:'Completed', cancelled:'Cancelled', refunded:'Cancelled', litigation_opened:'In progress' },
+    cancellation_requested: 'Cancellation requested',
     payment: { pending:'Pending', paid:'Paid' },
     actions: { cancel:'Cancel', see:'View', release:'Release funds', issue:'Problem?', invoice:'Invoice' },
     noDate: '-',
@@ -266,6 +269,36 @@ function ServiceSnapshotModal({ order, onClose }) {
   );
 }
 
+/* ─── Modal demande d'annulation (client) ── */
+function CancelRequestModal({ order, onClose, onSubmit }) {
+  const [reason, setReason] = useState('');
+  const [loading, setLoading] = useState(false);
+  if (!order) return null;
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-[#47525E]">Demande d'annulation</h3>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+        </div>
+        <p className="text-[13px] text-gray-600 mb-3">Vous pouvez indiquer le motif de votre demande. Le professionnel recevra la demande et devra l'accepter ou la refuser.</p>
+        <textarea value={reason} onChange={e => setReason(e.target.value)} rows={4} className="w-full border border-gray-200 rounded-lg p-3 text-sm mb-4" placeholder="Motif de la demande (obligatoire)" />
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">Annuler</button>
+          <button onClick={async () => {
+            if (!reason.trim()) return alert('Merci d\'indiquer un motif');
+            setLoading(true);
+            try {
+              await onSubmit({ reason });
+            } catch (e) { console.error(e); alert('Erreur lors de la soumission'); }
+            finally { setLoading(false); }
+          }} disabled={loading} className="flex-1 bg-[#976DD0] text-white rounded-full py-2 text-sm">Soumettre</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Ligne tableau ── */
 function OrderRow({ order, lang, onRate, onAction }) {
   const t = T[lang];
@@ -278,7 +311,7 @@ function OrderRow({ order, lang, onRate, onAction }) {
   const statusLabel = t.status[order.status] || 'En cours';
   const isDelivered = order.status === 'delivered_by_pro';
   const isConfirmed = order.status === 'confirmed_by_buyer';
-  const isCancelled = ['cancelled','refunded'].includes(order.status);
+  const isCancelled = ['cancelled','refunded','cancellation_requested'].includes(order.status);
   const hasIncident = order.status === 'litigation_opened' || order.incident_opened;
   const paymentLabel = (isDelivered || isConfirmed) ? (isConfirmed ? t.payment.paid : t.payment.pending) : null;
 
@@ -316,10 +349,14 @@ function OrderRow({ order, lang, onRate, onAction }) {
         )}
       </td>
       <td className="py-3 px-3 whitespace-nowrap">{price}</td>
-      {/* Statut */}
-      <td className="py-3 px-3">
-        <span className={`font-medium ${STATUS_STYLE[statusLabel] || 'text-gray-500'}`}>{statusLabel}</span>
-      </td>
+          {/* Statut */}
+          <td className="py-3 px-3">
+            {order.status === 'cancellation_requested' ? (
+              <span className="inline-block bg-black text-white rounded-full px-3 py-1 text-[11px]">{t.cancellation_requested || 'Annulation demandée'}</span>
+            ) : (
+              <span className={`font-medium ${STATUS_STYLE[statusLabel] || 'text-gray-500'}`}>{statusLabel}</span>
+            )}
+          </td>
       <td className="py-3 px-3 whitespace-nowrap">{dateLivraison}</td>
       {/* Paiement */}
       <td className="py-3 px-3">
@@ -422,6 +459,7 @@ export default function MarketplaceOrders() {
   const [ratingOrder, setRatingOrder] = useState(null);
   const [viewOrder, setViewOrder] = useState(null);
   const [incidentOrder, setIncidentOrder] = useState(null);
+  const [cancelOrder, setCancelOrder] = useState(null);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -447,6 +485,8 @@ export default function MarketplaceOrders() {
       try { await confirmDelivery(order._id, lang); fetchOrders(); } catch {}
     } else if (type === 'issue') {
       setIncidentOrder(order);
+    } else if (type === 'cancel') {
+      setCancelOrder(order);
     }
   };
 
@@ -505,6 +545,17 @@ export default function MarketplaceOrders() {
             await openLitigation(incidentOrder._id, description, lang);
             setIncidentOrder(null);
             fetchOrders();
+          }} />
+        )}
+        {cancelOrder && (
+          <CancelRequestModal order={cancelOrder} onClose={() => setCancelOrder(null)} onSubmit={async ({ reason }) => {
+            // call backend endpoint (optimistic UI)
+            try {
+              await fetch(`/api/marketplace/orders/${cancelOrder._id}/cancellation-request`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
+            } catch (e) { console.warn(e); }
+            // optimistic update
+            setOrders(prev => prev.map(o => o._id === cancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'client' } } : o));
+            setCancelOrder(null);
           }} />
         )}
       </div>

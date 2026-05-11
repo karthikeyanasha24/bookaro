@@ -211,12 +211,38 @@ function SoldServiceModal({ order, onClose }) {
   );
 }
 
+// Modal pour traiter une demande d'annulation côté pro
+function ProCancelReviewModal({ order, onClose, onAccept, onReject }) {
+  if (!order) return null;
+  const req = order.cancellationRequest || {};
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-[#47525E]">Demande d'annulation</h3>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+        </div>
+        <div className="text-[13px] text-gray-700 mb-3">
+          <div className="mb-2"><strong>Motif client:</strong></div>
+          <div className="whitespace-pre-line rounded border border-gray-100 p-3 text-sm text-gray-600">{req.reason || '-'}</div>
+          <div className="text-[12px] text-gray-400 mt-3">Demande envoyée: {req.createdAt ? new Date(req.createdAt).toLocaleString('fr-FR') : '-'}</div>
+        </div>
+        <div className="flex gap-2 mt-4">
+          <button onClick={onReject} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">Refuser</button>
+          <button onClick={onAccept} className="flex-1 bg-[#D14343] text-white rounded-full py-2 text-sm">Accepter et rembourser</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SoldServices() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [viewOrder, setViewOrder] = useState(null);
   const [submitOrder, setSubmitOrder] = useState(null);
   const [incidentOrder, setIncidentOrder] = useState(null);
+  const [cancelReviewOrder, setCancelReviewOrder] = useState(null);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -299,14 +325,25 @@ export default function SoldServices() {
                         <td className="py-3 px-3">{client.name || '-'}</td>
                         <td className="py-3 px-3 whitespace-nowrap font-medium">{num}</td>
                         <td className="py-3 px-3 whitespace-nowrap">{price}</td>
-                        <td className="py-3 px-3">{statusLabel}</td>
+                        <td className="py-3 px-3">
+                          {order.status === 'cancellation_requested' ? (
+                            <button onClick={() => setCancelReviewOrder(order)} className="inline-block bg-red-100 text-red-600 text-[11px] font-bold px-3 py-1 rounded-full">Annulation demandée</button>
+                          ) : (
+                            statusLabel
+                          )}
+                        </td>
                         <td className="py-3 px-3 whitespace-nowrap">{dateLivraison}</td>
                         <td className="py-3 px-3">{paymentLabel}</td>
                         <td className="py-3 px-3">
                           <div className="flex flex-col gap-0.5 text-[12px]">
                             <button onClick={() => setSubmitOrder(order)} className="text-[#976DD0] hover:underline text-left font-medium">Soumettre</button>
                             <button onClick={() => setViewOrder(order)} className="text-[#47525E] hover:text-[#976DD0] text-left">Voir</button>
-                            <button className="text-red-400 hover:underline text-left">Annuler</button>
+                            {!(order.status === 'cancellation_requested' || order.status === 'cancelled' || order.status === 'refunded') && (
+                              <button className="text-red-400 hover:underline text-left">Annuler</button>
+                            )}
+                            {order.status === 'cancellation_requested' && (
+                              <button onClick={() => setCancelReviewOrder(order)} className="text-[12px] text-red-600">Gérer annulation</button>
+                            )}
                             <button onClick={() => setIncidentOrder(order)} className="text-[#D14343] hover:underline text-left font-semibold">Problème ?</button>
                           </div>
                         </td>
@@ -327,6 +364,23 @@ export default function SoldServices() {
         // Marquer l'incident côté UI (mock)
         setOrders(orders => orders.map(o => o._id === incidentOrder._id ? { ...o, incident: { description } } : o));
       }} />}
+      {cancelReviewOrder && (
+        <ProCancelReviewModal order={cancelReviewOrder} onClose={() => setCancelReviewOrder(null)} onAccept={async () => {
+          try {
+            await fetch(`/api/marketplace/orders/${cancelReviewOrder._id}/cancellation/accept`, { method: 'POST' });
+          } catch (e) { console.warn(e); }
+          // optimistic update: mark cancelled
+          setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: 'cancelled' } : o));
+          setCancelReviewOrder(null);
+        }} onReject={async () => {
+          try {
+            await fetch(`/api/marketplace/orders/${cancelReviewOrder._id}/cancellation/reject`, { method: 'POST' });
+          } catch (e) { console.warn(e); }
+          // optimistic: revert to previous status if available
+          setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: o.cancellationRequest?.previousStatus || 'accepted_by_pro' } : o));
+          setCancelReviewOrder(null);
+        }} />
+      )}
     </PageLayout>
   );
 }
