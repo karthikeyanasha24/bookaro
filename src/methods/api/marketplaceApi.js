@@ -3,7 +3,7 @@
  * Appels directs vers http://localhost:6090
  */
 
-const BASE_URL = process.env.REACT_APP_MARKETPLACE_API_URL || 'http://localhost:6090';
+const BASE_URL = process.env.REACT_APP_MARKETPLACE_API_URL || 'http://localhost:8089';
 
 const getToken = () => localStorage.getItem('token');
 

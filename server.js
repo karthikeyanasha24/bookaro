@@ -24,6 +24,64 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// In-memory store for mock cancellation requests and order statuses
+const CANCELLATION_REQUESTS = {}; // { orderId: { reason, createdAt, by, status, previousStatus } }
+const ORDER_STATUS = {}; // { orderId: status }
+
+// Helper to emit socket events (if any clients connected)
+const emit = (event, payload) => {
+  try { io.emit(event, payload); } catch (e) { /* ignore */ }
+};
+
+// --- Mock endpoints for marketplace cancellation flow and litigiation ---
+app.post('/marketplace/orders/:id/cancellation-request', (req, res) => {
+  const id = req.params.id;
+  const { reason } = req.body || {};
+  const now = new Date().toISOString();
+  CANCELLATION_REQUESTS[id] = { reason: reason || '', createdAt: now, by: 'client', status: 'requested', previousStatus: ORDER_STATUS[id] || 'unknown' };
+  ORDER_STATUS[id] = 'cancellation_requested';
+  emit('cancellation_requested', { orderId: id, request: CANCELLATION_REQUESTS[id] });
+  return res.json({ success: true, request: CANCELLATION_REQUESTS[id] });
+});
+
+app.post('/pro/marketplace/orders/:id/cancellation/accept', (req, res) => {
+  const id = req.params.id;
+  if (!CANCELLATION_REQUESTS[id]) return res.status(404).json({ success: false, message: 'Not found' });
+  CANCELLATION_REQUESTS[id].status = 'accepted';
+  ORDER_STATUS[id] = 'cancelled';
+  emit('cancellation_accepted', { orderId: id, request: CANCELLATION_REQUESTS[id] });
+  // In a real backend, trigger Stripe refund here
+  return res.json({ success: true });
+});
+
+app.post('/pro/marketplace/orders/:id/cancellation/reject', (req, res) => {
+  const id = req.params.id;
+  if (!CANCELLATION_REQUESTS[id]) return res.status(404).json({ success: false, message: 'Not found' });
+  CANCELLATION_REQUESTS[id].status = 'rejected';
+  ORDER_STATUS[id] = CANCELLATION_REQUESTS[id].previousStatus || 'accepted_by_pro';
+  emit('cancellation_rejected', { orderId: id, request: CANCELLATION_REQUESTS[id] });
+  return res.json({ success: true });
+});
+
+// Litigation (incident) endpoint used by frontend
+app.post('/marketplace/orders/:id/litigation', (req, res) => {
+  const id = req.params.id;
+  const { reason } = req.body || {};
+  const now = new Date().toISOString();
+  // For mock, store as a cancellation-like incident record
+  const incident = { description: reason || '', createdAt: now, by: 'client' };
+  emit('litigation_opened', { orderId: id, incident });
+  return res.json({ success: true, incident });
+});
+
+// Confirm delivery (release funds) endpoint used by frontend confirmDelivery
+app.post('/marketplace/orders/:id/confirm', (req, res) => {
+  const id = req.params.id;
+  ORDER_STATUS[id] = 'confirmed_by_buyer';
+  emit('order_confirmed', { orderId: id });
+  return res.json({ success: true });
+});
+
 app.get('/api/dashboard/overview', (req, res) => {
   const period = req.query.period || 'day';
 
