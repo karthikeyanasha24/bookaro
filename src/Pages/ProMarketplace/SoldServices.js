@@ -245,18 +245,19 @@ export default function SoldServices() {
   const [cancelReviewOrder, setCancelReviewOrder] = useState(null);
 
   const BADGE_BASE = 'inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-semibold min-w-[120px]';
+  // Unique, harmonious pastel palette (no duplicates between status and payment badges)
   const STATUS_BADGE = {
-    pending_payment: `bg-yellow-200 text-black ${BADGE_BASE}`,
+    pending_payment: `bg-amber-200 text-black ${BADGE_BASE}`,
     paid: `bg-emerald-200 text-black ${BADGE_BASE}`,
-    accepted_by_pro: `bg-purple-200 text-black ${BADGE_BASE}`,
+    accepted_by_pro: `bg-fuchsia-200 text-black ${BADGE_BASE}`,
     delivered_by_pro: `bg-violet-200 text-black ${BADGE_BASE}`,
-    confirmed_by_buyer: `bg-violet-200 text-black ${BADGE_BASE}`,
-    cancelled: `bg-red-200 text-black ${BADGE_BASE}`,
-    refunded: `bg-red-200 text-black ${BADGE_BASE}`,
+    confirmed_by_buyer: `bg-sky-200 text-black ${BADGE_BASE}`,
+    cancelled: `bg-rose-200 text-black ${BADGE_BASE}`,
+    refunded: `bg-rose-300 text-black ${BADGE_BASE}`,
     litigation_opened: `bg-orange-200 text-black ${BADGE_BASE}`,
     cancellation_requested: `bg-black text-white ${BADGE_BASE}`,
   };
-  const PAYMENT_BADGE = { paid: `bg-emerald-200 text-black ${BADGE_BASE}`, pending: `bg-yellow-200 text-black ${BADGE_BASE}`, refunded: `bg-red-200 text-black ${BADGE_BASE}` };
+  const PAYMENT_BADGE = { paid: `bg-slate-200 text-black ${BADGE_BASE}`, pending: `bg-stone-200 text-black ${BADGE_BASE}`, refunded: `bg-pink-100 text-black ${BADGE_BASE}` };
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
