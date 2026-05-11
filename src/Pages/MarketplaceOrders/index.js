@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { io } from 'socket.io-client';
 import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
 // Modal uniforme pour signaler un incident (même design que pro, couleur violette)
@@ -580,6 +581,21 @@ export default function MarketplaceOrders() {
   }, [lang]);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
+
+  // Real-time updates via WebSocket
+  useEffect(() => {
+    const socket = io();
+    socket.on('cancellation_requested', ({ orderId, request }) => {
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancellation_requested', cancellationRequest: request } : o));
+    });
+    socket.on('cancellation_accepted', ({ orderId, request }) => {
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancelled', cancellationRequest: { ...(o.cancellationRequest||{}), status: 'accepted', ...request } } : o));
+    });
+    socket.on('cancellation_rejected', ({ orderId, request }) => {
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: (request?.previousStatus || (o.cancellationRequest?.previousStatus || 'accepted_by_pro')), cancellationRequest: { ...(o.cancellationRequest||{}), status: 'rejected', ...request } } : o));
+    });
+    return () => { socket.disconnect(); };
+  }, []);
 
   const handleAction = async (type, order) => {
     if (type === 'see') {

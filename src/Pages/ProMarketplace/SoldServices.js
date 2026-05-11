@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { io } from 'socket.io-client';
 import { getProOrders, deliverOrder, openLitigation, acceptCancellation, rejectCancellation, proRequestCancellation } from '../../methods/api/marketplaceApi';
 import { MOCK_PRO_ORDERS } from '../../mocks/marketplaceOrders.mock';
 import { uploadFiles } from '../../methods/api/upload';
@@ -305,6 +306,21 @@ export default function SoldServices() {
   }, []);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
+
+  // Real-time WebSocket listeners
+  useEffect(() => {
+    const socket = io();
+    socket.on('cancellation_requested', ({ orderId, request }) => {
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancellation_requested', cancellationRequest: request } : o));
+    });
+    socket.on('cancellation_accepted', ({ orderId, request }) => {
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancelled', cancellationRequest: { ...(o.cancellationRequest||{}), status: 'accepted', ...request } } : o));
+    });
+    socket.on('cancellation_rejected', ({ orderId, request }) => {
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: (request?.previousStatus || (o.cancellationRequest?.previousStatus || 'accepted_by_pro')), cancellationRequest: { ...(o.cancellationRequest||{}), status: 'rejected', ...request } } : o));
+    });
+    return () => { socket.disconnect(); };
+  }, []);
 
   const handleSubmit = async ({ message, files }) => {
     let uploaded = [];
