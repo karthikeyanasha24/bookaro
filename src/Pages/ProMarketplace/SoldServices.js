@@ -244,18 +244,19 @@ export default function SoldServices() {
   const [incidentOrder, setIncidentOrder] = useState(null);
   const [cancelReviewOrder, setCancelReviewOrder] = useState(null);
 
+  const BADGE_BASE = 'inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-semibold min-w-[120px]';
   const STATUS_BADGE = {
-    pending_payment: 'bg-yellow-50 text-black',
-    paid: 'bg-green-50 text-black',
-    accepted_by_pro: 'bg-blue-50 text-black',
-    delivered_by_pro: 'bg-indigo-50 text-black',
-    confirmed_by_buyer: 'bg-indigo-50 text-black',
-    cancelled: 'bg-red-50 text-black',
-    refunded: 'bg-red-50 text-black',
-    litigation_opened: 'bg-orange-50 text-black',
-    cancellation_requested: 'bg-black text-white',
+    pending_payment: `bg-yellow-200 text-black ${BADGE_BASE}`,
+    paid: `bg-emerald-200 text-black ${BADGE_BASE}`,
+    accepted_by_pro: `bg-purple-200 text-black ${BADGE_BASE}`,
+    delivered_by_pro: `bg-violet-200 text-black ${BADGE_BASE}`,
+    confirmed_by_buyer: `bg-violet-200 text-black ${BADGE_BASE}`,
+    cancelled: `bg-red-200 text-black ${BADGE_BASE}`,
+    refunded: `bg-red-200 text-black ${BADGE_BASE}`,
+    litigation_opened: `bg-orange-200 text-black ${BADGE_BASE}`,
+    cancellation_requested: `bg-black text-white ${BADGE_BASE}`,
   };
-  const PAYMENT_BADGE = { paid: 'bg-green-50 text-black', pending: 'bg-yellow-50 text-black', refunded: 'bg-red-50 text-black' };
+  const PAYMENT_BADGE = { paid: `bg-emerald-200 text-black ${BADGE_BASE}`, pending: `bg-yellow-200 text-black ${BADGE_BASE}`, refunded: `bg-red-200 text-black ${BADGE_BASE}` };
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
