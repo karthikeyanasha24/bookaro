@@ -400,16 +400,16 @@ function OrderRow({ order, lang, onRate, onAction }) {
       <td className="py-3 px-3">
         <div className="flex flex-col gap-0.5 text-[12px]">
           {!isCancelled && !isDelivered && !isConfirmed && (
-            <button onClick={() => onAction('cancel', order)} className="text-[#47525E] hover:text-red-500 text-left">
+            <button onClick={() => onAction('cancel', order)} className="text-[#47525E] hover:text-red-500 text-left font-bold">
               {t.actions.cancel}
             </button>
           )}
-          <button onClick={() => onAction('see', order)} className="text-[#47525E] hover:text-[#976DD0] text-left">
+          <button onClick={() => onAction('see', order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">
             {t.actions.see}
           </button>
           {isDelivered && (
             <>
-              <button onClick={() => onAction('release', order)} className="text-[#976DD0] hover:underline text-left font-medium">
+              <button onClick={() => onAction('release', order)} className="text-[#976DD0] hover:underline text-left font-bold">
                 {t.actions.release}
               </button>
             </>
@@ -421,10 +421,10 @@ function OrderRow({ order, lang, onRate, onAction }) {
           )}
           {isConfirmed && (
             <>
-              <button onClick={() => onRate(order)} className="text-[#976DD0] hover:underline text-left font-medium">
+              <button onClick={() => onRate(order)} className="text-[#976DD0] hover:underline text-left font-bold">
                 {t.rateBtn}
               </button>
-              <button onClick={() => onAction('invoice', order)} className="text-[#47525E] hover:text-[#976DD0] text-left">
+              <button onClick={() => onAction('invoice', order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">
                 {t.actions.invoice}
               </button>
             </>

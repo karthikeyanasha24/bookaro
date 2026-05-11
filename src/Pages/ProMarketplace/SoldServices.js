@@ -336,15 +336,15 @@ export default function SoldServices() {
                         <td className="py-3 px-3">{paymentLabel}</td>
                         <td className="py-3 px-3">
                           <div className="flex flex-col gap-0.5 text-[12px]">
-                            <button onClick={() => setSubmitOrder(order)} className="text-[#976DD0] hover:underline text-left font-medium">Soumettre</button>
-                            <button onClick={() => setViewOrder(order)} className="text-[#47525E] hover:text-[#976DD0] text-left">Voir</button>
+                            <button onClick={() => setSubmitOrder(order)} className="text-[#976DD0] hover:underline text-left font-bold">Soumettre</button>
+                            <button onClick={() => setViewOrder(order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">Voir</button>
                             {!(order.status === 'cancellation_requested' || order.status === 'cancelled' || order.status === 'refunded' || order.status === 'delivered_by_pro' || order.status === 'confirmed_by_buyer') && (
-                              <button className="text-red-400 hover:underline text-left">Annuler</button>
+                              <button className="text-red-400 hover:underline text-left font-bold">Annuler</button>
                             )}
                             {order.status === 'cancellation_requested' && (
-                              <button onClick={() => setCancelReviewOrder(order)} className="text-[12px] text-red-600">Gérer annulation</button>
+                              <button onClick={() => setCancelReviewOrder(order)} className="text-[12px] text-red-600 font-bold">Gérer annulation</button>
                             )}
-                            <button onClick={() => setIncidentOrder(order)} className="text-[#D14343] hover:underline text-left font-semibold">Problème ?</button>
+                            <button onClick={() => setIncidentOrder(order)} className="text-[#D14343] hover:underline text-left font-bold">Problème ?</button>
                           </div>
                         </td>
                       </tr>
