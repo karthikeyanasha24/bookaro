@@ -39,7 +39,14 @@ const PageLayout = ({ children }) => {
 const PageLayoutInner = ({ children }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem("sidebar_open");
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [projectData, setProjectData] = useState("");
   const navigate = useNavigate();
@@ -65,13 +72,8 @@ const PageLayoutInner = ({ children }) => {
   const excludeSidebarRoutes = ["/login", "/signup", "/forgotpassword", "/reset-password", "/otpverify", "/change-password", "/reset-email", "/reset-new-email", "/signup/pro", "/phone-number"];
   const shouldShowSidebar = isLoggedIn && !excludeSidebarRoutes.some(route => pathname.startsWith(route));
 
-  // Load sidebar state from localStorage
-  useEffect(() => {
-    const savedSidebarState = localStorage.getItem("sidebar_open");
-    if (savedSidebarState !== null) {
-      setIsSidebarOpen(JSON.parse(savedSidebarState));
-    }
-  }, []);
+  // sidebar state is now initialized from localStorage synchronously to avoid
+  // layout changes after first render
 
   // Toggle sidebar and save state
   const toggleSidebar = () => {
