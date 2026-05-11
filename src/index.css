@@ -8,6 +8,14 @@ body {
   background-color: #fff !important;
 }
 
+/* Prevent transitions and animations before React mounts to avoid initial flicker */
+body:not(.is-mounted) *,
+body:not(.is-mounted) *::before,
+body:not(.is-mounted) *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
