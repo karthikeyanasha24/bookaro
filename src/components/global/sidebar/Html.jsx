@@ -113,7 +113,7 @@ const Html = ({
   // Section header with toggle
   const SectionHeader = ({ icon: Icon, label, sectionId, isCollapsed, hasSubitems = true, onClick }) => (
     <div 
-      className={`section-header ${isSectionActive(sectionId) ? "section-current" : ""}`}
+      className="section-header"
       onClick={() => handleSectionHeaderClick({ sectionId, hasSubitems, onClick })}
       style={{ cursor: hasSubitems || onClick ? 'pointer' : 'default' }}
     >
