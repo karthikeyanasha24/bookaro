@@ -89,11 +89,19 @@ const HowItWorksSection = () => {
               </div>
             </div>
 
-            {/* Marge basse supplémentaire après la ligne de pictos */}
-            <div className="mb-12"></div>
+            {/* Bouton Démarrer + phrase grise */}
+            <div className="flex flex-col items-center justify-center mb-12">
+              <Link
+                to="/signup"
+                className="inline-flex items-center bg-[#976DD0] hover:bg-[#7e54bd] text-white font-medium rounded-full px-8 py-3 transition"
+              >
+                Démarrer
+              </Link>
+              <div className="text-gray-400 text-[15px] mt-2">100% gratuit pour les particuliers</div>
+            </div>
 
-                      {/* Double espace avant la première étape de l'explainer */}
-                      <div className="mb-[120px]"></div>
+            {/* Double espace avant la première étape de l'explainer */}
+            <div className="mb-[120px]"></div>
           </div>
 
           {/* Première ligne de l'explainer */}
@@ -323,6 +331,16 @@ const HowItWorksSection = () => {
               </div>
             </div>
           </div>
+        </div>
+        {/* Bouton Démarrer + phrase grise à la fin de la section */}
+        <div className="flex flex-col items-center justify-center mt-12">
+          <Link
+            to="/signup"
+            className="inline-flex items-center bg-[#976DD0] hover:bg-[#7e54bd] text-white font-medium rounded-full px-8 py-3 transition"
+          >
+            Démarrer
+          </Link>
+          <div className="text-gray-400 text-[15px] mt-2">100% gratuit pour les particuliers</div>
         </div>
       </section>
     </>

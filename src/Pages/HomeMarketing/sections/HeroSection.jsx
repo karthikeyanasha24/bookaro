@@ -38,12 +38,6 @@ const HeroSection = () => {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             to="/signup"
-            className="inline-flex items-center justify-center bg-[#976DD0] hover:bg-[#7e54bd] text-white font-medium rounded-full px-7 py-3 transition shadow-sm"
-          >
-            Démarrer gratuitement
-          </Link>
-          <Link
-            to="/properties?search=true"
             className="inline-flex items-center justify-center border border-[#976DD0] text-[#976DD0] hover:bg-[#976DD0]/10 font-medium rounded-full px-7 py-3 transition bg-white/40"
           >
             Explorer la plateforme
@@ -79,18 +73,18 @@ const HeroSection = () => {
 /* ---------- Sub-components ---------- */
 
 const SmallCard = ({ card }) => (
-  <div className="rounded-2xl bg-white/80 backdrop-blur-sm ring-1 ring-white/60 p-5 text-gray-900 shadow-sm">
+  <div className="rounded-2xl bg-white/90 backdrop-blur-sm ring-1 ring-white/60 p-5 text-gray-900 shadow-sm">
     <p className="text-[12px] uppercase tracking-wide font-semibold text-[#976DD0] mb-2">
       {card.title1}
     </p>
     {card.image && (
-      <img
-        src={card.image}
-        alt=""
-        className="w-full h-28 object-cover rounded-lg mb-3"
-        loading="lazy"
-      />
-    )}
+        <img
+          src={card.image}
+          alt=""
+          className={`w-full ${(card.image.includes('P2PEstim.png') || card.image.includes('leadcheck.png') || card.image.includes('Offmarketsale.png')) ? 'h-44' : (card.image.includes('Agendapartagé.png') || card.image.includes('Offrescentralized.png') || card.image.includes('Opportunistsales.png')) ? 'h-44' : 'h-28'} rounded-lg mb-3 ${card.image.includes('P2PEstim.png') || card.image.includes('leadcheck.png') || card.image.includes('Offmarketsale.png') ? 'object-contain' : card.image.includes('Agendapartagé.png') || card.image.includes('Offrescentralized.png') || card.image.includes('Opportunistsales.png') ? 'object-contain' : 'object-cover'}`}
+          loading="lazy"
+        />
+      )}
     <p className="font-semibold text-[15px] mb-1.5">{card.title2}</p>
     <p className="text-[13px] text-gray-700 leading-relaxed">{card.text}</p>
   </div>
@@ -100,9 +94,6 @@ const CenterCard = ({ data }) => (
   <div className="rounded-2xl bg-white/95 ring-1 ring-white/40 p-6 text-gray-900 flex flex-col gap-4 shadow-lg">
     <div>
       <h3 className="text-2xl font-semibold leading-tight">{data.bigTitle}</h3>
-      <p className="text-[13px] font-semibold text-[#976DD0] mt-1 uppercase tracking-wide">
-        {data.smallTitle}
-      </p>
     </div>
 
     {data.blocks.map((b, i) => (
@@ -112,7 +103,7 @@ const CenterCard = ({ data }) => (
           <img
             src={b.image}
             alt=""
-            className="w-full h-24 object-cover rounded-lg"
+            className={`w-full ${b.image.includes('Learningcenter.png') ? 'h-32 object-contain' : 'h-24 object-cover'} rounded-lg`}
             loading="lazy"
           />
         )}
@@ -126,64 +117,63 @@ const CenterCard = ({ data }) => (
 
 const LEFT_CARDS = [
   {
-    title1: "Définir votre projet",
-    image: "/assets/img/dashboard.png",
-    title2: "Peer-To-Peer",
-    text: "Lancez une campagne d'estimation auprès de la communauté en quelques clics.",
+    title1: "Définir votre prix de vente",
+    image: "/assets/img/P2PEstim.png",
+    title2: "Peer-To-Peer Estimation",
+    text: "Lancez une campagne d'estimation auprès des membres de la communauté en quelques clics.",
   },
   {
-    title1: "Accompagnement",
-    image: "/assets/img/banner-one.png",
-    title2: "Agent immobilier IA",
-    text: "Un copilote disponible 24h/24 pour répondre à toutes vos questions.",
+    title1: "Trier les prospects",
+    image: "/assets/img/leadcheck.png",
+    title2: "Analyse financière",
+    text: "AnyHomes calcul pour chaque lead un score d'obtention du financement pour vous aider dans votre choix.",
   },
   {
-    title1: "Suivi de visite",
-    image: "/assets/img/banner-two.png",
-    title2: "Visites + analyses",
-    text: "Centralisez les avis post-visite et adaptez votre stratégie.",
+    title1: "Vente sélective et discrète",
+    image: "/assets/img/Offmarketsale.png",
+    title2: "Ventte Off-Market",
+    text: "Décidez qui peut voir votre bien fonction de leur profil de financement.",
   },
 ];
 
 const RIGHT_CARDS = [
   {
-    title1: "Vente Off-Market",
-    image: "/assets/img/offmarket.png",
-    title2: "Acheteurs qualifiés",
-    text: "Tester le prix de votre bien sans le rendre visible publiquement.",
+    title1: "Gestion des visites",
+    image: "/assets/img/Agendapartagé.png",
+    title2: "Planning partagé",
+    text: "Un calendrier partagé avec les candidats pour gérer toutes vos visites au même endroit.",
   },
   {
-    title1: "Outil transactionnel",
-    image: "/assets/img/transaction-tool.png",
-    title2: "Coordination signature",
-    text: "Toutes les étapes de la transaction dans une plateforme unique.",
+    title1: "Processus de vente et négociation",
+    image: "/assets/img/Offrescentralized.png",
+    title2: "Gestion des offres d'achat",
+    text: "Consulter, comparer et répondre ayx offres reçus sur une interface unique avec un historique des interactions.",
   },
   {
-    title1: "Annuaire AnyHomes",
-    image: "/assets/img/directory.png",
-    title2: "+20 000 biens",
-    text: "Référencez et explorez l'ensemble du marché immobilier français.",
+    title1: "Vente opportuniste ou passive",
+    image: "/assets/img/Opportunistsales.png",
+    title2: "#OpenToDiscussion",
+    text: "Avec le statut #OpenToDiscussion signifiez au marché que vous n'êtes pas officiellement vendeur mais que vous restez ouvert.",
   },
 ];
 
 const CENTER_CARD = {
-  bigTitle: "Trouver le bien idéal",
-  smallTitle: "+20 000 biens disponibles",
+  bigTitle: "Accompagnement sur mesure",
   blocks: [
     {
-      title: "Localisation",
-      image: "/assets/img/banner-ones.png",
-      text: "Recherchez par ville, code postal ou département dans toute la France.",
+      title: "Coach immobilier IA disponible 24/7",
+      image: "/assets/img/AI Coaching.png",
+      text: "De la publication de votre annonce jusqu'à la signature de l'acte de vente, votre coach IA vous guide et répond à vos questions.",
     },
     {
-      title: "Type de bien",
-      image: "/assets/img/apartment.png",
-      text: "Maison, appartement, immeuble, château ou ferme : à vous de choisir.",
+      title: "Agents immobiliers à la demande",
+      image: "/assets/img/Agentondemand.png",
+      text: "Pour une aide ponctuelle, les agents locaux vous proposent des services à la carte pour augmenter les chances de succès de votre vente PAP.",
     },
     {
-      title: "Mode de transaction",
-      image: "/assets/img/sale.svg",
-      text: "Achat ou location, sur le marché ou en off-market.",
+      title: "Learning center",
+      image: "/assets/img/Learningcenter.png",
+      text: "Du contenu pour vous former et être en mesure de gérer seul votre transaction immobilière.",
     },
   ],
 };

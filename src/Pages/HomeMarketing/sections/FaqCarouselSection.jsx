@@ -12,7 +12,7 @@ const FAQ_MOCK = [
   {
     id: "1",
     title: "Quel est l'intérêt de référencer mon bien si je ne suis pas encore vendeur ?",
-    body: "Cela permet à votre profil de bien d'avoir une présence permanente en ligne, d'accroître son attractivité et de générer des leads pour une transaction future.",
+    body: "Grâce au profil de votre bien, mesurez l'intérêt du marché, identifiez des acheteurs ou des locataires potentiels et préparez sereinement votre futur projet immobilier (vente, achat, déménagement) sans engagement immédiat de vente.",
   },
   {
     id: "2",
@@ -26,7 +26,7 @@ const FAQ_MOCK = [
   },
   {
     id: "4",
-    title: "Puis-je vendre Off-Market avec AnyHomes ?",
+    title: "Puis-je vendre en off-market avec AnyHomes ?",
     body: "Oui, la vente Off-Market vous permet de tester le prix de votre bien auprès d'acheteurs qualifiés sans le rendre visible publiquement.",
   },
   {
@@ -83,15 +83,15 @@ const FaqCarouselSection = () => {
                 type="button"
                 key={q.id}
                 onClick={() => setActive(idx)}
-                className={`snap-start shrink-0 w-[320px] text-left p-5 rounded-2xl border transition ${
+                className={`snap-start shrink-0 text-left p-5 rounded-2xl border transition h-[350px] md:h-[415px] ${
                   isActive
-                    ? "bg-[#976DD0] text-white border-[#976DD0]"
-                    : "bg-gray-50 text-gray-500 border-gray-100 hover:border-[#976DD0]/40"
+                    ? "w-[320px] bg-[#976DD0] text-white border-[#976DD0]"
+                    : "w-[192px] bg-gray-50 text-gray-500 border-gray-100 hover:border-[#976DD0]/40"
                 }`}
               >
-                <p className="font-semibold text-[15px] mb-2">{q.title}</p>
+                <p className="font-bold text-[25px] mb-2">{q.title}</p>
                 {isActive && (
-                  <p className="text-[13px] leading-relaxed">{q.body}</p>
+                  <p className="text-[16px] leading-relaxed">{q.body}</p>
                 )}
               </button>
             );
