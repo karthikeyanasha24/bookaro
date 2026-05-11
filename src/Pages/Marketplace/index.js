@@ -820,9 +820,9 @@ export function BuyModal({ svc, lang, onClose, onDone }) {
           <p className="text-sm text-[#47525E] mb-5">{t.loginRequired}</p>
           <div className="flex gap-2">
             <button onClick={onClose} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">{t.cancel}</button>
-            <a href="/login" className="flex-1 bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full py-2 text-sm font-semibold text-center">
+            <Link to="/login" onClick={onClose} className="flex-1 bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full py-2 text-sm font-semibold text-center">
               {t.goLogin}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
