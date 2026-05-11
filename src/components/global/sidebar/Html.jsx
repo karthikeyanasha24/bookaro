@@ -12,7 +12,8 @@ const SECTION_ROUTES = {
   transactionMgmt: ["/real-estate-transaction-searcher", "/real-estate-transaction-owner"],
   propertySeeker: ["/serach-alert", "/followed-properties", "/properties?favourites=true", "/renter-file", "/buyer-file"],
   properties: ["/my-properties", "/seller-file", "/property/qr-code"],
-  marketplace: ["/marketplace", "/marketplace/favorites", "/marketplace/orders", "/pro/marketplace"],
+  marketplace: ["/marketplace", "/marketplace/favorites", "/marketplace/orders", "/pro/marketplace", "/pro/marketplace/sold-services"],
+  
 };
 
 const Html = ({
