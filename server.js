@@ -36,9 +36,11 @@ const emit = (event, payload) => {
 // --- Mock endpoints for marketplace cancellation flow and litigiation ---
 app.post('/marketplace/orders/:id/cancellation-request', (req, res) => {
   const id = req.params.id;
-  const { reason } = req.body || {};
+  const { reason, by } = req.body || {};
   const now = new Date().toISOString();
-  CANCELLATION_REQUESTS[id] = { reason: reason || '', createdAt: now, by: 'client', status: 'requested', previousStatus: ORDER_STATUS[id] || 'unknown' };
+  // Allow caller to indicate who initiated the request (client or pro)
+  const initiator = by || 'client';
+  CANCELLATION_REQUESTS[id] = { reason: reason || '', createdAt: now, by: initiator, status: 'requested', previousStatus: ORDER_STATUS[id] || 'unknown' };
   ORDER_STATUS[id] = 'cancellation_requested';
   emit('cancellation_requested', { orderId: id, request: CANCELLATION_REQUESTS[id] });
   return res.json({ success: true, request: CANCELLATION_REQUESTS[id] });

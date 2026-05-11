@@ -359,7 +359,7 @@ export default function SoldServices() {
                             <button onClick={() => setSubmitOrder(order)} className="text-[#976DD0] hover:underline text-left font-bold">Soumettre</button>
                             <button onClick={() => setViewOrder(order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">Voir</button>
                             {!(order.status === 'cancellation_requested' || order.status === 'cancelled' || order.status === 'refunded' || order.status === 'delivered_by_pro' || order.status === 'confirmed_by_buyer') && (
-                              <button className="text-red-400 hover:underline text-left font-bold">Annuler</button>
+                              <button onClick={() => setCancelReviewOrder({ ...order, cancellationRequest: { reason: '', by: 'pro', createdAt: new Date().toISOString(), previousStatus: order.status } })} className="text-red-400 hover:underline text-left font-bold">Annuler</button>
                             )}
                             {order.status === 'cancellation_requested' && (
                               <button onClick={() => setCancelReviewOrder(order)} className="text-[12px] text-red-600 font-bold">Gérer annulation</button>
@@ -387,7 +387,12 @@ export default function SoldServices() {
       {cancelReviewOrder && (
         <ProCancelReviewModal order={cancelReviewOrder} onClose={() => setCancelReviewOrder(null)} onAccept={async () => {
           try {
-            try { await acceptCancellation(cancelReviewOrder._id); } catch (e) { console.warn(e); }
+            // If the cancellation request was initiated by the pro locally, call API with by='pro'
+            if (cancelReviewOrder.cancellationRequest?.by === 'pro') {
+              try { await acceptCancellation(cancelReviewOrder._id); } catch (e) { console.warn(e); }
+            } else {
+              try { await acceptCancellation(cancelReviewOrder._id); } catch (e) { console.warn(e); }
+            }
           } catch (e) { console.warn(e); }
           // optimistic update: mark cancelled
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: 'cancelled' } : o));

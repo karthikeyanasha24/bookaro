@@ -64,6 +64,10 @@ export const acceptCancellation = (orderId, lang = 'fr') =>
 export const rejectCancellation = (orderId, lang = 'fr') =>
   request('POST', `/pro/marketplace/orders/${orderId}/cancellation/reject`, null, lang);
 
+// Pro-initiated cancellation (pro opens cancellation request)
+export const proRequestCancellation = (orderId, payload = {}, lang = 'fr') =>
+  request('POST', `/marketplace/orders/${orderId}/cancellation-request`, { ...payload, by: 'pro' }, lang);
+
 // ─── Pro (auth requise) ────────────────────────────────────────────────────
 
 export const getProDashboard = (lang = 'fr') =>
