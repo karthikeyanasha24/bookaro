@@ -102,6 +102,7 @@ const Html = ({
     return (
       <NavLink
         to={url}
+        end
         className={`menu-item ${isRouteActive(url) ? "is-current" : ""}`}
       >
         <Icon className="menu-icon" size={20} />
@@ -113,7 +114,7 @@ const Html = ({
   // Section header with toggle
   const SectionHeader = ({ icon: Icon, label, sectionId, isCollapsed, hasSubitems = true, onClick }) => (
     <div 
-      className="section-header"
+      className={`section-header ${isSectionActive(sectionId) ? "section-current" : ""}`}
       onClick={() => handleSectionHeaderClick({ sectionId, hasSubitems, onClick })}
       style={{ cursor: hasSubitems || onClick ? 'pointer' : 'default' }}
     >
