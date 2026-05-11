@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation } from '../../methods/api/marketplaceApi';
+import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
 // Modal uniforme pour signaler un incident (même design que pro, couleur violette)
 function IncidentModal({ order, onClose, onSubmit }) {
@@ -469,6 +469,9 @@ function OrderRow({ order, lang, onRate, onAction }) {
               {t.actions.cancel}
             </button>
           )}
+          {order.status === 'cancellation_requested' && (
+            <button onClick={() => onAction('respond', order)} className="text-red-600 hover:underline text-left font-bold">Répondre</button>
+          )}
           <button onClick={() => onAction('see', order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">
             {t.actions.see}
           </button>
@@ -557,6 +560,7 @@ export default function MarketplaceOrders() {
   const [viewOrder, setViewOrder] = useState(null);
   const [incidentOrder, setIncidentOrder] = useState(null);
   const [cancelOrder, setCancelOrder] = useState(null);
+  const [respondOrder, setRespondOrder] = useState(null);
   const [releaseOrder, setReleaseOrder] = useState(null);
   const [postReleaseOrder, setPostReleaseOrder] = useState(null);
 
@@ -586,6 +590,8 @@ export default function MarketplaceOrders() {
       setIncidentOrder(order);
     } else if (type === 'cancel') {
       setCancelOrder(order);
+    } else if (type === 'respond') {
+      setRespondOrder(order);
     }
   };
 
@@ -645,6 +651,42 @@ export default function MarketplaceOrders() {
             setIncidentOrder(null);
             fetchOrders();
           }} />
+        )}
+        {respondOrder && (
+          <div>
+            {/* Client modal to respond to cancellation request */}
+            {(() => {
+              const order = respondOrder;
+              const req = order.cancellationRequest || {};
+              return (
+                <div onClick={() => setRespondOrder(null)} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                  <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-bold text-[#47525E]">Réponse à la demande d'annulation</h3>
+                      <button onClick={() => setRespondOrder(null)} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+                    </div>
+                    <div className="text-[13px] text-gray-700 mb-3">
+                      <div className="mb-2"><strong>Motif :</strong></div>
+                      <div className="whitespace-pre-line rounded border border-gray-100 p-3 text-sm text-gray-600">{req.reason || '-'}</div>
+                      <div className="text-[12px] text-gray-400 mt-3">Envoyée: {req.createdAt ? new Date(req.createdAt).toLocaleString('fr-FR') : '-'}</div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <button onClick={async () => {
+                        try { await rejectCancellation(respondOrder._id, lang); } catch (e) { console.warn(e); }
+                        setOrders(prev => prev.map(o => o._id === respondOrder._id ? { ...o, status: o.cancellationRequest?.previousStatus || 'accepted_by_pro' } : o));
+                        setRespondOrder(null);
+                      }} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">Refuser</button>
+                      <button onClick={async () => {
+                        try { await acceptCancellation(respondOrder._id, lang); } catch (e) { console.warn(e); }
+                        setOrders(prev => prev.map(o => o._id === respondOrder._id ? { ...o, status: 'cancelled' } : o));
+                        setRespondOrder(null);
+                      }} className="flex-1 bg-[#D14343] text-white rounded-full py-2 text-sm">Accepter et rembourser</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
         )}
         {cancelOrder && (
             <CancelRequestModal order={cancelOrder} onClose={() => setCancelOrder(null)} onSubmit={async ({ reason }) => {
