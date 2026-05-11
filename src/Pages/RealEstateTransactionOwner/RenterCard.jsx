@@ -48,7 +48,7 @@ import { BsFiletypePdf } from "react-icons/bs";
 import environment from "../../environment";
 import TrainingVideoCard from "../RealEstateTransactionSearcher/TrainingVideoCard";
 import methodModel from "../../methods/methods";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function RenterCard({
   card,
@@ -977,14 +977,14 @@ export default function RenterCard({
                 </MenuButton>
                 <MenuItems className="bg-white border p-2 px-4 rounded-[12px]">
                   <MenuItem>
-                    <a className="block text-[14px] py-1" href="/profile/Account">
+                    <Link className="block text-[14px] py-1" to="/profile/Account">
                       Settings
-                    </a>
+                    </Link>
                   </MenuItem>
                   <MenuItem>
-                    <a className="block text-[14px] py-1" href="/help">
+                    <Link className="block text-[14px] py-1" to="/help">
                       Support
-                    </a>
+                    </Link>
                   </MenuItem>
                   {/* <MenuItem>
                     <a className="block text-[14px] py-1" href="/license">
