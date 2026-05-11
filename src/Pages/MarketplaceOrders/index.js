@@ -328,6 +328,46 @@ function CancelRequestModal({ order, onClose, onSubmit }) {
   );
 }
 
+/* ─── Modal Libérer les fonds (client) ── */
+function ReleaseFundsModal({ order, onClose, onConfirm }) {
+  if (!order) return null;
+  const svcTitle = order.service?.title_fr || order.service?.title || 'Service';
+  return (
+    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-[#47525E]">Félicitations — Prestation livrée</h3>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+        </div>
+        <p className="text-[13px] text-gray-700 mb-4">Le professionnel a indiqué avoir livré la prestation: <strong>{svcTitle}</strong>.</p>
+        <p className="text-[13px] text-gray-600 mb-4">En validant, vous déclencherez le paiement au prestataire.</p>
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">Annuler</button>
+          <button onClick={onConfirm} className="flex-1 bg-[#976DD0] text-white rounded-full py-2 text-sm font-semibold">Valider et payer</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Prompt après paiement — propose d'évaluer ── */
+function PostReleasePrompt({ order, onClose, onEvaluate }) {
+  if (!order) return null;
+  return (
+    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-sm my-4 p-6 text-center">
+        <h3 className="font-bold text-[#47525E] mb-2">Paiement déclenché</h3>
+        <p className="text-[13px] text-gray-600 mb-4">Merci ! Le paiement a été envoyé au prestataire.</p>
+        <p className="text-[13px] text-gray-600 mb-4">Souhaitez-vous laisser un avis sur cette prestation ?</p>
+        <div className="flex gap-2 justify-center">
+          <button onClick={onClose} className="border border-gray-300 rounded-full py-2 px-4 text-sm text-[#47525E]">Plus tard</button>
+          <button onClick={onEvaluate} className="bg-[#976DD0] text-white rounded-full py-2 px-4 text-sm font-semibold">Evaluer</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Ligne tableau ── */
 function OrderRow({ order, lang, onRate, onAction }) {
   const t = T[lang];
@@ -492,6 +532,8 @@ export default function MarketplaceOrders() {
   const [viewOrder, setViewOrder] = useState(null);
   const [incidentOrder, setIncidentOrder] = useState(null);
   const [cancelOrder, setCancelOrder] = useState(null);
+  const [releaseOrder, setReleaseOrder] = useState(null);
+  const [postReleaseOrder, setPostReleaseOrder] = useState(null);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -514,7 +556,7 @@ export default function MarketplaceOrders() {
     if (type === 'see') {
       setViewOrder(order);
     } else if (type === 'release') {
-      try { await confirmDelivery(order._id, lang); fetchOrders(); } catch {}
+      setReleaseOrder(order);
     } else if (type === 'issue') {
       setIncidentOrder(order);
     } else if (type === 'cancel') {
@@ -581,14 +623,23 @@ export default function MarketplaceOrders() {
         )}
         {cancelOrder && (
           <CancelRequestModal order={cancelOrder} onClose={() => setCancelOrder(null)} onSubmit={async ({ reason }) => {
-            // call backend endpoint (optimistic UI)
             try {
               await fetch(`/api/marketplace/orders/${cancelOrder._id}/cancellation-request`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
             } catch (e) { console.warn(e); }
-            // optimistic update
             setOrders(prev => prev.map(o => o._id === cancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'client' } } : o));
             setCancelOrder(null);
           }} />
+        )}
+        {releaseOrder && (
+          <ReleaseFundsModal order={releaseOrder} onClose={() => setReleaseOrder(null)} onConfirm={async () => {
+            try { await confirmDelivery(releaseOrder._id, lang); } catch (e) { console.warn(e); }
+            setReleaseOrder(null);
+            fetchOrders();
+            setPostReleaseOrder(releaseOrder);
+          }} />
+        )}
+        {postReleaseOrder && (
+          <PostReleasePrompt order={postReleaseOrder} onClose={() => setPostReleaseOrder(null)} onEvaluate={() => { setPostReleaseOrder(null); setRatingOrder(postReleaseOrder); }} />
         )}
       </div>
     </PageLayout>
