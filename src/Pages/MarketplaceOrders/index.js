@@ -415,7 +415,7 @@ function OrderRow({ order, lang, onRate, onAction }) {
             </>
           )}
           {showIssue && (
-            <button onClick={() => onAction('issue', order)} className="text-red-400 hover:underline text-left">
+            <button onClick={() => onAction('issue', order)} className="text-black font-bold hover:underline text-left">
               {t.actions.issue}
             </button>
           )}
