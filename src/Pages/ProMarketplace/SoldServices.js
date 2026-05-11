@@ -377,7 +377,18 @@ export default function SoldServices() {
                     const dateLivraison = order.delivery_date || order.deliveredAt ? new Date(order.delivery_date || order.deliveredAt).toLocaleDateString('fr-FR') : '-';
                     const num = `#${(order._id || '').slice(-5).toUpperCase() || '00123'}`;
                     const price = `${order.totalTTC || order.total || 0} € TTC`;
-                    const statusLabel = order.status === 'delivered_by_pro' ? 'Terminé' : 'En cours';
+                    const STATUS_LABEL = {
+                      pending_payment: 'En cours',
+                      paid: 'En cours',
+                      accepted_by_pro: 'En cours',
+                      delivered_by_pro: 'Terminé',
+                      confirmed_by_buyer: 'Terminé',
+                      cancelled: 'Annulé',
+                      refunded: 'Annulé',
+                      litigation_opened: 'En cours',
+                      cancellation_requested: 'Annulation demandée',
+                    };
+                    const statusLabel = STATUS_LABEL[order.status] || 'En cours';
                     const paymentLabel = order.payment_status === 'paid' ? 'Payé' : 'En attente';
                     // Affichage du sticker Incident si incident signalé
                     const hasIncident = !!order.incident;
@@ -414,7 +425,7 @@ export default function SoldServices() {
                               <button onClick={() => setProCancelOrder(order)} className="text-red-400 hover:underline text-left font-bold">Annuler</button>
                             )}
                             {order.status === 'cancellation_requested' && (
-                              <button onClick={() => setCancelReviewOrder(order)} className="text-[12px] text-red-600 font-bold">Gérer annulation</button>
+                              <button onClick={() => setCancelReviewOrder(order)} className="text-black font-bold hover:underline text-left">Répondre</button>
                             )}
                             <button onClick={() => setIncidentOrder(order)} className="text-[#D14343] hover:underline text-left font-bold">Problème ?</button>
                           </div>
