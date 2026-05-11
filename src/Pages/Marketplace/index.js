@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+  const navigate = useNavigate();
 import { useSelector } from 'react-redux';
 import { MdSearch, MdLocationOn, MdKeyboardArrowDown, MdPerson, MdStorefront, MdWorkOutline, MdRateReview, MdOutlineSell, MdOutlineInventory2 } from 'react-icons/md';
 import { PiStarFill, PiStar } from 'react-icons/pi';
@@ -1213,7 +1216,7 @@ export default function Marketplace() {
         <ServiceModal svc={viewModal} lang={lang} onClose={() => setViewModal(null)} onBuy={(svc) => { setViewModal(null); setBuyModal(svc); }} />
       )}
       {buyModal && (
-        <BuyModal svc={buyModal} lang={lang} onClose={() => setBuyModal(null)} onDone={() => { setBuyModal(null); window.location.href = "/marketplace/orders"; }} />
+        <BuyModal svc={buyModal} lang={lang} onClose={() => setBuyModal(null)} onDone={() => { setBuyModal(null); navigate('/marketplace/orders'); }} />
       )}
       {authModal && <AuthRequiredModal onClose={() => setAuthModal(false)} />}
       {requestModal && <ServiceRequestModal user={user} lang={lang} categories={categories} onClose={() => setRequestModal(false)} />}

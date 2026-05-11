@@ -300,9 +300,9 @@ const Html = ({
               sectionId="companyProfile"
               isCollapsed={!isOpen}
               hasSubitems={false}
-              onClick={() => {
-                window.location.href = "https://app.anyhomes.fr/profile/";
-              }}
+                onClick={() => {
+                  window.open("https://app.anyhomes.fr/profile/", "_blank", "noopener,noreferrer");
+                }}
             />
           </div>
         )}

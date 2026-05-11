@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from 'react-router-dom';
 import { FiTrash2 } from "react-icons/fi";
 import ApiClient from "../../../methods/api/apiClient";
 import DashboardSection from "./DashboardSection";
@@ -93,7 +94,7 @@ const SavedSearchSection = ({ section, loading, error, t }) => {
             )}
           </p>
           <div className="dashboard-button-center">
-            <a href="/properties" className="dashboard-button">{t("dashboard.cta.newSearch", "New search")}</a>
+            <Link to="/properties" className="dashboard-button">{t("dashboard.cta.newSearch", "New search")}</Link>
           </div>
         </>
       ) : (
@@ -117,26 +118,26 @@ const SavedSearchSection = ({ section, loading, error, t }) => {
                   </button>
                   <p className="saved-search-name">{card.name}</p>
                   <p className="saved-search-criteria">{card.criteriaLabel}</p>
-                  <a href={newResultsRoute} className="saved-search-new-results">
+                  <Link to={newResultsRoute} className="saved-search-new-results">
                     {t("dashboard.savedSearch.newResults", "{{count}} nouveaux résultats", { count: card.newResultsCount })}
-                  </a>
+                  </Link>
               </div>
               <div className="saved-search-preview-grid">
                   {(card.previewProperties || []).slice(0, 5).map((preview) => (
-                    <a key={preview.id} href={preview.route || "/property-details"} className="saved-search-preview-item">
+                    <Link key={preview.id} to={preview.route || "/property-details"} className="saved-search-preview-item">
                       <img
                         src={preview.coverUrl}
                         alt={t("dashboard.savedSearch.previewAlt", "aperçu")}
                         className="saved-search-preview-image"
                       />
-                    </a>
+                    </Link>
                   ))}
               </div>
             </div>
           );
           })}
           <div className="dashboard-button-center">
-            <a href="/properties" className="dashboard-button">{t("dashboard.cta.newSearch", "New search")}</a>
+            <Link to="/properties" className="dashboard-button">{t("dashboard.cta.newSearch", "New search")}</Link>
           </div>
         </div>
       )}
