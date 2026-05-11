@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/global/PageLayout';
 import { ServiceCard, ServiceModal, BuyModal, MOCK_SERVICES, T } from './index';
 
@@ -36,6 +37,7 @@ export default function MarketplaceFavorites() {
   const [viewModal, setViewModal] = useState(null);
   const [buyModal, setBuyModal] = useState(null);
   const tx = TITLES[lang];
+  const navigate = useNavigate();
 
   const refresh = useCallback(() => {
     const ids = readFavoriteIds();
@@ -110,7 +112,7 @@ export default function MarketplaceFavorites() {
           svc={buyModal}
           lang={lang}
           onClose={() => setBuyModal(null)}
-          onDone={() => { setBuyModal(null); window.location.href = '/marketplace/orders'; }}
+          onDone={() => { setBuyModal(null); navigate('/marketplace/orders'); }}
         />
       )}
     </PageLayout>

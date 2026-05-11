@@ -1,6 +1,6 @@
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
 import { MdNotifications, MdPerson, MdEmail } from "react-icons/md";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../sidebar";
 
 const Html = ({
@@ -13,6 +13,7 @@ const Html = ({
   setShowAccountMenu,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const getLogo = () => {
     return "/assets/img/logo.png";
@@ -35,7 +36,7 @@ const Html = ({
 
       {/* CTA création de bien — décalé à droite du toggle de la sidebar */}
       <button
-        onClick={() => (window.location.href = '/property1')}
+        onClick={() => navigate('/property1')}
         className="ml-8 bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[13px] font-semibold px-4 py-2 rounded-full transition-colors shadow-sm"
         title="Créer le profil de mon bien"
       >
@@ -44,15 +45,15 @@ const Html = ({
 
       <div className="flex items-center gap-4 ml-auto">
         {Number(messageCount) > 0 && (
-          <button
+            <button
             className="mx-2 animate-blink message-header-btn"
             title="Messages"
-            onClick={() => window.location.href = '/chat'}
+            onClick={() => navigate('/chat')}
           >
             <MdEmail className="menu-icon violet-message" size={22} />
           </button>
         )}
-        <button className="mx-2 notification-btn" title="Notifications" onClick={() => window.location.href = '/notifications'}>
+        <button className="mx-2 notification-btn" title="Notifications" onClick={() => navigate('/notifications')}>
           <MdNotifications className={`menu-icon${Number(notificationCount) > 0 ? ' violet-message' : ''}`} size={20} />
         </button>
         <div style={{position: 'relative', display: 'inline-block'}}>
