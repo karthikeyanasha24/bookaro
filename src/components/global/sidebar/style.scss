@@ -54,7 +54,8 @@
   min-height: 0;
   background: #2d3748;
   color: #e2e8f0;
-  transition: width 0.3s ease-in-out;
+  /* Transitions are enabled only after React mounts to avoid first-paint flicker */
+  transition: none;
   overflow: visible !important;
   
   &.sidebar-open {
@@ -64,6 +65,19 @@
   &.sidebar-collapsed {
     width: 70px;
   }
+}
+
+/* Enable smooth transitions only after the app has mounted */
+.is-mounted .sidebar-wrapper {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Also prevent header width transition on first paint */
+.min-sidebar {
+  transition: none;
+}
+.is-mounted .min-sidebar {
+  transition: width 0.3s ease-in-out;
 }
 
 /* Fix: Ensure sidebar container and menu take full height for independent scroll */

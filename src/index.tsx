@@ -16,6 +16,15 @@ root.render(
   </React.StrictMode>
 );
 
+// Activate UI transitions after first render to avoid initial flash
+setTimeout(() => {
+  try {
+    document.body.classList.add('is-mounted');
+  } catch (e) {
+    // ignore server-side / test environments
+  }
+}, 50);
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
