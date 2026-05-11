@@ -3,9 +3,38 @@ import { getMyOrders, confirmDelivery, openLitigation, postReview } from '../../
 import PageLayout from '../../components/global/PageLayout';
 // Modal uniforme pour signaler un incident (même design que pro, couleur violette)
 function IncidentModal({ order, onClose, onSubmit }) {
-  // ...existing code...
-  // À compléter avec le vrai JSX si besoin, sinon laisser vide ou retourner null
-  return null;
+  const [desc, setDesc] = useState('');
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await onSubmit({ description: desc });
+    } catch (e) { console.error(e); }
+    setLoading(false);
+    onClose();
+  };
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4 p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="font-bold text-[#976DD0] text-base">Signaler un incident</h2>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+        </div>
+        <div className="mb-4 text-[13px] text-gray-700">Décrivez le problème rencontré sur ce service. L'admin sera notifié et pourra intervenir.</div>
+        <textarea
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3"
+          rows={4}
+          placeholder="Décrivez le problème..."
+          value={desc}
+          onChange={e => setDesc(e.target.value)}
+        />
+        <div className="flex gap-2 mt-4">
+          <button onClick={onClose} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">Annuler</button>
+          <button onClick={handleSubmit} disabled={loading || !desc.trim()} className="flex-1 bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full py-2 text-sm font-semibold">Soumettre</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ─── helpers localStorage ── */
@@ -369,7 +398,7 @@ function OrderRow({ order, lang, onRate, onAction }) {
       {/* Actions */}
       <td className="py-3 px-3">
         <div className="flex flex-col gap-0.5 text-[12px]">
-          {!isCancelled && (
+          {!isCancelled && !isDelivered && !isConfirmed && (
             <button onClick={() => onAction('cancel', order)} className="text-[#47525E] hover:text-red-500 text-left">
               {t.actions.cancel}
             </button>
