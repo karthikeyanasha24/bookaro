@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getProOrders, deliverOrder, openLitigation, acceptCancellation, rejectCancellation, proRequestCancellation } from '../../methods/api/marketplaceApi';
+const socket = io();
 import { MOCK_PRO_ORDERS } from '../../mocks/marketplaceOrders.mock';
 import { uploadFiles } from '../../methods/api/upload';
 import PageLayout from '../../components/global/PageLayout';
@@ -435,6 +436,7 @@ export default function SoldServices() {
         <ProCancelRequestModal order={proCancelOrder} onClose={() => setProCancelOrder(null)} onSubmit={async ({ reason }) => {
           try {
             await proRequestCancellation(proCancelOrder._id, { reason });
+            try { socket.emit('cancellation_requested', { orderId: proCancelOrder._id, request: { reason, createdAt: new Date().toISOString(), by: 'pro', previousStatus: proCancelOrder.status } }); } catch (e) {}
           } catch (e) { console.warn(e); }
           // optimistic UI: mark as cancellation_requested
           setOrders(prev => prev.map(o => o._id === proCancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'pro', previousStatus: proCancelOrder.status } } : o));
@@ -453,6 +455,7 @@ export default function SoldServices() {
           } catch (e) { console.warn(e); }
           // optimistic update: mark cancelled
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: 'cancelled' } : o));
+          try { socket.emit('cancellation_accepted', { orderId: cancelReviewOrder._id, request: cancelReviewOrder.cancellationRequest || {} }); } catch (e) {}
           setCancelReviewOrder(null);
         }} onReject={async () => {
           try {
@@ -460,6 +463,7 @@ export default function SoldServices() {
           } catch (e) { console.warn(e); }
           // optimistic: revert to previous status if available
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: o.cancellationRequest?.previousStatus || 'accepted_by_pro' } : o));
+          try { socket.emit('cancellation_rejected', { orderId: cancelReviewOrder._id, request: cancelReviewOrder.cancellationRequest || {} }); } catch (e) {}
           setCancelReviewOrder(null);
         }} />
       )}

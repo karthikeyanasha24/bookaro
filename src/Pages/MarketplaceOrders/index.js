@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
+// single socket instance for this module
+const socket = io();
 import PageLayout from '../../components/global/PageLayout';
 // Modal uniforme pour signaler un incident (même design que pro, couleur violette)
 function IncidentModal({ order, onClose, onSubmit }) {
@@ -582,9 +584,8 @@ export default function MarketplaceOrders() {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  // Real-time updates via WebSocket
+  // Real-time updates via WebSocket (reuse module socket)
   useEffect(() => {
-    const socket = io();
     socket.on('cancellation_requested', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancellation_requested', cancellationRequest: request } : o));
     });
@@ -594,7 +595,11 @@ export default function MarketplaceOrders() {
     socket.on('cancellation_rejected', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: (request?.previousStatus || (o.cancellationRequest?.previousStatus || 'accepted_by_pro')), cancellationRequest: { ...(o.cancellationRequest||{}), status: 'rejected', ...request } } : o));
     });
-    return () => { socket.disconnect(); };
+    return () => {
+      socket.off('cancellation_requested');
+      socket.off('cancellation_accepted');
+      socket.off('cancellation_rejected');
+    };
   }, []);
 
   const handleAction = async (type, order) => {
@@ -708,6 +713,10 @@ export default function MarketplaceOrders() {
             <CancelRequestModal order={cancelOrder} onClose={() => setCancelOrder(null)} onSubmit={async ({ reason }) => {
             try {
               await requestCancellation(cancelOrder._id, { reason }, lang);
+              // emit locally so other open clients update immediately
+              try {
+                socket.emit('cancellation_requested', { orderId: cancelOrder._id, request: { reason, createdAt: new Date().toISOString(), by: 'client' } });
+              } catch (e) { /* ignore */ }
             } catch (e) { console.warn(e); }
             setOrders(prev => prev.map(o => o._id === cancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'client' } } : o));
             setCancelOrder(null);
