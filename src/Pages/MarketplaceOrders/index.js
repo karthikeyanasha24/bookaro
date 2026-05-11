@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
 import { toast } from 'react-toastify';
+import PageLayout from '../../components/global/PageLayout';
 // single socket instance for this module
 const socket = io();
-import PageLayout from '../../components/global/PageLayout';
 // Modal uniforme pour signaler un incident (même design que pro, couleur violette)
 function IncidentModal({ order, onClose, onSubmit }) {
   const [desc, setDesc] = useState('');

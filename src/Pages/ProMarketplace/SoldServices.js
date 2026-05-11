@@ -2,10 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getProOrders, deliverOrder, openLitigation, acceptCancellation, rejectCancellation, proRequestCancellation } from '../../methods/api/marketplaceApi';
 import { toast } from 'react-toastify';
-const socket = io();
 import { MOCK_PRO_ORDERS } from '../../mocks/marketplaceOrders.mock';
 import { uploadFiles } from '../../methods/api/upload';
 import PageLayout from '../../components/global/PageLayout';
+
+const socket = io();
 
 // Modal pour signaler un incident
 function IncidentModal({ order, onClose, onSubmit }) {
