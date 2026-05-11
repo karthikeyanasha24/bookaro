@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getProOrders, deliverOrder, openLitigation, acceptCancellation, rejectCancellation, proRequestCancellation } from '../../methods/api/marketplaceApi';
+import { toast } from 'react-toastify';
 const socket = io();
 import { MOCK_PRO_ORDERS } from '../../mocks/marketplaceOrders.mock';
 import { uploadFiles } from '../../methods/api/upload';
@@ -313,12 +314,15 @@ export default function SoldServices() {
     const socket = io();
     socket.on('cancellation_requested', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancellation_requested', cancellationRequest: request } : o));
+      toast.info(`Annulation demandée ${orderId ? `(${orderId.slice(-5).toUpperCase()})` : ''}`);
     });
     socket.on('cancellation_accepted', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancelled', cancellationRequest: { ...(o.cancellationRequest||{}), status: 'accepted', ...request } } : o));
+      toast.success(`Annulation acceptée ${orderId ? `(${orderId.slice(-5).toUpperCase()})` : ''}`);
     });
     socket.on('cancellation_rejected', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: (request?.previousStatus || (o.cancellationRequest?.previousStatus || 'accepted_by_pro')), cancellationRequest: { ...(o.cancellationRequest||{}), status: 'rejected', ...request } } : o));
+      toast.info(`Annulation refusée ${orderId ? `(${orderId.slice(-5).toUpperCase()})` : ''}`);
     });
     return () => { socket.disconnect(); };
   }, []);
@@ -434,9 +438,9 @@ export default function SoldServices() {
       }} />}
       {proCancelOrder && (
         <ProCancelRequestModal order={proCancelOrder} onClose={() => setProCancelOrder(null)} onSubmit={async ({ reason }) => {
-          try {
+            try {
             await proRequestCancellation(proCancelOrder._id, { reason });
-            try { socket.emit('cancellation_requested', { orderId: proCancelOrder._id, request: { reason, createdAt: new Date().toISOString(), by: 'pro', previousStatus: proCancelOrder.status } }); } catch (e) {}
+            try { socket.emit('cancellation_requested', { orderId: proCancelOrder._id, request: { reason, createdAt: new Date().toISOString(), by: 'pro', previousStatus: proCancelOrder.status } }); toast.success('Demande d\'annulation envoyée au client'); } catch (e) {}
           } catch (e) { console.warn(e); }
           // optimistic UI: mark as cancellation_requested
           setOrders(prev => prev.map(o => o._id === proCancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'pro', previousStatus: proCancelOrder.status } } : o));
@@ -455,7 +459,7 @@ export default function SoldServices() {
           } catch (e) { console.warn(e); }
           // optimistic update: mark cancelled
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: 'cancelled' } : o));
-          try { socket.emit('cancellation_accepted', { orderId: cancelReviewOrder._id, request: cancelReviewOrder.cancellationRequest || {} }); } catch (e) {}
+          try { socket.emit('cancellation_accepted', { orderId: cancelReviewOrder._id, request: cancelReviewOrder.cancellationRequest || {} }); toast.success('Annulation acceptée — remboursement déclenché'); } catch (e) {}
           setCancelReviewOrder(null);
         }} onReject={async () => {
           try {
@@ -463,7 +467,7 @@ export default function SoldServices() {
           } catch (e) { console.warn(e); }
           // optimistic: revert to previous status if available
           setOrders(prev => prev.map(o => o._id === cancelReviewOrder._id ? { ...o, status: o.cancellationRequest?.previousStatus || 'accepted_by_pro' } : o));
-          try { socket.emit('cancellation_rejected', { orderId: cancelReviewOrder._id, request: cancelReviewOrder.cancellationRequest || {} }); } catch (e) {}
+          try { socket.emit('cancellation_rejected', { orderId: cancelReviewOrder._id, request: cancelReviewOrder.cancellationRequest || {} }); toast.info('Annulation refusée'); } catch (e) {}
           setCancelReviewOrder(null);
         }} />
       )}

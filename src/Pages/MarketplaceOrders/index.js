@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
+import { toast } from 'react-toastify';
 // single socket instance for this module
 const socket = io();
 import PageLayout from '../../components/global/PageLayout';
@@ -588,12 +589,15 @@ export default function MarketplaceOrders() {
   useEffect(() => {
     socket.on('cancellation_requested', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancellation_requested', cancellationRequest: request } : o));
+      toast.info(`Annulation demandée ${orderId ? `(${orderId.slice(-5).toUpperCase()})` : ''}`);
     });
     socket.on('cancellation_accepted', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancelled', cancellationRequest: { ...(o.cancellationRequest||{}), status: 'accepted', ...request } } : o));
+      toast.success(`Annulation acceptée ${orderId ? `(${orderId.slice(-5).toUpperCase()})` : ''}`);
     });
     socket.on('cancellation_rejected', ({ orderId, request }) => {
       setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: (request?.previousStatus || (o.cancellationRequest?.previousStatus || 'accepted_by_pro')), cancellationRequest: { ...(o.cancellationRequest||{}), status: 'rejected', ...request } } : o));
+      toast.info(`Annulation refusée ${orderId ? `(${orderId.slice(-5).toUpperCase()})` : ''}`);
     });
     return () => {
       socket.off('cancellation_requested');
@@ -693,12 +697,12 @@ export default function MarketplaceOrders() {
                     </div>
                     <div className="flex gap-2 mt-4">
                       <button onClick={async () => {
-                        try { await rejectCancellation(respondOrder._id, lang); } catch (e) { console.warn(e); }
+                        try { await rejectCancellation(respondOrder._id, lang); toast.info('Vous avez refusé la demande'); } catch (e) { console.warn(e); }
                         setOrders(prev => prev.map(o => o._id === respondOrder._id ? { ...o, status: o.cancellationRequest?.previousStatus || 'accepted_by_pro' } : o));
                         setRespondOrder(null);
                       }} className="flex-1 border border-gray-300 rounded-full py-2 text-sm text-[#47525E]">Refuser</button>
                       <button onClick={async () => {
-                        try { await acceptCancellation(respondOrder._id, lang); } catch (e) { console.warn(e); }
+                        try { await acceptCancellation(respondOrder._id, lang); toast.success('Vous avez accepté la demande — remboursement en cours'); } catch (e) { console.warn(e); }
                         setOrders(prev => prev.map(o => o._id === respondOrder._id ? { ...o, status: 'cancelled' } : o));
                         setRespondOrder(null);
                       }} className="flex-1 bg-[#D14343] text-white rounded-full py-2 text-sm">Accepter et rembourser</button>
@@ -716,6 +720,7 @@ export default function MarketplaceOrders() {
               // emit locally so other open clients update immediately
               try {
                 socket.emit('cancellation_requested', { orderId: cancelOrder._id, request: { reason, createdAt: new Date().toISOString(), by: 'client' } });
+                toast.success('Demande d\'annulation envoyée');
               } catch (e) { /* ignore */ }
             } catch (e) { console.warn(e); }
             setOrders(prev => prev.map(o => o._id === cancelOrder._id ? { ...o, status: 'cancellation_requested', cancellationRequest: { reason, createdAt: new Date().toISOString(), by: 'client' } } : o));
