@@ -38,7 +38,7 @@ const OnboardingPage: React.FC = () => {
             Suivez ces quelques étapes pour comprendre comment AnyHomes vous aide à concrétiser votre projet immobilier.
           </p>
           <div className="onboarding-illustration mt-4 flex justify-center">
-            <img src="/assets/img/Onborading.jpg" alt="Onboarding illustration" className="max-w-full w-[560px] rounded-md shadow-sm" />
+            <img src="/assets/img/Onborading.jpg" alt="Onboarding illustration" className="w-full max-w-[880px] rounded-md shadow-sm" />
           </div>
         </div>
 
