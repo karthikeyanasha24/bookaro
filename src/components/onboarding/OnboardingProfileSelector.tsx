@@ -10,7 +10,7 @@ const OnboardingProfileSelector: React.FC<Props> = ({ activeProfile, onChange })
   const isOwner = activeProfile === 'owner';
 
   return (
-    <div className="flex items-center gap-3 mb-4">
+    <div className="flex items-center gap-3 mt-8 mb-8">
       <span className="text-[14px] font-medium text-[#47525E]">Vous êtes :</span>
       <div className="flex items-center bg-[#F3EEF9] rounded-full p-1 gap-1">
         <button
