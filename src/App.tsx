@@ -51,7 +51,7 @@ function App() {
   // detect which elements change during mount/hydration and cause flicker.
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') return;
-    let observer;
+    let observer: MutationObserver | null = null;
     try {
       const targets = [
         '.sidebar-wrapper',
@@ -61,13 +61,14 @@ function App() {
         'header',
         '.page-content-wrapper'
       ];
-      const nodes = targets.map(sel => Array.from(document.querySelectorAll(sel))).flat();
+      const nodes: Element[] = targets.flatMap((sel) => Array.from(document.querySelectorAll(sel)));
       if (nodes.length === 0) return;
-      observer = new MutationObserver((mutations) => {
-        mutations.forEach(m => {
+      observer = new MutationObserver((mutations: MutationRecord[]) => {
+        mutations.forEach((m: MutationRecord) => {
           if (m.type === 'attributes' && m.attributeName === 'class') {
-            const el = m.target;
-            console.log('[DOM-MUTATION] class change:', el, 'new=', el.className);
+            const el = m.target as Element;
+            const className = (el as HTMLElement).className;
+            console.log('[DOM-MUTATION] class change:', el, 'new=', className);
           }
           if (m.type === 'childList') {
             if (m.addedNodes.length) console.log('[DOM-MUTATION] nodes added to', m.target, m.addedNodes);
@@ -75,7 +76,7 @@ function App() {
           }
         });
       });
-      nodes.forEach(n => observer.observe(n, { attributes: true, childList: true, subtree: true }));
+      nodes.forEach((n) => observer!.observe(n, { attributes: true, childList: true, subtree: true }));
     } catch (e) {
       // ignore
     }
