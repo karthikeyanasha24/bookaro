@@ -16,6 +16,15 @@ body:not(.is-mounted) *::after {
   animation: none !important;
 }
 
+/* Also disable transitions and animations until the DOM is declared stable
+   (set by the MutationObserver debounce in App). This prevents visual
+   flashes caused by late class toggles or DOM additions after mount. */
+body:not(.is-stable) *,
+body:not(.is-stable) *::before,
+body:not(.is-stable) *::after {
+  transition: none !important;
+  animation: none !important;
+}
 /* Hide major structural elements by default to avoid layout flashes.
    They will be shown only when React has mounted and the store has been rehydrated. */
 .main-sidebar,
