@@ -19,19 +19,7 @@ const METRIC_CONFIG = [
 ];
 
 const PropertyAttractivitySection = ({ section, loading, error, period, onPeriodChange, t }) => {
-  let cards = section?.cards || [];
-  let isMockData = false;
-  // Inject mock data if no backend data
-  if (!cards.length) {
-    try {
-      // eslint-disable-next-line global-require
-      const { mockDashboardOverview } = require("../dashboard.mocks");
-      cards = mockDashboardOverview.sections.propertyAttractivity.cards || [];
-      isMockData = true;
-    } catch (e) {
-      // fallback: rien
-    }
-  }
+  const cards = section?.cards || [];
 
   const resolvePropertyId = (card) => {
     return card?.property?._id || card?.property?.id || card?.propertyId;
@@ -56,6 +44,7 @@ const PropertyAttractivitySection = ({ section, loading, error, period, onPeriod
       subtitle={t("dashboard.sections.propertyAttractivitySub", "Property attractivity metrics")}
       loading={loading}
       error={error}
+      isMock={section?._isMock}
       headerRight={
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <select className="section-period-select" value={period} onChange={(e) => onPeriodChange(e.target.value)}>
@@ -64,19 +53,6 @@ const PropertyAttractivitySection = ({ section, loading, error, period, onPeriod
             <option value="month">{t("dashboard.periods.month", "Month")}</option>
             <option value="year">{t("dashboard.periods.year", "Year")}</option>
           </select>
-          {isMockData && (
-            <span style={{
-              background: '#f3e8ff',
-              color: '#7c3aed',
-              borderRadius: '12px',
-              padding: '2px 10px',
-              fontSize: '13px',
-              fontWeight: 500,
-              marginLeft: 12,
-              alignSelf: 'center',
-              border: '1px solid #e9d5ff',
-            }}>Données fictives</span>
-          )}
         </div>
       }
     >

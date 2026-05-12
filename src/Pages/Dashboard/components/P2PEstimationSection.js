@@ -62,6 +62,7 @@ const P2PEstimationSection = ({ section, loading, error, t }) => {
       subtitle={section?.subtitle}
       loading={loading}
       error={error}
+      isMock={section?._isMock}
     >
       {items.length === 0 ? (
         <p className="dashboard-subtitle" style={{ fontSize: "14px", color: "#6b7280" }}>

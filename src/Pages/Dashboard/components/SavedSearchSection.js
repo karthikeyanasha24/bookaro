@@ -11,19 +11,7 @@ const withFreshnessSort = (route) => {
 };
 
 const SavedSearchSection = ({ section, loading, error, t }) => {
-  let cards = section?.cards || [];
-  let isMockData = false;
-  // Inject mock data if no backend data
-  if (!cards.length) {
-    try {
-      // eslint-disable-next-line global-require
-      const { mockDashboardOverview } = require("../dashboard.mocks");
-      cards = mockDashboardOverview.sections.savedSearchResults.cards || [];
-      isMockData = true;
-    } catch (e) {
-      // fallback: rien
-    }
-  }
+  const cards = section?.cards || [];
   const [localCards, setLocalCards] = useState(cards);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -71,19 +59,7 @@ const SavedSearchSection = ({ section, loading, error, t }) => {
       subtitle={t("dashboard.sections.savedSearchSub", "Discover new properties matching your saved searches")}
       loading={loading}
       error={error}
-      headerRight={isMockData ? (
-        <span style={{
-          background: '#f3e8ff',
-          color: '#7c3aed',
-          borderRadius: '12px',
-          padding: '2px 10px',
-          fontSize: '13px',
-          fontWeight: 500,
-          marginLeft: 12,
-          alignSelf: 'center',
-          border: '1px solid #e9d5ff',
-        }}>Données fictives</span>
-      ) : undefined}
+      isMock={section?._isMock}
     >
       {!hasNewResults ? (
         <>

@@ -166,6 +166,7 @@ const P2PReportSection = ({ section, loading, error, t }) => {
       )}
       loading={loading}
       error={error}
+      isMock={section?._isMock}
     >
       {properties.length === 0 ? (
         <p className="dashboard-subtitle" style={{ fontSize: "14px", color: "#6b7280" }}>{section?.emptyState?.message || t("dashboard.empty.noP2PReport", "No P2P report available yet.")}</p>

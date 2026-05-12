@@ -41,6 +41,7 @@ const Login = () => {
     deviceToken: localStorage.getItem("deviceToken"),
     deviceID: `${navigator.product}_${navigator.productSub}`,
     deviceName: navigator.platform,
+    ipAddress: "",
   };
 
   // 1. Force le mock user si mode autonome et pas loggé
@@ -103,19 +104,61 @@ const Login = () => {
 
 
   // Mode autonome : simule la vérification d'email sans appel réseau
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    // Simule un login réussi pour le front autonome
-    setTimeout(() => {
-      dispatch(login_success({
+
+    if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+      setTimeout(() => {
+        dispatch(login_success({
+          email: form.email,
+          fullName: form.fullName || "Utilisateur",
+          isVerified: "Y",
+          token: "mock-token",
+        }));
+        toast.success("Connexion réussie (mode autonome)");
+        navigate(getPostLoginRoute());
+      }, 500);
+      return;
+    }
+
+    try {
+      loader(true);
+      const payload = {
         email: form.email,
-        fullName: form.fullName || "Utilisateur",
-        isVerified: "Y",
-        token: "mock-token",
-      }));
-      toast.success("Connexion réussie (mode autonome)");
-      navigate(getPostLoginRoute());
-    }, 500);
+        password: form.password,
+        deviceId: deviceInfo.deviceID,
+        deviceToken: deviceInfo.deviceToken,
+        deviceName: deviceInfo.deviceName,
+        ipAddress: deviceInfo.ipAddress,
+        browser: navigator.userAgent,
+      };
+      const res = await ApiClient.post("user/login", payload);
+
+      if (res?.success && res?.data) {
+        const token = res.data.access_token || res.data.token;
+        if (token) {
+          localStorage.setItem("token", token);
+          localStorage.setItem("access_token", token);
+        }
+        dispatch(login_success({
+          ...res.data,
+          loggedIn: true,
+          token,
+        }));
+        toast.success(t("messages.loginSuccess"));
+        navigate(getPostLoginRoute());
+        return;
+      }
+
+      const errorMessage =
+        res?.message || res?.error?.message || t("messages.loginFailed") || "Login failed";
+      toast.error(errorMessage);
+    } catch (error) {
+      console.error("Login error", error);
+      toast.error(t("messages.loginFailed") || "Login failed");
+    } finally {
+      loader(false);
+    }
   };
 
   // Handler pour le bouton signup

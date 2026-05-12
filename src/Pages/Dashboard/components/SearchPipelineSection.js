@@ -30,6 +30,7 @@ const SearchPipelineSection = ({ section, loading, error, t }) => {
       title={t("dashboard.sections.searchPipeline", "Property search pipeline overview")}
       loading={loading}
       error={error}
+      isMock={section?._isMock}
     >
       {!metrics ? (
         <p className="dashboard-subtitle" style={{ fontSize: "14px", color: "#6b7280" }}>

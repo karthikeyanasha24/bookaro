@@ -42,6 +42,18 @@ const SECTION_ORDERS_BY_MODE = {
     "propertyAttractivity",
     "ownerPipeline",
   ],
+  renter: [
+    "todoList",
+    "trainingCenter",
+    "savedSearchResults",
+    "followedPropertyNews",
+    "propertySearchPipeline",
+    "pastTransactions",
+    "p2pEstimation",
+    "p2pReport",
+    "propertyAttractivity",
+    "ownerPipeline",
+  ],
   owner: [
     "todoList",
     "propertyAttractivity",
@@ -62,8 +74,30 @@ const DASHBOARD_SECTION_ORDER_STORAGE_KEY_PREFIX = "dashboard.sectionOrder.v2";
 const DASHBOARD_DISPLAY_MODE_STORAGE_KEY = "dashboard.displayMode.v1";
 
 const sanitizeDisplayMode = (value) => {
-  const allowedModes = new Set(["buyer", "seller", "owner"]);
+  const allowedModes = new Set(["buyer", "renter", "seller", "owner"]);
   return allowedModes.has(value) ? value : "buyer";
+};
+
+const mapSignupPropertyToDisplayMode = (property) => {
+  const normalized = typeof property === "string" ? property.toLowerCase().trim() : "";
+  switch (normalized) {
+    case "buy":
+    case "plan":
+    case "off-market":
+    case "off market":
+    case "offmarket":
+      return "buyer";
+    case "rent":
+      return "renter";
+    case "sell my property":
+    case "quote my property":
+    case "prepare future sale":
+      return "seller";
+    case "rent my property":
+      return "owner";
+    default:
+      return null;
+  }
 };
 
 const getDefaultSectionOrderForMode = (mode) => {
@@ -76,12 +110,25 @@ const getSectionOrderStorageKey = (mode) => {
   return `${DASHBOARD_SECTION_ORDER_STORAGE_KEY_PREFIX}.${safeMode}`;
 };
 
+const loadPersistedDisplayMode = (user) => {
+  try {
+    const rawValue = window.localStorage.getItem(DASHBOARD_DISPLAY_MODE_STORAGE_KEY);
+    if (rawValue) return sanitizeDisplayMode(rawValue);
+  } catch (error) {
+    // ignore storage errors and fallback to user data or default
+  }
+
+  const modeFromUser = mapSignupPropertyToDisplayMode(user?.property);
+  return modeFromUser || "buyer";
+};
+
 const enforceFollowedPropertyNewsPosition = (order, mode) => {
   if (!Array.isArray(order) || !order.includes("followedPropertyNews")) return order;
 
   const safeMode = sanitizeDisplayMode(mode);
   const targetAnchorByMode = {
     buyer: { anchor: "savedSearchResults", place: "after" },
+    renter: { anchor: "savedSearchResults", place: "after" },
     seller: { anchor: "savedSearchResults", place: "after" },
     owner: { anchor: "trainingCenter", place: "before" },
   };
@@ -140,15 +187,6 @@ const loadPersistedSectionOrder = (mode) => {
   }
 };
 
-const loadPersistedDisplayMode = () => {
-  try {
-    const rawValue = window.localStorage.getItem(DASHBOARD_DISPLAY_MODE_STORAGE_KEY);
-    return sanitizeDisplayMode(rawValue);
-  } catch (error) {
-    return "buyer";
-  }
-};
-
 const DashboardPage = () => {
   const { t } = useTranslation();
   const [period, setPeriod] = useState("day");
@@ -168,11 +206,11 @@ const DashboardPage = () => {
   const sections = data?.sections || {};
 
   useEffect(() => {
-    const initialDisplayMode = loadPersistedDisplayMode();
+    const initialDisplayMode = loadPersistedDisplayMode(user);
     setDisplayMode(initialDisplayMode);
     setSectionOrder(loadPersistedSectionOrder(initialDisplayMode));
     setIsOrderHydrated(true);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!isOrderHydrated) return;

@@ -32,19 +32,7 @@ const formatRooms = (rooms, t) => {
 
 const PastTransactionsSection = ({ section, loading, error, t }) => {
   const { i18n } = useTranslation();
-  let items = section?.items || [];
-  let isMockData = false;
-  if (!Array.isArray(items) || items.length === 0) {
-    // Dynamically require mock data from dashboard.mocks.js
-    try {
-      // eslint-disable-next-line global-require
-      const { mockDashboardOverview } = require("../dashboard.mocks.js");
-      items = mockDashboardOverview.sections.pastTransactions.items;
-      isMockData = true;
-    } catch (e) {
-      items = [];
-    }
-  }
+  const items = section?.items || [];
 
   return (
     <DashboardSection
@@ -52,19 +40,7 @@ const PastTransactionsSection = ({ section, loading, error, t }) => {
       subtitle={t("dashboard.sections.pastTransactionsSub", "Historical transactions help you define the right price either for a purchase or for a sale")}
       loading={loading}
       error={error}
-      headerRight={isMockData ? (
-        <span style={{
-          background: '#f3e8ff',
-          color: '#7c3aed',
-          borderRadius: '12px',
-          padding: '2px 10px',
-          fontSize: '13px',
-          fontWeight: 500,
-          marginLeft: 12,
-          alignSelf: 'center',
-          border: '1px solid #e9d5ff',
-        }}>Données fictives</span>
-      ) : undefined}
+      isMock={section?._isMock}
     >
       {items.length === 0 ? (
         <p className="dashboard-subtitle" style={{ fontSize: "14px", color: "#6b7280" }}>{t("dashboard.empty.noTransactions", "No historical transaction available.")}</p>

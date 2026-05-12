@@ -41,6 +41,15 @@ const isValidDashboardPayload = (payload) => {
   );
 };
 
+const hasBackendSectionContent = (backendSection) => {
+  if (!backendSection || typeof backendSection !== "object") return false;
+  if (Array.isArray(backendSection.items) && backendSection.items.length > 0) return true;
+  if (Array.isArray(backendSection.cards) && backendSection.cards.length > 0) return true;
+  if (Array.isArray(backendSection.properties) && backendSection.properties.length > 0) return true;
+  if (backendSection.metrics && Object.keys(backendSection.metrics).length > 0) return true;
+  return Object.keys(backendSection).length > 1;
+};
+
 export const useDashboardOverview = (period) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,10 +79,12 @@ export const useDashboardOverview = (period) => {
         const usingMock = [];
         Object.keys(mockSections).forEach((sectionKey) => {
           const backendSection = backendData.sections?.[sectionKey];
-          if (backendSection && Array.isArray(backendSection.items) && backendSection.items.length > 0) {
-            mergedSections[sectionKey] = { ...backendSection, _isMock: false };
-          } else if (backendSection && Array.isArray(backendSection.cards) && backendSection.cards.length > 0) {
-            mergedSections[sectionKey] = { ...backendSection, _isMock: false };
+          const shouldShowBackendSection = hasBackendSectionContent(backendSection);
+          if (shouldShowBackendSection) {
+            mergedSections[sectionKey] = {
+              ...backendSection,
+              _isMock: backendSection._isMock === true ? true : false,
+            };
           } else {
             mergedSections[sectionKey] = { ...mockSections[sectionKey], _isMock: true };
             usingMock.push(sectionKey);

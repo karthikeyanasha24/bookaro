@@ -217,13 +217,7 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
   const [openShareId, setOpenShareId] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  let isMockData = false;
-  let source = Array.isArray(section?.items) && section.items.length > 0
-    ? section.items
-    : DEFAULT_NEWS_ITEMS;
-  if (!Array.isArray(section?.items) || section.items.length === 0) {
-    isMockData = true;
-  }
+  const source = Array.isArray(section?.items) ? section.items : [];
   const newsGroups = useMemo(() => {
     const sortedItems = [...source]
       .sort((a, b) => {
@@ -355,6 +349,7 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
         "dashboard.sections.followedPropertyNewsSub",
         "Suivre un bien immobilier vous permet de vous positionner avant même qu'il ne soit en vente."
       )}
+      isMock={section?._isMock}
       headerRight={
         <button
           type="button"

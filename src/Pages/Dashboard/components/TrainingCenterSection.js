@@ -23,6 +23,7 @@ const TrainingCenterSection = ({ section, loading, error, t }) => {
       subtitle={t("dashboard.sections.trainingSub", "Leverage these insights to manage your real estate project like a pro")}
       loading={loading}
       error={error}
+      isMock={section?._isMock}
     >
       <div className="training-grid">
         {items.map((item, index) => {

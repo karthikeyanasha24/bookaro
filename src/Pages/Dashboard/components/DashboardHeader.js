@@ -7,6 +7,7 @@ const DashboardHeader = ({
 }) => {
   const displayModeOptions = [
     { value: "buyer", label: t("dashboard.displayMode.buyer", "Acheteur") },
+    { value: "renter", label: t("dashboard.displayMode.renter", "Locataire") },
     { value: "seller", label: t("dashboard.displayMode.seller", "Vendeur") },
     { value: "owner", label: t("dashboard.displayMode.owner", "Propriétaire") },
   ];

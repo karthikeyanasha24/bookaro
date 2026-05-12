@@ -65,6 +65,7 @@ const OwnerPipelineSection = ({ section, loading, error, t }) => {
       title={t("dashboard.sections.ownerPipeline", "Seller or landlord pipeline overview")}
       loading={loading}
       error={error}
+      isMock={section?._isMock}
     >
       {properties.length === 0 ? (
         <div>
