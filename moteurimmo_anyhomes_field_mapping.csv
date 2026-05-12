@@ -1,0 +1,127 @@
+AnyHomesField;AnyHomesPossibleValues;MoteurImmoField(s);MoteurImmoPossibleValues;Comment;Priority
+name;String;raw.title / raw.headline;String;Titre principal utilisé pour afficher le bien;critique
+location;Object {address, city, zipcode, country, state};raw.location / raw.address / raw.city / raw.postalCode / raw.zipcode;Object|string;Contient les informations d'adresse brutes;utile
+newlocation;GeoJSON Point {type:Point, coordinates:[lon,lat]};raw.position / raw.coordinates / raw.location.coordinates / raw.latitude + raw.longitude;Array|Object;GeoJSON requis pour les recherches géospatiales;critique
+email;String;raw.publisher.email / raw.contactEmail;String;Email de contact pour le bien ou l'agence;optionnel
+amenities;Array of ObjectId;raw.features / raw.equipements / raw.amenities;Array;Liste d'IDs amenities AnyHomes mappées depuis les caractéristiques;utile
+images;Array of image objects;raw.pictureUrls / raw.pictureUrl / raw.images;Array|String;URLs des photos du bien;critique
+content;String;raw.description / raw.body;String;Description longue du bien;critique
+address;String;raw.address / raw.location.address;String;Adresse textuelle affichée;critique
+zipcode;String;raw.postalCode / raw.zipcode / raw.location.postalCode;String;Code postal du bien;critique
+country;String;raw.country / raw.location.country;String;Pays du bien;critique
+city;String;raw.city / raw.town / raw.location.city / raw.location.town;String;Ville du bien;critique
+state;String;raw.location.state / raw.region / raw.department;String;Région ou département du bien;optionnel
+price;Number;raw.price / raw.originalPrice;Number;Prix affiché du bien;critique
+type;Enum [apartment, castle, farm, building, house];raw.propertyKind / raw.category / raw.subtype / raw.type;String;Type de bien AnyHomes;critique
+featured;Boolean;-;N/A;Flag de mise en avant;optionnel
+agency;ObjectId;raw.publisher / raw.agentId / raw.agencyId;String|Object;ID de l'agence ou éditeur;optionnel
+like;Array of ObjectId;-;N/A;Liste des likes;optionnel
+follow;Array of ObjectId;-;N/A;Liste des followers;optionnel
+categories;ObjectId;raw.category / raw.subcategory;String;Catégorie du bien;utile
+status;Enum [active, inactive];raw.status / raw.publicationStatus / raw.type;String;Statut actif/inactif du bien;critique
+addedBy;ObjectId;-;N/A;Utilisateur propriétaire/auteur du bien;critique
+importBy;Enum [user, platform];-;N/A;Source de création;utile
+area;String;raw.surface / raw.livingArea / raw.area;Number|String;Surface en m²;utile
+bedrooms;String;raw.bedrooms;Number;Nombre de chambres;critique
+rooms;String;raw.rooms / raw.nbRooms;Number;Nombre de pièces;critique
+bathroom;String;raw.baths / raw.bathrooms / raw.bathroom;Number;Nombre de salles de bain;utile
+surface;String;raw.surface / raw.livingArea / raw.area;Number|String;Surface affichée;critique
+propertyFloor;String;raw.floor / raw.level;Number|String;Étage du bien;optionnel
+toilets;String;raw.toilets / raw.wc;Number;Nombre de toilettes;optionnel
+livingRoom;String;raw.livingRoom / raw.living_room / raw.livingRoomCount;Number;Nombre de salons;optionnel
+totalFloorBuilding;String;raw.totalFloors / raw.buildingFloors;Number;Nombre d'étages de l'immeuble;optionnel
+propertyMonthlyCharges;Number;raw.monthlyCharges / raw.propertyMonthlyCharges / raw.maintenanceCharges;Number;Charges mensuelles ou copropriété;utile
+guaranteeDeposit;Number;raw.guaranteeDeposit / raw.securityDeposit;Number;Dépôt de garantie;utile
+propertyInventory;Number;raw.propertyInventory;Number;Inventaire du bien (rent);optionnel
+situation;Array or String;raw.situation / raw.layout / raw.configuration;String|Array;Situation du bien (duplex, souplex...);optionnel
+building;String;raw.yearBuilt / raw.buildingYear / raw.constructionYear;Number|String;Année de construction;utile
+propertyState;ObjectId;raw.state / raw.condition / raw.propertyCondition;String;État du bien;utile
+equipment;Array of ObjectId;raw.features / raw.equipements / raw.amenities;Array;Équipements intérieurs/extras;utile
+outside;Array of ObjectId;raw.outdoorFeatures / raw.gardenFeatures;Array;Équipements extérieurs;utile
+serviceAccessibility;Array of ObjectId;raw.accessibility / raw.transport;Array;Accessibilité et transports;optionnel
+ancilliary;Array of ObjectId;raw.ancillaryFeatures;Array;Éléments annexes;optionnel
+environment;Array of ObjectId;raw.neighborhood / raw.environment;Array;Environnement et proximité;optionnel
+leisure;Array of ObjectId;raw.leisure / raw.facilities;Array;Commodités de loisirs;optionnel
+investment;Array of ObjectId;raw.investmentPotential / raw.rentalYield;Array|Number;Potentiel investissement;optionnel
+isDeleted;Boolean;-;N/A;Suppression logique;critique
+propertyType;Enum [sale, rent, directory];raw.transactionType / raw.listingType / raw.adType / raw.offerType / raw.propertyType;String;Sale/rent/directory;critique
+offMarket;Boolean;raw.offMarket / raw.status / raw.publicationStatus;Boolean|String;Indique hors marché possible;optionnel
+chooseDocumentGrade;String;-;N/A;Note de dossier interne;optionnel
+isChoosedDocumentVerified;Boolean;-;N/A;Vérification du document interne;optionnel
+isChoosedDeclDocumentVerified;Boolean;-;N/A;Vérification déclaration interne;optionnel
+maximumLead;String;-;N/A;Nombre maximum de leads autorisés;optionnel
+cooking;Array of ObjectId;raw.kitchenType / raw.cooking / raw.kitchenFeatures;Array|String;Type de cuisine;optionnel
+heatingType;ObjectId;raw.heatingType / raw.heating;String;Type de chauffage;utile
+energymode;ObjectId;raw.energyMode / raw.heatingMode;String;Mode énergétique;optionnel
+dateOfDiagnosis;String;raw.energyDiagnosisDate / raw.diagnosticDate;Date string;Date du diagnostic énergétique;utile
+diagnosisType;String;raw.diagnosticType / raw.energyDiagnosisType;String;Type de diagnostic énergétique;utile
+energyConsumption;String;raw.energyConsumption / raw.dpeValue;String;Consommation énergie;utile
+energy_efficient;String;raw.energyEfficiency / raw.eepClass;String;Classe énergie;utile
+emission_efficient;String;raw.emissionEfficiency / raw.ghgClass;String;Classe émissions;utile
+emissions;String;raw.emissions / raw.ghgValue;String;Valeur émissions;utile
+diagnosisDate;String;raw.diagnosticDate / raw.energyDiagnosisDate;Date string;Date du diagnostic;utile
+contact;Boolean;raw.contactAllowed / raw.contact;Boolean;Flag de contact autorisé;optionnel
+transparency;Boolean;-;N/A;Flag transparence;optionnel
+username;String;raw.publisher.name / raw.agentName;String;Nom du contact ou propriétaire;optionnel
+phoneNumber;String;raw.publisher.phone / raw.agentPhone;String;Téléphone du contact;optionnel
+propertyCharges;Number;raw.propertyCharges;Number;Charges totales du bien;utile
+usedAs;String;raw.usedAs / raw.useType;String;Usage du bien;optionnel
+propertyAgencyFees;Number;raw.agencyFees / raw.serviceFees;Number;Frais d'agence;optionnel
+propertyTitle;String;raw.title / raw.headline;String;Titre du bien affiché;critique
+sale_my_property;Boolean;-;N/A;Flag marché interne vente auto;optionnel
+real_estate_market;Boolean;-;N/A;Flag marché immobilier interne;optionnel
+add_more_step;Boolean;-;N/A;Flag étape création complémentaire;optionnel
+revenue_detail;Array;raw.rentalRevenue / raw.revenueDetails;Array;Détails des revenus locatifs;optionnel
+renovation_work;Array;raw.renovationHistory / raw.renovationWork;Array;Détails travaux;optionnel
+rating;Array;raw.rating / raw.reviewScore;Array|Number;Note du bien;optionnel
+Expenses;Array;raw.expenses / raw.costs;Array;Dépenses du bien;optionnel
+createdAt;Date;N/A;-;Date de création du document;critique
+updatedAt;Date;N/A;-;Date de mise à jour du document;critique
+searchType;String;-;N/A;Type de recherche interne;optionnel
+proposal;String;raw.proposal / raw.offerType;String;Proposition rental/purchase/both;optionnel
+userLeads;String;-;N/A;Nombre de leads utilisateur;optionnel
+rateLeads;String;-;N/A;Taux de leads;optionnel
+maxLeads;String;-;N/A;Leads maximum;optionnel
+handleBy;String;-;N/A;Responsable du bien;optionnel
+agencyType;String;-;N/A;Type d'agence;optionnel
+request_status;Enum [accepted, pending, rejected];-;N/A;Statut de la demande;optionnel
+exactLocation;Boolean;-;N/A;Flag de position exacte;optionnel
+randomLocation;Object;N/A;-;Position aléatoire interne;optionnel
+interestUpdatedTime;Date;N/A;-;Timestamp dernière activité;optionnel
+visitSlots;Array;N/A;-;Slots de visite;optionnel
+sellerFiles;Object;N/A;-;Fichiers vendeur;optionnel
+autoInvite;Boolean;N/A;-;Invitation automatique;optionnel
+signingSlots;Array;N/A;-;Slots signature;optionnel
+homeInventorySlots;Array;N/A;-;Slots inventaire;optionnel
+offerStatus;Boolean;N/A;-;Statut offre;optionnel
+visitBookedCount;Number;N/A;-;Nombre de visites réservées;optionnel
+contractSigned;Boolean;N/A;-;Contrat signé;optionnel
+activityIndicatorCount;Number;N/A;-;Indicateur d'activité;optionnel
+chatSorting;Date;N/A;-;Tri dans le chat;optionnel
+identityVerified;Boolean;N/A;-;Bien vérifié;optionnel
+linkedSchools;Array;raw.linkedSchools / raw.schoolNearby;Array;Écoles liées;optionnel
+referencePrice;Number;raw.referencePrice / raw.price;Number;Prix de référence utilisé pour comparaison;utile
+pricePerSqm;Number;-;Calculated;Prix au m² calculé;utile
+shareCount;Number;N/A;-;Nombre de partages;optionnel
+propertyViewerCount;Number;N/A;-;Nombre de vues;optionnel
+directoryPurchaseProsals;String;-;N/A;Proposition annuaire interne;optionnel
+source;String;raw.source / "moteurimmo";String;Source externe ou source de flux;optionnel
+sourceId;String;raw.uniqueId / raw.unique_id / raw.id / raw.adId;String;Identifiant externe stable;critique
+externalUrl;String;raw.url;String;URL de l'annonce externe;utile
+reference;String;raw.reference / raw.adId;String;Référence annonce;utile
+listingStatus;String;raw.status / raw.publicationStatus / raw.type;String;Statut brut du flux externe;utile
+origin;String;raw.origin / raw.publisher;String;Origine du flux;optionnel
+raw;Object;raw;Object;JSON brut entier du flux externe;optionnel
+lastSyncAt;Date;N/A;-;Timestamp dernière synchronisation import;utile
+externalListingId;ObjectId;N/A;-;ID du document externalListing lié;utile
+ownerId;ObjectId;N/A;-;Proposition d'ID propriétaire réel;utile
+; ;raw.ad_id;String;Identifiant alternatif de l'annonce MoteurImmo;utile
+; ;raw.creationDate;Date;Date de création de l'annonce dans MoteurImmo;utile
+; ;raw.deletionDate;Date;Date de suppression de l'annonce dans MoteurImmo;utile
+; ;raw.history;Array;Historique des modifications du flux externe;optionnel
+; ;raw.lastChangeDate;Date;Date du dernier changement rapporté par MoteurImmo;utile
+; ;raw.lastModificationDate;Date;Date de la dernière modification du flux externe;utile
+; ;raw.latitude;Number;Latitude brute fournie séparément;utile
+; ;raw.longitude;Number;Longitude brute fournie séparément;utile
+; ;raw.postal;String;Code postal alternatif du flux MoteurImmo;utile
+; ;raw.publicationDate;Date;Date de publication de l'annonce;utile
