@@ -5,6 +5,14 @@
     border-color: #976dd0;
     background-color: #faf7fe;
   }
+
+  .onboarding-illustration {
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+  }
 }
 
 .page-content-wrapper.sidebar-collapsed .onboarding-page {
