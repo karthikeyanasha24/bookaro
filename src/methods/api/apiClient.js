@@ -1,13 +1,30 @@
 
 import axios from 'axios';
 
-const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:6089';
+const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:6090';
 
 const client = axios.create({
   baseURL: BASE,
   timeout: 30_000,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
+});
+
+// Attach Authorization header from localStorage (if present) on every request.
+// Some parts of the code store token under `token` or `access_token`.
+client.interceptors.request.use((cfg) => {
+  try {
+    if (typeof window !== 'undefined') {
+      const token = window.localStorage.getItem('token') || window.localStorage.getItem('access_token');
+      if (token) {
+        cfg.headers = cfg.headers || {};
+        cfg.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  return cfg;
 });
 
 class ApiClient {
