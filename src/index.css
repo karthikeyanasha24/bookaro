@@ -35,6 +35,16 @@ body.is-mounted.is-rehydrated header {
   visibility: visible !important;
 }
 
+/* Also disable transitions/animations for header/sidebar to prevent flicker */
+body.is-mounted.is-rehydrated .main-sidebar,
+body.is-mounted.is-rehydrated .main-navbar,
+body.is-mounted.is-rehydrated .sidebar-wrapper,
+body.is-mounted.is-rehydrated .App-header,
+body.is-mounted.is-rehydrated header {
+  transition: none !important;
+  animation: none !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

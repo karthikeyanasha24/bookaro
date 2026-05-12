@@ -68,8 +68,11 @@
 }
 
 /* Enable smooth transitions only after the app has mounted */
-.is-mounted .sidebar-wrapper {
-  transition: width 0.3s ease-in-out;
+
+/* Keep sidebar layout changes instant to avoid visual flicker */
+.sidebar-wrapper {
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Also prevent header width transition on first paint */
