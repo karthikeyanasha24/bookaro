@@ -80,7 +80,21 @@ async function normalizeListing(raw) {
   dto.surface = raw.surface || raw.livingArea || raw.area || null;
   dto.rooms = raw.rooms || raw.nbRooms || null;
   dto.bedrooms = raw.bedrooms || null;
+  dto.bathrooms = raw.baths || raw.bathrooms || raw.bathroom || null;
   dto.propertyCharges = raw.propertyCharges || null;
+  dto.floor = raw.floor || raw.level || null;
+  dto.livingRoom = raw.livingRoom || raw.living_room || raw.livingRoomCount || null;
+  dto.buildingYear = raw.yearBuilt || raw.buildingYear || raw.constructionYear || null;
+  dto.propertyMonthlyCharges = raw.monthlyCharges || raw.propertyMonthlyCharges || raw.maintenanceCharges || null;
+  dto.guaranteeDeposit = raw.guaranteeDeposit || raw.securityDeposit || null;
+  dto.propertyInventory = raw.propertyInventory || null;
+
+  dto.address = raw.address || (raw.location && raw.location.address) || null;
+  dto.zipcode = raw.postalCode || raw.zipcode || (raw.location && (raw.location.postalCode || raw.location.zipcode)) || null;
+  dto.city = raw.city || raw.town || (raw.location && (raw.location.city || raw.location.town || raw.location.locality)) || null;
+  dto.country = raw.country || (raw.location && raw.location.country) || 'France';
+  dto.propertyTypeRaw = raw.transactionType || raw.listingType || raw.adType || raw.offerType || raw.propertyType || raw.type || '';
+  dto.propertyKind = raw.propertyKind || raw.category || raw.subtype || raw.type || null;
 
   dto.publisher = raw.publisher || null;
 

@@ -2,7 +2,6 @@ const express = require("express");
 var cors = require("cors");
 let http = require("http");
 var bcrypt = require("bcrypt");
-const agenda = require('./app/config/agenda.config.js');
 
 const app = express();
 // CORS is configured below with credentials support for local frontend dev.
@@ -76,17 +75,17 @@ db.mongoose
   .then(async () => {
     console.log("Connected to the database!");
 
-    // load and start Agenda jobs if possible; protect against Agenda failures
+    // start Agenda first, then load jobs so scheduling happens only after Agenda is ready
     try {
       const agenda = require("./app/config/agenda.config");
       try {
-        require("./app/jobs/agenda.jobs")(agenda, db);
-      } catch (e) {
-        console.error('Failed to load agenda jobs:', e);
-      }
-      try {
         await agenda.start();
-        console.log("Agenda started and jobs loaded.");
+        try {
+          require("./app/jobs/agenda.jobs")(agenda, db);
+          console.log("Agenda started and jobs loaded.");
+        } catch (e) {
+          console.error('Failed to load agenda jobs:', e);
+        }
       } catch (e) {
         console.error('Agenda failed to start, continuing without scheduled jobs:', e);
       }

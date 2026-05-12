@@ -74,6 +74,67 @@ async function createTimelineIfNeeded(propertyId, userId, type, meta = {}) {
   }
 }
 
+function inferPropertyType(rawType) {
+  const normalized = String(rawType || '').toLowerCase();
+  if (!normalized) return 'sale';
+  if (/rent|location|rental|locatif|loué|bail/.test(normalized)) return 'rent';
+  if (/directory|annonce|listing/.test(normalized)) return 'directory';
+  return 'sale';
+}
+
+function inferPropertyKind(kindText) {
+  const normalized = String(kindText || '').toLowerCase();
+  if (/house|maison|villa/.test(normalized)) return 'house';
+  if (/castle|chateau/.test(normalized)) return 'castle';
+  if (/farm|ferme/.test(normalized)) return 'farm';
+  if (/building|immeuble/.test(normalized)) return 'building';
+  return 'apartment';
+}
+
+function inferPropertyStatus(listingStatus) {
+  const normalized = String(listingStatus || '').toLowerCase();
+  if (/sold|inactive|archived|unavailable|deleted|removed|cancelled|cancelled/.test(normalized)) return 'inactive';
+  return 'active';
+}
+
+function buildPropertyPayload(dto, userId) {
+  const propertyType = inferPropertyType(dto.propertyTypeRaw || dto.listingStatus);
+  const propertyKind = inferPropertyKind(dto.propertyKind || dto.propertyTitle || dto.origin || dto.listingStatus);
+
+  return {
+    name: dto.propertyTitle || 'Imported from MoteurImmo',
+    propertyTitle: dto.propertyTitle || 'Imported from MoteurImmo',
+    content: dto.content || '',
+    price: dto.price != null ? Number(dto.price) : null,
+    originalPrice: dto.originalPrice != null ? Number(dto.originalPrice) : null,
+    area: dto.surface != null ? String(dto.surface) : undefined,
+    surface: dto.surface != null ? String(dto.surface) : undefined,
+    rooms: dto.rooms != null ? String(dto.rooms) : undefined,
+    bedrooms: dto.bedrooms != null ? String(dto.bedrooms) : undefined,
+    bathroom: dto.bathrooms != null ? String(dto.bathrooms) : undefined,
+    livingRoom: dto.livingRoom != null ? String(dto.livingRoom) : undefined,
+    propertyFloor: dto.floor != null ? String(dto.floor) : undefined,
+    address: dto.address || null,
+    zipcode: dto.zipcode || null,
+    city: dto.city || null,
+    country: dto.country || 'France',
+    newlocation: dto.position || (dto.location && Array.isArray(dto.location.coordinates) ? { type: 'Point', coordinates: [Number(dto.location.coordinates[0]) || 0, Number(dto.location.coordinates[1]) || 0] } : { type: 'Point', coordinates: [0, 0] }),
+    images: [],
+    propertyType,
+    type: propertyKind,
+    status: inferPropertyStatus(dto.listingStatus),
+    isDeleted: false,
+    importBy: 'platform',
+    addedBy: userId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    propertyMonthlyCharges: dto.propertyMonthlyCharges != null ? Number(dto.propertyMonthlyCharges) : undefined,
+    guaranteeDeposit: dto.guaranteeDeposit != null ? Number(dto.guaranteeDeposit) : undefined,
+    propertyInventory: dto.propertyInventory != null ? Number(dto.propertyInventory) : undefined,
+    building: dto.buildingYear || undefined,
+  };
+}
+
 async function upsertListing(raw) {
   const dto = await normalizeListing(raw);
   console.log('DEBUG upsertListing dto summary:', {
@@ -101,13 +162,26 @@ async function upsertListing(raw) {
     const prop = await db.property.findById(existing.propertyId);
     if (prop) {
       const updates = {};
-      if (dto.price != null && dto.price !== prop.price) {
-        updates.price = dto.price;
-      }
+      if (dto.price != null && dto.price !== prop.price) updates.price = dto.price;
       if (dto.propertyTitle && dto.propertyTitle !== prop.propertyTitle) updates.propertyTitle = dto.propertyTitle;
       if (dto.content && dto.content !== prop.content) updates.content = dto.content;
-      if (dto.surface && dto.surface !== prop.surface) updates.surface = dto.surface;
+      if (dto.surface && String(dto.surface) !== String(prop.surface)) updates.surface = String(dto.surface);
+      if (dto.rooms != null && String(dto.rooms) !== String(prop.rooms)) updates.rooms = String(dto.rooms);
+      if (dto.bedrooms != null && String(dto.bedrooms) !== String(prop.bedrooms)) updates.bedrooms = String(dto.bedrooms);
+      if (dto.bathrooms != null && String(dto.bathrooms) !== String(prop.bathroom)) updates.bathroom = String(dto.bathrooms);
+      if (dto.floor != null && String(dto.floor) !== String(prop.propertyFloor)) updates.propertyFloor = String(dto.floor);
+      if (dto.livingRoom != null && String(dto.livingRoom) !== String(prop.livingRoom)) updates.livingRoom = String(dto.livingRoom);
+      if (dto.address && dto.address !== prop.address) updates.address = dto.address;
+      if (dto.zipcode && dto.zipcode !== prop.zipcode) updates.zipcode = dto.zipcode;
+      if (dto.city && dto.city !== prop.city) updates.city = dto.city;
+      if (dto.country && dto.country !== prop.country) updates.country = dto.country;
       if (dto.position) updates.newlocation = dto.position;
+      const newType = inferPropertyKind(dto.propertyKind || dto.propertyTitle || dto.origin || dto.listingStatus);
+      if (newType && newType !== prop.type) updates.type = newType;
+      const newPropertyType = inferPropertyType(dto.propertyTypeRaw || dto.listingStatus);
+      if (newPropertyType && newPropertyType !== prop.propertyType) updates.propertyType = newPropertyType;
+      const mappedStatus = inferPropertyStatus(dto.listingStatus);
+      if (mappedStatus !== prop.status) updates.status = mappedStatus;
       if (Object.keys(updates).length) {
         updates.updatedAt = new Date();
         await db.property.updateOne({ _id: prop._id }, { $set: updates });
@@ -150,31 +224,10 @@ async function upsertListing(raw) {
   }
 
   // create new property when none exists
-  const propData = {
-    propertyTitle: dto.propertyTitle || 'Imported from MoteurImmo',
-    content: dto.content,
-    price: dto.price,
-    originalPrice: dto.originalPrice,
-    surface: dto.surface,
-    rooms: dto.rooms,
-    bedrooms: dto.bedrooms,
-    address: (dto.location && dto.location.address) || null,
-    zipcode: (dto.location && (dto.location.postalCode || dto.location.zipcode)) || null,
-    city: (dto.location && dto.location.city) || null,
-    country: 'France',
-    // ensure newlocation matches schema requirements
-    newlocation: dto.position || (dto.location && Array.isArray(dto.location.coordinates) ? { type: 'Point', coordinates: [Number(dto.location.coordinates[0]) || 0, Number(dto.location.coordinates[1]) || 0] } : { type: 'Point', coordinates: [0, 0] }),
-    images: [],
-    propertyType: (dto.listingStatus && String(dto.listingStatus).toLowerCase().includes('rental')) || (dto.listingStatus === 'rental') ? 'rent' : 'sale',
-    // `type` is required by schema; map common categories
-    type: (dto.origin && String(dto.origin).toLowerCase().includes('house')) || (dto.category && String(dto.category).toLowerCase() === 'house') ? 'house' : 'apartment',
-    importBy: 'platform',
-    addedBy: userId,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  if (!dto.position) console.warn('propData uses fallback coordinates [0,0] for newlocation — consider improving geo mapping');
+  const propData = buildPropertyPayload(dto, userId);
+  if (!dto.position && propData.newlocation && Array.isArray(propData.newlocation.coordinates) && propData.newlocation.coordinates[0] === 0 && propData.newlocation.coordinates[1] === 0) {
+    console.warn('propData uses fallback coordinates [0,0] for newlocation — consider improving geo mapping');
+  }
 
   let property;
   try {
