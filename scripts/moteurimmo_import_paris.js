@@ -14,10 +14,17 @@ async function main() {
   const types = process.env.MOTEURIMMO_TYPES ? JSON.parse(process.env.MOTEURIMMO_TYPES) : null;
   const minPrice = process.env.MOTEURIMMO_MIN_PRICE ? Number(process.env.MOTEURIMMO_MIN_PRICE) : null;
   const maxPrice = process.env.MOTEURIMMO_MAX_PRICE ? Number(process.env.MOTEURIMMO_MAX_PRICE) : null;
+  const radius = process.env.MOTEURIMMO_RADIUS ? Number(process.env.MOTEURIMMO_RADIUS) : 10;
   const status = process.env.MOTEURIMMO_STATUS ? JSON.parse(process.env.MOTEURIMMO_STATUS) : null;
   const dateField = process.env.MOTEURIMMO_DATE_FIELD || null; // e.g. 'publicationDate' or 'creationDate'
   const dateFrom = process.env.MOTEURIMMO_DATE_FROM || null;
   const dateTo = process.env.MOTEURIMMO_DATE_TO || null;
+
+  function applyDateFilter(body, field, from, to) {
+    if (!field) return;
+    if (from) body[`${field}After`] = from;
+    if (to) body[`${field}Before`] = to;
+  }
 
   await mongoose.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true });
   console.log('Connected to DB');
@@ -40,13 +47,11 @@ async function main() {
     };
     if (minPrice !== null) body.minPrice = minPrice;
     if (maxPrice !== null) body.maxPrice = maxPrice;
+    if (radius !== null) body.radius = radius;
     if (status) body.status = status;
     if (categories) body.categories = categories;
-    // date filters: if a date field is provided, add From/To suffixes
-    if (dateField) {
-      if (dateFrom) body[`${dateField}From`] = dateFrom;
-      if (dateTo) body[`${dateField}To`] = dateTo;
-    }
+    // date filters: use documented Before/After suffixes for the selected date field
+    applyDateFilter(body, dateField, dateFrom, dateTo);
     console.log(`Fetching page ${page} (maxLength=${pageSize})`);
     let res;
     try {

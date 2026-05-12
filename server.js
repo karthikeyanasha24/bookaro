@@ -5,36 +5,31 @@ var bcrypt = require("bcrypt");
 const agenda = require('./app/config/agenda.config.js');
 
 const app = express();
-app.use(cors());
-// app.use(
-//   cors({
-//     origin: "*",
-//     allowedHeaders: [
-//       "Origin",
-//       "X-Requested-With",
-//       "Content-Type",
-//       "Accept",
-//       "Authorization",
-//       "Access-Control-Allow-Origin"
-//     ],
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//     credentials: false, // Set to false since credentials aren't allowed with origin: '*'
-//     optionsSuccessStatus: 204
-//   })
-// );
-
-// app.options("*", cors());
+// CORS is configured below with credentials support for local frontend dev.
 
 
 const corsOptions = {
-  origin: true, // frontend URL here
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://127.0.0.1:8089',
+      'http://localhost:8089',
+      'http://127.0.0.1:3000',
+      'http://localhost:3000',
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  exposedHeaders: ['Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
 app.options('*', cors(corsOptions)); // for preflight support
 
 // ── Stripe Webhook (doit être AVANT express.json pour avoir le raw body) ────
@@ -81,13 +76,23 @@ db.mongoose
   .then(async () => {
     console.log("Connected to the database!");
 
-
-    //load all jobs
-    const agenda = require("./app/config/agenda.config");
-    require("./app/jobs/agenda.jobs")(agenda, db);
-
-    await agenda.start();
-    console.log("Agenda started and jobs loaded.");
+    // load and start Agenda jobs if possible; protect against Agenda failures
+    try {
+      const agenda = require("./app/config/agenda.config");
+      try {
+        require("./app/jobs/agenda.jobs")(agenda, db);
+      } catch (e) {
+        console.error('Failed to load agenda jobs:', e);
+      }
+      try {
+        await agenda.start();
+        console.log("Agenda started and jobs loaded.");
+      } catch (e) {
+        console.error('Agenda failed to start, continuing without scheduled jobs:', e);
+      }
+    } catch (e) {
+      console.error('Agenda configuration not available, skipping job scheduler:', e);
+    }
   })
   .catch((err) => {
     console.log("Cannot connect to the database!", err);

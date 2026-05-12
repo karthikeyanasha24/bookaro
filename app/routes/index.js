@@ -35,6 +35,7 @@ router.use("/payment", require("./payment.routes"));
 router.use("/subscription", require("./subscription.routes"));
 router.use("/cards", require("./cards.routes"));
 router.use("/interests", require("./interests.routes"));
+router.use("/onboarding", require("./onboarding.routes"));
 router.use("/reviews", require("./reviews.routes"));
 router.use("/buildingPermits", require("./buildingPermit.routes"))
 router.use("/draft", require("./draftProperty.routes.js"))
@@ -51,6 +52,8 @@ router.use("/agencyReviews",require("./agencyReviews.routes.js"));
 router.use("/adminSettings",require("./adminSettings.routes.js"));
 router.use("/support",require("./support.routes.js"));
 router.use("/adminDashboard", require("./adminDashboard.routes.js"));
+router.use("/dashboard", require("./frontendDashboard.routes.js"));
+router.use("/api/dashboard", require("./frontendDashboard.routes.js"));
 
 // ── Marketplace de services ────────────────────────────────────────────────
 router.use("/marketplace", require("../modules/services-marketplace/routes/public"));

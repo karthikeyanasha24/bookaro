@@ -62,6 +62,21 @@ module.exports = (mongoose) => {
       coverImage: String,
       website: String,
       tagline: String,
+      // signup objective provided during account creation (normalized values)
+      signupObjective: {
+        type: String,
+        enum: [
+          "Acheter",
+          "Louer",
+          "Planifier mon projet",
+          "Opportunités hors marché",
+          "Vendre ma propriété",
+          "Louer ma propriété",
+          "Évaluer ma propriété",
+          "Préparer une vente future"
+        ],
+        default: null,
+      },
       about: String,
       companyContactNumber: String,
       companyEmail: String,

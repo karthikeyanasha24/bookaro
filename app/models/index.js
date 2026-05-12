@@ -59,6 +59,7 @@ db.tags = require("./tags.model.js")(mongoose)
 db.contactTeam = require("./contactTeam.model.js")(mongoose)
 db.peerEstimation = require("./peerEstimation.model.js")(mongoose)
 db.peerCampaign = require("./peerCampaign.model.js")(mongoose)
+db.onboarding = require("./onboarding.model.js")(mongoose);
 db.campaignRefPrice = require("./campaignRefPrice.model.js")(mongoose)
 db.campaignPayments = require("./campaignPayments.model.js")(mongoose)
 db.recentLogs = require("./recentLogs.model.js")(mongoose)

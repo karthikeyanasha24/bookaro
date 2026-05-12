@@ -18,6 +18,17 @@ function generateOTP() {
   }
   return OTP;
 }
+// Allowed signup objectives (used to validate incoming signup payloads)
+const ALLOWED_SIGNUP_OBJECTIVES = [
+  "Acheter",
+  "Louer",
+  "Planifier mon projet",
+  "Opportunités hors marché",
+  "Vendre ma propriété",
+  "Louer ma propriété",
+  "Évaluer ma propriété",
+  "Préparer une vente future",
+];
 module.exports = {
   adminLogin: async (req, res) => {
     try {
@@ -1880,7 +1891,13 @@ module.exports = {
     var date = new Date();
     try {
       const data = req.body;
-      data.email = data.email.toLowerCase();
+        data.email = data.email.toLowerCase();
+        // sanitize signupObjective: only keep allowed values, remove otherwise
+        if (req.body.signupObjective && ALLOWED_SIGNUP_OBJECTIVES.includes(req.body.signupObjective)) {
+          data.signupObjective = req.body.signupObjective;
+        } else if (data.signupObjective) {
+          delete data.signupObjective;
+        }
 
       if (!req.body.email) {
         return res.status(400).json({
@@ -2973,6 +2990,12 @@ module.exports = {
       data.updatedAt = new Date();
       data.isDeleted = false;
       data.email = data.email.toLowerCase();
+      // sanitize signupObjective: only keep allowed values, remove otherwise
+      if (req.body.signupObjective && ALLOWED_SIGNUP_OBJECTIVES.includes(req.body.signupObjective)) {
+        data.signupObjective = req.body.signupObjective;
+      } else if (data.signupObjective) {
+        delete data.signupObjective;
+      }
       const otp = await generateOTP();
       data.otp = otp;
 
