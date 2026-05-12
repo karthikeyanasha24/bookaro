@@ -53,7 +53,7 @@ function App() {
     if (process.env.NODE_ENV === 'production') return;
     let observer: MutationObserver | null = null;
     try {
-      const targets = [
+      const selectors = [
         '.sidebar-wrapper',
         '.main-sidebar',
         '.main-navbar',
@@ -61,22 +61,39 @@ function App() {
         'header',
         '.page-content-wrapper'
       ];
-      const nodes: Element[] = targets.flatMap((sel) => Array.from(document.querySelectorAll(sel)));
-      if (nodes.length === 0) return;
+      console.log('[DOM-MUTATION INIT] attaching global observer');
       observer = new MutationObserver((mutations: MutationRecord[]) => {
         mutations.forEach((m: MutationRecord) => {
+          const target = m.target as Element;
+          // If target or any ancestor matches our selectors, log it
+          const matchesSelector = (el: Element | null) => {
+            if (!el) return false;
+            return selectors.some(sel => {
+              try { return (el as Element).matches(sel) || (el.closest && el.closest(sel) != null); } catch (e) { return false; }
+            });
+          };
+
           if (m.type === 'attributes' && m.attributeName === 'class') {
-            const el = m.target as Element;
-            const className = (el as HTMLElement).className;
-            console.log('[DOM-MUTATION] class change:', el, 'new=', className);
+            if (matchesSelector(target) || matchesSelector(target.parentElement)) {
+              const className = (target as HTMLElement).className || '';
+              console.log('[DOM-MUTATION] class change:', target, 'new=', className);
+            }
           }
           if (m.type === 'childList') {
-            if (m.addedNodes.length) console.log('[DOM-MUTATION] nodes added to', m.target, m.addedNodes);
-            if (m.removedNodes.length) console.log('[DOM-MUTATION] nodes removed from', m.target, m.removedNodes);
+            if (m.addedNodes.length) {
+              Array.from(m.addedNodes).forEach(n => {
+                if (n.nodeType === 1 && matchesSelector(n as Element)) console.log('[DOM-MUTATION] node added', n);
+              });
+            }
+            if (m.removedNodes.length) {
+              Array.from(m.removedNodes).forEach(n => {
+                if (n.nodeType === 1 && matchesSelector(n as Element)) console.log('[DOM-MUTATION] node removed', n);
+              });
+            }
           }
         });
       });
-      nodes.forEach((n) => observer!.observe(n, { attributes: true, childList: true, subtree: true }));
+      observer.observe(document.body, { attributes: true, childList: true, subtree: true });
     } catch (e) {
       // ignore
     }
