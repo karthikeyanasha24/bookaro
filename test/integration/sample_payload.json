@@ -1,0 +1,18 @@
+[
+  {
+    "uniqueId": "test-sample-1",
+    "title": "Test Listing 1",
+    "description": "A sample listing used for integration tests",
+    "price": 123456,
+    "surface": 75,
+    "rooms": 3,
+    "latitude": 48.8566,
+    "longitude": 2.3522,
+    "pictureUrls": [],
+    "origin": "test",
+    "adId": "test-1",
+    "url": "https://example.com/listing/test-1",
+    "status": "available",
+    "creationDate": "2026-05-01T00:00:00Z"
+  }
+]

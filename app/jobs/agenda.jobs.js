@@ -61,6 +61,13 @@ module.exports = (agenda, db) => {
       console.error("Error expiring the active campaign:", err);
     }
   });
+
+  // MoteurImmo sync job
+  try {
+    require("../../cron/moteurimmo.cron.js")(agenda);
+  } catch (err) {
+    console.error('Error loading moteurimmo cron:', err);
+  }
   //// agenda to delete the unused records
   //   agenda.define("cleanup-agenda-jobs", async () => {
   //   try {
