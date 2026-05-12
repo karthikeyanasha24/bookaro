@@ -62,10 +62,26 @@ function App() {
         '.page-content-wrapper'
       ];
       console.log('[DOM-MUTATION INIT] attaching global observer');
+      let stableTimer: number | null = null;
+      const setStable = () => {
+        try { document.body.classList.add('is-stable'); } catch (e) {}
+      };
+      const clearStable = () => {
+        try { document.body.classList.remove('is-stable'); } catch (e) {}
+      };
+
+      const scheduleStable = () => {
+        if (stableTimer) window.clearTimeout(stableTimer);
+        clearStable();
+        stableTimer = window.setTimeout(() => {
+          setStable();
+          stableTimer = null;
+        }, 200);
+      };
+
       observer = new MutationObserver((mutations: MutationRecord[]) => {
         mutations.forEach((m: MutationRecord) => {
           const target = m.target as Element;
-          // If target or any ancestor matches our selectors, log it
           const matchesSelector = (el: Element | null) => {
             if (!el) return false;
             return selectors.some(sel => {
@@ -77,19 +93,28 @@ function App() {
             if (matchesSelector(target) || matchesSelector(target.parentElement)) {
               const className = (target as HTMLElement).className || '';
               console.log('[DOM-MUTATION] class change:', target, 'new=', className);
+              scheduleStable();
             }
           }
           if (m.type === 'childList') {
+            let relevant = false;
             if (m.addedNodes.length) {
               Array.from(m.addedNodes).forEach(n => {
-                if (n.nodeType === 1 && matchesSelector(n as Element)) console.log('[DOM-MUTATION] node added', n);
+                if (n.nodeType === 1 && matchesSelector(n as Element)) {
+                  console.log('[DOM-MUTATION] node added', n);
+                  relevant = true;
+                }
               });
             }
             if (m.removedNodes.length) {
               Array.from(m.removedNodes).forEach(n => {
-                if (n.nodeType === 1 && matchesSelector(n as Element)) console.log('[DOM-MUTATION] node removed', n);
+                if (n.nodeType === 1 && matchesSelector(n as Element)) {
+                  console.log('[DOM-MUTATION] node removed', n);
+                  relevant = true;
+                }
               });
             }
+            if (relevant) scheduleStable();
           }
         });
       });
