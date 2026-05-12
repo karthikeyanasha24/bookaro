@@ -27,20 +27,12 @@ header {
 }
 
 /* Show structural elements only after app mount AND store rehydration */
-body.is-mounted.is-rehydrated .main-sidebar,
-body.is-mounted.is-rehydrated .main-navbar,
-body.is-mounted.is-rehydrated .sidebar-wrapper,
-body.is-mounted.is-rehydrated .App-header,
-body.is-mounted.is-rehydrated header {
+body.is-mounted.is-rehydrated.is-stable .main-sidebar,
+body.is-mounted.is-rehydrated.is-stable .main-navbar,
+body.is-mounted.is-rehydrated.is-stable .sidebar-wrapper,
+body.is-mounted.is-rehydrated.is-stable .App-header,
+body.is-mounted.is-rehydrated.is-stable header {
   visibility: visible !important;
-}
-
-/* Also disable transitions/animations for header/sidebar to prevent flicker */
-body.is-mounted.is-rehydrated .main-sidebar,
-body.is-mounted.is-rehydrated .main-navbar,
-body.is-mounted.is-rehydrated .sidebar-wrapper,
-body.is-mounted.is-rehydrated .App-header,
-body.is-mounted.is-rehydrated header {
   transition: none !important;
   animation: none !important;
 }
