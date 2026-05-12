@@ -1,10 +1,9 @@
 /**
- * Onboarding API — single seam between frontend and backend.
+ * Onboarding API — seam between frontend and backend.
  *
- * TODAY  : all methods are mocked with localStorage (simulates server-side persistence).
- * FUTURE : replace each method body with the corresponding ApiClient call.
- *          No other file needs to change — the hook, components and trigger helpers
- *          all depend only on this module.
+ * This module calls the backend onboarding endpoints via `ApiClient` and
+ * keeps a small localStorage fallback for offline/mock usage. The backend
+ * is the source of truth for onboarding state.
  *
  * Backend contract (draft):
  *   GET  /onboarding/state           → OnboardingStateDTO
@@ -23,6 +22,7 @@ import {
   OnboardingEventType,
   Profile,
 } from './onboarding.types';
+import ApiClient from '../../methods/api/apiClient';
 
 // ---------------------------------------------------------------------------
 // DTO — mirrors the backend response shape
@@ -35,7 +35,7 @@ export interface OnboardingStateDTO {
 }
 
 // ---------------------------------------------------------------------------
-// Event → action(s) mapping (mock backend logic — will live server-side)
+// Event → action(s) mapping used only by the mock fallback
 // ---------------------------------------------------------------------------
 
 const EVENT_TO_ACTIONS: Record<OnboardingEventType, ActionId[]> = {
@@ -58,7 +58,7 @@ const EVENT_TO_ACTIONS: Record<OnboardingEventType, ActionId[]> = {
 };
 
 // ---------------------------------------------------------------------------
-// Mock persistence (localStorage — simulates server-side storage)
+// Mock persistence (localStorage) — used as an offline fallback only
 // ---------------------------------------------------------------------------
 
 const STORAGE_KEY = 'anyhomes_onboarding';
@@ -68,6 +68,11 @@ const DEFAULT_STATE: OnboardingStateDTO = {
   objective: 'sell',
   completions: {},
 };
+
+// TODO (PROD): Remove the localStorage fallback below before shipping to
+// production. It exists to support demos and offline development; the backend
+// is the single source of truth for onboarding state and should be relied on
+// in production builds.
 
 function readMockState(): OnboardingStateDTO {
   try {
@@ -90,24 +95,44 @@ function writeMockState(state: OnboardingStateDTO): void {
 export const onboardingApi = {
   /** GET /onboarding/state */
   getState: (): Promise<OnboardingStateDTO> => {
-    // TODO: return ApiClient.get('onboarding/state');
-    return Promise.resolve(readMockState());
+    return ApiClient.get('/onboarding/state').then((res) => {
+      if (res && res.success && res.data) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(res.data)); } catch {}
+        return res.data as OnboardingStateDTO;
+      }
+      return readMockState();
+    }).catch(() => readMockState());
   },
 
   /** PUT /onboarding/profile */
   updateProfile: (profile: Profile, objective: Objective): Promise<void> => {
-    // TODO: return ApiClient.put('onboarding/profile', { profile, objective });
-    const state = readMockState();
-    writeMockState({ ...state, profile, objective });
-    return Promise.resolve();
+    return ApiClient.put('/onboarding/profile', { profile, objective }).then((res) => {
+      if (res && res.success) {
+        try {
+          const state = readMockState();
+          const next = { ...state, profile, objective };
+          writeMockState(next);
+        } catch {}
+      }
+    }).catch(() => {
+      const state = readMockState();
+      writeMockState({ ...state, profile, objective });
+    });
   },
 
   /** PUT /onboarding/objective */
   updateObjective: (objective: Objective): Promise<void> => {
-    // TODO: return ApiClient.put('onboarding/objective', { objective });
-    const state = readMockState();
-    writeMockState({ ...state, objective });
-    return Promise.resolve();
+    return ApiClient.put('/onboarding/objective', { objective }).then((res) => {
+      if (res && res.success) {
+        try {
+          const state = readMockState();
+          writeMockState({ ...state, objective });
+        } catch {}
+      }
+    }).catch(() => {
+      const state = readMockState();
+      writeMockState({ ...state, objective });
+    });
   },
 
   /**
@@ -116,13 +141,24 @@ export const onboardingApi = {
    * The frontend never computes completion.
    */
   sendEvent: (eventType: OnboardingEventType): Promise<void> => {
-    // TODO: return ApiClient.post('onboarding/event', { eventType });
-    const state = readMockState();
-    const toComplete = EVENT_TO_ACTIONS[eventType] ?? [];
-    const completions = { ...state.completions };
-    toComplete.forEach((id) => { completions[id] = 'done'; });
-    writeMockState({ ...state, completions });
-    return Promise.resolve();
+    return ApiClient.post('/onboarding/event', { eventType }).then((res) => {
+      if (res && res.success) {
+        return onboardingApi.getState().then(() => {});
+      }
+      const state = readMockState();
+      const toComplete = EVENT_TO_ACTIONS[eventType] ?? [];
+      const completions = { ...state.completions };
+      toComplete.forEach((id) => { completions[id] = 'done'; });
+      writeMockState({ ...state, completions });
+      return Promise.resolve();
+    }).catch(() => {
+      const state = readMockState();
+      const toComplete = EVENT_TO_ACTIONS[eventType] ?? [];
+      const completions = { ...state.completions };
+      toComplete.forEach((id) => { completions[id] = 'done'; });
+      writeMockState({ ...state, completions });
+      return Promise.resolve();
+    });
   },
 };
 
