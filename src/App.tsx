@@ -61,6 +61,8 @@ function App() {
         'header',
         '.page-content-wrapper'
       ];
+      // Elements/areas to ignore (Leaflet map tiles and panes cause many mutations)
+      const ignoreSelectors = ['.leaflet-container', '.leaflet-tile', '.leaflet-pane', '.leaflet-tile-container'];
       console.log('[DOM-MUTATION INIT] attaching global observer');
       let stableTimer: number | null = null;
       const setStable = () => {
@@ -83,11 +85,17 @@ function App() {
         mutations.forEach((m: MutationRecord) => {
           const target = m.target as Element;
           const matchesSelector = (el: Element | null) => {
-            if (!el) return false;
-            return selectors.some(sel => {
-              try { return (el as Element).matches(sel) || (el.closest && el.closest(sel) != null); } catch (e) { return false; }
-            });
-          };
+                if (!el) return false;
+                try {
+                  // ignore mutations originating inside ignored selectors
+                  for (const ign of ignoreSelectors) {
+                    if (el.closest && el.closest(ign)) return false;
+                  }
+                } catch (e) {}
+                return selectors.some(sel => {
+                  try { return (el as Element).matches(sel) || (el.closest && el.closest(sel) != null); } catch (e) { return false; }
+                });
+              };
 
           if (m.type === 'attributes' && m.attributeName === 'class') {
             if (matchesSelector(target) || matchesSelector(target.parentElement)) {
@@ -100,17 +108,30 @@ function App() {
             let relevant = false;
             if (m.addedNodes.length) {
               Array.from(m.addedNodes).forEach(n => {
-                if (n.nodeType === 1 && matchesSelector(n as Element)) {
-                  console.log('[DOM-MUTATION] node added', n);
-                  relevant = true;
+                if (n.nodeType === 1) {
+                  const el = n as Element;
+                  // ignore nodes inside ignored selectors
+                  let ignored = false;
+                  try { for (const ign of ignoreSelectors) { if (el.closest && el.closest(ign)) { ignored = true; break; } } } catch (e) {}
+                  if (ignored) return;
+                  if (matchesSelector(el)) {
+                    console.log('[DOM-MUTATION] node added', n);
+                    relevant = true;
+                  }
                 }
               });
             }
             if (m.removedNodes.length) {
               Array.from(m.removedNodes).forEach(n => {
-                if (n.nodeType === 1 && matchesSelector(n as Element)) {
-                  console.log('[DOM-MUTATION] node removed', n);
-                  relevant = true;
+                if (n.nodeType === 1) {
+                  const el = n as Element;
+                  let ignored = false;
+                  try { for (const ign of ignoreSelectors) { if (el.closest && el.closest(ign)) { ignored = true; break; } } } catch (e) {}
+                  if (ignored) return;
+                  if (matchesSelector(el)) {
+                    console.log('[DOM-MUTATION] node removed', n);
+                    relevant = true;
+                  }
                 }
               });
             }
