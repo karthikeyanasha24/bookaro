@@ -46,6 +46,41 @@ function App() {
       } catch (e) {}
     };
   }, []);
+
+  // Dev helper: observe DOM mutations (classes/attributes/children) to
+  // detect which elements change during mount/hydration and cause flicker.
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+    let observer;
+    try {
+      const targets = [
+        '.sidebar-wrapper',
+        '.main-sidebar',
+        '.main-navbar',
+        '.App-header',
+        'header',
+        '.page-content-wrapper'
+      ];
+      const nodes = targets.map(sel => Array.from(document.querySelectorAll(sel))).flat();
+      if (nodes.length === 0) return;
+      observer = new MutationObserver((mutations) => {
+        mutations.forEach(m => {
+          if (m.type === 'attributes' && m.attributeName === 'class') {
+            const el = m.target;
+            console.log('[DOM-MUTATION] class change:', el, 'new=', el.className);
+          }
+          if (m.type === 'childList') {
+            if (m.addedNodes.length) console.log('[DOM-MUTATION] nodes added to', m.target, m.addedNodes);
+            if (m.removedNodes.length) console.log('[DOM-MUTATION] nodes removed from', m.target, m.removedNodes);
+          }
+        });
+      });
+      nodes.forEach(n => observer.observe(n, { attributes: true, childList: true, subtree: true }));
+    } catch (e) {
+      // ignore
+    }
+    return () => { if (observer) observer.disconnect(); };
+  }, []);
   // const { t } = useTranslation();
   const routes = [
     { url: "*", path: "NotFoundPage" }, // Not Found Page
