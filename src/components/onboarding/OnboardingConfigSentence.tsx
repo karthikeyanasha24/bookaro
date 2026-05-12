@@ -34,7 +34,7 @@ const OnboardingConfigSentence: React.FC<Props> = ({
   const isOwner = profile === 'owner';
 
   return (
-    <div className="flex flex-wrap items-center gap-y-2 text-[14px] text-[#47525E] mb-6 leading-relaxed">
+    <div className="flex flex-wrap items-center gap-y-2 text-[14px] text-[#47525E] mt-12 mb-12 leading-relaxed">
       <span className="mr-1">Vous êtes :</span>
 
       <Pill
