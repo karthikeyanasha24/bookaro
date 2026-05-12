@@ -16,14 +16,7 @@ root.render(
   </React.StrictMode>
 );
 
-// Activate UI transitions after first render to avoid initial flash
-setTimeout(() => {
-  try {
-    document.body.classList.add('is-mounted');
-  } catch (e) {
-    // ignore server-side / test environments
-  }
-}, 50);
+// UI mount class is now set by App on mount to avoid races
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

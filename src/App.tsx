@@ -27,6 +27,17 @@ const PageRouter = ({ children }: any) => {
 };
 
 function App() {
+  // Add `is-mounted` to body as soon as App mounts to enable guarded transitions
+  useEffect(() => {
+    try {
+      document.body.classList.add('is-mounted');
+    } catch (e) {}
+    return () => {
+      try {
+        document.body.classList.remove('is-mounted');
+      } catch (e) {}
+    };
+  }, []);
   // const { t } = useTranslation();
   const routes = [
     { url: "*", path: "NotFoundPage" }, // Not Found Page
