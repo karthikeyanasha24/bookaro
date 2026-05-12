@@ -2051,9 +2051,37 @@ input[type="number"] {
 }
 
 .google_address {
-  .css-b62m3t-container {
-    width: 100%;
-  }
+  width: 100%;
+}
+.google_address input {
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 12px 14px !important;
+  border: 1px solid #dfe4ec !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  color: #47525e !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
+.google_address input::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+  white-space: normal !important;
+}
+.google_address .css-166bipr-Input,
+.google_address .css-1jqq78o-placeholder,
+.google_address .css-1v8wx0q-control {
+  width: 100% !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
+.google_address input:focus,
+.google_address .css-2grruz-control:focus {
+  outline: none !important;
+  border-color: #976dd0 !important;
+  box-shadow: 0 0 0 4px rgba(151, 109, 208, 0.12) !important;
 }
 
 .home_search .css-2grruz-control {

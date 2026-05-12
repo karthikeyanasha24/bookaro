@@ -37,7 +37,7 @@ function loadGoogleMaps(apiKey) {
  * - onSelect : ({ city, postalCode, formatted, lat, lng }) => void (lors d'une sélection)
  * - placeholder, className, id
  */
-export default function CityAutocomplete({ value = '', onChange, onSelect, placeholder = 'Ville ou code postal', className = '', id }) {
+export default function CityAutocomplete({ value = '', onChange, onSelect, placeholder = 'Ville ou code postal', className = '', id, disabled = false }) {
   const inputRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [predictions, setPredictions] = useState([]);
@@ -122,6 +122,7 @@ export default function CityAutocomplete({ value = '', onChange, onSelect, place
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         placeholder={placeholder}
         className={className}
+        disabled={disabled}
       />
       {open && predictions.length > 0 && (
         <div className="absolute left-0 top-full mt-1 z-50 bg-white rounded-lg border border-gray-200 shadow-lg w-full max-w-[320px] max-h-[220px] overflow-y-auto">

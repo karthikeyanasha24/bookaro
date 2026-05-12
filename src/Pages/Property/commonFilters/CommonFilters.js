@@ -757,16 +757,20 @@ const CommonFilter = ({
                     className="relative z-[9999]"
                   >
                     <DialogBackdrop className="fixed inset-0 bg-black/30" />
-                    <div className="fixed inset-0 flex w-screen items-center justify-center">
-                      <DialogPanel className="max-w-md w-full bg-white rounded-[20px]">
+                    <div className="fixed inset-0 flex w-screen items-center justify-center px-4">
+                      <DialogPanel className="max-w-xl w-full bg-white rounded-[20px]">
                         <DialogTitle className="p-6">
                           <p className="border-b text-[#389D93] text-[18px] text-center pb-4">
                             {t("filtersCommon.whereAreYouLooking")}
                           </p>
-                          <div className="pt-10 flex items-center google_address">
+                          <div className="pt-10 google_address">
+                            <label htmlFor="address" className="mb-2 block text-sm font-medium text-[#47525E]">
+                              {t("filtersCommon.location")}
+                            </label>
                             <GooglePlaceAutoComplete
                               key={inputKey}
                               value={currentLocation}
+                              onChange={setCurrentLocation}
                               result={addressResult}
                               placeholder={t("filtersCommon.enterLocationSearch")}
                               id="address"
@@ -1849,14 +1853,17 @@ const CommonFilter = ({
                     onClose={() => setIsOpen7(false)}
                     className="relative z-[9999]"
                   >
-                    <DialogBackdrop className="fixed inset-0 bg-[#976DD0]/70" />
-                    <div className="fixed inset-0 flex w-screen items-start justify-start h-screen ">
-                      <DialogPanel className="max-w-md w-full  bg-white rounded-tr-[20px] rounded-br-[20px] h-full">
-                        <DialogTitle className=" p-6 h-[90%] ">
-                          <p className="border-b  text-[#389D93] text-[18px] text-center pb-4 h-[7%]">
-                            {t("filtersCommon.moreCriteria")}
-                          </p>
-                          <div className="h-[93%] overflow-auto">
+                    <DialogBackdrop className="fixed inset-0 bg-black/50" />
+                    <div className="fixed inset-0 flex w-screen items-center justify-center px-4">
+                      <DialogPanel className="max-w-md w-full max-h-[45vh] bg-white rounded-[20px] overflow-hidden flex flex-col">
+                        <div className="p-6 border-b">
+                          <DialogTitle>
+                            <p className="text-[#389D93] text-[18px] text-center pb-4">
+                              {t("filtersCommon.moreCriteria")}
+                            </p>
+                          </DialogTitle>
+                        </div>
+                        <div className="flex-1 min-h-0 overflow-auto pt-4 px-6">
                             <ul className="py-4">
                               <li>
                                 <h4 className="text-black font-[600] text-[16px] mb-4">
@@ -2964,12 +2971,11 @@ const CommonFilter = ({
                                               </p>
                                             </div>
                                             <div className="flex">
-                                              <p
-                                                className={`w-[${option.size}] h-[28px] bg-[${option.color}] rounded-tl-[4px] rounded-bl-[4px] rounded-br-[1px] rounded-tr-[1px] block ms-3`}
-                                              ></p>
-                                              <p
-                                                className={`traingle_shape${i}`}
-                                              ></p>
+                                              <div
+                                                className="h-[28px] rounded-tl-[4px] rounded-bl-[4px] rounded-br-[1px] rounded-tr-[1px] block ms-3"
+                                                style={{ width: option.size, backgroundColor: option.color }}
+                                              />
+                                              <p className={`traingle_shape${i}`} />
                                             </div>
                                           </div>
                                         </div>
@@ -2983,8 +2989,7 @@ const CommonFilter = ({
                               </li>
                             </ul>
                           </div>
-                        </DialogTitle>
-                        <div className="flex  border-t p-4 justify-between h-[10%]">
+                        <div className="flex border-t p-4 justify-between shrink-0 bg-white">
                           <button
                             onClick={() => setIsOpen7(false)}
                             className="text-[#868389] text-[18px] underline"

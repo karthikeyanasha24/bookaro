@@ -161,7 +161,7 @@ const Html = ({
         <div className="menu-section">
           <MenuItem icon={FaRocket} label={t('navigation.onboarding')} url="/onboarding" isCollapsed={!isOpen} />
           <MenuItem icon={MdDashboard} label={t('navigation.dashboard')} url="/dashboard" isCollapsed={!isOpen} />
-          <MenuItem icon={MdSearch} label={t('navigation.searchProperties')} url="/properties?search=true" isCollapsed={!isOpen} />
+          <MenuItem icon={MdSearch} label={t('navigation.searchProperties')} url="/properties" isCollapsed={!isOpen} />
           <MenuItem icon={MdEmail} label={t('navigation.messages')} url="/chat" isCollapsed={!isOpen} />
         </div>
 
