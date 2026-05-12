@@ -203,7 +203,9 @@ function App() {
             </Router>
           </Suspense>
         ) : (
-          <PersistGate loading={"loading ..."} persistor={persistor}>
+          <PersistGate loading={"loading ..."} persistor={persistor} onBeforeLift={() => {
+            try { document.body.classList.add('is-rehydrated'); } catch (e) {}
+          }}>
             <Suspense
               fallback={
                 <div id="loader" className="loaderDiv">

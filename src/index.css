@@ -16,13 +16,23 @@ body:not(.is-mounted) *::after {
   animation: none !important;
 }
 
-/* Hide major structural elements until React mounts to avoid layout flashes */
-body:not(.is-mounted) .main-sidebar,
-body:not(.is-mounted) .main-navbar,
-body:not(.is-mounted) .sidebar-wrapper,
-body:not(.is-mounted) .App-header,
-body:not(.is-mounted) header {
+/* Hide major structural elements by default to avoid layout flashes.
+   They will be shown only when React has mounted and the store has been rehydrated. */
+.main-sidebar,
+.main-navbar,
+.sidebar-wrapper,
+.App-header,
+header {
   visibility: hidden !important;
+}
+
+/* Show structural elements only after app mount AND store rehydration */
+body.is-mounted.is-rehydrated .main-sidebar,
+body.is-mounted.is-rehydrated .main-navbar,
+body.is-mounted.is-rehydrated .sidebar-wrapper,
+body.is-mounted.is-rehydrated .App-header,
+body.is-mounted.is-rehydrated header {
+  visibility: visible !important;
 }
 
 code {
