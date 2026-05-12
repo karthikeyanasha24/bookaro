@@ -31,10 +31,18 @@ function App() {
   useEffect(() => {
     try {
       document.body.classList.add('is-mounted');
+      // In debug/mock mode there is no PersistGate rehydration step,
+      // so mark the store as rehydrated immediately so UI is visible.
+      if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+        try { document.body.classList.add('is-rehydrated'); } catch (e) {}
+      }
     } catch (e) {}
     return () => {
       try {
         document.body.classList.remove('is-mounted');
+        if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+          try { document.body.classList.remove('is-rehydrated'); } catch (e) {}
+        }
       } catch (e) {}
     };
   }, []);
