@@ -45,7 +45,7 @@ const HeroSection = () => {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            to="/signup"
+            to="/onboarding"
             className="inline-flex items-center justify-center bg-white text-black font-medium rounded-full px-7 py-3 transition shadow hover:bg-gray-100"
           >
             Explorer la plateforme
