@@ -71,6 +71,6 @@ db.agencyReviews = require("./agencyReviews.model.js")(mongoose)
 db.adminSettings = require("./adminSettings.model.js")(mongoose)
 db.supports = require("./support.model.js")(mongoose)
 db.claimOwnerships = require("./claimOwnerships.model.js")(mongoose)
-
+db.dashboardPreferences = require("./dashboardPreferences.model.js")(mongoose)
 
 module.exports = db;
