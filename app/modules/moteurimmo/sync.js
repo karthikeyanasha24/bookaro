@@ -117,17 +117,71 @@ function buildPropertyPayload(dto, userId) {
     address: dto.address || null,
     zipcode: dto.zipcode || null,
     city: dto.city || null,
+    state: dto.state || undefined,
     country: dto.country || 'France',
     newlocation: dto.position || (dto.location && Array.isArray(dto.location.coordinates) ? { type: 'Point', coordinates: [Number(dto.location.coordinates[0]) || 0, Number(dto.location.coordinates[1]) || 0] } : { type: 'Point', coordinates: [0, 0] }),
+    location: dto.location || undefined,
+    email: dto.email || undefined,
     images: [],
+    featured: dto.featured === true,
+    agency: dto.agency || undefined,
     propertyType,
     type: propertyKind,
     status: inferPropertyStatus(dto.listingStatus),
-    isDeleted: false,
-    importBy: 'platform',
-    addedBy: userId,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    addedBy: dto.addedBy || userId,
+    importBy: dto.importBy || 'platform',
+    isDeleted: dto.isDeleted === true,
+    offMarket: dto.offMarket === true,
+    chooseDocumentGrade: dto.chooseDocumentGrade || undefined,
+    isChoosedDocumentVerified: dto.isChoosedDocumentVerified === true,
+    isChoosedDeclDocumentVerified: dto.isChoosedDeclDocumentVerified === true,
+    maximumLead: dto.maximumLead || undefined,
+    dateOfDiagnosis: dto.dateOfDiagnosis || undefined,
+    diagnosisType: dto.diagnosisType || undefined,
+    energyConsumption: dto.energyConsumption || undefined,
+    energy_efficient: dto.energy_efficient || undefined,
+    emission_efficient: dto.emission_efficient || undefined,
+    emissions: dto.emissions || undefined,
+    diagnosisDate: dto.diagnosisDate || undefined,
+    contact: dto.contact === true,
+    transparency: dto.transparency === true,
+    username: dto.username || undefined,
+    phoneNumber: dto.phoneNumber || undefined,
+    usedAs: dto.usedAs || undefined,
+    propertyAgencyFees: dto.propertyAgencyFees != null ? Number(dto.propertyAgencyFees) : undefined,
+    sale_my_property: dto.sale_my_property === true,
+    real_estate_market: dto.real_estate_market === true,
+    add_more_step: dto.add_more_step === true,
+    revenue_detail: Array.isArray(dto.revenue_detail) ? dto.revenue_detail : undefined,
+    renovation_work: Array.isArray(dto.renovation_work) ? dto.renovation_work : undefined,
+    rating: Array.isArray(dto.rating) ? dto.rating : undefined,
+    Expenses: Array.isArray(dto.Expenses) ? dto.Expenses : undefined,
+    searchType: dto.searchType || undefined,
+    proposal: dto.proposal || undefined,
+    favoriteCount: dto.favoriteCount != null ? Number(dto.favoriteCount) : undefined,
+    externalUrl: dto.externalUrl || undefined,
+    publisher: dto.publisher || undefined,
+    publisherType: dto.publisherType || undefined,
+    publisherPhone: dto.publisherPhone || undefined,
+    pricePerSquareMeter: dto.pricePerSquareMeter != null ? Number(dto.pricePerSquareMeter) : undefined,
+    priceStats: dto.priceStats || undefined,
+    history: Array.isArray(dto.history) ? dto.history : undefined,
+    landSurface: dto.landSurface != null ? Number(dto.landSurface) : undefined,
+    creationDate: dto.creationDate ? new Date(dto.creationDate) : undefined,
+    publicationDate: dto.publicationDate ? new Date(dto.publicationDate) : undefined,
+    deletionDate: dto.deletionDate ? new Date(dto.deletionDate) : undefined,
+    lastCheckDate: dto.lastCheckDate ? new Date(dto.lastCheckDate) : undefined,
+    lastEventDate: dto.lastEventDate ? new Date(dto.lastEventDate) : undefined,
+    lastChangeDate: dto.lastChangeDate ? new Date(dto.lastChangeDate) : undefined,
+    lastModificationDate: dto.lastModificationDate ? new Date(dto.lastModificationDate) : undefined,
+    lastPriceChangeDate: dto.lastPriceChangeDate ? new Date(dto.lastPriceChangeDate) : undefined,
+    lastPublicationDate: dto.lastPublicationDate ? new Date(dto.lastPublicationDate) : undefined,
+    transactionTypeSource: dto.transactionTypeSource || undefined,
+    inseeCode: dto.inseeCode || undefined,
+    departmentCode: dto.departmentCode || undefined,
+    regionCode: dto.regionCode || undefined,
+    createdAt: dto.createdAt ? new Date(dto.createdAt) : new Date(),
+    updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : new Date(),
     propertyMonthlyCharges: dto.propertyMonthlyCharges != null ? Number(dto.propertyMonthlyCharges) : undefined,
     guaranteeDeposit: dto.guaranteeDeposit != null ? Number(dto.guaranteeDeposit) : undefined,
     propertyInventory: dto.propertyInventory != null ? Number(dto.propertyInventory) : undefined,
@@ -174,7 +228,20 @@ async function upsertListing(raw) {
       if (dto.address && dto.address !== prop.address) updates.address = dto.address;
       if (dto.zipcode && dto.zipcode !== prop.zipcode) updates.zipcode = dto.zipcode;
       if (dto.city && dto.city !== prop.city) updates.city = dto.city;
+      if (dto.state && dto.state !== prop.state) updates.state = dto.state;
       if (dto.country && dto.country !== prop.country) updates.country = dto.country;
+      if (dto.email && dto.email !== prop.email) updates.email = dto.email;
+      if (dto.featured !== undefined && dto.featured !== prop.featured) updates.featured = dto.featured;
+      if (dto.offMarket != null && dto.offMarket !== prop.offMarket) updates.offMarket = dto.offMarket;
+      if (dto.isDeleted != null && dto.isDeleted !== prop.isDeleted) updates.isDeleted = dto.isDeleted;
+      if (dto.propertyMonthlyCharges != null && Number(dto.propertyMonthlyCharges) !== prop.propertyMonthlyCharges) updates.propertyMonthlyCharges = Number(dto.propertyMonthlyCharges);
+      if (dto.propertyCharges != null && Number(dto.propertyCharges) !== prop.propertyCharges) updates.propertyCharges = Number(dto.propertyCharges);
+      if (dto.guaranteeDeposit != null && Number(dto.guaranteeDeposit) !== prop.guaranteeDeposit) updates.guaranteeDeposit = Number(dto.guaranteeDeposit);
+      if (dto.propertyInventory != null && Number(dto.propertyInventory) !== prop.propertyInventory) updates.propertyInventory = Number(dto.propertyInventory);
+      if (dto.externalUrl && dto.externalUrl !== prop.externalUrl) updates.externalUrl = dto.externalUrl;
+      if (dto.favoriteCount != null && Number(dto.favoriteCount) !== prop.favoriteCount) updates.favoriteCount = Number(dto.favoriteCount);
+      if (dto.searchType && dto.searchType !== prop.searchType) updates.searchType = dto.searchType;
+      if (dto.proposal && dto.proposal !== prop.proposal) updates.proposal = dto.proposal;
       if (dto.position) updates.newlocation = dto.position;
       const newType = inferPropertyKind(dto.propertyKind || dto.propertyTitle || dto.origin || dto.listingStatus);
       if (newType && newType !== prop.type) updates.type = newType;

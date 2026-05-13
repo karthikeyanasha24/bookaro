@@ -26,22 +26,26 @@ exports.createProService = async (req, res) => {
     const proId = req.identity && req.identity._id;
     if (!proId) return res.status(401).json({ success: false, message: 'Authentification requise' });
 
-    const { title, description, summary, category, priceTTC, quantity, unitType, city, radiusKm, imageUrls } = req.body;
+    const { title, description, summary, category, priceTTC, quantity, modality, city, radiusKm, delivery_time, imageUrls } = req.body;
 
-    if (!title || !category || !priceTTC || !quantity || !unitType || !city || !radiusKm) {
-      return res.status(400).json({ success: false, message: 'Champs obligatoires manquants : title, category, priceTTC, quantity, unitType, city, radiusKm' });
+    if (!title || !category || priceTTC === undefined || !city || !radiusKm) {
+      return res.status(400).json({ success: false, message: 'Champs obligatoires manquants : title, category, priceTTC, city, radiusKm' });
     }
-    if (!['unit', 'package'].includes(unitType)) {
-      return res.status(400).json({ success: false, message: 'unitType doit être "unit" ou "package"' });
+    if (priceTTC < 0 || radiusKm <= 0) {
+      return res.status(400).json({ success: false, message: 'priceTTC doit être >= 0 et radiusKm > 0' });
     }
-    if (priceTTC <= 0 || quantity <= 0 || radiusKm <= 0) {
-      return res.status(400).json({ success: false, message: 'priceTTC, quantity et radiusKm doivent être > 0' });
+    if (quantity !== undefined && Number(quantity) <= 0) {
+      return res.status(400).json({ success: false, message: 'quantity doit être > 0 si renseignée' });
     }
 
     const service = await ProService.create({
       title, description, summary, category,
       pro: proId,
-      priceTTC, quantity, unitType, city, radiusKm,
+      priceTTC,
+      ...(quantity !== undefined ? { quantity } : {}),
+      modality: modality || 'Présentiel',
+      city, radiusKm,
+      delivery_time: delivery_time || undefined,
       imageUrls: imageUrls || [],
       status: 'draft',
     });
@@ -97,7 +101,7 @@ exports.updateProService = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Seuls les services en brouillon ou inactifs peuvent être modifiés' });
     }
 
-    const allowed = ['title', 'description', 'summary', 'priceTTC', 'quantity', 'unitType', 'city', 'radiusKm', 'imageUrls'];
+    const allowed = ['title', 'description', 'summary', 'priceTTC', 'quantity', 'modality', 'city', 'radiusKm', 'delivery_time', 'imageUrls'];
     allowed.forEach(field => {
       if (req.body[field] !== undefined) service[field] = req.body[field];
     });

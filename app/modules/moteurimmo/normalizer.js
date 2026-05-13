@@ -56,8 +56,9 @@ async function normalizeListing(raw) {
     return dto;
   }
   dto.source = 'moteurimmo';
+  dto.url = raw.url || null;
   dto.sourceId = raw.uniqueId || raw.unique_id || raw.id || raw.adId || null;
-  dto.reference = raw.reference || raw.adId || null;
+  dto.reference = raw.reference || raw.adId || raw.id || null;
 
   // ensure stable sourceId: if missing, hash a stable key (url or origin+adId+reference)
   if (!dto.sourceId) {
@@ -72,11 +73,13 @@ async function normalizeListing(raw) {
   }
 
   dto.propertyTitle = raw.title || raw.headline || '';
+  dto.name = dto.propertyTitle;
   dto.content = raw.description || raw.body || '';
 
-  dto.price = raw.price != null ? Number(raw.price) : (raw.originalPrice != null ? Number(raw.originalPrice) : null);
+  dto.price = raw.price != null ? Number(raw.price) : (raw.rent != null ? Number(raw.rent) : (raw.originalPrice != null ? Number(raw.originalPrice) : null));
   dto.originalPrice = raw.originalPrice != null ? Number(raw.originalPrice) : null;
 
+  dto.area = raw.surface || raw.livingArea || raw.area || null;
   dto.surface = raw.surface || raw.livingArea || raw.area || null;
   dto.rooms = raw.rooms || raw.nbRooms || null;
   dto.bedrooms = raw.bedrooms || null;
@@ -92,11 +95,76 @@ async function normalizeListing(raw) {
   dto.address = raw.address || (raw.location && raw.location.address) || null;
   dto.zipcode = raw.postalCode || raw.zipcode || (raw.location && (raw.location.postalCode || raw.location.zipcode)) || null;
   dto.city = raw.city || raw.town || (raw.location && (raw.location.city || raw.location.town || raw.location.locality)) || null;
+  dto.state = (raw.location && (raw.location.state || raw.location.region || raw.location.department)) || raw.region || raw.department || null;
   dto.country = raw.country || (raw.location && raw.location.country) || 'France';
   dto.propertyTypeRaw = raw.transactionType || raw.listingType || raw.adType || raw.offerType || raw.propertyType || raw.type || '';
   dto.propertyKind = raw.propertyKind || raw.category || raw.subtype || raw.type || null;
 
+  dto.email = (raw.publisher && (raw.publisher.email || raw.publisher.contactEmail)) || raw.contactEmail || null;
+  dto.featured = raw.featured != null ? Boolean(raw.featured) : (raw.isFeatured != null ? Boolean(raw.isFeatured) : false);
+  dto.agency = (raw.publisher && (raw.publisher.agencyId || raw.publisher.id || raw.publisher._id)) || raw.agentId || raw.agencyId || null;
   dto.publisher = raw.publisher || null;
+  dto.publisherType = raw.publisher && raw.publisher.type ? raw.publisher.type : (raw.publisherType || null);
+  dto.publisherPhone = (raw.publisher && raw.publisher.phone) || raw.agentPhone || null;
+
+  dto.addedBy = raw.addedBy || null;
+  dto.importBy = raw.importBy || 'platform';
+  dto.isDeleted = raw.isDeleted != null ? Boolean(raw.isDeleted) : false;
+  dto.offMarket = raw.offMarket != null ? Boolean(raw.offMarket) : false;
+
+  dto.pricePerSquareMeter = raw.pricePerSquareMeter != null ? Number(raw.pricePerSquareMeter) : null;
+  dto.priceStats = raw.priceStats || null;
+  dto.history = Array.isArray(raw.history) ? raw.history : null;
+  dto.landSurface = raw.landSurface != null ? Number(raw.landSurface) : null;
+  dto.creationDate = raw.creationDate || null;
+  dto.publicationDate = raw.publicationDate || null;
+  dto.deletionDate = raw.deletionDate || null;
+  dto.lastCheckDate = raw.lastCheckDate || null;
+  dto.lastEventDate = raw.lastEventDate || null;
+  dto.lastChangeDate = raw.lastChangeDate || null;
+  dto.lastModificationDate = raw.lastModificationDate || null;
+  dto.lastPriceChangeDate = raw.lastPriceChangeDate || null;
+  dto.lastPublicationDate = raw.lastPublicationDate || null;
+  dto.transactionTypeSource = raw.transactionType || raw.listingType || raw.adType || raw.offerType || null;
+  dto.inseeCode = (raw.location && raw.location.inseeCode) || raw.inseeCode || null;
+  dto.departmentCode = (raw.location && raw.location.departmentCode) || raw.departmentCode || null;
+  dto.regionCode = (raw.location && raw.location.regionCode) || raw.regionCode || null;
+
+  dto.chooseDocumentGrade = raw.chooseDocumentGrade || raw.documentGrade || null;
+  dto.isChoosedDocumentVerified = raw.isChoosedDocumentVerified != null ? Boolean(raw.isChoosedDocumentVerified) : false;
+  dto.isChoosedDeclDocumentVerified = raw.isChoosedDeclDocumentVerified != null ? Boolean(raw.isChoosedDeclDocumentVerified) : false;
+  dto.maximumLead = raw.maximumLead != null ? String(raw.maximumLead) : null;
+
+  dto.dateOfDiagnosis = raw.energyDiagnosisDate || raw.diagnosticDate || null;
+  dto.diagnosisType = raw.diagnosticType || raw.energyDiagnosisType || null;
+  dto.energyConsumption = raw.energyConsumption || raw.dpeValue || null;
+  dto.energy_efficient = raw.energyEfficiency || raw.eepClass || null;
+  dto.emission_efficient = raw.emissionEfficiency || raw.ghgClass || null;
+  dto.emissions = raw.emissions || raw.ghgValue || null;
+  dto.diagnosisDate = raw.diagnosticDate || raw.energyDiagnosisDate || null;
+
+  dto.contact = raw.contactAllowed != null ? Boolean(raw.contactAllowed) : (raw.contact != null ? Boolean(raw.contact) : false);
+  dto.transparency = raw.transparency != null ? Boolean(raw.transparency) : false;
+  dto.username = (raw.publisher && raw.publisher.name) || raw.agentName || null;
+  dto.phoneNumber = (raw.publisher && raw.publisher.phone) || raw.agentPhone || null;
+  dto.usedAs = raw.usedAs || raw.useType || null;
+  dto.propertyAgencyFees = raw.agencyFees || raw.serviceFees || null;
+
+  dto.sale_my_property = raw.sale_my_property != null ? Boolean(raw.sale_my_property) : false;
+  dto.real_estate_market = raw.real_estate_market != null ? Boolean(raw.real_estate_market) : false;
+  dto.add_more_step = raw.add_more_step != null ? Boolean(raw.add_more_step) : false;
+
+  dto.revenue_detail = raw.rentalRevenue || raw.revenueDetails || null;
+  dto.renovation_work = raw.renovationHistory || raw.renovationWork || null;
+  dto.rating = raw.rating || raw.reviewScore || null;
+  dto.Expenses = raw.expenses || raw.costs || null;
+
+  dto.searchType = raw.searchType || null;
+  dto.proposal = raw.proposal || raw.offerType || null;
+
+  dto.favoriteCount = raw.favoriteCount != null ? Number(raw.favoriteCount) : null;
+  dto.externalUrl = raw.url || raw.externalUrl || null;
+  dto.ownerId = raw.ownerId || null;
 
   // location / coordinates (robust handling and lat/lon swap detection)
   dto.location = raw.location || raw.address || null;
@@ -147,7 +215,9 @@ async function normalizeListing(raw) {
 
   dto.listingStatus = raw.type || raw.status || raw.publicationStatus || null;
 
-  dto.history = Array.isArray(raw.history) ? raw.history.map(h => ({ action: h.action, date: h.date, differences: h.differences || null })) : [];
+  dto.history = Array.isArray(raw.history)
+    ? raw.history.map(h => (h && typeof h === 'object' ? { ...h } : h))
+    : [];
 
   dto.external = raw; // keep raw for audit
 

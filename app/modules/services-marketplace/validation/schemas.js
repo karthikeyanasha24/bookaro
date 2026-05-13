@@ -15,10 +15,11 @@ const createServiceSchema = {
     summary:     v.optionalString('Le résumé', 500),
     category:    v.mongoId('La catégorie'),
     priceTTC:    v.positiveNumber('Le prix TTC'),
-    quantity:    v.positiveInt('La quantité'),
-    unitType:    v.inEnum('Le type d\'unité', UNIT_TYPES),
+    quantity:    (val) => val !== undefined ? v.positiveInt('La quantité')(val) : null,
     city:        v.requiredString('La ville', 100),
+    modality:    v.optionalString('La modalité', 50),
     radiusKm:    v.positiveNumber('Le rayon (km)'),
+    delivery_time: v.optionalString('Le délai de livraison', 50),
   },
 };
 
@@ -29,9 +30,10 @@ const updateServiceSchema = {
     summary:     v.optionalString('Le résumé', 500),
     priceTTC:    (val) => val !== undefined ? v.positiveNumber('Le prix TTC')(val) : null,
     quantity:    (val) => val !== undefined ? v.positiveInt('La quantité')(val) : null,
-    unitType:    v.optionalEnum('Le type d\'unité', UNIT_TYPES),
     city:        v.optionalString('La ville', 100),
+    modality:    v.optionalString('La modalité', 50),
     radiusKm:    (val) => val !== undefined ? v.positiveNumber('Le rayon (km)')(val) : null,
+    delivery_time: v.optionalString('Le délai de livraison', 50),
   },
 };
 

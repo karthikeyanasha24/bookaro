@@ -66,6 +66,9 @@ module.exports = (mongoose) => {
             },   // what type of property it is 
             featured: { type: Boolean, default: false, index: true },
             agency: { type: Schema.Types.ObjectId, ref: "users", index: true },
+            publisher: Object,
+            publisherType: { type: String },
+            publisherPhone: { type: String },
             // like: { type: [Schema.Types.ObjectId], ref: "users", default: [] },
             like: [{ type: Schema.Types.ObjectId, ref: "users", default: [] }],
             // follow: { type: [Schema.Types.ObjectId], ref: "users", default: [] },
@@ -91,11 +94,28 @@ module.exports = (mongoose) => {
             propertyMonthlyCharges: { type: Number },  //rent
             guaranteeDeposit: { type: Number }, //rent
             propertyInventory: { type: Number }, //rent
+            landSurface: { type: Number },
             situation: { type: Array },   //Souplex   Duplex
             building: { type: String },   //year of construction
             propertyState: { type: Schema.Types.ObjectId, ref: "revenueManagement" },
-            // state: { type: String },
-            // equipment: { type: Array, default: [] },
+            externalUrl: { type: String },
+            favoriteCount: { type: Number, default: 0 },
+            pricePerSquareMeter: { type: Number },
+            priceStats: Object,
+            history: { type: Array, default: [] },
+            creationDate: Date,
+            publicationDate: Date,
+            deletionDate: Date,
+            lastCheckDate: Date,
+            lastEventDate: Date,
+            lastChangeDate: Date,
+            lastModificationDate: Date,
+            lastPriceChangeDate: Date,
+            lastPublicationDate: Date,
+            transactionTypeSource: { type: String },
+            inseeCode: { type: String },
+            departmentCode: { type: String },
+            regionCode: { type: String },
             equipment: [{ type: Schema.Types.ObjectId, ref: "amenities" }],
             // outside: { type: Array, default: [] },
             outside: [{ type: Schema.Types.ObjectId, ref: "amenities" }],

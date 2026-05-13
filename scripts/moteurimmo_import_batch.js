@@ -55,7 +55,11 @@ async function main() {
       console.log('Fetching page', page);
       try {
         const res = await axios.post(url, body, { headers: { 'Content-Type': 'application/json' }, timeout: 60000 });
-        const batch = res && res.data && (res.data.items || (Array.isArray(res.data) ? res.data : []));
+        const batch = res && res.data && (
+          Array.isArray(res.data)
+            ? res.data
+            : (res.data.items || res.data.ads || res.data.listings || [])
+        );
         if (!batch || batch.length === 0) {
           console.log('No more items returned by API at page', page);
           break;
@@ -108,7 +112,15 @@ async function main() {
     }
   }
 
-  const items = Array.isArray(json) ? json : (json && json.items ? json.items : (json && typeof json === 'object' ? Object.values(json) : []));
+  const items = Array.isArray(json)
+    ? json
+    : (json && Array.isArray(json.items))
+      ? json.items
+      : (json && Array.isArray(json.ads))
+        ? json.ads
+        : (json && Array.isArray(json.listings))
+          ? json.listings
+          : [];
   console.log('Items available (raw):', Array.isArray(items) ? items.length : Object.keys(items || {}).length);
 
   // Filter out any non-object entries (the API may include informational strings in test mode)
