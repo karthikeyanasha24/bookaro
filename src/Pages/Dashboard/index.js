@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { FaGripLinesVertical } from "react-icons/fa6";
 import PageLayout from "../../components/global/PageLayout";
 import "./dashboard.css";
 import { useDashboardOverview } from "./useDashboardOverview";
 import DashboardHeader from "./components/DashboardHeader";
+import DashboardSettingsModal from "./components/DashboardSettingsModal";
+import { getDashboardPreferences, saveDashboardPreferences } from "./dashboardPreferences.api";
 import TodoListSection from "./components/TodoListSection";
 import PropertyAttractivitySection from "./components/PropertyAttractivitySection";
 import SavedSearchSection from "./components/SavedSearchSection";
@@ -187,12 +188,61 @@ const loadPersistedSectionOrder = (mode) => {
   }
 };
 
+const getDefaultSectionVisibility = () => ({
+  todoList: true,
+  propertyAttractivity: true,
+  p2pEstimation: true,
+  p2pReport: true,
+  followedPropertyNews: true,
+  trainingCenter: true,
+  pastTransactions: true,
+  ownerPipeline: true,
+  savedSearchResults: true,
+  propertySearchPipeline: true,
+});
+
+const getDefaultVisibilityForMode = (mode) => {
+  const visibility = getDefaultSectionVisibility();
+  if (mode === "buyer") {
+    visibility.ownerPipeline = false;
+  }
+  if (mode === "renter") {
+    visibility.propertyAttractivity = false;
+    visibility.p2pReport = false;
+    visibility.ownerPipeline = false;
+  }
+  if (mode === "owner") {
+    visibility.ownerPipeline = false;
+    visibility.savedSearchResults = false;
+    visibility.propertySearchPipeline = false;
+  }
+  return visibility;
+};
+
+const getPreferencesForMode = (mode, preferences) => {
+  const pref = preferences?.[mode];
+  const sectionOrder = Array.isArray(pref?.sectionOrder) && pref.sectionOrder.length === DEFAULT_SECTION_ORDER.length
+    ? pref.sectionOrder
+    : getDefaultSectionOrderForMode(mode);
+  const sectionVisibility = pref?.sectionVisibility
+    ? { ...getDefaultVisibilityForMode(mode), ...pref.sectionVisibility }
+    : getDefaultVisibilityForMode(mode);
+  return { sectionOrder, sectionVisibility };
+};
+
 const DashboardPage = () => {
   const { t } = useTranslation();
   const [period, setPeriod] = useState("day");
   const [displayMode, setDisplayMode] = useState("buyer");
   const [sectionOrder, setSectionOrder] = useState(DEFAULT_SECTION_ORDER);
+  const [sectionVisibility, setSectionVisibility] = useState({});
+  const [dashboardPreferences, setDashboardPreferences] = useState(null);
+  const [preferencesLoaded, setPreferencesLoaded] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsMode, setSettingsMode] = useState("buyer");
+  const [settingsOrder, setSettingsOrder] = useState(DEFAULT_SECTION_ORDER);
   const [isOrderHydrated, setIsOrderHydrated] = useState(false);
+  const [settingsVisibility, setSettingsVisibility] = useState({});
   const [draggedSectionId, setDraggedSectionId] = useState(null);
   const [draggedSectionHeight, setDraggedSectionHeight] = useState(0);
   const [dragOverSectionId, setDragOverSectionId] = useState(null);
@@ -204,6 +254,32 @@ const DashboardPage = () => {
   const user = useSelector((state) => state.user);
 
   const sections = data?.sections || {};
+
+  useEffect(() => {
+    if (!user) return;
+
+    const loadPreferences = async () => {
+      const response = await getDashboardPreferences();
+      if (response?.success) {
+        setDashboardPreferences(response.data?.preferences || {});
+      } else {
+        setDashboardPreferences({});
+      }
+      setPreferencesLoaded(true);
+    };
+
+    loadPreferences();
+  }, [user]);
+
+  useEffect(() => {
+    if (!preferencesLoaded) return;
+    const { sectionOrder: prefsOrder, sectionVisibility: prefsVisibility } = getPreferencesForMode(displayMode, dashboardPreferences);
+    setSectionOrder(prefsOrder);
+    setSectionVisibility(prefsVisibility);
+    setSettingsMode(displayMode);
+    setSettingsOrder(prefsOrder);
+    setSettingsVisibility(prefsVisibility);
+  }, [preferencesLoaded, displayMode, dashboardPreferences]);
 
   useEffect(() => {
     const initialDisplayMode = loadPersistedDisplayMode(user);
@@ -330,6 +406,72 @@ const DashboardPage = () => {
     setSectionOrder(loadPersistedSectionOrder(safeMode));
   };
 
+  const handleOpenSettings = () => {
+    setSettingsOpen(true);
+    setSettingsMode(displayMode);
+    setSettingsOrder(sectionOrder);
+    setSettingsVisibility(sectionVisibility);
+  };
+
+  const handleCloseSettings = () => {
+    setSettingsOpen(false);
+  };
+
+  const handleSettingsModeChange = (nextMode) => {
+    const safeMode = sanitizeDisplayMode(nextMode);
+    setSettingsMode(safeMode);
+    const { sectionOrder: prefsOrder, sectionVisibility: prefsVisibility } = getPreferencesForMode(safeMode, dashboardPreferences);
+    setSettingsOrder(prefsOrder);
+    setSettingsVisibility(prefsVisibility);
+  };
+
+  const savePreferencesForMode = async ({ mode, sectionOrder, sectionVisibility }) => {
+    const response = await saveDashboardPreferences({ mode, sectionOrder, sectionVisibility });
+    if (response?.success) {
+      setDashboardPreferences((prev = {}) => ({
+        ...prev,
+        [mode]: {
+          sectionOrder,
+          sectionVisibility,
+        },
+      }));
+      if (mode === displayMode) {
+        setSectionOrder(sectionOrder);
+        setSectionVisibility(sectionVisibility);
+      }
+    }
+  };
+
+  const handleResetProfile = async (mode) => {
+    const defaultOrder = getDefaultSectionOrderForMode(mode);
+    const defaultVisibility = getDefaultVisibilityForMode(mode);
+    await savePreferencesForMode({ mode, sectionOrder: defaultOrder, sectionVisibility: defaultVisibility });
+    if (mode === displayMode) {
+      setSectionOrder(defaultOrder);
+      setSectionVisibility(defaultVisibility);
+    }
+    setSettingsOrder(defaultOrder);
+    setSettingsVisibility(defaultVisibility);
+  };
+
+  const handleSectionVisibilityChange = (visibility) => {
+    setSettingsVisibility(visibility);
+    if (settingsMode === displayMode) {
+      setSectionVisibility(visibility);
+    }
+  };
+
+  const handleSectionOrderChange = (order) => {
+    setSettingsOrder(order);
+    if (settingsMode === displayMode) {
+      setSectionOrder(order);
+    }
+  };
+
+  const handleSectionSettingsSave = async (payload) => {
+    await savePreferencesForMode(payload);
+  };
+
   const handleResetSectionOrder = () => {
     // FLIP animation: capture positions before
     const prevRects = {};
@@ -435,11 +577,27 @@ const DashboardPage = () => {
             displayMode={displayMode}
             onDisplayModeChange={handleDisplayModeChange}
             onResetSectionOrder={handleResetSectionOrder}
+            onOpenSettings={handleOpenSettings}
+          />
+          <DashboardSettingsModal
+            open={settingsOpen}
+            onClose={handleCloseSettings}
+            mode={settingsMode}
+            sectionOrder={settingsOrder}
+            sectionVisibility={settingsVisibility}
+            onModeChange={handleSettingsModeChange}
+            onSectionOrderChange={handleSectionOrderChange}
+            onSectionVisibilityChange={handleSectionVisibilityChange}
+            onResetProfile={handleResetProfile}
+            onSavePreferences={handleSectionSettingsSave}
+            t={t}
           />
 
-          {sectionOrder.map((sectionId) => {
-            const sectionComponent = sectionComponents[sectionId];
-            if (!sectionComponent) return null;
+          {sectionOrder
+            .filter((sectionId) => sectionVisibility[sectionId] !== false)
+            .map((sectionId) => {
+              const sectionComponent = sectionComponents[sectionId];
+              if (!sectionComponent) return null;
 
             const isDragOver =
               Boolean(draggedSectionId) &&
@@ -464,25 +622,7 @@ const DashboardPage = () => {
                 onDragOver={(event) => handleSectionDragOver(event, sectionId)}
                 onDrop={(event) => handleSectionDrop(event, sectionId)}
               >
-                <div className="dashboard-section-dnd-control">
-                  <button
-                    type="button"
-                    className="dashboard-section-drag-handle"
-                    draggable
-                    onMouseDown={() => setActiveGripSectionId(sectionId)}
-                    onMouseUp={() => setActiveGripSectionId(null)}
-                    onMouseLeave={() => {
-                      if (!draggedSectionId) setActiveGripSectionId(null);
-                    }}
-                    onDragStart={(event) => handleSectionDragStart(event, sectionId)}
-                    onDragEnd={handleSectionDragEnd}
-                    aria-label={t("dashboard.dragHandle", "Glisser la section")}
-                    title={t("dashboard.dragHandle", "Glisser la section")}
-                  >
-                    <FaGripLinesVertical />
-                  </button>
-                </div>
-                {isDragging ? (
+                  {isDragging ? (
                   <div
                     className="dashboard-section-drag-placeholder"
                     style={{ height: `${Math.max(120, Math.round(draggedSectionHeight))}px` }}
