@@ -9,6 +9,21 @@ module.exports = async (req, res, next) => {
     next();
     return;
   }
+  const isGuestMode =
+    req.headers["x-guest-mode"] === "true" ||
+    req.query.guest === "true" ||
+    req.headers["x-guest-mode"] === "1";
+
+  const guestUser = {
+    _id: "guest-user-000",
+    id: "guest-user-000",
+    fullName: "Bookaroo Guest",
+    email: "guest@bookaroo.local",
+    role: "guest",
+    customerRole: { name: "Guest" },
+    isGuest: true,
+  };
+
   if (req.headers && req.headers.authorization) {
     try {
       var parts = req.headers.authorization.split(" ");
@@ -20,6 +35,12 @@ module.exports = async (req, res, next) => {
           token = credentials;
         }
       } else {
+        if (isGuestMode) {
+          req.identity = guestUser;
+          req.isGuest = true;
+          next();
+          return;
+        }
         return res.status(401).json({
           success: false,
           error: { code: 401, message: "Invalid token" },
@@ -41,6 +62,12 @@ module.exports = async (req, res, next) => {
         req.identity = user;
       }
     } catch (err) {
+      if (isGuestMode) {
+        req.identity = guestUser;
+        req.isGuest = true;
+        next();
+        return;
+      }
       return res.status(401).json({
         success: false,
         error: {
@@ -49,6 +76,9 @@ module.exports = async (req, res, next) => {
         },
       });
     }
+  } else if (isGuestMode) {
+    req.identity = guestUser;
+    req.isGuest = true;
   } else {
     return res.status(401).json({
       success: false,
