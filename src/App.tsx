@@ -140,6 +140,9 @@ function App() {
         });
       });
       observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+      // If no DOM mutations happen after mount, still consider the app stable
+      // so header/navigation elements become visible.
+      scheduleStable();
     } catch (e) {
       // ignore
     }
@@ -185,7 +188,6 @@ function App() {
     { url: "/property/add/:step", path: "propertySteps/AddEdit" },
     // QR Code management page
     { url: "/property/qr-code", path: "QRCodeManagement" },
-    { url: "/", element: <Navigate to="/login" /> },
     { url: "/project", path: "Project" },
     { url: "/dashboard", path: "Dashboard" },
     { url: "/property-details", path: "PropertyDetails" },

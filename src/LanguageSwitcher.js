@@ -16,7 +16,7 @@ const LanguageSwitcher = () => {
         { code: 'en', label: 'English', flag: '🇬🇧' },
     ];
 
-    const currentLanguage = languages.find(lang => lang.code === i18n.language);
+    const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
     return (
         <div className="language-switcher">
@@ -26,7 +26,7 @@ const LanguageSwitcher = () => {
                 title="Select language"
                 aria-label="Select language"
             >
-                <span className="lang-flag">{currentLanguage?.flag || '🌐'}</span>
+                <span className="lang-code">{currentLanguage?.code?.toUpperCase() || 'FR'}</span>
             </button>
             
             {isOpen && (
@@ -38,7 +38,7 @@ const LanguageSwitcher = () => {
                             onClick={() => handleLanguageChange(lang.code)}
                             title={lang.label}
                         >
-                            <span className="lang-flag">{lang.flag}</span>
+                            <span className="lang-code">{lang.code.toUpperCase()}</span>
                             <span className="lang-label">{lang.label}</span>
                         </button>
                     ))}

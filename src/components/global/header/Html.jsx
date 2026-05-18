@@ -2,6 +2,7 @@ import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
 import { MdNotifications, MdPerson, MdEmail } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../sidebar";
+import LanguageSwitcher from "../../../LanguageSwitcher";
 
 const Html = ({
   isOpen,
@@ -44,6 +45,7 @@ const Html = ({
       </button>
 
       <div className="flex items-center gap-4 ml-auto">
+        <LanguageSwitcher />
         {Number(messageCount) > 0 && (
             <button
             className="mx-2 animate-blink message-header-btn"

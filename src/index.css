@@ -30,8 +30,7 @@ body:not(.is-stable) *::after {
 .main-sidebar,
 .main-navbar,
 .sidebar-wrapper,
-.App-header,
-header {
+.App-header {
   visibility: hidden !important;
 }
 
@@ -39,8 +38,7 @@ header {
 body.is-mounted.is-rehydrated.is-stable .main-sidebar,
 body.is-mounted.is-rehydrated.is-stable .main-navbar,
 body.is-mounted.is-rehydrated.is-stable .sidebar-wrapper,
-body.is-mounted.is-rehydrated.is-stable .App-header,
-body.is-mounted.is-rehydrated.is-stable header {
+body.is-mounted.is-rehydrated.is-stable .App-header {
   visibility: visible !important;
   transition: none !important;
   animation: none !important;
