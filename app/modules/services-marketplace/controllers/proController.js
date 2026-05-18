@@ -221,11 +221,199 @@ exports.deliverOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: `Statut actuel (${order.status}) ne permet pas la livraison` });
     }
 
+    const { message, attachments } = req.body || {};
+    if (message !== undefined) order.deliveryMessage = String(message).trim() || null;
+    if (Array.isArray(attachments) && attachments.length > 0) {
+      order.attachments = attachments.map((file) => ({
+        name: file.name || '',
+        url: file.url || '',
+        size: file.size || null,
+        mimeType: file.mimeType || '',
+      }));
+    }
+
     order.status = 'delivered_by_pro';
     order.deliveredAt = new Date();
     await order.save();
 
     return res.json({ success: true, data: order, message: 'Livraison signalée, en attente de confirmation acheteur' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * POST /pro/marketplace/orders/:id/cancellation-request
+ * Le pro demande l'annulation d'une commande au buyer
+ */
+exports.requestCancellation = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ProService, ServiceOrder } = getModels(lang);
+    const proId = req.identity && req.identity._id;
+    if (!proId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+
+    const service = await ProService.findOne({ _id: order.service, pro: proId });
+    if (!service) return res.status(403).json({ success: false, message: 'Non autorisé' });
+
+    if (['cancelled', 'refunded', 'confirmed_by_buyer', 'litigation_opened'].includes(order.status)) {
+      return res.status(400).json({ success: false, message: 'Cette commande ne peut pas être annulée.' });
+    }
+    if (order.status === 'cancellation_requested') {
+      return res.status(409).json({ success: false, message: 'Une demande d\'annulation est déjà en cours.' });
+    }
+
+    order.cancellationRequest = {
+      reason: String(req.body.reason || '').trim(),
+      by: 'pro',
+      previousStatus: order.status,
+      createdAt: new Date(),
+    };
+    order.status = 'cancellation_requested';
+    order.cancellationRequestedAt = new Date();
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Demande d\'annulation envoyée au client.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * POST /pro/marketplace/orders/:id/cancellation/accept
+ * Le pro accepte la demande d'annulation du client
+ */
+exports.acceptCancellationRequest = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ProService, ServiceOrder } = getModels(lang);
+    const proId = req.identity && req.identity._id;
+    if (!proId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+
+    const service = await ProService.findOne({ _id: order.service, pro: proId });
+    if (!service) return res.status(403).json({ success: false, message: 'Non autorisé' });
+
+    if (order.status !== 'cancellation_requested') {
+      return res.status(400).json({ success: false, message: `Statut actuel (${order.status}) ne permet pas d'accepter une annulation` });
+    }
+
+    if (!order.cancellationRequest || order.cancellationRequest.by !== 'buyer') {
+      return res.status(400).json({ success: false, message: 'Aucune demande d\'annulation acheteur à traiter' });
+    }
+
+    const previousStatus = order.cancellationRequest.previousStatus || 'paid';
+    const refundMessage = String(req.body.message || '').trim();
+
+    if (order.stripePaymentIntentId) {
+      try {
+        if (order.payoutStatus === 'pending') {
+          await stripeService.cancelPaymentIntent(order.stripePaymentIntentId);
+        } else {
+          await stripeService.refundPaymentIntent(order.stripePaymentIntentId);
+        }
+      } catch (stripeErr) {
+        console.error('[Stripe] cancellation accept error:', stripeErr.message);
+        return res.status(502).json({ success: false, message: 'Erreur Stripe lors de l\'annulation', error: stripeErr.message });
+      }
+      order.payoutStatus = 'cancelled';
+    }
+
+    order.status = 'cancelled';
+    order.cancelledAt = new Date();
+    order.cancellationResponse = {
+      by: 'pro',
+      accepted: true,
+      message: refundMessage || null,
+      createdAt: new Date(),
+    };
+
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Demande d\'annulation acceptée' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * POST /pro/marketplace/orders/:id/cancellation/reject
+ * Le pro refuse la demande d'annulation du client
+ */
+exports.rejectCancellationRequest = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ProService, ServiceOrder } = getModels(lang);
+    const proId = req.identity && req.identity._id;
+    if (!proId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+
+    const service = await ProService.findOne({ _id: order.service, pro: proId });
+    if (!service) return res.status(403).json({ success: false, message: 'Non autorisé' });
+
+    if (order.status !== 'cancellation_requested') {
+      return res.status(400).json({ success: false, message: `Statut actuel (${order.status}) ne permet pas de refuser une annulation` });
+    }
+
+    if (!order.cancellationRequest || order.cancellationRequest.by !== 'buyer') {
+      return res.status(400).json({ success: false, message: 'Aucune demande d\'annulation acheteur à traiter' });
+    }
+
+    const previousStatus = order.cancellationRequest.previousStatus || 'paid';
+    const responseMessage = String(req.body.message || '').trim();
+
+    order.status = previousStatus;
+    order.cancellationResponse = {
+      by: 'pro',
+      accepted: false,
+      message: responseMessage || null,
+      createdAt: new Date(),
+    };
+
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Demande d\'annulation refusée' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * POST /pro/marketplace/orders/:id/litigation
+ * Le pro ouvre un litige sur une commande
+ */
+exports.openLitigation = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ProService, ServiceOrder } = getModels(lang);
+    const proId = req.identity && req.identity._id;
+    if (!proId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+
+    const service = await ProService.findOne({ _id: order.service, pro: proId });
+    if (!service) return res.status(403).json({ success: false, message: 'Non autorisé' });
+
+    const allowedStatuses = ['paid', 'accepted_by_pro', 'in_progress', 'delivered_by_pro'];
+    if (!allowedStatuses.includes(order.status)) {
+      return res.status(400).json({ success: false, message: `Impossible d'ouvrir un litige sur une commande au statut : ${order.status}` });
+    }
+
+    order.status = 'litigation_opened';
+    order.litigationOpenedAt = new Date();
+    order.litigationDescription = String(req.body.description || '').trim() || null;
+    order.litigationInitiatedBy = 'pro';
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Litige ouvert, un admin va prendre en charge' });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
   }

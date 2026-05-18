@@ -14,6 +14,7 @@ router.get('/stats', ctrl.getStats);
 
 // Services
 router.get('/services', validatePagination, ctrl.listAllServices);
+router.get('/services/export', ctrl.exportServicesCsv);
 router.post('/services/:id/validate', ctrl.validateService);
 router.post('/services/:id/reject', ctrl.rejectService);
 router.put('/services/:id/featured', ctrl.setFeaturedService);
@@ -26,6 +27,11 @@ router.delete('/categories/:id', ctrl.deleteCategory);
 
 // Commandes
 router.get('/orders', validatePagination, ctrl.listAllOrders);
+router.get('/orders/export', ctrl.exportOrdersCsv);
+router.get('/litigations', validatePagination, ctrl.listAllLitigations);
+router.get('/litigations/export', ctrl.exportLitigationsCsv);
+router.get('/cancellations', validatePagination, ctrl.listAllCancellations);
+router.get('/cancellations/export', ctrl.exportCancellationsCsv);
 router.post('/orders/:id/resolve-litigation', validateResolveLitigation, ctrl.resolveLitigation);
 
 // Avis

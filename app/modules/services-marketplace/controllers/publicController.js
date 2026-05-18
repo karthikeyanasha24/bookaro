@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const ProServiceEn = require('../models/ProService_en.model');
 const ProServiceFr = require('../models/ProService_fr.model');
 const ServiceCategoryEn = require('../models/ServiceCategory_en.model');
@@ -8,6 +9,8 @@ const ServiceReviewEn = require('../models/ServiceReview_en.model');
 const ServiceReviewFr = require('../models/ServiceReview_fr.model');
 const ServiceFavorite = require('../models/ServiceFavorite.model');
 const stripeService = require('../services/stripeMarketplaceService');
+const db = require('../../../models');
+const Users = db.users;
 
 // Sélectionne le bon modèle selon la langue (défaut: fr)
 function getModels(lang) {
@@ -20,6 +23,78 @@ function getModels(lang) {
   };
 }
 
+const hasCompleteFeaturedProfile = (pro) => {
+  if (!pro) return false;
+  return Boolean(
+    pro.featuredSubheading &&
+    pro.featuredTitle &&
+    pro.featuredBio &&
+    Number(pro.featuredExperienceYears) > 0 &&
+    Number(pro.featuredClientsAccompanied) > 0 &&
+    pro.featuredRatingNotes &&
+    pro.featuredSatisfactionRate &&
+    pro.featuredProfilePhoto
+  );
+};
+
+const buildFeaturedProPayload = (pro) => {
+  const fullName = pro.fullName || `${pro.firstName || ''} ${pro.lastName || ''}`.trim();
+  return {
+    id: pro._id,
+    fullName,
+    firstName: pro.firstName,
+    lastName: pro.lastName,
+    tag: pro.featuredSubheading,
+    headline: pro.featuredTitle,
+    description: pro.featuredBio,
+    photo: pro.featuredProfilePhoto || pro.image || pro.avatar,
+    phone: pro.mobileNo || pro.phone,
+    isTopAgent: pro.isTopAgent,
+    isGlobalFavorite: pro.isGlobalFavorite,
+    isLocalFavorite: pro.isLocalFavorite,
+    localFavoritePostalCodes: pro.localFavoritePostalCodes || [],
+    stats: [
+      { value: String(pro.featuredExperienceYears || 0), label: "Années d'expérience" },
+      { value: String(pro.featuredClientsAccompanied || 0), label: "Clients accompagnés" },
+      { value: String(pro.featuredRatingNotes || "-"), label: "Notes" },
+      { value: String(pro.featuredSatisfactionRate || "-"), label: "Clients satisfaits" },
+    ],
+  };
+};
+
+/**
+ * GET /marketplace/favorite-pros
+ * Liste des pros favoris complets pour l'encart Featured agents
+ */
+exports.listFavoritePros = async (req, res) => {
+  try {
+    const postalCode = req.query.postalCode || null;
+    const filter = { accountType: 'pro', isDeleted: false, status: 'active' };
+    const pros = await Users.find(filter).select(
+      'firstName lastName fullName phone mobileNo image avatar accountType status isGlobalFavorite isLocalFavorite isTopAgent localFavoritePostalCodes featuredSubheading featuredTitle featuredBio featuredExperienceYears featuredClientsAccompanied featuredRatingNotes featuredSatisfactionRate featuredProfilePhoto'
+    );
+
+    const favorites = pros
+      .filter((pro) => (pro.isGlobalFavorite || pro.isLocalFavorite) && hasCompleteFeaturedProfile(pro))
+      .map(buildFeaturedProPayload);
+
+    const globalFavorites = favorites.filter((pro) => pro.isGlobalFavorite).slice(0, 2);
+    const localFavorites = postalCode
+      ? favorites.filter((pro) => pro.isLocalFavorite && pro.localFavoritePostalCodes.includes(postalCode)).slice(0, 2)
+      : favorites.filter((pro) => pro.isLocalFavorite).slice(0, 2);
+
+    return res.json({
+      success: true,
+      data: {
+        globalFavorites,
+        localFavorites,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
 /**
  * GET /marketplace/services
  * Liste les services actifs avec filtres (catégorie, ville, prix, recherche)
@@ -29,13 +104,32 @@ exports.listServices = async (req, res) => {
     const lang = req.query.lang || 'fr';
     const { ProService } = getModels(lang);
     const {
-      category, city, minPrice, maxPrice, search,
+      category, city, location, provider, minPrice, maxPrice, search,
       page = 1, limit = 20, sortBy = 'createdAt', order = 'desc'
     } = req.query;
 
     const filter = { status: 'active' };
     if (category) filter.category = category;
     if (city) filter.city = { $regex: city, $options: 'i' };
+    if (location) filter.city = { $regex: location, $options: 'i' };
+    if (provider) {
+      if (mongoose.Types.ObjectId.isValid(provider)) {
+        filter.pro = provider;
+      } else {
+        const match = await Users.findOne({
+          $or: [
+            { fullName: provider },
+            { username: provider },
+            { email: provider },
+          ],
+        }).select('_id');
+        if (match) {
+          filter.pro = match._id;
+        } else {
+          filter.pro = null;
+        }
+      }
+    }
     if (minPrice || maxPrice) {
       filter.priceTTC = {};
       if (minPrice) filter.priceTTC.$gte = Number(minPrice);
@@ -57,7 +151,7 @@ exports.listServices = async (req, res) => {
         .skip(skip)
         .limit(Number(limit))
         .populate('category', 'name iconUrl')
-        .populate('pro', 'name avatar'),
+        .populate('pro', 'name avatar accountType isGlobalFavorite isLocalFavorite isTopAgent featuredSubheading featuredTitle featuredBio featuredExperienceYears featuredClientsAccompanied featuredRatingNotes featuredSatisfactionRate featuredProfilePhoto'),
       ProService.countDocuments(filter),
     ]);
 
@@ -198,6 +292,47 @@ exports.createOrder = async (req, res) => {
 };
 
 /**
+ * GET /marketplace/orders
+ * Liste les commandes de l'acheteur connecté
+ */
+exports.listOrders = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const buyerId = req.identity && req.identity._id;
+    if (!buyerId) {
+      return res.status(401).json({ success: false, message: 'Authentification requise' });
+    }
+
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+
+    const filter = { buyer: buyerId };
+    const [items, total] = await Promise.all([
+      ServiceOrder.find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate('service', 'title priceTTC imageUrls'),
+      ServiceOrder.countDocuments(filter),
+    ]);
+
+    return res.json({
+      success: true,
+      data: items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
  * POST /marketplace/orders/:id/pay
  * (Re)crée un PaymentIntent pour une commande pending_payment
  * Utile si le premier createOrder a échoué ou si l'intent a expiré.
@@ -297,6 +432,136 @@ exports.confirmOrderDelivery = async (req, res) => {
 };
 
 /**
+ * POST /marketplace/orders/:id/cancellation-request
+ * L'acheteur demande l'annulation d'une commande
+ */
+exports.requestCancellation = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const buyerId = req.identity && req.identity._id;
+    if (!buyerId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findOne({ _id: req.params.id, buyer: buyerId });
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+    if (['cancelled', 'refunded', 'confirmed_by_buyer', 'litigation_opened'].includes(order.status)) {
+      return res.status(400).json({ success: false, message: 'Cette commande ne peut pas être annulée.' });
+    }
+    if (order.status === 'cancellation_requested') {
+      return res.status(409).json({ success: false, message: 'Une demande d\'annulation est déjà en cours.' });
+    }
+
+    order.cancellationRequest = {
+      reason: String(req.body.reason || '').trim(),
+      by: 'buyer',
+      previousStatus: order.status,
+      createdAt: new Date(),
+    };
+    order.status = 'cancellation_requested';
+    order.cancellationRequestedAt = new Date();
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Demande d\'annulation envoyée.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * POST /marketplace/orders/:id/cancellation/accept
+ * L'acheteur accepte une demande d'annulation émise par le pro
+ */
+exports.acceptCancellationRequest = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const buyerId = req.identity && req.identity._id;
+    if (!buyerId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findOne({ _id: req.params.id, buyer: buyerId });
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+
+    if (order.status !== 'cancellation_requested') {
+      return res.status(400).json({ success: false, message: `Statut actuel (${order.status}) ne permet pas d'accepter une annulation` });
+    }
+    if (!order.cancellationRequest || order.cancellationRequest.by !== 'pro') {
+      return res.status(400).json({ success: false, message: 'Aucune demande d\'annulation pro à traiter' });
+    }
+
+    const responseMessage = String(req.body.message || '').trim();
+
+    if (order.stripePaymentIntentId) {
+      try {
+        if (order.payoutStatus === 'pending') {
+          await stripeService.cancelPaymentIntent(order.stripePaymentIntentId);
+        } else {
+          await stripeService.refundPaymentIntent(order.stripePaymentIntentId);
+        }
+      } catch (stripeErr) {
+        console.error('[Stripe] cancellation accept error:', stripeErr.message);
+        return res.status(502).json({ success: false, message: 'Erreur Stripe lors de l\'annulation', error: stripeErr.message });
+      }
+      order.payoutStatus = 'cancelled';
+    }
+
+    order.status = 'cancelled';
+    order.cancelledAt = new Date();
+    order.cancellationResponse = {
+      by: 'buyer',
+      accepted: true,
+      message: responseMessage || null,
+      createdAt: new Date(),
+    };
+
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Demande d\'annulation acceptée' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * POST /marketplace/orders/:id/cancellation/reject
+ * L'acheteur refuse une demande d'annulation émise par le pro
+ */
+exports.rejectCancellationRequest = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const buyerId = req.identity && req.identity._id;
+    if (!buyerId) return res.status(401).json({ success: false, message: 'Authentification requise' });
+
+    const order = await ServiceOrder.findOne({ _id: req.params.id, buyer: buyerId });
+    if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
+
+    if (order.status !== 'cancellation_requested') {
+      return res.status(400).json({ success: false, message: `Statut actuel (${order.status}) ne permet pas de refuser une annulation` });
+    }
+    if (!order.cancellationRequest || order.cancellationRequest.by !== 'pro') {
+      return res.status(400).json({ success: false, message: 'Aucune demande d\'annulation pro à traiter' });
+    }
+
+    const previousStatus = order.cancellationRequest.previousStatus || 'paid';
+    const responseMessage = String(req.body.message || '').trim();
+
+    order.status = previousStatus;
+    order.cancellationResponse = {
+      by: 'buyer',
+      accepted: false,
+      message: responseMessage || null,
+      createdAt: new Date(),
+    };
+
+    await order.save();
+
+    return res.json({ success: true, data: order, message: 'Demande d\'annulation refusée' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
  * POST /marketplace/orders/:id/litigation
  * L'acheteur ouvre un litige
  */
@@ -315,8 +580,11 @@ exports.openLitigation = async (req, res) => {
       return res.status(400).json({ success: false, message: `Impossible d'ouvrir un litige sur une commande au statut : ${order.status}` });
     }
 
+    const { description } = req.body;
     order.status = 'litigation_opened';
     order.litigationOpenedAt = new Date();
+    order.litigationDescription = String(description || '').trim() || null;
+    order.litigationInitiatedBy = 'buyer';
     await order.save();
 
     return res.json({ success: true, data: order, message: 'Litige ouvert, un admin va prendre en charge' });

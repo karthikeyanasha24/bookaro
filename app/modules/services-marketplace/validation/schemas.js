@@ -57,6 +57,12 @@ const createReviewSchema = {
   },
 };
 
+const createCancellationRequestSchema = {
+  body: {
+    reason: v.requiredString('Le motif de la demande', 1000),
+  },
+};
+
 // ─── ADMIN : Créer une catégorie ──────────────────────────────────────────────
 
 const createCategorySchema = {
@@ -90,9 +96,10 @@ const paginationSchema = {
 module.exports = {
   validateCreateService:     validate(createServiceSchema),
   validateUpdateService:     validate(updateServiceSchema),
-  validateCreateOrder:       validate(createOrderSchema),
-  validateCreateReview:      validate(createReviewSchema),
-  validateCreateCategory:    validate(createCategorySchema),
+  validateCreateOrder:           validate(createOrderSchema),
+  validateCreateReview:          validate(createReviewSchema),
+  validateCreateCancellationRequest: validate(createCancellationRequestSchema),
+  validateCreateCategory:        validate(createCategorySchema),
   validateResolveLitigation: validate(resolveLitigationSchema),
   validatePagination:        validate(paginationSchema),
 };

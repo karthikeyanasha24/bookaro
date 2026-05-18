@@ -9,6 +9,8 @@ const ServiceReviewFr = require('../models/ServiceReview_fr.model');
 const FeaturedProAssignment = require('../models/FeaturedProAssignment.model');
 const MarketplaceSettings = require('../models/MarketplaceSettings.model');
 const stripeService = require('../services/stripeMarketplaceService');
+const db = require('../../../models');
+const Users = db.users;
 
 function getModels(lang) {
   const l = lang === 'en' ? 'en' : 'fr';
@@ -30,20 +32,129 @@ exports.listAllServices = async (req, res) => {
   try {
     const lang = req.query.lang || 'fr';
     const { ProService } = getModels(lang);
-    const { status, page = 1, limit = 30 } = req.query;
+    const { status, q, sortBy = 'createdAt', order = 'desc', page = 1, limit = 30 } = req.query;
 
     const filter = {};
     if (status) filter.status = status;
 
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const proIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { title: { $regex: searchRegex } },
+        { description: { $regex: searchRegex } },
+        { summary: { $regex: searchRegex } },
+        { city: { $regex: searchRegex } },
+        { modality: { $regex: searchRegex } },
+      ];
+
+      if (proIds.length > 0) {
+        orFilters.push({ pro: { $in: proIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'priceTTC', 'title', 'status', 'city'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
     const skip = (Number(page) - 1) * Number(limit);
     const [services, total] = await Promise.all([
-      ProService.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit))
+      ProService.find(filter).sort({ [sortField]: sortOrder }).skip(skip).limit(Number(limit))
         .populate('pro', 'name email')
         .populate('category', 'name'),
       ProService.countDocuments(filter),
     ]);
 
     return res.json({ success: true, data: services, pagination: { page: Number(page), limit: Number(limit), total } });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+function formatCsvValue(value) {
+  const text = value === undefined || value === null ? '' : String(value);
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+exports.exportServicesCsv = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ProService } = getModels(lang);
+    const { status, q, sortBy = 'createdAt', order = 'desc' } = req.query;
+
+    const filter = {};
+    if (status) filter.status = status;
+
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const proIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { title: { $regex: searchRegex } },
+        { description: { $regex: searchRegex } },
+        { summary: { $regex: searchRegex } },
+        { city: { $regex: searchRegex } },
+        { modality: { $regex: searchRegex } },
+      ];
+
+      if (proIds.length > 0) {
+        orFilters.push({ pro: { $in: proIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'priceTTC', 'title', 'status', 'city'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
+    const services = await ProService.find(filter).sort({ [sortField]: sortOrder })
+      .populate('pro', 'name email')
+      .populate('category', 'name');
+
+    const header = ['Service ID', 'Titre', 'Statut', 'Prestataire', 'Email prestataire', 'Catégorie', 'Ville', 'Modalité', 'Prix TTC', 'Quantité', 'Créé le', 'Mis à jour le'];
+    const rows = services.map((svc) => [
+      formatCsvValue(svc._id),
+      formatCsvValue(lang === 'fr' ? (svc.title_fr || svc.title) : (svc.title_en || svc.title)),
+      formatCsvValue(svc.status),
+      formatCsvValue(svc.pro?.name || ''),
+      formatCsvValue(svc.pro?.email || ''),
+      formatCsvValue(svc.category?.name || ''),
+      formatCsvValue(svc.city),
+      formatCsvValue(svc.modality),
+      formatCsvValue(svc.priceTTC),
+      formatCsvValue(svc.quantity || ''),
+      formatCsvValue(svc.createdAt ? svc.createdAt.toISOString() : ''),
+      formatCsvValue(svc.updatedAt ? svc.updatedAt.toISOString() : ''),
+    ]);
+
+    const csvContent = [header.map(formatCsvValue).join(','), ...rows.map((r) => r.join(','))].join('\n');
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', `attachment; filename="marketplace-services-${Date.now()}.csv"`);
+    return res.send(csvContent);
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
   }
@@ -198,20 +309,378 @@ exports.listAllOrders = async (req, res) => {
   try {
     const lang = req.query.lang || 'fr';
     const { ServiceOrder } = getModels(lang);
-    const { status, page = 1, limit = 30 } = req.query;
+    const { status, q, sortBy = 'createdAt', order = 'desc', page = 1, limit = 30 } = req.query;
 
     const filter = {};
     if (status) filter.status = status;
 
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const buyerIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { 'serviceSnapshot.title': { $regex: searchRegex } },
+        { 'proSnapshot.name': { $regex: searchRegex } },
+        { 'serviceSnapshot.pro.name': { $regex: searchRegex } },
+      ];
+
+      if (buyerIds.length > 0) {
+        orFilters.push({ buyer: { $in: buyerIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'status', 'totalPriceTTC', 'quantity', 'city', 'serviceSnapshot.title', 'proSnapshot.name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
     const skip = (Number(page) - 1) * Number(limit);
     const [orders, total] = await Promise.all([
-      ServiceOrder.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit))
+      ServiceOrder.find(filter).sort({ [sortField]: sortOrder }).skip(skip).limit(Number(limit))
         .populate('buyer', 'name email')
         .populate('service', 'title priceTTC'),
       ServiceOrder.countDocuments(filter),
     ]);
 
     return res.json({ success: true, data: orders, pagination: { page: Number(page), limit: Number(limit), total } });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+exports.exportOrdersCsv = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const { status, q, sortBy = 'createdAt', order = 'desc' } = req.query;
+
+    const filter = {};
+    if (status) filter.status = status;
+
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const buyerIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { 'serviceSnapshot.title': { $regex: searchRegex } },
+        { 'proSnapshot.name': { $regex: searchRegex } },
+        { 'serviceSnapshot.pro.name': { $regex: searchRegex } },
+      ];
+
+      if (buyerIds.length > 0) {
+        orFilters.push({ buyer: { $in: buyerIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'status', 'totalPriceTTC', 'quantity', 'city', 'serviceSnapshot.title', 'proSnapshot.name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
+    const orders = await ServiceOrder.find(filter).sort({ [sortField]: sortOrder })
+      .populate('buyer', 'name email')
+      .populate('service', 'title priceTTC');
+
+    const header = ['Order ID', 'Service', 'Status', 'Buyer', 'Buyer email', 'Pro', 'Price TTC', 'Quantity', 'Created At', 'Delivered At', 'Confirmed At', 'Litigation At', 'Cancellation Requested At'];
+    const rows = orders.map((order) => [
+      formatCsvValue(order._id),
+      formatCsvValue(order.serviceSnapshot?.title || order.service?.title || ''),
+      formatCsvValue(order.status),
+      formatCsvValue(order.buyer?.name || ''),
+      formatCsvValue(order.buyer?.email || ''),
+      formatCsvValue(order.proSnapshot?.name || ''),
+      formatCsvValue(order.totalPriceTTC),
+      formatCsvValue(order.quantity),
+      formatCsvValue(order.createdAt ? order.createdAt.toISOString() : ''),
+      formatCsvValue(order.deliveredAt ? order.deliveredAt.toISOString() : ''),
+      formatCsvValue(order.confirmedAt ? order.confirmedAt.toISOString() : ''),
+      formatCsvValue(order.litigationOpenedAt ? order.litigationOpenedAt.toISOString() : ''),
+      formatCsvValue(order.cancellationRequestedAt ? order.cancellationRequestedAt.toISOString() : ''),
+    ]);
+
+    const csvContent = [header.map(formatCsvValue).join(','), ...rows.map((r) => r.join(','))].join('\n');
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', `attachment; filename="marketplace-orders-${Date.now()}.csv"`);
+    return res.send(csvContent);
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+/**
+ * GET /admin/marketplace/litigations
+ * Liste tous les litiges (client ou pro)
+ */
+exports.listAllLitigations = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const { status, q, sortBy = 'litigationOpenedAt', order = 'desc', page = 1, limit = 30 } = req.query;
+
+    const filter = { litigationOpenedAt: { $exists: true, $ne: null } };
+    if (status) filter.status = status;
+
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const buyerIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { 'serviceSnapshot.title': { $regex: searchRegex } },
+        { 'proSnapshot.name': { $regex: searchRegex } },
+        { 'litigationDescription': { $regex: searchRegex } },
+      ];
+
+      if (buyerIds.length > 0) {
+        orFilters.push({ buyer: { $in: buyerIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'status', 'totalPriceTTC', 'litigationOpenedAt', 'serviceSnapshot.title', 'proSnapshot.name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'litigationOpenedAt';
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const [litigations, total] = await Promise.all([
+      ServiceOrder.find(filter).sort({ [sortField]: sortOrder }).skip(skip).limit(Number(limit))
+        .populate('buyer', 'name email')
+        .populate('service', 'title priceTTC'),
+      ServiceOrder.countDocuments(filter),
+    ]);
+
+    return res.json({ success: true, data: litigations, pagination: { page: Number(page), limit: Number(limit), total } });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+exports.exportLitigationsCsv = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const { status, q, sortBy = 'litigationOpenedAt', order = 'desc' } = req.query;
+
+    const filter = { litigationOpenedAt: { $exists: true, $ne: null } };
+    if (status) filter.status = status;
+
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const buyerIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { 'serviceSnapshot.title': { $regex: searchRegex } },
+        { 'proSnapshot.name': { $regex: searchRegex } },
+        { 'litigationDescription': { $regex: searchRegex } },
+      ];
+
+      if (buyerIds.length > 0) {
+        orFilters.push({ buyer: { $in: buyerIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'status', 'totalPriceTTC', 'litigationOpenedAt', 'serviceSnapshot.title', 'proSnapshot.name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'litigationOpenedAt';
+
+    const litigations = await ServiceOrder.find(filter).sort({ [sortField]: sortOrder })
+      .populate('buyer', 'name email')
+      .populate('service', 'title priceTTC');
+
+    const header = ['Order ID', 'Service', 'Pro', 'Buyer', 'Buyer email', 'Initiated by', 'Litigation description', 'Status', 'Price TTC', 'Created At', 'Litigation opened At', 'Delivered At', 'Confirmed At'];
+    const rows = litigations.map((order) => [
+      formatCsvValue(order._id),
+      formatCsvValue(order.serviceSnapshot?.title || order.service?.title || ''),
+      formatCsvValue(order.proSnapshot?.name || ''),
+      formatCsvValue(order.buyer?.name || ''),
+      formatCsvValue(order.buyer?.email || ''),
+      formatCsvValue(order.litigationInitiatedBy),
+      formatCsvValue(order.litigationDescription),
+      formatCsvValue(order.status),
+      formatCsvValue(order.totalPriceTTC),
+      formatCsvValue(order.createdAt ? order.createdAt.toISOString() : ''),
+      formatCsvValue(order.litigationOpenedAt ? order.litigationOpenedAt.toISOString() : ''),
+      formatCsvValue(order.deliveredAt ? order.deliveredAt.toISOString() : ''),
+      formatCsvValue(order.confirmedAt ? order.confirmedAt.toISOString() : ''),
+    ]);
+
+    const csvContent = [header.map(formatCsvValue).join(','), ...rows.map((r) => r.join(','))].join('\n');
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', `attachment; filename="marketplace-litigations-${Date.now()}.csv"`);
+    return res.send(csvContent);
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+exports.listAllCancellations = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const { status, initiatedBy, q, sortBy = 'cancellationRequestedAt', order = 'desc', page = 1, limit = 30 } = req.query;
+
+    const filter = { cancellationRequest: { $exists: true, $ne: null } };
+    if (status) filter.status = status;
+    if (initiatedBy) filter['cancellationRequest.by'] = initiatedBy;
+
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const buyerIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { 'serviceSnapshot.title': { $regex: searchRegex } },
+        { 'proSnapshot.name': { $regex: searchRegex } },
+        { 'cancellationRequest.reason': { $regex: searchRegex } },
+        { 'cancellationResponse.message': { $regex: searchRegex } },
+      ];
+
+      if (buyerIds.length > 0) {
+        orFilters.push({ buyer: { $in: buyerIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'status', 'totalPriceTTC', 'cancellationRequestedAt', 'serviceSnapshot.title', 'proSnapshot.name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'cancellationRequestedAt';
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const [cancellations, total] = await Promise.all([
+      ServiceOrder.find(filter).sort({ [sortField]: sortOrder }).skip(skip).limit(Number(limit))
+        .populate('buyer', 'name email')
+        .populate('service', 'title priceTTC'),
+      ServiceOrder.countDocuments(filter),
+    ]);
+
+    return res.json({ success: true, data: cancellations, pagination: { page: Number(page), limit: Number(limit), total } });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
+  }
+};
+
+exports.exportCancellationsCsv = async (req, res) => {
+  try {
+    const lang = req.query.lang || 'fr';
+    const { ServiceOrder } = getModels(lang);
+    const { status, initiatedBy, q, sortBy = 'cancellationRequestedAt', order = 'desc' } = req.query;
+
+    const filter = { cancellationRequest: { $exists: true, $ne: null } };
+    if (status) filter.status = status;
+    if (initiatedBy) filter['cancellationRequest.by'] = initiatedBy;
+
+    if (q) {
+      const searchRegex = new RegExp(q, 'i');
+      const buyerIds = await Users.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { firstName: { $regex: searchRegex } },
+          { lastName: { $regex: searchRegex } },
+        ],
+      }).select('_id').lean();
+
+      const orFilters = [
+        { 'serviceSnapshot.title': { $regex: searchRegex } },
+        { 'proSnapshot.name': { $regex: searchRegex } },
+        { 'cancellationRequest.reason': { $regex: searchRegex } },
+        { 'cancellationResponse.message': { $regex: searchRegex } },
+      ];
+
+      if (buyerIds.length > 0) {
+        orFilters.push({ buyer: { $in: buyerIds.map((u) => u._id) } });
+      }
+      if (q.match(/^[0-9a-fA-F]{24}$/)) {
+        orFilters.push({ _id: q });
+      }
+
+      filter.$or = orFilters;
+    }
+
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const allowedSortFields = ['createdAt', 'status', 'totalPriceTTC', 'cancellationRequestedAt', 'serviceSnapshot.title', 'proSnapshot.name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'cancellationRequestedAt';
+
+    const cancellations = await ServiceOrder.find(filter).sort({ [sortField]: sortOrder })
+      .populate('buyer', 'name email')
+      .populate('service', 'title priceTTC');
+
+    const header = ['Order ID', 'Service', 'Pro', 'Buyer', 'Buyer email', 'Initiated by', 'Request reason', 'Response accepted', 'Response message', 'Status', 'Price TTC', 'Created At', 'Cancellation requested At', 'Cancelled At'];
+    const rows = cancellations.map((order) => [
+      formatCsvValue(order._id),
+      formatCsvValue(order.serviceSnapshot?.title || order.service?.title || ''),
+      formatCsvValue(order.proSnapshot?.name || ''),
+      formatCsvValue(order.buyer?.name || ''),
+      formatCsvValue(order.buyer?.email || ''),
+      formatCsvValue(order.cancellationRequest?.by),
+      formatCsvValue(order.cancellationRequest?.reason),
+      formatCsvValue(order.cancellationResponse?.accepted === true ? 'yes' : order.cancellationResponse?.accepted === false ? 'no' : ''),
+      formatCsvValue(order.cancellationResponse?.message || ''),
+      formatCsvValue(order.status),
+      formatCsvValue(order.totalPriceTTC),
+      formatCsvValue(order.createdAt ? order.createdAt.toISOString() : ''),
+      formatCsvValue(order.cancellationRequestedAt ? order.cancellationRequestedAt.toISOString() : ''),
+      formatCsvValue(order.cancelledAt ? order.cancelledAt.toISOString() : ''),
+    ]);
+
+    const csvContent = [header.map(formatCsvValue).join(','), ...rows.map((r) => r.join(','))].join('\n');
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', `attachment; filename="marketplace-cancellations-${Date.now()}.csv"`);
+    return res.send(csvContent);
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
   }
