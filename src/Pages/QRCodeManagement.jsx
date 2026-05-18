@@ -1,6 +1,7 @@
 
 import React, { useMemo, useEffect, useState } from 'react';
 import QRCodeFlyerModal from '../components/QRCodeFlyerModal';
+import ApiClient from '../methods/api/apiClient';
 import { useTranslation } from 'react-i18next';
 import { FiX } from 'react-icons/fi';
 import { FiDownload, FiTrash } from 'react-icons/fi';
@@ -18,6 +19,10 @@ const QRCodeManagement = () => {
   // Modale viewer
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerImg, setViewerImg] = useState(null);
+  const [properties, setProperties] = useState([]);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [search, setSearch] = useState("");
 
   // Synchronise la hauteur de Chill avec celle du flyer sans déformation, après chargement
   // Synchronise la hauteur de Chill avec celle du flyer, sans déformer l'image
@@ -36,62 +41,48 @@ const QRCodeManagement = () => {
     window.addEventListener('resize', syncChillHeight);
     return () => window.removeEventListener('resize', syncChillHeight);
   }, []);
+
+  const loadProperties = async () => {
+    setIsLoading(true);
+    const response = await ApiClient.get('/property/qr-code/properties', { page, limit: pageSize, search });
+    if (response.success) {
+      setProperties(response.data || []);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadProperties();
+  }, [page, pageSize, search]);
   // i18n
   const { t, i18n } = useTranslation();
 
-  // Recherche
-  const [search, setSearch] = useState("");
-
   // Demo data for table
-  const data = useMemo(() => [
-    {
-      id: 1,
+  const data = useMemo(() => {
+    if (properties.length === 0) {
+      return [];
+    }
+    return properties.map((row) => ({
+      id: row.propertyId,
       property: {
-        title: 'Maison familiale',
-        status: 'À vendre',
-        rooms: 5,
-        surface: 110,
-        location: '75018 Paris',
-        imageUrl: '/assets/img/dashboard/attractivity/attractivity-1.jpg',
+        title: row.title,
+        status: row.summary || '',
+        rooms: null,
+        surface: null,
+        location: '',
+        imageUrl: row.coverUrl || '/assets/img/placeholder.png',
       },
-      flyer: '/assets/img/flyer-demo2.jpeg',
-      scanCount: 12,
-      lastScan: '2024-04-10',
-    },
-    {
-      id: 2,
-      property: {
-        title: 'Appartement lumineux',
-        status: 'Off-market',
-        rooms: 3,
-        surface: 64,
-        location: '69003 Lyon',
-        imageUrl: '/assets/img/dashboard/attractivity/attractivity-2.jpg',
-      },
-      flyer: '/assets/img/flyer-demo2.jpeg',
-      scanCount: 7,
-      lastScan: '2024-04-09',
-    },
-    // Ligne sans QR code généré
-    {
-      id: 3,
-      property: {
-        title: 'Villa à la mer',
-        status: 'À louer',
-        rooms: 6,
-        surface: 180,
-        location: '06160 Antibes',
-        imageUrl: '/assets/img/dashboard/attractivity/attractivity-3.jpg',
-      },
-      flyer: null,
-      scanCount: null,
-      lastScan: null,
-      noQr: true,
-    },
-  ], []);
+      flyer: row.latestFlyer?.previewImageUrl || null,
+      scanCount: row.latestFlyer?.scansCount ?? null,
+      lastScan: row.latestFlyer?.lastScan || null,
+      latestFlyer: row.latestFlyer || null,
+      availablePhotos: row.availablePhotos || [],
+      propertyId: row.propertyId,
+      noQr: !row.latestFlyer,
+    }));
+  }, [properties]);
 
-
-  // Filtrage local (en attendant l'API)
+  // Filtrage local (utilise les données réelles)
   const filteredData = useMemo(() => {
     if (!search.trim()) return data;
     const lower = search.toLowerCase();
@@ -185,7 +176,11 @@ const QRCodeManagement = () => {
               boxShadow: '0 2px 8px #976dd033',
               transition: 'background 0.2s',
             }}
-            onClick={e => { e.stopPropagation(); setFlyerModalOpen(true); }}
+            onClick={e => {
+              e.stopPropagation();
+              setSelectedProperty(row);
+              setFlyerModalOpen(true);
+            }}
           >
             Generate QR Code
           </button>
@@ -224,7 +219,19 @@ const QRCodeManagement = () => {
   return (
     <PageLayout>
       {/* Modale QR Code Flyer */}
-      <QRCodeFlyerModal open={flyerModalOpen} onClose={() => setFlyerModalOpen(false)} />
+      <QRCodeFlyerModal
+        open={flyerModalOpen}
+        selectedProperty={selectedProperty}
+        onClose={() => {
+          setFlyerModalOpen(false);
+          setSelectedProperty(null);
+        }}
+        onSuccess={() => {
+          setFlyerModalOpen(false);
+          setSelectedProperty(null);
+          loadProperties();
+        }}
+      />
       {/* Image Viewer Modal */}
       {viewerOpen && (
         <div style={{

@@ -288,6 +288,7 @@
 .dashboard-settings-drag-handle {
   color: #6f42c1;
   cursor: grab;
+  touch-action: none;
 }
 
 .dashboard-settings-drag-placeholder {

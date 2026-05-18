@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaCalendarDays } from 'react-icons/fa6';
 import { getServiceById, createOrder } from '../../../methods/api/marketplaceApi';
 import { saveOrderId } from '../../MarketplaceOrders';
 
@@ -155,7 +156,10 @@ export default function ServiceDetail() {
               {service.delivery_time && (
                 <div>
                   <div className="text-xs text-gray-400 font-medium">{t.deliveryTime}</div>
-                  <div className="text-sm font-semibold text-gray-700">{service.delivery_time} {t.days}</div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <FaCalendarDays className="text-gray-400" />
+                    {service.delivery_time} {t.days}
+                  </div>
                 </div>
               )}
               {service.provider && (
@@ -178,8 +182,17 @@ export default function ServiceDetail() {
             {/* Prix */}
             <div className="flex justify-between text-sm mb-1">
               <span className="text-gray-500">{t.price}</span>
-              <span className="font-semibold text-blue-600">{service.price_ttc || service.price}€</span>
+              {service.price_ttc === 0 || service.is_free ? (
+                <span className="font-semibold text-blue-600 line-through">{service.price_ttc || service.price || 0}€</span>
+              ) : (
+                <span className="font-semibold text-blue-600">{service.price_ttc || service.price || 0}€</span>
+              )}
             </div>
+            {service.price_ttc === 0 || service.is_free ? (
+              <div className="inline-flex items-center gap-2 text-[12px] font-semibold text-[#976DD0]">
+                <span className="bg-[#F2ECF8] px-2 py-1 rounded-full">Service offert</span>
+              </div>
+            ) : null}
 
             {/* Quantité */}
             <div className="mb-4">

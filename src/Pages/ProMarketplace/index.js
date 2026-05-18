@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FaCalendarDays } from 'react-icons/fa6';
 import { useSelector } from 'react-redux';
-import { getProServices, getProOrders, acceptOrder, deliverOrder, getStripeStatus, startStripeOnboard, getCategories } from '../../methods/api/marketplaceApi';
+import { createProService, updateProService, deleteProService, getProServices, acceptOrder, deliverOrder, getStripeStatus, startStripeOnboard, getCategories } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
 import CityAutocomplete from '../../components/common/CityAutocomplete';
+import { ServiceModal } from '../Marketplace';
 
-const InputRow = ({ label, children, className = '' }) => (
+const InputRow = ({ label, required = false, children, className = '' }) => (
   <div className={`flex flex-col gap-1 ${className}`}>
     <label className="text-[11px] text-gray-500 font-medium flex items-center gap-1">
-      <span className="text-[#976DD0]">⋙</span> {label}
+      <span className="text-[#976DD0]">⋙</span>
+      {label}
+      {required && <span className="text-red-500">*</span>}
     </label>
     {children}
   </div>
@@ -22,7 +26,7 @@ const T = {
     tabs: { services: 'Mes services', orders: 'Suivi des services vendus' },
     countSvc: (n) => `Vous avez ${n} service${n > 1 ? 's' : ''} actif${n > 1 ? 's' : ''}`,
     countOrders: (n) => `Vous avez ${n} service${n > 1 ? 's' : ''} vendu${n > 1 ? 's' : ''}`,
-    svcTable: { date:'Date création', cat:'Catégorie', subcat:'Sous-catégorie', svc:'Service', price:'Prix', orders:'Commande', ca:'Total CA', status:'Statut' },
+    svcTable: { date:'Date création', cat:'Catégorie', svc:'Service', price:'Prix TTC', orders:'Commande', ca:'Total CA', status:'Statut' },
     actions: { activate:'Activer', deactivate:'Désactiver', see:'Voir', edit:'Modifier', delete:'Supprimer', accept:'Accepter', deliver:'Terminer service', approve:'Approuver' },
     statusLabels: { active:'Actif', inactive:'Inactif', draft:'Brouillon', pending:'En attente' },
     orderTabs: { all:'Tous', inprogress:'En cours', done:'Terminé', cancelled:'Annulé' },
@@ -41,14 +45,14 @@ const T = {
     svcTitle: 'Titre du service',
     svcTitlePh: 'Ex : Pack 10 visites accompagnées',
     cat: 'Catégorie',
-    subcat: 'Sous-catégorie',
     svcName: 'Service',
-    tarif: 'Type de tarification',
+    modality: 'Modalité',
     zone: 'Zone couverte',
     radius: 'Rayon',
     qty: 'Quantité',
-    price: 'Prix',
-    svcType: 'Modalité',
+    priceHT: 'Prix HT',
+    priceTTC: 'Prix TTC',
+    delivery: 'Délai de délivrance',
     email: 'Email',
     descTitle: 'Présentation du service',
     d1: "Qu'est-ce que ce service va vous apporter ?",
@@ -58,8 +62,8 @@ const T = {
     saveDraft: 'Enregistrer brouillon',
     activate: 'Créer et activer',
     cancel: 'Annuler',
-    freeService: 'Service offert (gratuit)',
-    freeServiceHint: "Coché : votre service est proposé gratuitement, le client effectue une réservation sans paiement.",
+    freeService: 'Service offert',
+    freeServiceHint: "Coché : votre service est proposé gratuitement, le client effectue une réservation sans paiement.",
   },
   en: {
     title: 'Manage my on-demand services',
@@ -68,7 +72,7 @@ const T = {
     tabs: { services: 'My services', orders: 'Track sold services' },
     countSvc: (n) => `You have ${n} active service${n > 1 ? 's' : ''}`,
     countOrders: (n) => `You have ${n} sold service${n > 1 ? 's' : ''}`,
-    svcTable: { date:'Created', cat:'Category', subcat:'Sub-category', svc:'Service', price:'Price', orders:'Orders', ca:'Total revenue', status:'Status' },
+    svcTable: { date:'Created', cat:'Category', svc:'Service', price:'Taxed price', orders:'Orders', ca:'Total revenue', status:'Status' },
     actions: { activate:'Activate', deactivate:'Deactivate', see:'View', edit:'Edit', delete:'Delete', accept:'Accept', deliver:'Mark delivered', approve:'Approve' },
     statusLabels: { active:'Active', inactive:'Inactive', draft:'Draft', pending:'Pending' },
     orderTabs: { all:'All', inprogress:'In progress', done:'Completed', cancelled:'Cancelled' },
@@ -89,6 +93,7 @@ const T = {
     subcat: 'Sub-category',
     svcName: 'Service',
     tarif: 'Pricing type',
+    modality: 'Modality',
     zone: 'Coverage area',
     radius: 'Radius',
     qty: 'Quantity',
@@ -103,7 +108,7 @@ const T = {
     saveDraft: 'Save draft',
     activate: 'Create and activate',
     cancel: 'Cancel',
-    freeService: 'Free service (no charge)',
+    freeService: 'Free service',
     freeServiceHint: 'Checked: your service is offered for free; the client books it without payment.',
   },
 };
@@ -128,22 +133,42 @@ const DEFAULT_TRANSACTIONS = ['Acheter', 'Vendre', 'Louer', 'Gérer'];
 const DEFAULT_SERVICES = ['Visites', 'Estimation', 'Négociation', 'Recherche de bien', 'Analyse acheteur', 'Prise de photo', 'Dossier vendeur', 'Recherche de financement', 'Visite virtuelle'];
 
 
-function CreateServiceModal({ lang, onClose }) {
+function CreateServiceModal({ lang, service = null, onClose, onCreated }) {
   const t = T[lang];
+  const isEdit = Boolean(service);
   const user = useSelector(state => state.user);
   const [transactions, setTransactions] = useState(DEFAULT_TRANSACTIONS);
   const [serviceTypes, setServiceTypes] = useState(DEFAULT_SERVICES);
   const [form, setForm] = useState({
-    category: 'Acheter', subcategory: 'Visites', service: 'Visites',
-    title: '', tarif: 'Forfait', zone: 'Lille', radius: '5', qty: 'Pack 10 visites',
-    price: '300', type: 'Présentiel', isFree: false,
+    category: 'Acheter', service: 'Visites',
+    title: '', zone: 'Lille', radius: '5', qty: '',
+    price: '300', modality: 'Présentiel', deliveryTime: 'Variable', isFree: false,
     d1: '', d2: '', d3: '', d4: '',
-    email: user?.email || '',
   });
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  // Charger les catégories définies par l'admin (fallback liste locale)
+  useEffect(() => {
+    if (!service) return;
+    const priceVal = service.price_ttc ? Math.round((service.price_ttc / 1.2) * 100) / 100 : 0;
+    setForm({
+      category: service.category?.name_fr || service.category?.name || form.category,
+      service: service.title_fr || service.title || form.service,
+      title: service.title_fr || service.title || '',
+      zone: service.city || form.zone,
+      radius: service.radiusKm?.toString() || form.radius,
+      qty: service.quantity ? service.quantity.toString() : '',
+      price: service.price_ttc === 0 ? '0' : priceVal.toString(),
+      modality: service.modality || service.type || 'Présentiel',
+      deliveryTime: service.delivery_time || 'Variable',
+      isFree: service.price_ttc === 0 || service.is_free,
+      d1: service.summary || '',
+      d2: service.description || '',
+      d3: service.d3 || '',
+      d4: service.d4 || '',
+    });
+  }, [service]);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -170,15 +195,55 @@ function CreateServiceModal({ lang, onClose }) {
 
   const handleSave = async (draft = false) => {
     setLoading(true);
-    // TODO: wire to API
-    setTimeout(() => { setLoading(false); onClose(); }, 800);
+    try {
+      const htPrice = Number(form.price || 0);
+      const payload = {
+        title: form.title,
+        description: form.d2,
+        summary: form.d3,
+        category: form.category,
+        modality: form.modality,
+        priceTTC: form.isFree ? 0 : Math.round(htPrice * 1.2 * 100) / 100,
+        city: form.zone,
+        radiusKm: Number(form.radius || 0),
+        delivery_time: form.deliveryTime,
+        imageUrls: [],
+      };
+      const quantityValue = Number(form.qty?.replace(/\D/g, ''));
+      if (!Number.isNaN(quantityValue) && quantityValue > 0) {
+        payload.quantity = quantityValue;
+      }
+      if (form.isFree) {
+        payload.priceTTC = 0;
+      }
+      if (isEdit && service?._id) {
+        await updateProService(service._id, payload, lang);
+      } else {
+        await createProService(payload, lang);
+      }
+      if (onCreated) onCreated();
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-
+  const isFormValid = () => {
+    if (!form.title.trim()) return false;
+    if (!form.category.trim()) return false;
+    if (!form.service.trim()) return false;
+    if (!form.zone.trim()) return false;
+    if (!form.radius.trim()) return false;
+    if (!form.d1.trim() || !form.d2.trim() || !form.d3.trim() || !form.d4.trim()) return false;
+    if (!form.isFree && !form.price.trim()) return false;
+    return true;
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
+    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="font-bold text-[#47525E] text-base">{t.modalTitle}</h2>
           <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
@@ -189,74 +254,29 @@ function CreateServiceModal({ lang, onClose }) {
           <div>
             <p className="font-bold text-[#47525E] text-sm mb-3">{t.charTitle}</p>
             <div className="mb-3">
-              <InputRow label={t.svcTitle}>
+              <InputRow label={t.svcTitle} required>
                 <input value={form.title} onChange={e => set('title', e.target.value)} maxLength={60} placeholder={t.svcTitlePh} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]" />
                 <span className="text-[10px] text-gray-400 mt-0.5">{(form.title || '').length}/60</span>
               </InputRow>
             </div>
             <div className="grid grid-cols-3 gap-3">
-                            {/* Champ numéro de téléphone ici si existant */}
-                            {/* Champ email ajouté juste après */}
-                            <InputRow label={t.email || 'Email'} className="col-span-3">
-                              <input
-                                type="email"
-                                value={form.email}
-                                onChange={e => set('email', e.target.value)}
-                                className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0] w-full"
-                                placeholder={t.email || 'Email'}
-                                autoComplete="email"
-                                required
-                              />
-                            </InputRow>
-              <InputRow label={t.cat}>
+              <InputRow label={t.cat} required>
                 <select value={form.category} onChange={e => set('category', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
                   {transactions.map(o => <option key={o}>{o}</option>)}
                 </select>
               </InputRow>
-              <InputRow label={t.subcat}>
-                <select value={form.subcategory} onChange={e => set('subcategory', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  {serviceTypes.map(o => <option key={o}>{o}</option>)}
-                </select>
-              </InputRow>
-              <InputRow label={t.svcName}>
+              <InputRow label={t.svcName} required>
                 <select value={form.service} onChange={e => set('service', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
                   {serviceTypes.map(o => <option key={o}>{o}</option>)}
                 </select>
               </InputRow>
-              <InputRow label={t.tarif}>
-                <select value={form.tarif} onChange={e => set('tarif', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  <option>Forfait</option><option>Unitaire</option><option>Au temps passé</option>
+              <InputRow label={t.modality} required>
+                <select value={form.modality} onChange={e => set('modality', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0] w-full">
+                  <option>Présentiel</option>
+                  <option>À distance</option>
                 </select>
               </InputRow>
-              <InputRow label={t.svcType}>
-                <select value={form.type} onChange={e => set('type', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]">
-                  <option>Présentiel</option><option>À distance</option>
-                </select>
-              </InputRow>
-              {form.type !== 'À distance' && (
-                <InputRow label={t.zone} className="col-span-2">
-                  <div className="flex gap-2">
-                    <div className="flex-1 min-w-0">
-                      <CityAutocomplete
-                        value={form.zone}
-                        onChange={(v) => set('zone', v)}
-                        onSelect={(p) => set('zone', p.city || p.formatted)}
-                        placeholder="Ville ou code postal"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]"
-                      />
-                    </div>
-                    <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 text-[12px] shrink-0">
-                      <span className="text-gray-400">{t.radius}</span>
-                      <input value={form.radius} onChange={e => set('radius', e.target.value)} className="w-10 text-[13px] focus:outline-none text-right" />
-                      <span className="text-gray-400">km</span>
-                    </div>
-                  </div>
-                </InputRow>
-              )}
-              <InputRow label={t.qty}>
-                <input value={form.qty} onChange={e => set('qty', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]" placeholder="Pack 10 visites" />
-              </InputRow>
-              <InputRow label={t.price}>
+              <InputRow label={t.priceHT} required>
                 {form.isFree ? (
                   <div className="flex items-center border border-gray-200 bg-gray-50 rounded-lg overflow-hidden px-3 py-2 text-[13px] text-[#976DD0] font-semibold">
                     {lang === 'fr' ? 'Offert' : 'Free'}
@@ -267,6 +287,37 @@ function CreateServiceModal({ lang, onClose }) {
                     <span className="px-2 text-gray-400 text-sm">€</span>
                   </div>
                 )}
+                {!form.isFree && (
+                  <div className="text-[11px] text-gray-400 mt-1">{t.priceTTC}: {Math.round((Number(form.price || 0) * 1.2) * 100) / 100} €</div>
+                )}
+              </InputRow>
+              <InputRow label={t.zone} required className="col-span-2">
+                <div className="flex gap-2">
+                  <div className="flex-1 min-w-0">
+                    <CityAutocomplete
+                      value={form.zone}
+                      onChange={(v) => set('zone', v)}
+                      onSelect={(p) => set('zone', p.city || p.formatted)}
+                      placeholder="Ville ou code postal"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]"
+                    />
+                  </div>
+                  <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-2 text-[12px] shrink-0">
+                    <span className="text-gray-400">{t.radius}</span>
+                    <input value={form.radius} onChange={e => set('radius', e.target.value)} className="w-10 text-[13px] focus:outline-none text-right" />
+                    <span className="text-gray-400">km</span>
+                  </div>
+                </div>
+              </InputRow>
+              <InputRow label={t.qty} className="col-span-1">
+                <input value={form.qty} onChange={e => set('qty', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0]" placeholder="Pack 10 visites" />
+              </InputRow>
+              <InputRow label={t.delivery} className="col-span-2">
+                <select value={form.deliveryTime} onChange={e => set('deliveryTime', e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#976DD0] w-full">
+                  {['Variable', '1 jour', '2 jours', '3 jours', '4 jours', '5 jours', '6 jours', '7 jours', '8 jours', '9 jours', '10 jours'].map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
               </InputRow>
             </div>
             {/* Service offert */}
@@ -297,7 +348,10 @@ function CreateServiceModal({ lang, onClose }) {
                 <div key={key} className="border border-gray-200 rounded-xl p-3 flex gap-3">
                   <div className="w-9 h-9 bg-[#976DD0] rounded-lg flex items-center justify-center text-white shrink-0">{icon}</div>
                   <div className="flex-1">
-                    <p className="text-[11px] font-semibold text-[#47525E] mb-1">{label}</p>
+                    <p className="text-[11px] font-semibold text-[#47525E] mb-1">
+                      {label}
+                      <span className="text-red-500">*</span>
+                    </p>
                     <textarea
                       rows={2}
                       className="w-full text-[12px] text-gray-500 focus:outline-none resize-none"
@@ -313,11 +367,20 @@ function CreateServiceModal({ lang, onClose }) {
         </div>
 
         <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
-          <button onClick={() => handleSave(true)} disabled={loading} className="flex-1 border border-gray-300 rounded-full py-2.5 text-sm text-[#47525E] hover:bg-gray-50">
-            {t.saveDraft}
+          <button onClick={onClose} disabled={loading} className="flex-1 border border-gray-300 rounded-full py-2.5 text-sm text-[#47525E] hover:bg-gray-50">
+            {t.cancel}
           </button>
-          <button onClick={() => handleSave(false)} disabled={loading} className="flex-1 bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full py-2.5 text-sm font-semibold transition-colors">
-            {t.activate}
+          { !isEdit && (
+            <button onClick={() => handleSave(true)} disabled={loading} className="flex-1 border border-gray-300 rounded-full py-2.5 text-sm text-[#47525E] hover:bg-gray-50">
+              {t.saveDraft}
+            </button>
+          )}
+          <button
+            onClick={() => handleSave(false)}
+            disabled={loading || !isFormValid()}
+            className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition-colors ${loading || !isFormValid() ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#976DD0] hover:bg-[#7d55b5] text-white'}`}
+          >
+            {isEdit ? 'Modifier' : t.activate}
           </button>
         </div>
       </div>
@@ -325,15 +388,26 @@ function CreateServiceModal({ lang, onClose }) {
   );
 }
 
+
 /* ─── Tableau services pro (image 3) ── */
-function ServicesTab({ services, lang, onAdd, onAction }) {
+function ServicesTab({ services, lang, onAdd, onAction, filter }) {
   const t = T[lang];
-  const activeCount = services.filter(s => s.status === 'active').length;
+  const filteredCount = services.length;
+  const filterLabel = filter === 'active'
+    ? lang === 'fr' ? ` actif${filteredCount > 1 ? 's' : ''}` : ` active service${filteredCount > 1 ? 's' : ''}`
+    : filter === 'inactive'
+      ? lang === 'fr' ? ` inactif${filteredCount > 1 ? 's' : ''}` : ` inactive service${filteredCount > 1 ? 's' : ''}`
+      : filter === 'draft'
+        ? lang === 'fr' ? ` brouillon${filteredCount > 1 ? 's' : ''}` : ` draft service${filteredCount > 1 ? 's' : ''}`
+        : '';
+  const countMessage = lang === 'fr'
+    ? `Vous avez ${filteredCount} service${filteredCount > 1 ? 's' : ''}${filterLabel}`
+    : `You have ${filteredCount} service${filteredCount > 1 ? 's' : ''}${filterLabel}`;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-[13px] text-gray-500">{t.countSvc(activeCount)}</p>
+        <p className="text-[13px] text-gray-500">{countMessage}</p>
         <button onClick={onAdd} className="flex items-center gap-1.5 border border-[#976DD0] text-[#976DD0] text-[13px] font-semibold px-4 py-2 rounded-lg hover:bg-[#F2ECF8] transition-colors">
           {t.addBtn}
         </button>
@@ -348,7 +422,6 @@ function ServicesTab({ services, lang, onAdd, onAction }) {
               <tr className="border-b-2 border-gray-100 text-[12px] text-gray-400 font-medium">
                 <th className="text-left py-2 px-3">{t.svcTable.date}</th>
                 <th className="text-left py-2 px-3">{t.svcTable.cat}</th>
-                <th className="text-left py-2 px-3">{t.svcTable.subcat}</th>
                 <th className="text-left py-2 px-3">{t.svcTable.svc}</th>
                 <th className="text-left py-2 px-3">{t.svcTable.price}</th>
                 <th className="text-left py-2 px-3">{t.svcTable.orders}</th>
@@ -361,7 +434,6 @@ function ServicesTab({ services, lang, onAdd, onAction }) {
               {services.map(svc => {
                 const title = lang === 'fr' ? (svc.title_fr || svc.title) : (svc.title_en || svc.title);
                 const cat = svc.category?.name_fr || svc.category?.name || '—';
-                const subcat = svc.subcategory?.name_fr || svc.subcategory?.name || '—';
                 const dateStr = svc.createdAt ? new Date(svc.createdAt).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
                 const statusKey = svc.status || 'draft';
                 const statusLabel = t.statusLabels[statusKey] || statusKey;
@@ -369,13 +441,33 @@ function ServicesTab({ services, lang, onAdd, onAction }) {
                   <tr key={svc._id} className="border-b border-gray-100 hover:bg-gray-50/50 text-[13px] text-[#47525E]">
                     <td className="py-3 px-3 whitespace-nowrap">{dateStr}</td>
                     <td className="py-3 px-3">{cat}</td>
-                    <td className="py-3 px-3">{subcat}</td>
-                    <td className="py-3 px-3 font-medium">{title}</td>
-                    <td className="py-3 px-3 whitespace-nowrap">{svc.price_ttc || svc.price || 0} € TTC</td>
+                    <td className="py-3 px-3 font-medium">
+                  <div className="flex flex-col gap-1">
+                    <span>{title}</span>
+                    {svc.delivery_time && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-gray-500">
+                        <FaCalendarDays className="text-gray-400" />
+                        {svc.delivery_time}
+                      </span>
+                    )}
+                  </div>
+                </td>
+                    <td className="py-3 px-3 whitespace-nowrap">
+                      {svc.price_ttc === 0 || svc.is_free ? (
+                        <div className="flex flex-col gap-1">
+                          <span className="line-through text-gray-400">{svc.price_ttc || svc.price || 0} € TTC</span>
+                          <span className="inline-flex items-center justify-center rounded-full bg-[#F2ECF8] px-2 py-1 text-[11px] font-semibold text-[#976DD0]">Service offert</span>
+                        </div>
+                      ) : (
+                        `${svc.price_ttc || svc.price || 0} € TTC`
+                      )}
+                    </td>
                     <td className="py-3 px-3">{svc.order_count || svc.orders || '-'}</td>
                     <td className="py-3 px-3">{svc.total_revenue ? `${svc.total_revenue} €` : '-'}</td>
                     <td className="py-3 px-3">
-                      <span className={SVC_STATUS_STYLE[statusKey] || 'text-gray-500'}>{statusLabel}</span>
+                      <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 w-[140px] text-[11px] font-semibold ${statusKey === 'active' ? 'bg-green-100 text-green-700' : statusKey === 'inactive' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {statusLabel}
+                      </span>
                     </td>
                     <td className="py-3 px-3">
                       <div className="flex gap-1.5 text-[12px]">
@@ -385,129 +477,6 @@ function ServicesTab({ services, lang, onAdd, onAction }) {
                         <button onClick={() => onAction('see', svc)} className="border border-gray-300 rounded-full px-2.5 py-0.5 hover:bg-gray-50 text-[#47525E]">{t.actions.see}</button>
                         <button onClick={() => onAction('edit', svc)} className="border border-gray-300 rounded-full px-2.5 py-0.5 hover:bg-gray-50 text-[#47525E]">{t.actions.edit}</button>
                         <button onClick={() => onAction('delete', svc)} className="border border-red-200 rounded-full px-2.5 py-0.5 hover:bg-red-50 text-red-400">{t.actions.delete}</button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ─── Tableau suivi commandes vendues (image 1) ── */
-function OrdersTab({ orders, lang, onAction }) {
-  const t = T[lang];
-  const [activeSubTab, setActiveSubTab] = useState('all');
-
-  const filtered = orders.filter(o => {
-    if (activeSubTab === 'all') return true;
-    const status = t.orderStatus[o.status] || '';
-    if (activeSubTab === 'inprogress') return status === 'En cours' || status === 'In progress';
-    if (activeSubTab === 'done') return status === 'Terminé' || status === 'Completed';
-    if (activeSubTab === 'cancelled') return status === 'Annulé' || status === 'Cancelled';
-    return true;
-  });
-
-  const countAll = orders.length;
-
-  return (
-    <div>
-      <p className="text-[13px] text-gray-500 mb-4">{t.countOrders(countAll)}</p>
-
-      {/* Sub-tabs */}
-      <div className="flex gap-1 border-b border-gray-100 mb-4">
-        {Object.entries(t.orderTabs).map(([key, label]) => (
-          <button key={key} onClick={() => setActiveSubTab(key)}
-            className={`px-4 py-2.5 text-[13px] font-medium border-b-2 transition-colors ${activeSubTab === key ? 'border-[#976DD0] text-[#976DD0]' : 'border-transparent text-gray-400 hover:text-[#47525E]'}`}
-          >{label}</button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">{t.emptyOrders}</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px]">
-            <thead>
-              <tr className="border-b-2 border-gray-100 text-[12px] text-gray-400 font-medium">
-                <th className="text-left py-2 px-3">{t.orderTable.date}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.svc}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.bien}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.client}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.num}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.price}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.status}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.delivery}</th>
-                <th className="text-left py-2 px-3">{t.orderTable.payment}</th>
-                <th className="text-left py-2 px-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(order => {
-                const svcTitle = order.service?.title_fr || order.service?.title || '—';
-                const clientName = order.buyer?.name || order.buyer?.email?.split('@')[0] || 'Client';
-                const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
-                const deliveryStr = order.delivery_date || order.deliveredAt ? new Date(order.delivery_date || order.deliveredAt).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {day:'2-digit',month:'2-digit',year:'numeric'}) : '-';
-                const num = `#${(order._id || '').slice(-5).toUpperCase() || '00123'}`;
-                const statusLabel = t.orderStatus[order.status] || 'En cours';
-                const isAcceptable = order.status === 'paid';
-                const isDeliverable = order.status === 'accepted_by_pro';
-                const isConfirmed = order.status === 'confirmed_by_buyer';
-                return (
-                  <tr key={order._id} className="border-b border-gray-100 hover:bg-gray-50/50 text-[13px] text-[#47525E]">
-                    <td className="py-3 px-3 whitespace-nowrap">{dateStr}</td>
-                    <td className="py-3 px-3">{svcTitle}</td>
-                    <td className="py-3 px-3">
-                      {order.property ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-10 h-8 bg-gray-200 rounded shrink-0" />
-                          <span className="text-[12px] text-gray-400">{order.property.address || '—'}</span>
-                        </div>
-                      ) : <span className="text-gray-300">-</span>}
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-200 to-blue-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                          {clientName.charAt(0)}
-                        </div>
-                        <span className="text-[12px]">{clientName}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3 whitespace-nowrap font-medium">{num}</td>
-                    <td className="py-3 px-3 whitespace-nowrap">{order.totalTTC || order.total || 0} € TTC</td>
-                    <td className="py-3 px-3">
-                      <span className={`font-medium ${ORD_STATUS_STYLE[statusLabel] || 'text-gray-500'}`}>{statusLabel}</span>
-                    </td>
-                    <td className="py-3 px-3 whitespace-nowrap">{deliveryStr}</td>
-                    <td className="py-3 px-3">
-                      {isConfirmed && (
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                          {t.payment.paid}
-                        </span>
-                      )}
-                      {(isAcceptable || isDeliverable) && (
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#976DD0] text-white">
-                          {t.payment.pending}
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="flex flex-col gap-0.5 text-[12px]">
-                        <button className="text-[#47525E] hover:text-[#976DD0] text-left">{t.actions.see}</button>
-                        <button className="text-[#47525E] hover:text-[#976DD0] text-left">Contacter client</button>
-                        {isAcceptable && (
-                          <button onClick={() => onAction('accept', order)} className="text-[#976DD0] hover:underline text-left font-medium">{t.actions.accept}</button>
-                        )}
-                        {isDeliverable && (
-                          <button onClick={() => onAction('deliver', order)} className="text-[#976DD0] hover:underline text-left font-medium">{t.actions.deliver}</button>
-                        )}
-                        {isConfirmed && (
-                          <button className="text-[#389D93] hover:underline text-left font-medium">{t.actions.approve}</button>
-                        )}
                       </div>
                     </td>
                   </tr>
@@ -623,29 +592,25 @@ const MOCK_PRO_ORDERS = [
 export default function ProMarketplace() {
   const [lang, setLang] = useState('fr');
   const t = T[lang];
-  const [activeTab, setActiveTab] = useState('services');
   const [services, setServices] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [serviceStatusFilter, setServiceStatusFilter] = useState('all');
   const [loading, setLoading] = useState(false);
   const [createModal, setCreateModal] = useState(false);
+  const [viewService, setViewService] = useState(null);
+  const [editService, setEditService] = useState(null);
+  const [deactivateService, setDeactivateService] = useState(null);
+  const [deleteService, setDeleteService] = useState(null);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [svcRes, ordRes] = await Promise.all([
-        getProServices(lang),
-        getProOrders(lang),
-      ]);
+      const svcRes = await getProServices(lang);
       const svcList = svcRes?.services || svcRes?.data || [];
-      const ordList = ordRes?.orders || ordRes?.data || [];
       setServices(svcList.length > 0 ? svcList : MOCK_PRO_SERVICES);
-      setOrders(ordList.length > 0 ? ordList : MOCK_PRO_ORDERS);
     } catch (e) {
       console.error(e);
       setServices(MOCK_PRO_SERVICES);
-      setOrders(MOCK_PRO_ORDERS);
-    }
-    finally { setLoading(false); }
+    } finally { setLoading(false); }
   }, [lang]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -655,6 +620,25 @@ export default function ProMarketplace() {
       if (type === 'accept') { await acceptOrder(order._id, lang); fetchAll(); }
       else if (type === 'deliver') { await deliverOrder(order._id, lang); fetchAll(); }
     } catch (e) { console.error(e); }
+  };
+
+  const handleServiceAction = async (action, service) => {
+    try {
+      if (action === 'deactivate') {
+        setDeactivateService(service);
+      } else if (action === 'activate') {
+        await updateProService(service._id, { status: 'active' }, lang);
+        fetchAll();
+      } else if (action === 'see') {
+        setViewService(service);
+      } else if (action === 'edit') {
+        setEditService(service);
+      } else if (action === 'delete') {
+        setDeleteService(service);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -672,31 +656,148 @@ export default function ProMarketplace() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 border-b border-gray-100 mb-5">
-          {Object.entries(t.tabs).map(([key, label]) => (
-            <button key={key} onClick={() => setActiveTab(key)}
-              className={`px-5 py-3 text-[13px] font-medium border-b-2 transition-colors ${activeTab === key ? 'border-[#976DD0] text-[#976DD0]' : 'border-transparent text-gray-400 hover:text-[#47525E]'}`}
-            >{label}</button>
-          ))}
+        <div className="flex gap-2 items-center mb-5">
+          <span className="text-sm text-gray-500">Filtrer :</span>
+          {['all', 'active', 'inactive', 'draft'].map((status) => {
+            const label = status === 'all'
+              ? 'Tous'
+              : status === 'active'
+                ? 'Actif'
+                : status === 'inactive'
+                  ? 'Inactif'
+                  : 'Brouillon';
+            return (
+              <button
+                key={status}
+                type="button"
+                onClick={() => setServiceStatusFilter(status)}
+                className={`px-4 py-2 text-sm font-medium rounded-full border transition ${serviceStatusFilter === status ? 'bg-[#976DD0] text-white border-[#976DD0]' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {loading ? (
           <div className="text-center py-20 text-gray-400">{t.loading}</div>
         ) : (
           <>
-            {activeTab === 'services' && (
-              <ServicesTab services={services} lang={lang} onAdd={() => setCreateModal(true)} onAction={() => {}} />
-            )}
-            {activeTab === 'orders' && (
-              <OrdersTab orders={orders} lang={lang} onAction={handleOrderAction} />
-            )}
+            <ServicesTab
+              services={services.filter((svc) => {
+                if (serviceStatusFilter === 'all') return true;
+                return svc.status === serviceStatusFilter;
+              })}
+              lang={lang}
+              filter={serviceStatusFilter}
+              onAdd={() => setCreateModal(true)}
+              onAction={handleServiceAction}
+            />
           </>
         )}
       </div>
 
       {createModal && (
-        <CreateServiceModal lang={lang} onClose={() => setCreateModal(false)} />
+        <CreateServiceModal lang={lang} onClose={() => setCreateModal(false)} onCreated={fetchAll} />
+      )}
+      {editService && (
+        <CreateServiceModal
+          lang={lang}
+          service={editService}
+          onClose={() => setEditService(null)}
+          onCreated={() => { fetchAll(); setEditService(null); }}
+        />
+      )}
+      {viewService && (
+        <ServiceModal
+          svc={viewService}
+          lang={lang}
+          onClose={() => setViewService(null)}
+          onBuy={() => {}}
+          hideActions={true}
+        />
+      )}
+      {deactivateService && (
+        <div onClick={() => setDeactivateService(null)} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h2 className="font-bold text-[#47525E] text-base">Confirmer la désactivation</h2>
+              <button onClick={() => setDeactivateService(null)} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-sm text-gray-600">Voulez-vous vraiment désactiver ce service ? Il ne sera plus visible dans les résultats de recherche.</p>
+              <div className="rounded-xl border border-[#E9D8FD] bg-[#F3E8FF] px-4 py-3 text-sm text-[#6D28D9]">
+                <p className="font-medium">Service :</p>
+                <p>{lang === 'fr' ? (deactivateService.title_fr || deactivateService.title) : (deactivateService.title_en || deactivateService.title)}</p>
+              </div>
+            </div>
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
+              <button
+                type="button"
+                className="flex-1 border border-gray-300 rounded-full py-2.5 text-sm text-[#47525E] hover:bg-gray-50"
+                onClick={() => setDeactivateService(null)}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                className="flex-1 bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full py-2.5 text-sm font-semibold transition-colors"
+                onClick={async () => {
+                  try {
+                    await updateProService(deactivateService._id, { status: 'inactive' }, lang);
+                    setDeactivateService(null);
+                    fetchAll();
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }}
+              >
+                Désactiver
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {deleteService && (
+        <div onClick={() => setDeleteService(null)} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h2 className="font-bold text-[#47525E] text-base">Confirmer la suppression</h2>
+              <button onClick={() => setDeleteService(null)} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-sm text-gray-600">Voulez-vous vraiment supprimer ce service ? Cette action est irréversible.</p>
+              <div className="rounded-xl border border-[#E9D8FD] bg-[#F3E8FF] px-4 py-3 text-sm text-[#6D28D9]">
+                <p className="font-medium">Service :</p>
+                <p>{lang === 'fr' ? (deleteService.title_fr || deleteService.title) : (deleteService.title_en || deleteService.title)}</p>
+              </div>
+            </div>
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
+              <button
+                type="button"
+                className="flex-1 border border-gray-300 rounded-full py-2.5 text-sm text-[#47525E] hover:bg-gray-50"
+                onClick={() => setDeleteService(null)}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                className="flex-1 bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full py-2.5 text-sm font-semibold transition-colors"
+                onClick={async () => {
+                  try {
+                    await deleteProService(deleteService._id, lang);
+                    setDeleteService(null);
+                    fetchAll();
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }}
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       </div>
     </PageLayout>

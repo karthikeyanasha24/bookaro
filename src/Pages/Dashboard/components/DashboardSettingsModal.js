@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { FaGripLinesVertical } from "react-icons/fa6";
 
@@ -36,9 +36,11 @@ const DashboardSettingsModal = ({
   t,
 }) => {
   const [draggedSectionId, setDraggedSectionId] = useState(null);
+  const [touchDraggingSectionId, setTouchDraggingSectionId] = useState(null);
   const [dragOverTarget, setDragOverTarget] = useState({ sectionId: null, position: null });
   const [localOrder, setLocalOrder] = useState(sectionOrder);
   const [localVisibility, setLocalVisibility] = useState(sectionVisibility);
+  const rowRefs = useRef({});
 
   useEffect(() => {
     setLocalOrder(sectionOrder);
@@ -98,7 +100,54 @@ const DashboardSettingsModal = ({
     onSectionOrderChange(nextOrder);
     onSavePreferences({ mode, sectionOrder: nextOrder, sectionVisibility: localVisibility });
     setDraggedSectionId(null);
+    setTouchDraggingSectionId(null);
     setDragOverTarget({ sectionId: null, position: null });
+  };
+
+  const handleTouchStart = (event, sectionId) => {
+    setDraggedSectionId(sectionId);
+    setTouchDraggingSectionId(sectionId);
+    setDragOverTarget({ sectionId: null, position: null });
+    event.preventDefault();
+  };
+
+  const handleTouchMove = (event) => {
+    if (!touchDraggingSectionId) return;
+    const touch = event.touches[0];
+    const y = touch.clientY;
+    let closest = { sectionId: null, position: null, distance: Infinity };
+
+    Object.entries(rowRefs.current).forEach(([id, el]) => {
+      if (!el || id === touchDraggingSectionId) return;
+      const rect = el.getBoundingClientRect();
+      if (y >= rect.top && y <= rect.bottom) {
+        const position = y - rect.top < rect.height / 2 ? "above" : "below";
+        const distance = Math.abs(y - (rect.top + rect.height / 2));
+        if (distance < closest.distance) {
+          closest = { sectionId: id, position, distance };
+        }
+      }
+    });
+
+    if (closest.sectionId) {
+      setDragOverTarget({ sectionId: closest.sectionId, position: closest.position });
+      event.preventDefault();
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchDraggingSectionId) {
+      setDragOverTarget({ sectionId: null, position: null });
+      return;
+    }
+    if (dragOverTarget.sectionId) {
+      const event = { preventDefault: () => {} };
+      handleDrop(event, dragOverTarget.sectionId);
+    } else {
+      setDraggedSectionId(null);
+      setTouchDraggingSectionId(null);
+      setDragOverTarget({ sectionId: null, position: null });
+    }
   };
 
   const handleModeChange = (nextMode) => {
@@ -127,7 +176,7 @@ const DashboardSettingsModal = ({
               ✕
             </button>
           </div>
-          <div className="px-6 py-4 space-y-4 dashboard-settings-modal-body">
+          <div className="px-6 py-4 space-y-4 dashboard-settings-modal-body" onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchEnd}>
             <div>
               <p className="text-sm text-slate-500 mb-2">
                 {t("dashboard.settings.selectProfile", "Sélectionnez le profil à modifier")}
@@ -166,10 +215,12 @@ const DashboardSettingsModal = ({
                 return (
                   <div
                     key={sectionId}
+                    ref={(el) => (rowRefs.current[sectionId] = el)}
                     draggable={isGrippable}
                     onDragStart={(event) => isGrippable && handleDragStart(event, sectionId)}
                     onDragOver={(event) => isGrippable && handleDragOver(event, sectionId)}
                     onDrop={(event) => isGrippable && handleDrop(event, sectionId)}
+                    onTouchStart={(event) => isGrippable && handleTouchStart(event, sectionId)}
                     className="dashboard-settings-row"
                   >
                     <div className="dashboard-settings-drag-handle-wrapper">

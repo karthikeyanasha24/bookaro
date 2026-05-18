@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ApiClient from '../methods/api/apiClient';
 import './QRCodeFlyerModal.local.css';
 
 // Mock data for photos and social ratings
@@ -23,7 +24,7 @@ const socialOptions = [
   { key: 'rent', label: 'Revenu locatif annuel' },
 ];
 
-export default function QRCodeFlyerModal({ open, onClose }) {
+export default function QRCodeFlyerModal({ open, onClose, selectedProperty, onSuccess }) {
   // Empêche le scroll du body quand la modale est ouverte
   useEffect(() => {
     if (open) {
@@ -38,6 +39,9 @@ export default function QRCodeFlyerModal({ open, onClose }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [checked, setChecked] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleCheck = (key) => {
     setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -47,7 +51,37 @@ export default function QRCodeFlyerModal({ open, onClose }) {
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
-  const canGenerate = !!selectedPhoto;
+
+  const selectedMetrics = Object.keys(checked).filter((key) => checked[key]);
+  const photoList = selectedProperty?.availablePhotos?.length ? selectedProperty.availablePhotos : mockPhotos.map((url, idx) => ({ id: url, url }));
+  const canGenerate = !!selectedPhoto && !!selectedProperty;
+
+  const handleGenerate = async () => {
+    if (!canGenerate) return;
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        propertyId: selectedProperty.propertyId,
+        selectedPhotoId: selectedPhoto,
+        selectedMetrics,
+      };
+      const response = await ApiClient.post('/property/qr-code/flyers', payload);
+      if (response.success) {
+        setSuccessMessage('Flyer généré avec succès.');
+        if (typeof onSuccess === 'function') {
+          onSuccess(response.data);
+        }
+      } else {
+        setErrorMessage(response.message || 'Erreur lors de la génération');
+      }
+    } catch (err) {
+      setErrorMessage(err?.message || 'Erreur réseau');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!open) return null;
 
@@ -75,15 +109,19 @@ export default function QRCodeFlyerModal({ open, onClose }) {
           {/* Carousel */}
           <div className="qrflyer-carousel-caption">Sélectionnez une photo pour le flyer</div>
           <div className="qrflyer-carousel">
-            {mockPhotos.map((url, idx) => (
-              <div
-                key={url}
-                className={`qrflyer-carousel-imgwrap${selectedPhoto === url ? ' selected' : ''}`}
-                onClick={() => setSelectedPhoto(url)}
-              >
-                <img src={url} alt={`photo-${idx + 1}`} />
-              </div>
-            ))}
+            {photoList.map((photo, idx) => {
+              const photoId = typeof photo === 'string' ? photo : photo.id || photo.url || String(idx);
+              const photoUrl = typeof photo === 'string' ? photo : photo.url;
+              return (
+                <div
+                  key={photoId}
+                  className={`qrflyer-carousel-imgwrap${selectedPhoto === photoId ? ' selected' : ''}`}
+                  onClick={() => setSelectedPhoto(photoId)}
+                >
+                  <img src={photoUrl} alt={`photo-${idx + 1}`} />
+                </div>
+              );
+            })}
           </div>
           {/* Social data checkboxes */}
           <div className="qrflyer-checkboxes qrflyer-checkboxes-2col">
@@ -148,15 +186,18 @@ export default function QRCodeFlyerModal({ open, onClose }) {
           </button>
           <button
             className="qrflyer-btn qrflyer-btn-generate"
-            disabled={!canGenerate}
+            disabled={!canGenerate || isSubmitting}
+            onClick={handleGenerate}
             style={{
               opacity: canGenerate ? 1 : 0.5,
               cursor: canGenerate ? 'pointer' : 'not-allowed',
             }}
           >
-            Générer le flyer
+            {isSubmitting ? 'Génération...' : 'Générer le flyer'}
           </button>
         </div>
+        {errorMessage && <div className="qrflyer-error-message">{errorMessage}</div>}
+        {successMessage && <div className="qrflyer-success-message">{successMessage}</div>}
       </div>
     </div>
   );

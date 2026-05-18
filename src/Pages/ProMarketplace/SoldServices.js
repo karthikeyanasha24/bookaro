@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
-import { getProOrders, deliverOrder, openLitigation, acceptCancellation, rejectCancellation, proRequestCancellation } from '../../methods/api/marketplaceApi';
+import { getProOrders, deliverOrder, openLitigationPro, acceptCancellation, rejectCancellation, proRequestCancellation } from '../../methods/api/marketplaceApi';
 import { toast } from 'react-toastify';
 import { MOCK_PRO_ORDERS } from '../../mocks/marketplaceOrders.mock';
 import { uploadFiles } from '../../methods/api/upload';
 import PageLayout from '../../components/global/PageLayout';
+import { ServiceModal } from '../Marketplace';
 
 const socket = io();
 
@@ -137,82 +138,43 @@ function SubmitWorkModal({ order, onClose, onSubmit }) {
 
 // Modale fiche descriptive du service vendu
 function SoldServiceModal({ order, onClose }) {
-  const svc = order.service_snapshot || order.service || {};
-  const client = order.client || {};
-  return (
-    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4 flex flex-col">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-          <span className="font-bold text-[#47525E] text-base">{svc.title_fr || svc.title_en || svc.title || 'Service'}</span>
-          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 text-sm">✕</button>
+  if (!order) return null;
+
+  const svcSnapshot = order.serviceSnapshot || order.service_snapshot || order.service || {};
+  const service = {
+    ...svcSnapshot,
+    provider: svcSnapshot.provider || order.proSnapshot || order.pro || {},
+    price_ttc: svcSnapshot.priceTTC ?? svcSnapshot.price_ttc ?? order.totalPriceTTC ?? order.total ?? 0,
+    city: svcSnapshot.city || order.service?.city || undefined,
+    radiusKm: svcSnapshot.radiusKm ?? svcSnapshot.radius,
+    delivery_time: svcSnapshot.delivery_time || svcSnapshot.deliveryTime,
+    quantity: svcSnapshot.quantity ?? order.quantity,
+  };
+
+  const extraContent = order.status === 'delivered_by_pro' ? (
+    <div className="rounded-2xl border border-gray-100 bg-[#f7f2fc] p-4">
+      <h3 className="text-sm font-bold text-[#47525E] mb-2">Prestation livrée</h3>
+      <p className="text-[13px] text-gray-700 mb-2">
+        Date de livraison : <strong>{order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString('fr-FR') : 'Non renseignée'}</strong>
+      </p>
+      {order.attachments && order.attachments.length > 0 ? (
+        <div>
+          <p className="text-[13px] text-gray-700 mb-2">Pièces jointes :</p>
+          <ul className="list-disc ml-5 space-y-1 text-[13px] text-[#47525E]">
+            {order.attachments.map((file, idx) => (
+              <li key={idx}>
+                <a href={file.url} target="_blank" rel="noreferrer" className="text-[#976DD0] underline">{file.name || file.url}</a>
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="px-6 py-4 overflow-y-auto max-h-[72vh] space-y-6">
-          {/* Bien concerné */}
-          {order.property && (
-            <div className="mb-2">
-              <h3 className="text-sm font-bold text-[#47525E] mb-1">Bien concerné</h3>
-              <div className="text-[13px] text-gray-700">{order.property.title || '-'}</div>
-            </div>
-          )}
-          {/* Présentation du service */}
-          <div>
-            <h3 className="text-sm font-bold text-[#47525E] mb-1">Présentation du service</h3>
-            <div className="text-[13px] text-gray-700 mb-2">{svc.section_service || svc.title_fr || svc.title_en || svc.title || '-'}</div>
-          </div>
-          {/* Qu'est-ce que ce service va vous apporter */}
-          <div>
-            <h3 className="text-sm font-bold text-[#47525E] mb-1">Qu'est-ce que ce service va vous apporter ?</h3>
-            <div className="text-[13px] text-gray-700 mb-2">{svc.section_benefit_text || '-'}</div>
-          </div>
-          {/* Description du service rendu */}
-          <div>
-            <h3 className="text-sm font-bold text-[#47525E] mb-1">Description du service rendu</h3>
-            <div className="text-[13px] text-gray-700 mb-2">{svc.section_description_text || '-'}</div>
-          </div>
-          {/* Ce que vous obtiendrez */}
-          <div>
-            <h3 className="text-sm font-bold text-[#47525E] mb-1">Ce que vous obtiendrez</h3>
-            <div className="text-[13px] text-gray-700 mb-2">{svc.section_deliverable_text || '-'}</div>
-          </div>
-          {/* Facturation */}
-          <div>
-            <h3 className="text-sm font-bold text-[#47525E] mb-1">Facturation</h3>
-            <div className="text-[13px] text-gray-700 mb-2">{svc.section_billing_text || '-'}</div>
-          </div>
-          {/* Infos complémentaires */}
-          <div className="flex flex-wrap gap-2 mt-2">
-            <span className="bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">Prix: {svc.price_ttc ?? svc.price ?? order.totalTTC ?? order.total ?? '-'} €</span>
-            {svc.zone_covered && <span className="bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">{svc.zone_covered}</span>}
-            {svc.tarification_type && <span className="bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">{svc.tarification_type}</span>}
-          </div>
-          {/* Client */}
-          <div className="mt-4">
-            <h3 className="text-sm font-bold text-[#47525E] mb-1">Client</h3>
-            <div className="flex items-start gap-3">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center text-white text-xl font-bold shrink-0">
-                {client.name?.charAt(0) || '?'}
-              </div>
-              <div className="flex-1">
-                <p className="font-bold text-[#47525E] text-sm">{client.name || '-'}</p>
-                <p className="text-xs text-gray-400 mb-1">{client.email || '-'}</p>
-              </div>
-            </div>
-          </div>
-          {/* Section Service finalisé */}
-          {order.status === 'delivered_by_pro' && order.attachments && order.attachments.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-sm font-bold text-[#47525E] mb-1">Service finalisé</h3>
-              <ul className="list-disc ml-5">
-                {order.attachments.map((file, idx) => (
-                  <li key={idx}><a href={file.url} target="_blank" rel="noopener noreferrer" className="text-[#976DD0] underline">{file.name}</a></li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+      ) : (
+        <p className="text-[13px] text-gray-500">Aucune pièce jointe fournie.</p>
+      )}
     </div>
-  );
+  ) : null;
+
+  return <ServiceModal svc={service} lang="fr" onClose={onClose} hideActions extraContent={extraContent} />;
 }
 
 // Modal pour traiter une demande d'annulation côté pro
@@ -279,18 +241,13 @@ export default function SoldServices() {
   const [cancelReviewOrder, setCancelReviewOrder] = useState(null);
   const [proCancelOrder, setProCancelOrder] = useState(null);
 
-  const BADGE_BASE = 'inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-semibold min-w-[120px]';
+  const BADGE_BASE = 'inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-semibold w-[112px] whitespace-nowrap';
   // Unique, harmonious pastel palette (no duplicates between status and payment badges)
   const STATUS_BADGE = {
-    pending_payment: `bg-amber-200 text-black ${BADGE_BASE}`,
-    paid: `bg-emerald-200 text-black ${BADGE_BASE}`,
-    accepted_by_pro: `bg-fuchsia-200 text-black ${BADGE_BASE}`,
-    delivered_by_pro: `bg-violet-200 text-black ${BADGE_BASE}`,
-    confirmed_by_buyer: `bg-sky-200 text-black ${BADGE_BASE}`,
-    cancelled: `bg-rose-200 text-black ${BADGE_BASE}`,
-    refunded: `bg-rose-300 text-black ${BADGE_BASE}`,
-    litigation_opened: `bg-orange-200 text-black ${BADGE_BASE}`,
-    cancellation_requested: `bg-black text-white ${BADGE_BASE}`,
+    'En cours': `bg-teal-500 text-white ${BADGE_BASE}`,
+    'Terminé': `bg-violet-200 text-black ${BADGE_BASE}`,
+    'Annulé': `bg-rose-200 text-black ${BADGE_BASE}`,
+    'Annulation demandée': `bg-black text-white ${BADGE_BASE}`,
   };
   const PAYMENT_BADGE = { paid: `bg-slate-200 text-black ${BADGE_BASE}`, pending: `bg-stone-200 text-black ${BADGE_BASE}`, refunded: `bg-pink-100 text-black ${BADGE_BASE}` };
 
@@ -406,16 +363,16 @@ export default function SoldServices() {
                         <td className="py-3 px-3 whitespace-nowrap">{price}</td>
                         <td className="py-3 px-3">{
                           (() => {
-                            const cls = STATUS_BADGE[order.status] || 'bg-gray-50 text-black';
-                            return <span className={`inline-block ${cls} rounded-full px-3 py-1 text-[11px] font-semibold`}>{statusLabel}</span>;
+                            const cls = STATUS_BADGE[statusLabel] || `bg-gray-50 text-black ${BADGE_BASE}`;
+                            return <span className={cls}>{statusLabel}</span>;
                           })()
                         }</td>
                         <td className="py-3 px-3 whitespace-nowrap">{dateLivraison}</td>
                         <td className="py-3 px-3">{
                           (() => {
                             const key = order.payment_status || (paymentLabel === 'En attente' ? 'pending' : 'paid');
-                            const cls = PAYMENT_BADGE[key] || 'bg-gray-50 text-black';
-                            return <span className={`inline-block ${cls} rounded-full px-3 py-1 text-[11px] font-semibold`}>{paymentLabel}</span>;
+                            const cls = PAYMENT_BADGE[key] || `bg-gray-50 text-black ${BADGE_BASE}`;
+                            return <span className={cls}>{paymentLabel}</span>;
                           })()
                         }</td>
                         <td className="py-3 px-3">
@@ -443,8 +400,8 @@ export default function SoldServices() {
       {submitOrder && <SubmitWorkModal order={submitOrder} onClose={() => setSubmitOrder(null)} onSubmit={handleSubmit} />}
       {viewOrder && <SoldServiceModal order={viewOrder} onClose={() => setViewOrder(null)} />}
       {incidentOrder && <IncidentModal order={incidentOrder} onClose={() => setIncidentOrder(null)} onSubmit={async ({ description }) => {
-        // Appel backend pour signaler l'incident
-        await openLitigation(incidentOrder._id, description);
+        // Appel backend pour ouvrir un litige côté pro
+        await openLitigationPro(incidentOrder._id, description);
         // Marquer l'incident côté UI (mock)
         setOrders(orders => orders.map(o => o._id === incidentOrder._id ? { ...o, incident: { description } } : o));
       }} />}

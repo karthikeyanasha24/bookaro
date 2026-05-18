@@ -34,6 +34,11 @@ export const getServiceById = (id, lang = 'fr') =>
 export const getCategories = (lang = 'fr') =>
   request('GET', '/marketplace/categories', null, lang);
 
+export const getFavoritePros = (postalCode = '', lang = 'fr') => {
+  const path = postalCode ? `/marketplace/favorite-pros?postalCode=${encodeURIComponent(postalCode)}` : '/marketplace/favorite-pros';
+  return request('GET', path, null, lang);
+};
+
 // ─── Buyer (auth requise) ───────────────────────────────────────────────────
 
 export const createOrder = (payload, lang = 'fr') =>
@@ -50,6 +55,9 @@ export const confirmDelivery = (orderId, lang = 'fr') =>
 
 export const openLitigation = (orderId, reason, lang = 'fr') =>
   request('POST', `/marketplace/orders/${orderId}/litigation`, { reason }, lang);
+
+export const openLitigationPro = (orderId, description, lang = 'fr') =>
+  request('POST', `/pro/marketplace/orders/${orderId}/litigation`, { description }, lang);
 
 export const postReview = (payload, lang = 'fr') =>
   request('POST', '/marketplace/reviews', payload, lang);
@@ -73,6 +81,9 @@ export const proRequestCancellation = (orderId, payload = {}, lang = 'fr') =>
 export const getProDashboard = (lang = 'fr') =>
   request('GET', '/pro/marketplace/dashboard', null, lang);
 
+export const createProService = (payload, lang = 'fr') =>
+  request('POST', '/pro/marketplace/services', payload, lang);
+
 export const getProServices = (lang = 'fr') =>
   request('GET', '/pro/marketplace/services', null, lang);
 
@@ -82,8 +93,14 @@ export const getProOrders = (lang = 'fr') =>
 export const acceptOrder = (orderId, lang = 'fr') =>
   request('POST', `/pro/marketplace/orders/${orderId}/accept`, null, lang);
 
-export const deliverOrder = (orderId, lang = 'fr') =>
-  request('POST', `/pro/marketplace/orders/${orderId}/deliver`, null, lang);
+export const deliverOrder = (orderId, payload = {}, lang = 'fr') =>
+  request('POST', `/pro/marketplace/orders/${orderId}/deliver`, payload, lang);
+
+export const updateProService = (serviceId, payload, lang = 'fr') =>
+  request('PUT', `/pro/marketplace/services/${serviceId}`, payload, lang);
+
+export const deleteProService = (serviceId, lang = 'fr') =>
+  request('DELETE', `/pro/marketplace/services/${serviceId}`, null, lang);
 
 // ─── Service requests ("Faire une demande") ────────────────────────────────
 

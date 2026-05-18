@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { MdSearch, MdLocationOn, MdKeyboardArrowDown, MdPerson, MdStorefront, MdWorkOutline, MdRateReview, MdOutlineSell, MdOutlineInventory2 } from 'react-icons/md';
+import { MdSearch, MdLocationOn, MdKeyboardArrowDown, MdPerson, MdStorefront, MdWorkOutline, MdRateReview, MdOutlineInventory2, MdTextsms, MdSupportAgent } from 'react-icons/md';
 import { PiStarFill, PiStar } from 'react-icons/pi';
+import { FaCalendarDays } from 'react-icons/fa6';
 import CityAutocomplete from '../../components/common/CityAutocomplete';
-import { getServices, createOrder, searchProviders, getCategories, createServiceRequest } from '../../methods/api/marketplaceApi';
+import { getServices, createOrder, searchProviders, getCategories, createServiceRequest, getFavoritePros } from '../../methods/api/marketplaceApi';
 import PageLayout from '../../components/global/PageLayout';
 
 export const T = {
   fr: {
-    featuredTitle: "Nos agents favoris pour vous accompagner sans commission",
+    featuredTitle: "Nos agents locaux favoris pour vous accompagner sans commission",
     pageTitle: "Se faire accompagner par un professionnel",
     pageSub: "Nos agents immobiliers locaux et sûrs pour vous accompagner sans mandat ni commission",
     helpLabel: "J'ai besoin d'aide pour",
@@ -158,7 +159,7 @@ const MOCK_FEATURED = [
       { value: "10+", label: "Années d'expérience" },
       { value: "50",  label: "Clients accompagnés" },
       { value: "4,9/5", label: "25 avis clients" },
-      { value: "100%", label: "Clients accompagnés" },
+      { value: "100%", label: "Clients satisfaits" },
     ],
     photo: "/assets/img/agent-geoffroy-papelier.jpg.jpg",
     photoBg: "from-slate-300 to-slate-400",
@@ -175,7 +176,7 @@ const MOCK_FEATURED = [
       { value: "10+", label: "Années d'expérience" },
       { value: "50",  label: "Clients accompagnés" },
       { value: "4,9/5", label: "25 avis clients" },
-      { value: "100%", label: "Clients accompagnés" },
+      { value: "100%", label: "Clients satisfaits" },
     ],
     photo: "/assets/img/agent-michael-fournet.jpg.jpg",
     photoBg: "from-gray-300 to-gray-400",
@@ -454,48 +455,49 @@ function Stars({ value = 0, size = 14, interactive = false, onChange }) {
 
 function FeaturedCard({ pro, lang, onViewAgent }) {
   const [showContact, setShowContact] = useState(false);
+  const photo = pro.photo || pro.featuredProfilePhoto || (pro.name === 'Geoffroy Papelier' ? "/assets/img/Placeholder gauche.jpg" : "/assets/img/Placeholder droite.jpg");
+  const stats = pro.stats || [
+    { value: String(pro.featuredExperienceYears || 0), label: "Années d'expérience" },
+    { value: String(pro.featuredClientsAccompanied || 0), label: "Clients accompagnés" },
+    { value: String(pro.featuredRatingNotes || "-"), label: "Notes" },
+    { value: String(pro.featuredSatisfactionRate || "-"), label: "Clients satisfaits" },
+  ];
   return (
     <>
-    {showContact && <ContactModal pro={pro} onClose={() => setShowContact(false)} />}
-    <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm" style={{ minHeight: '270px' }}>
-      {/* Photo plein fond */}
-      {pro.photo
-        ? <img src={pro.photo} alt={pro.name} className="absolute inset-0 w-full h-full object-cover object-top" />
-        : <div className={`absolute inset-0 bg-gradient-to-br ${pro.photoBg}`} />
-      }
-      {/* Layer blanc transparent sur les 2/3 gauche */}
-      <div className="absolute inset-y-0 left-0 bg-white/80" style={{ width: '66.666%' }} />
-      {/* Contenu texte */}
-      <div className="relative z-10 flex flex-col justify-between h-full p-5" style={{ minHeight: '270px', width: '66.666%' }}>
-        <div>
-          <p className="font-bold text-black text-[11px] mb-1">{pro.tag}</p>
-          <h2 className="text-[#7030A0] font-extrabold text-[18px] leading-snug mb-2">
-            {pro.headline}
-          </h2>
-          <p className="text-[12px] text-black leading-tight line-clamp-3">{pro.description}</p>
-        </div>
-        {/* Stats */}
-        <div className="flex gap-4 my-2">
-          {pro.stats.map((s, i) => (
-            <div key={i}>
-              <p className="text-[20px] font-bold text-black leading-none">{s.value}</p>
-              <p className="text-[12px] text-black mt-0.5 leading-[1.15]">{s.label}</p>
+      {showContact && <ContactModal pro={pro} onClose={() => setShowContact(false)} />}
+      <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm" style={{ minHeight: '324px' }}>
+        <div className="flex h-full">
+          <div className="w-2/3 bg-white p-5 flex flex-col justify-between">
+            <div>
+              <p className="font-bold text-black text-[11px] mb-1">{pro.tag}</p>
+              <h2 className="text-[#7030A0] font-extrabold text-[18px] leading-snug mb-2">
+                {pro.headline}
+              </h2>
+              <p className="text-[14px] text-black leading-tight line-clamp-3">{pro.description}</p>
             </div>
-          ))}
+            <div className="flex gap-4 my-2">
+              {pro.stats.map((s, i) => (
+                <div key={i}>
+                  <p className="text-[20px] font-bold text-black leading-none">{s.value}</p>
+                  <p className="text-[12px] text-black mt-0.5 leading-[1.15]">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setShowContact(true)} className="border border-[#976DD0] text-[#976DD0] rounded-full px-4 py-1.5 text-[12px] font-semibold hover:bg-[#F2ECF8] transition-colors">
+                Contacter
+              </button>
+              <button onClick={() => onViewAgent && onViewAgent(pro)} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full px-4 py-1.5 text-[12px] font-semibold transition-colors">
+                Voir ses services
+              </button>
+            </div>
+          </div>
+          <div className="w-1/3 bg-white flex items-center justify-center overflow-hidden">
+            <img src={photo} alt={pro.name} className="h-full w-full object-cover" />
+          </div>
         </div>
-        {/* Boutons */}
-        <div className="flex gap-2">
-          <button onClick={() => setShowContact(true)} className="border border-[#976DD0] text-[#976DD0] rounded-full px-4 py-1.5 text-[12px] font-semibold hover:bg-[#F2ECF8] transition-colors">
-            Contacter
-          </button>
-          <button onClick={() => onViewAgent && onViewAgent(pro)} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white rounded-full px-4 py-1.5 text-[12px] font-semibold transition-colors">
-            Voir ses services
-          </button>
-        </div>
+        <p className="absolute bottom-3 right-3 z-10 text-white font-bold text-sm drop-shadow-md bg-black/50 px-2 py-1 rounded">{pro.name}</p>
       </div>
-      {/* Nom de l'agent — bas droite sur la photo */}
-      <p className="absolute bottom-3 right-3 z-10 text-white font-bold text-sm drop-shadow-md">{pro.name}</p>
-    </div>
     </>
   );
 }
@@ -537,11 +539,19 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
   const provRole = svc.provider?.role || "Agent indépendant IAD";
   const provCity = svc.city || svc.provider?.city || "Lille";
   const provPhoto = svc.provider?.photo || PROVIDER_PHOTOS[svc.providerKey] || PROVIDER_PHOTOS[provName];
-  const tarif = svc.tarification_type || "Forfait";
-  const modality = svc.modality || svc.service_type || svc.type || '';
+  const modality = svc.modality || svc.service_type || svc.type || 'Présentiel';
   const isDistance = /distance|remote/i.test(String(modality));
   const zone = isDistance ? t.distance : (svc.zone_covered || (svc.city ? `${svc.city} +5 KM` : "Lille +5 KM"));
-  const qty = svc.quantity_label || svc.quantity || "Pack 10 visites";
+  const qty = svc.quantity || svc.quantity_label || "Pack 10 visites";
+  const delivery = svc.delivery_time || 'Variable';
+  const since = svc.provider?.companySince || svc.provider?.companySince;
+  const experienceYears = (() => {
+    if (!since) return 20;
+    const parsedDate = new Date(since);
+    if (!isNaN(parsedDate)) return Math.max(new Date().getFullYear() - parsedDate.getFullYear(), 1);
+    const parsedYear = parseInt(String(since).slice(0, 4), 10);
+    return !isNaN(parsedYear) ? Math.max(new Date().getFullYear() - parsedYear, 1) : 20;
+  })();
 
   // Gestion du clic sur la carte (hors favoris et footer)
   const cardRef = useRef();
@@ -594,63 +604,112 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
           </div>
         </div>
         <div className="bg-[#F5F5F5] rounded-lg px-3 py-2 mb-2 grid grid-cols-2 gap-y-1.5 gap-x-3 text-[13px] leading-[1.1] text-black">
-          <span className="flex items-center gap-1.5"><MdWorkOutline className="text-[15px] shrink-0" /> 20 {t.exp}</span>
+          <span className="flex items-center gap-1.5"><MdWorkOutline className="text-[15px] shrink-0" /> {experienceYears} {t.exp}</span>
           <span className="flex items-center gap-1.5"><MdStorefront className="text-[15px] shrink-0" /> 250 {t.services}</span>
           <span className="flex items-center gap-1.5"><PiStarFill className="text-[15px] text-[#976DD0] shrink-0" /> 5/5</span>
           <span className="flex items-center gap-1.5"><MdRateReview className="text-[15px] shrink-0" /> 150 {t.reviews}</span>
         </div>
-        {cat && (
-          <span className="inline-block bg-[#F2ECF8] text-[#976DD0] text-[10px] font-semibold px-2 py-0.5 rounded-full mb-2 self-start">{title}</span>
-        )}
+        {svc.service ? (
+          <span className="inline-block bg-[#F2ECF8] text-[#976DD0] text-[11px] font-semibold px-2 py-0.5 rounded-full mb-2 self-start">{svc.service}</span>
+        ) : cat ? (
+          <span className="inline-block bg-[#F2ECF8] text-[#976DD0] text-[11px] font-semibold px-2 py-0.5 rounded-full mb-2 self-start">{cat}</span>
+        ) : null}
         <p className="font-bold text-black text-[15px] mb-2 line-clamp-2 text-center leading-[1.3] min-h-[40px]">{title}</p>
-        <div className="space-y-0.5 text-[12px] text-black mb-3 flex-1">
-          <div className="flex items-center gap-1.5"><MdOutlineSell className="text-[14px] text-black shrink-0" /><span>{tarif}</span></div>
+        <div className="space-y-0.5 text-[15px] text-black mb-3 flex-1 font-semibold">
+          <div className="flex items-center gap-1.5"><MdSupportAgent className="text-[14px] text-black shrink-0" /><span>{modality}</span></div>
           <div className="flex items-center gap-1.5"><MdLocationOn className="text-[14px] text-black shrink-0" /><span>{zone}</span></div>
           <div className="flex items-center gap-1.5"><MdOutlineInventory2 className="text-[14px] text-black shrink-0" /><span>{qty}</span></div>
+          <div className="flex items-center gap-1.5"><FaCalendarDays className="text-[14px] text-black shrink-0" /><span>{delivery}</span></div>
         </div>
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100 card-footer">
-          <button onClick={e => { e.stopPropagation(); setShowContact(true); }} className="text-[11px] border border-[#976DD0] text-[#976DD0] rounded-full px-3 py-1 hover:bg-[#F2ECF8] transition-colors">
-            {t.contact}
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-[#976DD0] text-[13px]">{price > 0 ? `${price} €` : t.free}</span>
-            <button onClick={e => { e.stopPropagation(); onBuy(svc); }} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[11px] font-semibold px-3 py-1.5 rounded-full transition-colors">
-              {price > 0 ? t.buy : t.book}
-            </button>
-          </div>
+        <div className={`pt-2 border-t border-gray-100 card-footer gap-2 ${price > 0 ? 'flex items-center justify-between' : 'flex flex-col items-center'}`}>
+          {price > 0 ? (
+            <>
+              {/* Message icon button */}
+              <button
+                onClick={e => { e.stopPropagation(); setShowContact(true); }}
+                className="flex items-center justify-center text-[#976DD0] hover:text-[#7d55b5] transition-colors p-0"
+                aria-label={t.contact}
+              >
+                <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 6.75C3 5.23122 4.23122 4 5.75 4H18.25C19.7688 4 21 5.23122 21 6.75V15.25C21 16.7688 19.7688 18 18.25 18H7.5L3 22V6.75Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                  <circle cx="8.5" cy="11.5" r="1" fill="#976DD0" />
+                  <circle cx="12" cy="11.5" r="1" fill="#976DD0" />
+                  <circle cx="15.5" cy="11.5" r="1" fill="#976DD0" />
+                </svg>
+              </button>
+              {/* Price and buy button aligned on the same line */}
+              <div className="flex flex-1 items-center justify-end gap-3 min-w-0">
+                <span className="font-bold text-[#976DD0] text-[17px] truncate">{price} €</span>
+                <button onClick={e => { e.stopPropagation(); onBuy(svc); }} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors whitespace-nowrap">
+                  {t.buy}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center text-center gap-3 w-full">
+              <span className="text-[16px] text-gray-400 font-semibold line-through">{price} €</span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={e => { e.stopPropagation(); setShowContact(true); }}
+                  className="flex items-center justify-center text-[#976DD0] hover:text-[#7d55b5] transition-colors p-0"
+                  aria-label={t.contact}
+                >
+                  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 6.75C3 5.23122 4.23122 4 5.75 4H18.25C19.7688 4 21 5.23122 21 6.75V15.25C21 16.7688 19.7688 18 18.25 18H7.5L3 22V6.75Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                    <circle cx="8.5" cy="11.5" r="1" fill="#976DD0" />
+                    <circle cx="12" cy="11.5" r="1" fill="#976DD0" />
+                    <circle cx="15.5" cy="11.5" r="1" fill="#976DD0" />
+                  </svg>
+                </button>
+                <span className="rounded-full bg-[#F3E8FF] px-3 py-1 text-[#6D28D9] text-[13px] font-semibold whitespace-nowrap">Offert</span>
+                <button onClick={e => { e.stopPropagation(); onBuy(svc); }} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors whitespace-nowrap">
+                  {t.book}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export function ServiceModal({ svc, lang, onClose, onBuy }) {
+export function ServiceModal({ svc, lang, onClose, onBuy, hideActions = false, extraContent = null }) {
   const t = T[lang];
   const title = lang === "fr" ? (svc.title_fr || svc.title) : (svc.title_en || svc.title);
   const desc = lang === "fr" ? (svc.description_fr || svc.description) : (svc.description_en || svc.description);
   const price = svc.price_ttc ?? svc.price ?? 0;
   const provName = svc.provider?.name || "Pauline Dupont";
   const provCity = svc.city || "Lille";
-  const tarif = svc.tarification_type || "Forfait";
-  const zone = svc.zone_covered || (svc.city ? `${svc.city} <5 km` : "Lille <5 km");
-  const qty = svc.quantity_label || svc.quantity || "Pack 10 visites";
+  const modality = svc.modality || svc.service_type || svc.type || 'Présentiel';
+  const zone = svc.zone_covered || svc.city || 'Lille';
+  const rayon = svc.radiusKm ? `${svc.radiusKm} km` : svc.radius ? `${svc.radius} km` : '5 km';
+  const qty = svc.quantity_label || (svc.quantity ? `${svc.quantity} visite${svc.quantity > 1 ? 's' : ''}` : 'Pack 10 visites');
+  const deliveryTime = svc.delivery_time || svc.deliveryTime || 'Variable';
   const sections = [
     { icon: "💡", title: t.q1, text: desc },
     { icon: "📋", title: t.q2, text: desc },
     { icon: "✅", title: t.q3, text: desc },
     { icon: "🔒", title: t.q4, text: t.payNote },
   ];
+  const serviceDetails = [
+    { icon: '⊙', label: t.modality, value: modality },
+    { icon: '📍', label: t.zone, value: zone },
+    { icon: '📏', label: t.radius, value: rayon },
+    { icon: '#', label: t.qty || 'Quantité', value: qty },
+    { icon: '⏱️', label: t.delivery, value: deliveryTime },
+  ];
   const [showContact, setShowContact] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const user = useSelector((state) => state.user);
   const isLogged = !!(user && (user._id || user.id)) || !!localStorage.getItem('token');
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto">
       {showContact && (
         <ContactModal pro={svc.provider || { name: provName, phone: svc.provider?.phone, email: svc.provider?.email }} onClose={() => setShowContact(false)} />
       )}
       {showAuth && <AuthRequiredModal onClose={() => setShowAuth(false)} />}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4 flex flex-col">
+      <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4 flex flex-col">
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
           <button className="flex items-center gap-1.5 text-[13px] font-semibold text-[#47525E] border border-gray-200 rounded-lg px-3 py-1.5">
             {t.manageTab} ▾
@@ -686,9 +745,10 @@ export function ServiceModal({ svc, lang, onClose, onBuy }) {
           <div>
             <h3 className="text-sm font-bold text-[#47525E] mb-2">{t.svcSection}</h3>
             <div className="flex flex-wrap gap-2">
-              {[{icon:"⊙",label:tarif},{icon:"📍",label:zone},{icon:"#",label:qty}].filter(s=>s.label).map((s,i)=>(
+              {serviceDetails.map((s,i) => (
                 <span key={i} className="flex items-center gap-1.5 bg-[#F2ECF8] text-[#976DD0] text-[11px] font-medium px-3 py-1 rounded-full">
-                  {s.icon} {s.label}
+                  <span>{s.icon}</span>
+                  <span>{s.label}: {s.value}</span>
                 </span>
               ))}
             </div>
@@ -704,22 +764,38 @@ export function ServiceModal({ svc, lang, onClose, onBuy }) {
               </div>
             ))}
           </div>
+          {extraContent && (
+            <div className="mt-4">
+              {extraContent}
+            </div>
+          )}
         </div>
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-          <button
-            onClick={() => {
-              if (!isLogged) setShowAuth(true);
-              else setShowContact(true);
-            }}
-            className="border border-[#976DD0] text-[#976DD0] text-sm font-semibold px-4 py-2 rounded-full hover:bg-[#F2ECF8] transition-colors"
-          >
-            Contacter {provName.split(" ")[0]}
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-[#47525E] text-sm">{price > 0 ? `${price} € T.T.C` : t.free}</span>
-            <button onClick={() => onBuy(svc)} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-6 py-2 rounded-full transition-colors">
-              {price > 0 ? t.buy : t.book}
+          {!hideActions ? (
+            <button
+              onClick={() => {
+                if (!isLogged) setShowAuth(true);
+                else setShowContact(true);
+              }}
+              className="border border-[#976DD0] text-[#976DD0] text-base font-semibold px-4 py-2 rounded-full hover:bg-[#F2ECF8] transition-colors"
+            >
+              Contacter {provName.split(" ")[0]}
             </button>
+          ) : <div />}
+          <div className="flex items-center gap-3">
+            {price > 0 ? (
+              <span className="font-bold text-[#47525E] text-sm">{price} € T.T.C</span>
+            ) : (
+              <span className="flex items-center gap-2 text-sm text-gray-400 font-semibold">
+                <span className="line-through">{price} € T.T.C</span>
+                <span className="rounded-full bg-[#F3E8FF] px-2 py-1 text-[#6D28D9]">Offert</span>
+              </span>
+            )}
+            {!hideActions && (
+              <button onClick={() => onBuy(svc)} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-base font-semibold px-7 py-2 rounded-full transition-colors">
+                {price > 0 ? t.buy : t.book}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -811,8 +887,8 @@ export function BuyModal({ svc, lang, onClose, onDone }) {
   // Bloc auth requis (uniquement pour la réservation gratuite : on garde le flow actuel sinon)
   if (isFree && !isLogged) {
     return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
-        <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+      <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
+        <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-[#47525E]">{t.bookingTitle}</h3>
             <button onClick={onClose} className="text-gray-400 text-lg">✕</button>
@@ -830,8 +906,8 @@ export function BuyModal({ svc, lang, onClose, onDone }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
+      <div onClick={e => e.stopPropagation()} className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-[#47525E]">{isFree ? t.bookingTitle : title}</h3>
           <button onClick={onClose} className="text-gray-400 text-lg">✕</button>
@@ -903,10 +979,14 @@ export default function Marketplace() {
   const [requestModal, setRequestModal] = useState(false);
   const [authModal, setAuthModal] = useState(false);
   const [selectedCats, setSelectedCats] = useState([]);
+  const [featuredPros, setFeaturedPros] = useState(MOCK_FEATURED);
+  const [featuredLoading, setFeaturedLoading] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [location, setLocation] = useState('Lille - 59000');
   const [agentQuery, setAgentQuery] = useState('');
   const [agentSuggestions, setAgentSuggestions] = useState([]);
+  const [postalCode, setPostalCode] = useState('59000');
+  const [demoMockMode, setDemoMockMode] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [agentDropOpen, setAgentDropOpen] = useState(false);
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
@@ -952,6 +1032,34 @@ export default function Marketplace() {
     return () => document.removeEventListener('mousedown', handle);
   }, []);
 
+  useEffect(() => {
+    const match = location.match(/\b(\d{5})\b/);
+    setPostalCode(match ? match[1] : '');
+  }, [location]);
+
+  const fetchFeaturedPros = useCallback(async () => {
+    setFeaturedLoading(true);
+    try {
+      if (demoMockMode) {
+        setFeaturedPros(MOCK_FEATURED);
+        return;
+      }
+      const res = await getFavoritePros(postalCode, lang);
+      const globals = res?.data?.globalFavorites || [];
+      const locals = res?.data?.localFavorites || [];
+      const list = [...globals, ...locals].filter((pro, index, self) => self.findIndex(p => p.id === pro.id) === index);
+      if (list.length > 0) {
+        setFeaturedPros(list);
+      }
+    } catch (err) {
+      console.warn('Unable to load featured pros', err);
+    } finally {
+      setFeaturedLoading(false);
+    }
+  }, [demoMockMode, lang, postalCode]);
+
+  useEffect(() => { fetchFeaturedPros(); }, [fetchFeaturedPros]);
+
   // Debounced agent search
   useEffect(() => {
     if (!agentQuery || agentQuery.length < 2) { setAgentSuggestions([]); return; }
@@ -987,38 +1095,31 @@ export default function Marketplace() {
       const params = {};
       if (selectedCats.length > 0) params.category = selectedCats.map(c => c.id).join(',');
       if (selectedAgent) params.provider = selectedAgent.id;
-      const res = await getServices(params, lang);
-      let list = res?.services || res?.data || [];
-      // Ne garder que les services avec provider attribué (sinon mocks)
-      const valid = Array.isArray(list) ? list.filter(s => s?.provider?.name) : [];
-      if (selectedAgent) {
-        list = MOCK_SERVICES.filter(s => s.provider?.name === selectedAgent.name);
-      } else if (valid.length === 0) {
-        list = MOCK_SERVICES;
+      if (location) params.location = location;
+      if (demoMockMode) {
+        setServices(MOCK_SERVICES);
       } else {
-        list = valid;
+        const res = await getServices(params, lang);
+        const list = res?.services || res?.data || [];
+        const valid = Array.isArray(list) ? list.filter(s => s?.provider?.name) : [];
+        setServices(valid);
       }
-      setServices(list);
     } catch (e) {
       console.error(e);
-      setServices(selectedAgent
-        ? MOCK_SERVICES.filter(s => s.provider?.name === selectedAgent.name)
-        : MOCK_SERVICES
-      );
+      setServices([]);
+    } finally {
+      setLoading(false);
     }
-    finally { setLoading(false); }
-  }, [lang, selectedCats, selectedAgent]);
+  }, [lang, selectedCats, selectedAgent, demoMockMode, location]);
 
   const resultsRef = useRef(null);
 
   const handleViewAgent = (pro) => {
-    const agent = { name: pro.name, id: pro.providerKey };
+    const agent = { name: pro.name || pro.fullName, id: pro.id || pro._id || pro.providerKey || pro.name };
     setSelectedAgent(agent);
-    setAgentQuery(pro.name);
+    setAgentQuery(agent.name);
     setSelectedCats([]);
-    // Forcer directement les services filtrés sans attendre le fetch asynchrone
-    const filtered = MOCK_SERVICES.filter(s => s.provider?.name === pro.name);
-    setServices(filtered);
+    fetchServices();
     // Scroll vers les résultats
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1031,16 +1132,24 @@ export default function Marketplace() {
     <PageLayout>
       <div className="bg-[#f3f5f9] min-h-full py-[22px] px-[22px] pb-24">
       <div className="max-w-[1120px] mx-auto">
-        <h2 className="font-bold text-black text-[24px] mb-4">{t.featuredTitle}</h2>
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h2 className="font-bold text-black text-[24px]">{t.featuredTitle}</h2>
+          <button
+            onClick={() => setDemoMockMode(prev => !prev)}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${demoMockMode ? 'bg-[#FDE68A] text-[#92400E]' : 'bg-[#E5E7EB] text-[#374151] hover:bg-[#D1D5DB]'}`}
+          >
+            {demoMockMode ? 'Mock activé' : 'Afficher mock'}
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-7">
-          {MOCK_FEATURED.map(pro => <FeaturedCard key={pro.id} pro={pro} lang={lang} onViewAgent={handleViewAgent} />)}
+          {(featuredPros.length > 0 ? featuredPros : MOCK_FEATURED).map(pro => <FeaturedCard key={pro.id || pro._id} pro={pro} lang={lang} onViewAgent={handleViewAgent} />)}
         </div>
         <h1 ref={resultsRef} className="font-bold text-black text-[24px]">{t.pageTitle}</h1>
-        <p className="text-[13px] text-gray-400 mb-4">{t.pageSub}</p>
+        <p className="text-[14px] text-gray-400 mb-4">{t.pageSub}</p>
         <div ref={dropdownRef} className="relative bg-white rounded-xl border border-gray-200 shadow-sm px-4 py-3 mb-3">
           <div className="flex flex-wrap gap-2 items-center">
             {/* Label */}
-            <span className="flex items-center gap-1 text-[13px] text-gray-400 shrink-0">
+            <span className="flex items-center gap-1 text-[14px] text-gray-400 shrink-0">
               <MdSearch size={18} /> {t.helpLabel}
             </span>
             {/* Chips sélectionnés */}
@@ -1198,7 +1307,7 @@ export default function Marketplace() {
           </div>
         )}
         <div className="mt-12 text-center">
-          <p className="text-[13px] text-gray-500 mb-3">{t.notFound}</p>
+          <p className="text-[14px] text-gray-500 mb-3">{t.notFound}</p>
           <button
             onClick={() => {
               const isLogged = !!(user && (user._id || user.id)) || !!localStorage.getItem('token');
