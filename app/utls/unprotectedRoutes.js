@@ -89,6 +89,8 @@ module.exports = {
     "/user/delete-by-credentials",
     // Marketplace — routes publiques (pas d'auth requise)
     "/marketplace/services",
-    "/marketplace/categories"
+    "/marketplace/categories",
+    "/property/qr-code/flyers/debug",
+    "/property/qr-code/debug"
   ],
 };

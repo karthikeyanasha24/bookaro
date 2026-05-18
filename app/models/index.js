@@ -19,6 +19,7 @@ db.blogs = require("./blogs.model.js")(mongoose);
 db.faqs = require("./faq.models.js")(mongoose);
 db.content = require("./contentManagement.model.js")(mongoose);
 db.property = require("./property.models.js")(mongoose);
+db.qrFlyers = require("./qrFlyer.model.js")(mongoose);
 db.favorites = require("./favoriteProperty.model.js")(mongoose);
 db.followUnfollow = require("./followUnfollow.model.js")(mongoose);
 db.notifications = require("./notifications.model.js")(mongoose);

@@ -29,6 +29,38 @@ const ALLOWED_SIGNUP_OBJECTIVES = [
   "Évaluer ma propriété",
   "Préparer une vente future",
 ];
+
+const REQUIRED_FEATURED_FIELDS = [
+  "featuredSubheading",
+  "featuredTitle",
+  "featuredBio",
+  "featuredExperienceYears",
+  "featuredClientsAccompanied",
+  "featuredRatingNotes",
+  "featuredSatisfactionRate",
+  "featuredProfilePhoto",
+];
+
+const isFeaturedProfileComplete = (pro) => {
+  if (!pro) return false;
+  return Boolean(
+    pro.featuredSubheading &&
+    pro.featuredTitle &&
+    pro.featuredBio &&
+    Number(pro.featuredExperienceYears) > 0 &&
+    Number(pro.featuredClientsAccompanied) > 0 &&
+    pro.featuredRatingNotes &&
+    pro.featuredSatisfactionRate &&
+    pro.featuredProfilePhoto
+  );
+};
+
+const normalizeBoolean = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') return value.toLowerCase() === 'true';
+  return false;
+};
+
 module.exports = {
   adminLogin: async (req, res) => {
     try {
@@ -955,6 +987,76 @@ module.exports = {
           },
         });
       }
+
+      const requestedGlobalFav = normalizeBoolean(req.body.isGlobalFavorite);
+      const requestedLocalFav = normalizeBoolean(req.body.isLocalFavorite);
+      const requestedTopAgent = normalizeBoolean(req.body.isTopAgent);
+
+      if ((requestedGlobalFav || requestedLocalFav || requestedTopAgent) && user.accountType !== "pro") {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 400,
+            message: "Only pro users can be marked as favorites or top agents.",
+          },
+        });
+      }
+
+      if (requestedLocalFav) {
+        let localCodes = req.body.localFavoritePostalCodes;
+        if (typeof localCodes === "string") {
+          localCodes = localCodes.split(",").map((code) => code.trim()).filter(Boolean);
+        }
+        if (localCodes && Array.isArray(localCodes)) {
+          req.body.localFavoritePostalCodes = localCodes;
+        }
+        if (!user.isLocalFavorite && (!Array.isArray(req.body.localFavoritePostalCodes) || req.body.localFavoritePostalCodes.length === 0)) {
+          return res.status(400).json({
+            success: false,
+            error: {
+              code: 400,
+              message: "Local favorite requires at least one postal code.",
+            },
+          });
+        }
+      }
+
+      if (requestedGlobalFav && !user.isGlobalFavorite) {
+        const existingGlobals = await Users.find({
+          accountType: "pro",
+          isGlobalFavorite: true,
+          isDeleted: false,
+          _id: { $ne: id },
+        }).select("fullName email").limit(3);
+        if (existingGlobals.length >= 2) {
+          return res.status(400).json({
+            success: false,
+            error: {
+              code: 400,
+              message: `Impossible d'ajouter un 3ème favori global. Déjà en place : ${existingGlobals.map((u) => u.fullName || u.email).join(", ")}`,
+            },
+          });
+        }
+      }
+
+      if (requestedLocalFav && !user.isLocalFavorite) {
+        const existingLocals = await Users.find({
+          accountType: "pro",
+          isLocalFavorite: true,
+          isDeleted: false,
+          _id: { $ne: id },
+        }).select("fullName email localFavoritePostalCodes").limit(3);
+        if (existingLocals.length >= 2) {
+          return res.status(400).json({
+            success: false,
+            error: {
+              code: 400,
+              message: `Impossible d'ajouter un 3ème favori local. Déjà en place : ${existingLocals.map((u) => u.fullName || u.email).join(", ")}`,
+            },
+          });
+        }
+      }
+
       const updatedUser = await Users.updateOne(
         {
           _id: id,

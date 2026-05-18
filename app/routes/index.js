@@ -14,6 +14,8 @@ router.use("/blogs", require("./blogs.routes"));
 router.use("/faqs", require("./faq.routes"));
 router.use("/content", require("./contentManagement.routes"));
 router.use("/property", require("./property.routes"));
+router.use("/property/qr-code", require("./qrCode.routes"));
+router.use("/qr", require("./qr.routes"));
 router.use("/favorites", require("./favorite.routes"));
 router.use("/followUnfollow", require("./followUnfollow.routes"));
 router.use("/notification", require("./notification.routes"));

@@ -45,6 +45,20 @@ module.exports = (mongoose) => {
         enum: ["individual", "pro"],
         default: "individual"
       },
+      // Marketplace discovery statuses for pro users
+      isGlobalFavorite: { type: Boolean, default: false },
+      isLocalFavorite: { type: Boolean, default: false },
+      localFavoritePostalCodes: [{ type: String }],
+      isTopAgent: { type: Boolean, default: false },
+      // Featured agent profile details for marketplace favorites
+      featuredSubheading: { type: String },
+      featuredTitle: { type: String },
+      featuredBio: { type: String },
+      featuredExperienceYears: { type: Number, default: 0 },
+      featuredClientsAccompanied: { type: Number, default: 0 },
+      featuredRatingNotes: { type: String },
+      featuredSatisfactionRate: { type: String },
+      featuredProfilePhoto: { type: String },
       status: { type: String, default: "active" },
       stripe_subscriptionId: String,
       // Stripe Connect — marketplace de services
