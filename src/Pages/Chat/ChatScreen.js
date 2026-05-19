@@ -30,6 +30,7 @@ const ChatScreen = ({
   handleUpdateMsg,
   sendMessage,
   sendFiles,
+  isGuest,
 }) => {
   const { user } = useSelector((state) => state);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,11 +42,12 @@ const ChatScreen = ({
     IMAGE: "IMAGE",
     DOCUMENT: "DOCUMENT",
   };
+  const currentUserId = user?._id || user?.id || 'guest-user-000';
   const markMessageAsRead = (message) => {
     socket.emit("read-message", {
       ...message,
       isRead: true,
-      user_id: user?.id || user?._id,
+      user_id: currentUserId,
       message_id: message._id,
     });
   };
@@ -180,28 +182,29 @@ const ChatScreen = ({
       <div className="bg-white rounded-tl-[12px] rounded-tr-[12px] p-5 h-[456px]">
         {/* loader */}
         {messages.length < totalMsg && <div>{showLoading && "Loading..."}</div>}
-
         <div ref={chatContainerRef} className="overflow-auto h-full pe-2">
-          {messages?.length > 0 && activeUser.room_id ? (
-            messages.map((msg, i) => (
-              <div
-                className={`${user?._id == msg?.sender ? "ml" : "me"
-                  }-auto w-[50%] mb-5`}
-              >
-                <div
-                  className={`flex items-start relative ${user?._id == msg?.sender ? "justify-end" : ""
-                    }`}
+          {messages?.length > 0 ? (
+            messages.map((msg, i) => {
+              const messageType = (msg?.type || msg?.message_type || "").toUpperCase();
+              const isOwnMessage = currentUserId === msg?.sender;
+                return (
+                  <div
+                  key={msg?._id || i}
+                  className={`${isOwnMessage ? "ml" : "me"}-auto w-[50%] mb-5`}
                 >
-                  {msg?.type === Type.TEXT ? (
-                    <p
-                      className={`${user?._id == msg?.sender
-                        ? "bg-[#E9E9E9]"
-                        : "bg-[#8F3EAD] text-white"
-                        } rounded-[6px] p-2 text-[14px] flex w-fit`}
-                    >
-                      {msg.content}
-                    </p>
-                  ) : msg?.type === Type.IMAGE ? (
+                  <div
+                    className={`flex items-start relative ${isOwnMessage ? "justify-end" : ""}`}
+                  >
+                    {messageType === Type.TEXT ? (
+                      <p
+                        className={`${isOwnMessage
+                          ? "bg-[#E9E9E9]"
+                          : "bg-[#8F3EAD] text-white"
+                          } rounded-[6px] p-2 text-[14px] flex w-fit`}
+                      >
+                        {msg.content}
+                      </p>
+                    ) : messageType === Type.IMAGE ? (
                     <div className="relative w-[200px] h-[200px] object-cover bg-[#efefef] p-1 rounded-[5px] border">
                       <img alt=""
                         src={imagePath(msg?.media?.[0]?.fileName, "/assets/img/business.png")}
@@ -230,7 +233,7 @@ const ChatScreen = ({
                         </p>
                       </div>
                     </div>
-                  ) : msg?.type === Type.DOCUMENT ? (
+                  ) : messageType === Type.DOCUMENT ? (
                     <div className="relative w-[45px] h-[45px] bg-[#efefef] p-1 rounded-[5px] border group">
                       <img
                         src="/assets/img/dummy_doc.png"
@@ -263,20 +266,19 @@ const ChatScreen = ({
                   ) : (
                     "msg type not defined yet"
                   )}
-                  {user?._id === msg?.sender && (
+                  {isOwnMessage && !isGuest && (
                     <div className="">
                       <Menu>
                         <MenuButton>
                           <HiDotsVertical
-                            className={`${user?._id == msg?.sender ? "" : "text-white"
-                              } mt-[2px] text-[14px]`}
+                            className={`${isOwnMessage ? "" : "text-white"} mt-[2px] text-[14px]`}
                           />
                         </MenuButton>
                         <MenuItems
                           anchor="bottom"
                           className="bg-white p-2 px-4 rounded-[10px]  shadow-md"
                         >
-                          {msg?.type === Type.TEXT && (
+                          {messageType === Type.TEXT && (
                             <MenuItem>
                               <p
                                 onClick={() => handleEdit(msg)}
@@ -289,18 +291,18 @@ const ChatScreen = ({
                               </p>
                             </MenuItem>
                           )}
-                          {(msg?.type === Type.DOCUMENT ||
-                            msg?.type === Type.IMAGE) && (
+                          {(messageType === Type.DOCUMENT ||
+                            messageType === Type.IMAGE) && (
                               <MenuItem>
                                 <p
                                   onClick={() => downloadFile(msg?.media?.[0]?.fileName)}
                                   className="flex items-center mb-2 cursor-pointer"
                                 >
-                                  {msg?.type === Type.DOCUMENT
+                                  {messageType === Type.DOCUMENT
                                     ? <FiDownload className="me-2 text-[15px]" />
                                     : <FiEye className="me-2 text-[15px]" />}
                                   <span className="text-[14px] text-[#333]">
-                                    {msg?.type === Type.DOCUMENT
+                                    {messageType === Type.DOCUMENT
                                       ? "Download"
                                       : "View"}
                                   </span>
@@ -336,15 +338,15 @@ const ChatScreen = ({
                   )}
                 </div>
                 <p
-                  className={`${user?._id == msg?.sender ? "text-end" : ""
-                    } text-[#47525E] text-[12px]`}
+                  className={`${isOwnMessage ? "text-end" : ""} text-[#47525E] text-[12px]`}
                 >
                   {/* {dateFormate(msg?.createdAt, "MM/DD/YYYY - h:mm A")} */}
                   {dateFormate(msg?.createdAt, "h:mm A")}
                 </p>
               </div>
-            ))
-          ) : (
+            );
+          })
+        ) : (
             <div className=" h-full flex items-center justify-center flex-col">
               <img src="/assets/img/chat.gif" className="w-[100px] mx-auto " />
               <p className="text-center text-[#976DD0] uppercase tracking-[.80px] mt-2 ">
@@ -359,15 +361,22 @@ const ChatScreen = ({
         <div className="flex border border-[#8492A6] bg-white rounded-[10px] ">
           <div className="flex items-center justify-center ps-4 relative">
             <div className="relative">
-              <button ref={buttonRef} onClick={() => {
-                if (activeUser.room_id) {
-                  setIsOpen(true)
-                } else setIsOpen(false)
-              }}>
+              <button
+                ref={buttonRef}
+                type="button"
+                disabled={isGuest}
+                className={isGuest ? "cursor-not-allowed opacity-50" : ""}
+                onClick={() => {
+                  if (isGuest) return;
+                  if (activeUser.room_id) {
+                    setIsOpen(true)
+                  } else setIsOpen(false)
+                }}
+              >
                 <LuPaperclip />
               </button>
 
-              {isOpen && (
+              {isOpen && !isGuest && (
                 <div ref={attachRef} className="absolute top-full left-0 bg-white p-2 px-4 rounded-[10px] shadow-md border border-[#efefef] mt-2 ">
                   <label className="flex items-center mb-2 cursor-pointer hover:text-[#976DD0] group">
                     <MdOutlinePhotoSizeSelectActual className="mr-2 text-[15px]" />
@@ -398,11 +407,13 @@ const ChatScreen = ({
             </div>
           </div>
           <input
-            className="w-full h-[55px] ps-[30px] "
+            className={`w-full h-[55px] ps-[30px] ${isGuest ? "bg-[#f2f2f2] cursor-not-allowed" : ""}`}
             type="text"
             ref={msgRef}
             value={msg}
+            readOnly={isGuest}
             onChange={(e) => {
+              if (isGuest) return;
               const value = e.target.value;
               if (value.length <= 2500) {
                 setMsg(value);
@@ -410,6 +421,7 @@ const ChatScreen = ({
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                if (isGuest) return;
                 if (editMode) {
                   handleUpdateMsg();
                 } else {
@@ -417,18 +429,18 @@ const ChatScreen = ({
                 }
               }
             }}
-            placeholder="Type your message..."
+            placeholder={isGuest ? "Mode guest : écriture désactivée" : "Type your message..."}
           ></input>
           <div className="flex items-center justify-center pe-4">
             {editMode ? (
               <FaCheckCircle
-                onClick={() => handleUpdateMsg()}
-                className="text-[#33BAA7] text-[24px]"
+                onClick={() => !isGuest && handleUpdateMsg()}
+                className={`text-[24px] ${isGuest ? "text-[#ccc] cursor-not-allowed" : "text-[#33BAA7]"}`}
               />
             ) : (
               <IoSend
-                onClick={() => sendMessage()}
-                className="text-[#33BAA7] text-[24px]"
+                onClick={() => !isGuest && sendMessage()}
+                className={`text-[24px] ${isGuest ? "text-[#ccc] cursor-not-allowed" : "text-[#33BAA7]"}`}
               />
             )}
           </div>
