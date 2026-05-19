@@ -7,6 +7,196 @@ var mongoose = require("mongoose");
 const Emails = require("../Emails/onBoarding");
 const { success } = require('../services/Response');
 
+const isGuestRequest = (req) => {
+  return (
+    req.isGuest ||
+    req.query?.guest === 'true' ||
+    req.headers?.['x-guest-mode'] === 'true' ||
+    req.headers?.['x-guest-mode'] === '1'
+  );
+};
+
+const buildGuestChatMessages = (room_id = 'guest-room-1') => {
+  const now = new Date();
+  const messages = [
+    {
+      _id: 'guest-msg-1',
+      type: 'text',
+      room_id,
+      sender: 'guest-buyer-001',
+      sender_name: 'Marine Lefèvre',
+      sender_image: null,
+      sender_logo: null,
+      content: "Bonjour, j'ai vu votre maison familiale sur AnyHomes. Même si je sais qu'elle n'est pas à vendre, je suis très intéressée et j'aimerais savoir si vous seriez prêt à en discuter.",
+      media: [],
+      inviteId: null,
+      project_id: null,
+      message_type: 'text',
+      isRead: true,
+      isDeleted: false,
+      createdAt: new Date(now.getTime() - 1000 * 60 * 12),
+      updatedAt: new Date(now.getTime() - 1000 * 60 * 12),
+    },
+    {
+      _id: 'guest-msg-2',
+      type: 'text',
+      room_id,
+      sender: 'guest-user-000',
+      sender_name: 'Propriétaire',
+      sender_image: null,
+      sender_logo: null,
+      content: "Bonjour Marine, c'est bien ma maison. Je n'envisage pas de la vendre tout de suite, mais je peux en parler si votre intérêt est sérieux.",
+      media: [],
+      inviteId: null,
+      project_id: null,
+      message_type: 'text',
+      isRead: false,
+      isDeleted: false,
+      createdAt: new Date(now.getTime() - 1000 * 60 * 8),
+      updatedAt: new Date(now.getTime() - 1000 * 60 * 8),
+    },
+    {
+      _id: 'guest-msg-3',
+      type: 'text',
+      room_id,
+      sender: 'guest-buyer-001',
+      sender_name: 'Marine Lefèvre',
+      sender_image: null,
+      sender_logo: null,
+      content: "D'accord, merci. Seriez-vous disponible pour un court échange cette semaine ? Je peux m'adapter à vos disponibilités.",
+      media: [],
+      inviteId: null,
+      project_id: null,
+      message_type: 'text',
+      isRead: false,
+      isDeleted: false,
+      createdAt: new Date(now.getTime() - 1000 * 60 * 5),
+      updatedAt: new Date(now.getTime() - 1000 * 60 * 5),
+    },
+    {
+      _id: 'guest-msg-4',
+      type: 'text',
+      room_id,
+      sender: 'guest-user-000',
+      sender_name: 'Propriétaire',
+      sender_image: null,
+      sender_logo: null,
+      content: "Oui, je peux jeudi après-midi ou samedi matin. Dites-moi ce qui vous convient le mieux.",
+      media: [],
+      inviteId: null,
+      project_id: null,
+      message_type: 'text',
+      isRead: false,
+      isDeleted: false,
+      createdAt: new Date(now.getTime() - 1000 * 60 * 2),
+      updatedAt: new Date(now.getTime() - 1000 * 60 * 2),
+    },
+  ];
+  return messages;
+};
+
+const buildGuestRoomMembers = (room_id = 'guest-room-1', property_id = 'guest-prop-1') => [
+  {
+    _id: 'guest-room-member-self',
+    id: 'guest-room-member-self',
+    user_id: 'guest-user-000',
+    user_role: 'owner',
+    user_name: 'Propriétaire',
+    user_logo: null,
+    user_image: null,
+    isOnline: false,
+    room_id: [room_id],
+    subject: 'Discussion au sujet de la Maison familiale',
+    user_details: {
+      _id: 'guest-user-000',
+      fullName: 'Propriétaire',
+      image: null,
+      accountType: 'owner',
+      isOnline: false,
+      email: 'guest@bookaroo.local',
+    },
+    property_id,
+  },
+  {
+    _id: 'guest-room-member-1',
+    id: 'guest-room-member-1',
+    user_id: 'guest-buyer-001',
+    user_role: 'individual',
+    user_name: 'Marine Lefèvre',
+    user_logo: null,
+    user_image: null,
+    isOnline: false,
+    room_id: [room_id],
+    subject: 'Discussion au sujet de la Maison familiale',
+    user_details: {
+      _id: 'guest-buyer-001',
+      fullName: 'Marine Lefèvre',
+      image: null,
+      accountType: 'individual',
+      isOnline: false,
+      email: 'marine.lefevre@anyhomes.local',
+    },
+    property_id,
+  },
+];
+
+const buildGuestRecentChats = (room_id = 'guest-room-1', property_id = 'guest-prop-1') => {
+  const messages = buildGuestChatMessages(room_id);
+  return [
+    {
+      isGroupChat: false,
+      room_id,
+      room_name: 'Discussion au sujet de la Maison familiale',
+      user_id: ['guest-buyer-001'],
+      last_message: messages[messages.length - 1],
+      last_message_at: messages[messages.length - 1].createdAt,
+      room_members: buildGuestRoomMembers(room_id, property_id),
+      unread_count: 0,
+      read_count: 1,
+      property_id,
+      property_details: {
+        _id: property_id,
+        name: 'Maison familiale',
+        images: ['/assets/img/dashboard/attractivity/attractivity-1.jpg'],
+        address: 'Paris, 75000',
+        propertyType: 'residential',
+        content: 'Appartement familial en plein cœur de Paris',
+        propertyTitle: 'Maison familiale',
+        addedBy: 'Propriétaire',
+      },
+    },
+  ];
+};
+
+const buildGuestPropertyChats = (room_id = 'guest-room-1', property_id = 'guest-prop-1') => {
+  const messages = buildGuestChatMessages(room_id);
+  return [
+    {
+      isGroupChat: false,
+      room_id,
+      room_name: 'Discussion au sujet de la Maison familiale',
+      user_id: ['guest-buyer-001'],
+      last_message: messages[messages.length - 1],
+      last_message_at: messages[messages.length - 1].createdAt,
+      room_members: buildGuestRoomMembers(room_id, property_id),
+      unread_count: 0,
+      read_count: 1,
+      property_id,
+      property_name: 'Maison familiale',
+      property_images: ['/assets/img/dashboard/attractivity/attractivity-1.jpg'],
+      property_address: 'Paris, 75000',
+      propertyType: 'residential',
+      content: 'Appartement familial en plein cœur de Paris',
+      propertyTitle: 'Maison familiale',
+      property_addedby: 'guest-user-000',
+      property_chatSorting: 100,
+    },
+  ];
+};
+
+// Duplicate guest room member builder removed. Using the first definition above
+// so chat requests return both guest and agent members for guest mode.
+
 // exports.joinGroup = async (req, res, next) => {
 //     try {
 //         let { chat_by, chat_with, subject, property_id } = req.body;
@@ -239,6 +429,16 @@ exports.joinGroup = async (req, res, next) => {
 }
 exports.getAllMessages = async (req, res, next) => {
     try {
+        if (isGuestRequest(req)) {
+            const room_id = req.query.room_id || 'guest-room-1';
+            const messages = buildGuestChatMessages(room_id);
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const count = req.query.count ? Number(req.query.count) : messages.length;
+            const skipNo = (page - 1) * count;
+            const paginated = messages.slice(skipNo, skipNo + count);
+            return response.success({ total: messages.length, data: paginated }, "Fetched all messages", req, res);
+        }
+
         let { room_id, search, isDeleted, sortBy, user_id, login_user_id } = req.query;
         let page = req.query.page || 1;
         let count = req.query.count || 10;
@@ -673,6 +873,17 @@ exports.getAllMessages = async (req, res, next) => {
 
 exports.getAllRecentChats = async (req, res, next) => {
     try {
+        if (isGuestRequest(req)) {
+            const room_id = req.query.room_id || 'guest-room-1';
+            const property_id = req.query.property_id || 'guest-prop-1';
+            const chats = buildGuestRecentChats(room_id, property_id);
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const count = req.query.count ? Number(req.query.count) : chats.length;
+            const skipNo = (page - 1) * count;
+            const paginated = chats.slice(skipNo, skipNo + count);
+            return response.success({ total: chats.length, data: paginated }, constants.USER.RECENT_CHAT_FETCHED, req, res);
+        }
+
         let { user_id, room_id, search, property_id, sortBy, isGroupChat, login_user_id } = req.query;
         let page = req.query.page || 1;
         let count = req.query.count || 10;
@@ -1033,9 +1244,106 @@ exports.getAllUnreadCounts = async (req, res, next) => {
     }
 }
 
+exports.debugGuest = async (req, res, next) => {
+    try {
+        const room_id = req.query.room_id || 'guest-room-1';
+        const property_id = req.query.property_id || 'guest-prop-1';
+        const data = {
+            headers: {
+                authorization: !!req.headers.authorization,
+                guestMode: req.headers['x-guest-mode'],
+                guestQuery: req.query?.guest,
+            },
+            query: req.query,
+            isGuest: !!req.isGuest,
+            isGuestRequest: isGuestRequest(req),
+            identity: {
+                id: req.identity?.id,
+                _id: req.identity?._id,
+                fullName: req.identity?.fullName,
+                role: req.identity?.role,
+                isGuest: req.identity?.isGuest,
+            },
+            originalUrl: req.originalUrl,
+            guestMock: {
+                property_chats: buildGuestPropertyChats(room_id, property_id),
+                room_members: buildGuestRoomMembers(room_id, property_id),
+                messages: buildGuestChatMessages(room_id),
+            },
+        };
+        return response.success(data, "Chat guest debug", req, res);
+    } catch (error) {
+        return response.failed(null, `${error}`, req, res);
+    }
+}
+
+exports.debugGuestFull = async (req, res, next) => {
+    try {
+        const room_id = req.query.room_id || 'guest-room-1';
+        const property_id = req.query.property_id || 'guest-prop-1';
+
+        const messages = buildGuestChatMessages(room_id);
+        const recentChats = buildGuestRecentChats(room_id, property_id);
+        const propertyChats = buildGuestPropertyChats(room_id, property_id);
+        const roomMembers = buildGuestRoomMembers(room_id, property_id);
+
+        const payload = {
+            headers: {
+                authorization: !!req.headers.authorization,
+                guestMode: req.headers['x-guest-mode'],
+                guestQuery: req.query?.guest,
+            },
+            query: req.query,
+            isGuest: !!req.isGuest,
+            isGuestRequest: isGuestRequest(req),
+            identity: {
+                id: req.identity?.id,
+                _id: req.identity?._id,
+                fullName: req.identity?.fullName,
+                role: req.identity?.role,
+                isGuest: req.identity?.isGuest,
+            },
+            originalUrl: req.originalUrl,
+            responses: {
+                messages: {
+                    total: messages.length,
+                    data: messages,
+                },
+                recent_chats: {
+                    total: recentChats.length,
+                    data: recentChats,
+                },
+                property_chats: {
+                    total: propertyChats.length,
+                    total_unread_count: propertyChats.reduce((sum, item) => sum + (item.unread_count || 0), 0),
+                    data: propertyChats,
+                },
+                room_members: {
+                    total: roomMembers.length,
+                    data: roomMembers,
+                },
+            },
+        };
+        return response.success(payload, "Chat guest debug full", req, res);
+    } catch (error) {
+        return response.failed(null, `${error}`, req, res);
+    }
+}
 
 exports.getAllPropertyChats = async (req, res, next) => {
     try {
+        if (isGuestRequest(req)) {
+            const room_id = req.query.room_id || 'guest-room-1';
+            const property_id = req.query.property_id || 'guest-prop-1';
+            const chats = buildGuestPropertyChats(room_id, property_id);
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const count = req.query.count ? Number(req.query.count) : chats.length;
+            const skipNo = (page - 1) * count;
+            const paginated = chats.slice(skipNo, skipNo + count);
+            const total_unread_count = chats.reduce((sum, item) => sum + (item.unread_count || 0), 0);
+            return response.success({ total: chats.length, total_unread_count, data: paginated }, constants.USER.RECENT_CHAT_FETCHED, req, res);
+        }
+
         let { user_id, room_id, search, property_id, sortBy, login_user_id } = req.query;
         let page = req.query.page || 1;
         let count = req.query.count || 10;
@@ -1518,6 +1826,16 @@ exports.getAllPropertyChats = async (req, res, next) => {
 // }
 exports.getAllRoomMembers = async (req, res, next) => {
     try {
+        if (isGuestRequest(req)) {
+            const room_id = req.query.room_id || 'guest-room-1';
+            const property_id = req.query.property_id || 'guest-prop-1';
+            const members = buildGuestRoomMembers(room_id, property_id);
+            const visibleMembers = members.filter(
+                (itm) => itm?.user_id !== 'guest-user-000' && itm?.user_role !== 'owner'
+            );
+            return response.success({ total: visibleMembers.length, data: visibleMembers }, "Fetched all room members", req, res);
+        }
+
         let { user_id, room_id, search, property_id, login_user_id, sortBy, isGroupChat, quickChat } = req.query;
         let page = req.query.page || 1;
         let count = req.query.count || 10;
