@@ -65,14 +65,19 @@ const PropSidebar = ({
                                     </div>
 
                                     <div className="lg:col-span-5 col-span-full">
-                                        <img
-                                            src={imagePath(
-                                                item?.images?.[0]?.file,
-                                                "assets/img/transaction/property-leads.jpg"
-                                            )}
-                                            alt=""
-                                            className="w-full h-[110px] rounded-[7px] object-cover"
-                                        />
+                                        {(() => {
+                                            const imageSource = item?.images?.[0]?.file || item?.images?.[0];
+                                            const imageUrl = typeof imageSource === 'string' && imageSource?.startsWith('http')
+                                                ? imageSource
+                                                : imagePath(imageSource, "assets/img/transaction/property-leads.jpg");
+                                            return (
+                                                <img
+                                                    src={imageUrl}
+                                                    alt=""
+                                                    className="w-full h-[110px] rounded-[7px] object-cover"
+                                                />
+                                            );
+                                        })()}
                                     </div>
                                     <div className="lg:col-span-7 col-span-full">
                                         <p className="text-[#6B6B6B] text-[13px]">
