@@ -1,4 +1,5 @@
 const db = require('../models');
+const mongoose = require('mongoose');
 
 exports.get_user_rooms = async (criteria, projection) => {
     let get_rooms = await db.roommembers.find(criteria, projection).lean().exec();
@@ -32,6 +33,9 @@ exports.get_first_letter_from_each_word = async (string) => {
 
 
 exports.get_unred_notification_count = async (user_id) => {
+    if (!mongoose.Types.ObjectId.isValid(user_id)) {
+        return 0;
+    }
     let get_count = await db.notifications.countDocuments({
         sendTo: user_id,
         isDeleted: false,

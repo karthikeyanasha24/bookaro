@@ -7,6 +7,73 @@ const db = require("../models");
 const { send_fcm_push_notification } = require("./FcmServices");
 const { default: mongoose } = require("mongoose");
 const { duration } = require("moment");
+const BACKEND_WEB_URL = process.env.BACK_WEB_URL || `http://localhost:${process.env.PORT || 6089}`;
+const ASSETS_BASE_URL = `${BACKEND_WEB_URL}/assets/img`;
+
+const getBackendWebUrl = (socket) => {
+  const forwardedProto = socket?.handshake?.headers?.["x-forwarded-proto"];
+  const proto = forwardedProto ? forwardedProto.split(",")[0] : "http";
+  const host = socket?.handshake?.headers?.host || `localhost:${process.env.PORT || 6089}`;
+  return `${proto}://${host}`;
+};
+
+const buildGuestEstimationProperties = (backendUrl) => {
+  const assetsUrl = `${backendUrl}/assets/img`;
+  return [
+    {
+      _id: "guest-property-1",
+      propertyTitle: "Maison de caractère à Paris",
+      address: "28 Rue des Rosiers, 75004 Paris",
+      propertyType: "Maison",
+      surface: 115,
+      propertyFloor: 2,
+      totalFloorBuilding: 3,
+      bedrooms: 3,
+      bathroom: 2,
+      referencePrice: 860000,
+      location: { lat: 48.8566, lng: 2.3522 },
+      zipcode: "75004",
+      images: [
+        `${assetsUrl}/spacejoy-WQ35C1ZqCPk-unsplash.jpg`,
+        `${assetsUrl}/jalg-tv-stand-Cmq9Sy5PW18-unsplash.jpg`,
+        `${assetsUrl}/yann-maignan-x3BCSWCAtrY-unsplash.jpg`,
+        `${assetsUrl}/spacejoy-GNs831kqdoM-unsplash.jpg`,
+        `${assetsUrl}/spacejoy-8Y8U9fduILs-unsplash.jpg`,
+      ],
+      revenue_detail: [{ price: 18000 }, { price: 19000 }, { price: 17500 }],
+      renovation_work: [{ price: 12000 }, { price: 8500 }],
+      rating: [{ rating_value: "4.33" }, { rating_value: "4.33" }, { rating_value: "4.33" }],
+      isLiked: false,
+      isFollowed: false,
+    },
+    {
+      _id: "guest-property-2",
+      propertyTitle: "Appartement lumineux à Lyon",
+      address: "12 Rue de la République, 69002 Lyon",
+      propertyType: "Appartement",
+      surface: 82,
+      propertyFloor: 4,
+      totalFloorBuilding: 6,
+      bedrooms: 2,
+      bathroom: 1,
+      referencePrice: 420000,
+      location: { lat: 45.7640, lng: 4.8357 },
+      zipcode: "69002",
+      images: [
+        `${assetsUrl}/spacejoy-ctyssSFmXmU-unsplash.jpg`,
+        `${assetsUrl}/spacejoy-85pCvDWDMmI-unsplash.jpg`,
+        `${assetsUrl}/levente-gyulai-nzPlsLZdcm8-unsplash.jpg`,
+        `${assetsUrl}/spacejoy-4xRP0Ajk9ys-unsplash.jpg`,
+        `${assetsUrl}/prydumano-design-VZ2z8ozzy10-unsplash.jpg`,
+      ],
+      revenue_detail: [{ price: 10500 }, { price: 11500 }],
+      renovation_work: [{ price: 4500 }],
+      rating: [{ rating_value: 3 }, { rating_value: 4 }],
+      isLiked: false,
+      isFollowed: false,
+    },
+  ];
+};
 
 let io;
 
@@ -884,7 +951,19 @@ exports.initializeSocket = function (startServer) {
     //event for property listing of in p2p estimation random
     socket.on("est-prop-list", async (data) => {
       try {
-        let { zipcode = '', loggedInUser } = data;
+        let { zipcode = '', loggedInUser, guest } = data;
+        const isGuestRequest = guest === true || guest === 'true' || loggedInUser === 'guest-user-000';
+        if (isGuestRequest) {
+          const backendUrl = getBackendWebUrl(socket);
+          const guestProperties = buildGuestEstimationProperties(backendUrl);
+          return socket.emit("est-prop-list", {
+            success: true,
+            message: "Guest properties fetched successfully.",
+            data: guestProperties,
+            total: guestProperties.length,
+          });
+        }
+
         let page = data.page || 1;
         let count = data.count || 10;
 
