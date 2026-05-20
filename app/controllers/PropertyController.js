@@ -398,6 +398,10 @@ module.exports = {
         loggedInUser,
         schoolName,
       } = req.query;
+      const pageNumber = Number(page) || 1;
+      let pageSize = Number(count) || 20;
+      if (pageSize <= 0) pageSize = 20;
+      if (pageSize > 100) pageSize = 100;
       var query = {};
       if (agencyId) {
         query.agency = new mongoose.Types.ObjectId(agencyId);
@@ -1449,21 +1453,34 @@ module.exports = {
       };
       pipeline.push(group_stage);
       pipeline.push(sorting);
-      const total = await db.property.aggregate([...pipeline]);
-      count = count ? Number(count) : total.length;
-      if (page && count) {
-        const skipNo = (Number(page) - 1) * Number(count);
-        pipeline.push({
-          $skip: Number(skipNo)
-        }, {
-          $limit: Number(count)
+
+      const canUseCountDocuments = !schoolType && !schoolStatus && !schoolName && !schoolId;
+      let total = 0;
+      if (canUseCountDocuments) {
+        total = await Property.countDocuments({
+          ...query,
+          ...documentGradeMatch,
+          ...documentVerificationMatch,
         });
+      } else {
+        const totalResult = await db.property.aggregate([
+          ...pipeline,
+          { $count: "count" },
+        ]);
+        total = totalResult.length ? totalResult[0].count : 0;
       }
+
+      const skipNo = (pageNumber - 1) * pageSize;
+      pipeline.push({
+        $skip: Number(skipNo),
+      }, {
+        $limit: Number(pageSize),
+      });
       const result = await Property.aggregate([...pipeline]);
       return res.status(200).json({
         success: true,
         message: constants.PROPERTY.RETRIEVED,
-        total: total.length,
+        total,
         data: result,
       });
     } catch (error) {
