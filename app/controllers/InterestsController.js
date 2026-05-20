@@ -2,7 +2,349 @@ const db = require("../models");
 const Emails = require("../Emails/onBoarding");
 const visitInvite = require("../Emails/visitInvite");
 
+const buildGuestInterestCards = () => {
+  const buyer = { _id: "guest-user-000", fullName: "Bookaroo Guest" };
+  const owner = { fullName: "Bookaroo Owner" };
 
+  const baseSaleProperties = [
+    {
+      propertyTitle: "Maison Lucie",
+      city: "Paris",
+      country: "France",
+      zipcode: "75011",
+      propertyType: "sale",
+      surface: 120,
+      rooms: 4,
+      bathroom: 2,
+      energy_efficient: "C",
+      price: 890000,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-1.jpg" }],
+      identityVerified: true,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "Appartement Victor",
+      city: "Lyon",
+      country: "France",
+      zipcode: "69006",
+      propertyType: "sale",
+      surface: 85,
+      rooms: 3,
+      bathroom: 1,
+      energy_efficient: "B",
+      price: 540000,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-2.jpg" }],
+      identityVerified: true,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "Loft Camille",
+      city: "Marseille",
+      country: "France",
+      zipcode: "13001",
+      propertyType: "sale",
+      surface: 105,
+      rooms: 3,
+      bathroom: 2,
+      energy_efficient: "D",
+      price: 650000,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-3.jpg" }],
+      identityVerified: false,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "Villa Anna",
+      city: "Nice",
+      country: "France",
+      zipcode: "06000",
+      propertyType: "sale",
+      surface: 145,
+      rooms: 5,
+      bathroom: 3,
+      energy_efficient: "B",
+      price: 1290000,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-4.jpg" }],
+      identityVerified: true,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "Maison Jules",
+      city: "Bordeaux",
+      country: "France",
+      zipcode: "33000",
+      propertyType: "sale",
+      surface: 170,
+      rooms: 6,
+      bathroom: 3,
+      energy_efficient: "A",
+      price: 1450000,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-5.jpg" }],
+      identityVerified: false,
+      addedBy: owner,
+    },
+  ];
+
+  const baseRentProperties = [
+    {
+      propertyTitle: "Studio Jeanne",
+      city: "Paris",
+      country: "France",
+      zipcode: "75010",
+      propertyType: "rent",
+      surface: 28,
+      rooms: 1,
+      bathroom: 1,
+      energy_efficient: "C",
+      propertyMonthlyCharges: 1450,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-6.jpg" }],
+      identityVerified: true,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "T2 Clara",
+      city: "Lille",
+      country: "France",
+      zipcode: "59000",
+      propertyType: "rent",
+      surface: 48,
+      rooms: 2,
+      bathroom: 1,
+      energy_efficient: "B",
+      propertyMonthlyCharges: 1850,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-7.jpg" }],
+      identityVerified: true,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "Appartement Henri",
+      city: "Nantes",
+      country: "France",
+      zipcode: "44000",
+      propertyType: "rent",
+      surface: 65,
+      rooms: 3,
+      bathroom: 1,
+      energy_efficient: "D",
+      propertyMonthlyCharges: 2200,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-8.jpg" }],
+      identityVerified: false,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "T3 Elise",
+      city: "Toulouse",
+      country: "France",
+      zipcode: "31000",
+      propertyType: "rent",
+      surface: 78,
+      rooms: 3,
+      bathroom: 2,
+      energy_efficient: "B",
+      propertyMonthlyCharges: 2550,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-9.jpg" }],
+      identityVerified: true,
+      addedBy: owner,
+    },
+    {
+      propertyTitle: "Appartement Marc",
+      city: "Strasbourg",
+      country: "France",
+      zipcode: "67000",
+      propertyType: "rent",
+      surface: 92,
+      rooms: 4,
+      bathroom: 2,
+      energy_efficient: "A",
+      propertyMonthlyCharges: 3200,
+      images: [{ file: "assets/img/dashboard/attractivity/attractivity-10.jpg" }],
+      identityVerified: false,
+      addedBy: owner,
+    },
+  ];
+
+  return [
+    {
+      _id: "guest-interest-sale-1",
+      buyerId: buyer,
+      propertyId: baseSaleProperties[0],
+      propertyType: "sale",
+      funnelStatus: "interest sent",
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 3,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: "Visit the property",
+        image: "assets/img/dashboard/attractivity/attractivity-1.jpg",
+        duration: "2:15",
+      },
+    },
+    {
+      _id: "guest-interest-sale-2",
+      buyerId: buyer,
+      propertyId: baseSaleProperties[1],
+      propertyType: "sale",
+      funnelStatus: "invite user for a visit",
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 5,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+        title: "Next steps for visit",
+        image: "assets/img/dashboard/attractivity/attractivity-2.jpg",
+        duration: "3:00",
+      },
+    },
+    {
+      _id: "guest-interest-sale-3",
+      buyerId: buyer,
+      propertyId: baseSaleProperties[2],
+      propertyType: "sale",
+      funnelStatus: "visit accept by user",
+      finalVisitDate: { date: new Date().toISOString(), from: "14:00", to: "15:00" },
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 4,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=oUFJJNQGwhk",
+        title: "Preparing for your visit",
+        image: "assets/img/dashboard/attractivity/attractivity-3.jpg",
+        duration: "2:40",
+      },
+    },
+    {
+      _id: "guest-interest-sale-4",
+      buyerId: buyer,
+      propertyId: baseSaleProperties[3],
+      propertyType: "sale",
+      funnelStatus: "offer sent",
+      makeOfferAmount: 1180000,
+      buyerPrice: {
+        amount: 1180000,
+        validity_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        move_in: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        fundingType: ["Bank Loan"],
+        conditions: ["Obtaining a bank loan"],
+      },
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 6,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=oqmR3J2VeL0",
+        title: "How to place your offer",
+        image: "assets/img/dashboard/attractivity/attractivity-4.jpg",
+        duration: "1:55",
+      },
+    },
+    {
+      _id: "guest-interest-sale-5",
+      buyerId: buyer,
+      propertyId: baseSaleProperties[4],
+      propertyType: "sale",
+      funnelStatus: "contract signed by user",
+      ownerPrice: 1450000,
+      finalSale: true,
+      status: "active",
+      interestStatus: "completed",
+      totalLeads: 2,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=VYOjWnS4cMY",
+        title: "What happens after signing",
+        image: "assets/img/dashboard/attractivity/attractivity-5.jpg",
+        duration: "2:30",
+      },
+    },
+    {
+      _id: "guest-interest-rent-1",
+      buyerId: buyer,
+      propertyId: baseRentProperties[0],
+      propertyType: "rent",
+      funnelStatus: "interest sent",
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 8,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=2vjPBrBU-TM",
+        title: "Renting made easy",
+        image: "assets/img/dashboard/attractivity/attractivity-6.jpg",
+        duration: "2:24",
+      },
+    },
+    {
+      _id: "guest-interest-rent-2",
+      buyerId: buyer,
+      propertyId: baseRentProperties[1],
+      propertyType: "rent",
+      funnelStatus: "invite user for a visit",
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 7,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=lW9bG2Sgm_Y",
+        title: "Scheduling your rental visit",
+        image: "assets/img/dashboard/attractivity/attractivity-7.jpg",
+        duration: "2:10",
+      },
+    },
+    {
+      _id: "guest-interest-rent-3",
+      buyerId: buyer,
+      propertyId: baseRentProperties[2],
+      propertyType: "rent",
+      funnelStatus: "visit hosted",
+      finalVisitDate: { date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), from: "11:00", to: "12:00" },
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 5,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=3tmd-ClpJxA",
+        title: "After the visit",
+        image: "assets/img/dashboard/attractivity/attractivity-8.jpg",
+        duration: "3:05",
+      },
+    },
+    {
+      _id: "guest-interest-rent-4",
+      buyerId: buyer,
+      propertyId: baseRentProperties[3],
+      propertyType: "rent",
+      funnelStatus: "offer sent",
+      makeOfferAmount: 2500,
+      buyerPrice: {
+        amount: 2500,
+        validity_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+        move_in: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+        fundingType: ["Bank Transfer"],
+        conditions: ["No prior debt"],
+      },
+      status: "active",
+      interestStatus: "pending",
+      totalLeads: 11,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: "Rent offer process",
+        image: "assets/img/dashboard/attractivity/attractivity-9.jpg",
+        duration: "2:12",
+      },
+    },
+    {
+      _id: "guest-interest-rent-5",
+      buyerId: buyer,
+      propertyId: baseRentProperties[4],
+      propertyType: "rent",
+      funnelStatus: "renter assigned",
+      status: "active",
+      interestStatus: "completed",
+      totalLeads: 13,
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=JGwWNGJdvx8",
+        title: "Welcome to your new home",
+        image: "assets/img/dashboard/attractivity/attractivity-10.jpg",
+        duration: "2:57",
+      },
+    },
+  ];
+};
 
 module.exports = {
 
@@ -360,6 +702,26 @@ module.exports = {
             const { buyerId, propertyType } = req.query;
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+            const isGuestRequest =
+                req.isGuest === true ||
+                req.query.guest === "true" ||
+                req.headers["x-guest-mode"] === "true" ||
+                req.headers["x-guest-mode"] === "1";
+
+            if (isGuestRequest) {
+                const cards = buildGuestInterestCards();
+                const filteredCards = propertyType
+                    ? cards.filter((card) => card.propertyType === propertyType)
+                    : cards;
+                const pagedCards = filteredCards.slice(skip, skip + limit);
+                return res.status(200).json({
+                    success: true,
+                    message: "Guest interests fetched successfully.",
+                    data: pagedCards,
+                    total: filteredCards.length,
+                });
+            }
 
             if (!buyerId) {
                 return res.status(400).json({
@@ -368,9 +730,7 @@ module.exports = {
                 });
             }
 
-            const findInterest = await db.in
-            const skip = (page - 1) * limit;
-            let sorting = { updatedAt: -1 }
+            let sorting = { updatedAt: -1 };
 
             // const funnelStages = [
             //     "interest received", "invite for a visit", "has to book a visit", "host the visit", "visit hosted",
@@ -471,9 +831,8 @@ module.exports = {
             return res.status(200).json({
                 success: true,
                 message: "Data fetched successfully.",
-                data: filteredInterests,
-                total: filteredInterests.length,
                 data: dataWithLeads,
+                total: filteredInterests.length,
             });
 
         }
