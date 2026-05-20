@@ -1,17 +1,27 @@
+import { isGuestMode } from '../guestMode';
+
 /**
  * Client API pour le marketplace de services
- * Appels directs vers http://localhost:6090
+ * Utilise le backend configuré dans REACT_APP_MARKETPLACE_API_URL / REACT_APP_API_BASE_URL
  */
 
-const BASE_URL = process.env.REACT_APP_MARKETPLACE_API_URL || 'http://localhost:8089';
+const BASE_URL = process.env.REACT_APP_MARKETPLACE_API_URL || process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_URL || 'http://localhost:6089';
 
 const getToken = () => localStorage.getItem('token');
 
 const request = async (method, path, body = null, lang = 'fr') => {
-  const url = `${BASE_URL}${path}${path.includes('?') ? '&' : '?'}lang=${lang}`;
+  let url = `${BASE_URL}${path}${path.includes('?') ? '&' : '?'}lang=${lang}`;
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const isGuest = isGuestMode();
+
+  if (isGuest) {
+    delete headers.Authorization;
+    headers['X-Guest-Mode'] = 'true';
+    url += '&guest=true';
+  } else if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
@@ -38,6 +48,9 @@ export const getFavoritePros = (postalCode = '', lang = 'fr') => {
   const path = postalCode ? `/marketplace/favorite-pros?postalCode=${encodeURIComponent(postalCode)}` : '/marketplace/favorite-pros';
   return request('GET', path, null, lang);
 };
+
+export const getFavoriteServices = (lang = 'fr') =>
+  request('GET', '/marketplace/favorites', null, lang);
 
 // ─── Buyer (auth requise) ───────────────────────────────────────────────────
 

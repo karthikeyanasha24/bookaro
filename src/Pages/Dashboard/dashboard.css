@@ -1258,6 +1258,53 @@
   flex-direction: column;
 }
 
+.dashboard-guest-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.dashboard-guest-modal {
+  width: min(560px, 100%);
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px 26px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+  color: #111827;
+}
+
+.dashboard-guest-modal h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.dashboard-guest-modal p {
+  margin: 0 0 22px;
+  color: #475569;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.dashboard-guest-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.dashboard-button-secondary {
+  background: #f3f4f6;
+  color: #111827;
+  box-shadow: none;
+}
+
 .p2p-price-content {
   flex: 1;
   display: flex;

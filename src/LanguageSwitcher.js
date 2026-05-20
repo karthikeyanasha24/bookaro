@@ -17,19 +17,29 @@ const LanguageSwitcher = () => {
     ];
 
     const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+    const otherLanguage = languages.find(lang => lang.code !== currentLanguage.code);
+    const hasTwoLanguages = languages.length === 2;
+
+    const handleToggle = () => {
+        if (hasTwoLanguages && otherLanguage) {
+            handleLanguageChange(otherLanguage.code);
+            return;
+        }
+        setIsOpen((prev) => !prev);
+    };
 
     return (
         <div className="language-switcher">
             <button
                 className="lang-toggle"
-                onClick={() => setIsOpen(!isOpen)}
-                title="Select language"
-                aria-label="Select language"
+                onClick={handleToggle}
+                title={hasTwoLanguages ? `Passer en ${otherLanguage?.label || 'langue'}` : 'Select language'}
+                aria-label={hasTwoLanguages ? `Switch to ${otherLanguage?.label || 'other language'}` : 'Select language'}
             >
                 <span className="lang-code">{currentLanguage?.code?.toUpperCase() || 'FR'}</span>
             </button>
             
-            {isOpen && (
+            {isOpen && !hasTwoLanguages && (
                 <div className="language-dropdown">
                     {languages.map((lang) => (
                         <button

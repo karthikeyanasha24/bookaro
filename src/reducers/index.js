@@ -5,9 +5,10 @@ import user from './modules/user';
 import loader from './modules/loader';
 import search from './modules/search';
 import activePlan from './modules/activePlan';
+import { isDebugMockUser } from '../methods/guestMode';
 
-// Désactive redux-persist en mode mock user
-const isMock = process.env.REACT_APP_DEBUG_MOCK_USER === 'true';
+// Désactive redux-persist en mode mock user uniquement si le debug mock user est explicitement activé.
+const isMock = isDebugMockUser();
 
 const rootReducer = isMock
   ? combineReducers({ loader, user, search, activePlan })

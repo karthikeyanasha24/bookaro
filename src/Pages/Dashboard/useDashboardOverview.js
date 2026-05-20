@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getDashboardOverview } from "./dashboard.api";
 import { mockDashboardOverview } from "./dashboard.mocks";
+import { isGuestMode } from "../../methods/guestMode";
 
 const IS_NON_PRODUCTION = process.env.NODE_ENV !== "production";
 const DISABLE_MOCK_FALLBACK = process.env.REACT_APP_DASHBOARD_DISABLE_MOCK_FALLBACK === "true";
@@ -62,18 +63,21 @@ export const useDashboardOverview = (period) => {
     try {
       // On tente d'appeler le backend
       const response = await getDashboardOverview(period);
+      const backendData = response?.data;
+      const guestMode = isGuestMode();
       const disableFallback = isMockFallbackDisabled();
+      const shouldFallback = !disableFallback;
+
       // Si le backend répond avec succès et que la réponse est du type attendu (pas HTML, pas cache), on utilise le backend
       if (
         response?.success &&
-        response?.data &&
-        typeof response.data === "object" &&
-        response.data.sections &&
-        Object.keys(response.data.sections).length > 0 &&
-        !/<!DOCTYPE html>/i.test(JSON.stringify(response.data))
+        backendData &&
+        typeof backendData === "object" &&
+        backendData.sections &&
+        Object.keys(backendData.sections).length > 0 &&
+        !/<!DOCTYPE html>/i.test(JSON.stringify(backendData))
       ) {
         // On fusionne section par section comme avant
-        const backendData = response.data;
         const mockSections = mockDashboardOverview.sections;
         const mergedSections = { ...mockSections };
         const usingMock = [];
@@ -95,19 +99,30 @@ export const useDashboardOverview = (period) => {
           console.log("[DASHBOARD][MOCK] Sections utilisant le mock:", usingMock);
         }
         setData({
-          ...mockDashboardOverview,
           ...backendData,
           sections: mergedSections,
         });
         setError(null);
-      } else {
-        // Si la réponse backend est absente, invalide ou HTML, on force tout mock
+      } else if (shouldFallback) {
+        // Si la réponse backend est absente, invalide ou HTML, on force tout mock uniquement
+        // lorsque le mock fallback est activé et que nous ne sommes pas en mode invité.
         setData(mockDashboardOverview);
         setError(null);
+      } else {
+        setData(null);
+        setError(new Error("Invalid dashboard payload"));
       }
     } catch (err) {
-      setData(mockDashboardOverview);
-      setError(null);
+      const guestMode = isGuestMode();
+      const disableFallback = isMockFallbackDisabled();
+      const shouldFallback = !disableFallback;
+      if (shouldFallback) {
+        setData(mockDashboardOverview);
+        setError(null);
+      } else {
+        setData(null);
+        setError(err || new Error("Dashboard request failed"));
+      }
     } finally {
       setLoading(false);
     }

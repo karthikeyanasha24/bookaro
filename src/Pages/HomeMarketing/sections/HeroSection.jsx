@@ -1,5 +1,8 @@
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
+import { enableGuestMode, disableDebugMockUser } from "../../../methods/guestMode";
+import { login_success, logout } from "../../../actions/user";
 
 /**
  * Section 1 — Hero (centré, fond violet gradient)
@@ -8,6 +11,32 @@ import { FaStar } from "react-icons/fa";
  * - Bloc 3 colonnes en dessous (cards translucides + card centrale)
  */
 const HeroSection = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleGuestAccess = () => {
+    disableDebugMockUser();
+    dispatch(logout());
+    localStorage.removeItem("persist:admin-app");
+    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
+    enableGuestMode();
+    dispatch(
+      login_success({
+        loggedIn: true,
+        isGuest: true,
+        _id: 'guest-user-000',
+        id: 'guest-user-000',
+        fullName: 'Bookaroo Guest',
+        email: 'guest@bookaroo.local',
+        accountType: 'guest',
+        customerRole: { name: 'Guest' },
+        notifications: [],
+      })
+    );
+    navigate('/dashboard');
+  };
+
   return (
     <section
       className="relative overflow-hidden text-gray-900 -mt-[100px] pt-[100px]"
@@ -44,12 +73,12 @@ const HeroSection = () => {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            to="/onboarding"
+          <button
+            onClick={handleGuestAccess}
             className="inline-flex items-center justify-center bg-white text-black font-medium rounded-full px-7 py-3 transition shadow hover:bg-gray-100"
           >
             Explorer la plateforme
-          </Link>
+          </button>
         </div>
       </div>
 

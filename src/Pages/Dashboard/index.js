@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PageLayout from "../../components/global/PageLayout";
 import "./dashboard.css";
 import { useDashboardOverview } from "./useDashboardOverview";
 import DashboardHeader from "./components/DashboardHeader";
 import DashboardSettingsModal from "./components/DashboardSettingsModal";
+import { isGuestMode } from "../../methods/guestMode";
 import { getDashboardPreferences, saveDashboardPreferences } from "./dashboardPreferences.api";
 import TodoListSection from "./components/TodoListSection";
 import PropertyAttractivitySection from "./components/PropertyAttractivitySection";
@@ -248,12 +250,32 @@ const DashboardPage = () => {
   const [dragOverSectionId, setDragOverSectionId] = useState(null);
   const [activeGripSectionId, setActiveGripSectionId] = useState(null);
   const [isResettingOrder, setIsResettingOrder] = useState(false);
+  const [guestActionAttempt, setGuestActionAttempt] = useState(null);
   const sectionRefs = useRef({});
   const dragPreviewNodeRef = useRef(null);
+  const navigate = useNavigate();
   const { data, loading, error } = useDashboardOverview(period);
   const user = useSelector((state) => state.user);
+  const guestMode = isGuestMode();
 
   const sections = data?.sections || {};
+
+  const handleDashboardClick = useCallback((event) => {
+    if (!guestMode) return;
+    const target = event.target instanceof HTMLElement ? event.target.closest("[data-guest-restricted]") : null;
+    if (!target || !(event.currentTarget instanceof HTMLElement) || !event.currentTarget.contains(target)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setGuestActionAttempt({
+      feature: target.getAttribute("data-guest-feature") || "",
+    });
+  }, [guestMode]);
+
+  const closeGuestActionAttempt = () => setGuestActionAttempt(null);
+  const confirmGuestActionAttempt = () => {
+    setGuestActionAttempt(null);
+    navigate("/login");
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -539,6 +561,8 @@ const DashboardPage = () => {
         loading={loading}
         error={error}
         t={t}
+        guestMode={guestMode}
+        onGuestActionAttempt={(feature) => setGuestActionAttempt({ feature })}
       />
     ),
     pastTransactions: (
@@ -548,7 +572,14 @@ const DashboardPage = () => {
       <P2PEstimationSection section={sections.p2pEstimation} loading={loading} error={error} t={t} />
     ),
     p2pReport: (
-      <P2PReportSection section={sections.p2pReport} loading={loading} error={error} t={t} />
+      <P2PReportSection
+        section={sections.p2pReport}
+        loading={loading}
+        error={error}
+        t={t}
+        guestMode={guestMode}
+        onGuestActionAttempt={(feature) => setGuestActionAttempt({ feature })}
+      />
     ),
     trainingCenter: (
       <TrainingCenterSection section={sections.trainingCenter} loading={loading} error={error} t={t} />
@@ -564,14 +595,16 @@ const DashboardPage = () => {
   return (
     <PageLayout>
       <section className="dashboard-page">
-        <div className="dashboard-container">
+        <div className="dashboard-container" onClickCapture={handleDashboardClick}>
           <DashboardHeader
             firstName={
-              user?.firstName
-                ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
-                : (data?.user?.firstName
-                  ? data.user.firstName.charAt(0).toUpperCase() + data.user.firstName.slice(1).toLowerCase()
-                  : "User")
+              guestMode
+                ? ""
+                : user?.firstName
+                  ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase()
+                  : (data?.user?.firstName
+                    ? data.user.firstName.charAt(0).toUpperCase() + data.user.firstName.slice(1).toLowerCase()
+                    : "User")
             }
             t={t}
             displayMode={displayMode}
@@ -592,6 +625,30 @@ const DashboardPage = () => {
             onSavePreferences={handleSectionSettingsSave}
             t={t}
           />
+
+          {guestActionAttempt && (
+            <div className="dashboard-guest-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="dashboard-guest-modal-title">
+              <div className="dashboard-guest-modal">
+                <h2 id="dashboard-guest-modal-title">
+                  {t("dashboard.guestModal.title", "Action réservée aux membres")}
+                </h2>
+                <p>
+                  {t(
+                    "dashboard.guestModal.message",
+                    "Cette fonctionnalité nécessite un compte Bookaroo. Connectez-vous ou créez un compte pour continuer."
+                  )}
+                </p>
+                <div className="dashboard-guest-modal-actions">
+                  <button type="button" className="dashboard-button" onClick={confirmGuestActionAttempt}>
+                    {t("dashboard.guestModal.cta", "Se connecter")}
+                  </button>
+                  <button type="button" className="dashboard-button dashboard-button-secondary" onClick={closeGuestActionAttempt}>
+                    {t("dashboard.guestModal.cancel", "Fermer")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {sectionOrder
             .filter((sectionId) => sectionVisibility[sectionId] !== false)

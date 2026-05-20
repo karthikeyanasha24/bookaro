@@ -89,6 +89,8 @@ const P2PEstimationSection = ({ section, loading, error, t }) => {
                     key={item.propertyId}
                     href={item.route || "/property-details"}
                     className={`p2p-strip-item ${itemIndex > 0 ? "p2p-strip-item-overlap" : ""}`}
+                    data-guest-restricted="true"
+                    data-guest-feature="Voir la propriété à estimer"
                   >
                     <img
                       src={getImageUrl(item, rowIndex * itemsPerRow + itemIndex)}
@@ -108,7 +110,12 @@ const P2PEstimationSection = ({ section, loading, error, t }) => {
           </div>
           {section?.action?.route && (
             <div className="dashboard-button-center p2p-button-center">
-              <a href={section.action.route} className="dashboard-button">
+              <a
+                href={section.action.route}
+                className="dashboard-button"
+                data-guest-restricted="true"
+                data-guest-feature="Démarrer l’estimation"
+              >
                 {t("dashboard.cta.estimateProperties", "Estimer des biens")}
               </a>
             </div>

@@ -11,6 +11,7 @@ import AuthLayout from "../../components/AuthLayout";
 import { getPostLoginRoute } from "../../components/onboarding/onboarding.hook";
 import { requestForToken } from "../../config/Firebase/FirebaseAuth";
 import ApiClient from "../../methods/api/apiClient";
+import { disableGuestMode, isDebugMockUser } from "../../methods/guestMode";
 import loader from "../../methods/loader";
 import methodModel from "../../methods/methods";
 import "./style.scss";
@@ -46,7 +47,7 @@ const Login = () => {
 
   // 1. Force le mock user si mode autonome et pas loggé
   useEffect(() => {
-    if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true' && (!user || !user.loggedIn)) {
+    if (isDebugMockUser() && (!user || !user.loggedIn)) {
       dispatch(login_success({
         ...user,
         loggedIn: true,
@@ -107,7 +108,8 @@ const Login = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+    if (isDebugMockUser()) {
+      disableGuestMode();
       setTimeout(() => {
         dispatch(login_success({
           email: form.email,
@@ -135,6 +137,7 @@ const Login = () => {
       const res = await ApiClient.post("user/login", payload);
 
       if (res?.success && res?.data) {
+        disableGuestMode();
         const token = res.data.access_token || res.data.token;
         if (token) {
           localStorage.setItem("token", token);

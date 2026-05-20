@@ -78,7 +78,12 @@ const PastTransactionsSection = ({ section, loading, error, t }) => {
             ))}
           </div>
           <div className="dashboard-button-center past-transactions-button-center">
-            <Link to="/past-transactions" className="dashboard-button">
+            <Link
+              to="/past-transactions"
+              className="dashboard-button"
+              data-guest-restricted="true"
+              data-guest-feature="Parcourir les transactions"
+            >
               {t("dashboard.cta.browseTransactions", "Parcourir les transactions")}
             </Link>
           </div>

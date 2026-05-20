@@ -70,7 +70,14 @@ const SavedSearchSection = ({ section, loading, error, t }) => {
             )}
           </p>
           <div className="dashboard-button-center">
-            <Link to="/properties" className="dashboard-button">{t("dashboard.cta.newSearch", "New search")}</Link>
+            <Link
+              to="/properties"
+              className="dashboard-button"
+              data-guest-restricted="true"
+              data-guest-feature="Nouvelle recherche"
+            >
+              {t("dashboard.cta.newSearch", "New search")}
+            </Link>
           </div>
         </>
       ) : (
@@ -94,13 +101,24 @@ const SavedSearchSection = ({ section, loading, error, t }) => {
                   </button>
                   <p className="saved-search-name">{card.name}</p>
                   <p className="saved-search-criteria">{card.criteriaLabel}</p>
-                  <Link to={newResultsRoute} className="saved-search-new-results">
+                  <Link
+                    to={newResultsRoute}
+                    className="saved-search-new-results"
+                    data-guest-restricted="true"
+                    data-guest-feature="Voir les résultats"
+                  >
                     {t("dashboard.savedSearch.newResults", "{{count}} nouveaux résultats", { count: card.newResultsCount })}
                   </Link>
               </div>
               <div className="saved-search-preview-grid">
                   {(card.previewProperties || []).slice(0, 5).map((preview) => (
-                    <Link key={preview.id} to={preview.route || "/property-details"} className="saved-search-preview-item">
+                    <Link
+                      key={preview.id}
+                      to={preview.route || "/property-details"}
+                      className="saved-search-preview-item"
+                      data-guest-restricted="true"
+                      data-guest-feature="Voir la mini-fiche"
+                    >
                       <img
                         src={preview.coverUrl}
                         alt={t("dashboard.savedSearch.previewAlt", "aperçu")}
@@ -113,7 +131,14 @@ const SavedSearchSection = ({ section, loading, error, t }) => {
           );
           })}
           <div className="dashboard-button-center">
-            <Link to="/properties" className="dashboard-button">{t("dashboard.cta.newSearch", "New search")}</Link>
+            <Link
+              to="/properties"
+              className="dashboard-button"
+              data-guest-restricted="true"
+              data-guest-feature="Nouvelle recherche"
+            >
+              {t("dashboard.cta.newSearch", "New search")}
+            </Link>
           </div>
         </div>
       )}

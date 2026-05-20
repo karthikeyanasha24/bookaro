@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/global/PageLayout';
-import { ServiceCard, ServiceModal, BuyModal, MOCK_SERVICES, T } from './index';
+import { ServiceCard, ServiceModal, BuyModal, T } from './index';
+import { getFavoriteServices } from '../../methods/api/marketplaceApi';
 
 const TITLES = {
   fr: {
@@ -16,37 +17,45 @@ const TITLES = {
   },
 };
 
-function readFavoriteIds() {
-  try {
-    const raw = localStorage.getItem('marketplace.favorites');
-    const arr = raw ? JSON.parse(raw) : [];
-    return Array.isArray(arr) ? arr : [];
-  } catch { return []; }
-}
-
-function readFavoriteData() {
-  try {
-    const raw = localStorage.getItem('marketplace.favorites.data');
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
-}
-
 export default function MarketplaceFavorites() {
-  const [lang, setLang] = useState('fr');
+  const lang = 'fr';
   const [services, setServices] = useState([]);
   const [viewModal, setViewModal] = useState(null);
   const [buyModal, setBuyModal] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isMockData, setIsMockData] = useState(false);
   const tx = TITLES[lang];
   const navigate = useNavigate();
 
-  const refresh = useCallback(() => {
-    const ids = readFavoriteIds();
-    const data = readFavoriteData();
-    const list = ids
-      .map(id => data[id] || MOCK_SERVICES.find(s => (s._id || s.id) === id))
-      .filter(Boolean);
-    setServices(list);
-  }, []);
+  const refresh = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await getFavoriteServices(lang);
+      const data = Array.isArray(res?.data) ? res.data : [];
+      setServices(data);
+      setIsMockData(Boolean(res?.isMock));
+      try {
+        const ids = data.map((svc) => svc._id || svc.id);
+        localStorage.setItem('marketplace.favorites', JSON.stringify(ids));
+        const dataMap = {};
+        data.forEach((svc) => {
+          dataMap[svc._id || svc.id] = svc;
+        });
+        localStorage.setItem('marketplace.favorites.data', JSON.stringify(dataMap));
+      } catch (storageError) {
+        console.warn('Unable to persist favorite snapshot locally', storageError);
+      }
+    } catch (fetchError) {
+      setError('Impossible de charger vos services favoris.');
+      setServices([]);
+      setIsMockData(false);
+    }
+
+    setIsLoading(false);
+  }, [lang]);
 
   useEffect(() => {
     refresh();
@@ -65,16 +74,23 @@ export default function MarketplaceFavorites() {
         <div className="max-w-[1120px] mx-auto">
           <div className="flex items-center justify-between mb-1">
             <h1 className="font-bold text-black text-[24px]">{tx.pageTitle}</h1>
-            <button
-              onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-              className="text-[12px] border border-gray-300 rounded-full px-3 py-1 text-gray-600 hover:bg-white"
-            >
-              {lang === 'fr' ? 'EN' : 'FR'}
-            </button>
+            {isMockData && (
+              <span className="inline-flex items-center rounded-full bg-yellow-100 border border-yellow-300 px-3 py-1 text-[12px] font-semibold text-yellow-900">
+                Données fictives
+              </span>
+            )}
           </div>
           <p className="text-[13px] text-gray-400 mb-4">{tx.pageSub}</p>
 
-          {services.length === 0 ? (
+          {isLoading ? (
+            <div className="bg-white border border-gray-200 rounded-xl p-10 text-center">
+              <p className="text-[14px] text-gray-700">Chargement de vos services favoris…</p>
+            </div>
+          ) : error ? (
+            <div className="bg-white border border-red-200 rounded-xl p-10 text-center">
+              <p className="text-[14px] text-red-600 max-w-md mx-auto">{error}</p>
+            </div>
+          ) : services.length === 0 ? (
             <div className="bg-white border border-dashed border-gray-300 rounded-xl p-10 text-center">
               <div className="mx-auto mb-4 w-12 h-12 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#9CA3AF" strokeWidth={1.6} strokeLinejoin="round" strokeLinecap="round">
@@ -92,6 +108,7 @@ export default function MarketplaceFavorites() {
                   lang={lang}
                   onView={setViewModal}
                   onBuy={setBuyModal}
+                  disableActions={isMockData}
                 />
               ))}
             </div>
@@ -105,6 +122,7 @@ export default function MarketplaceFavorites() {
           lang={lang}
           onClose={() => setViewModal(null)}
           onBuy={(svc) => { setViewModal(null); setBuyModal(svc); }}
+          disableActions={isMockData}
         />
       )}
       {buyModal && (

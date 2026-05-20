@@ -34,7 +34,13 @@ const TrainingCenterSection = ({ section, loading, error, t }) => {
             : t("dashboard.training.mediaType.written", "ecrit");
 
           return (
-          <Link key={item.id} to={item.route} className="training-card">
+          <Link
+            key={item.id}
+            to={item.route}
+            className="training-card"
+            data-guest-restricted="true"
+            data-guest-feature="Accéder à la formation"
+          >
             <div className="training-card-head">
               <div className="training-author-wrap">
                 <img
@@ -78,7 +84,12 @@ const TrainingCenterSection = ({ section, loading, error, t }) => {
         })}
       </div>
           <div className="dashboard-button-center training-button-center">
-        <Link to="/training" className="dashboard-button">
+        <Link
+          to="/training"
+          className="dashboard-button"
+          data-guest-restricted="true"
+          data-guest-feature="Parcourir les formations"
+        >
           {t("dashboard.cta.browseTraining", "Parcourir les formations")}
         </Link>
       </div>

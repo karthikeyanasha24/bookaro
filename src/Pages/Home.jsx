@@ -18,6 +18,8 @@ import LoginModal from "../components/common/Modal/LoginModal";
 import PageLayout from "../components/global/PageLayout";
 import QuickSearch from "../components/QuickSearch/QuickSearch";
 import ApiClient from "../methods/api/apiClient";
+import { enableGuestMode, disableDebugMockUser } from "../methods/guestMode";
+import { login_success, logout } from "../actions/user";
 import loader from "../methods/loader";
 import addressModel from "../models/address.model";
 import {
@@ -27,7 +29,6 @@ import {
 } from "../models/string.model";
 import BlogSection from "./Blogs/BlogSection";
 import PropertyCardHome from "./Property/PropertyCardHome";
-import { login_success } from "../actions/user";
 import UpgradePlan from "../components/common/Modal/UpgradePlan";
 import { useTranslation } from "react-i18next";
 
@@ -373,6 +374,27 @@ const Home = () => {
     }
   }, []);
 
+  const handleGuestAccess = () => {
+    dispatch(logout());
+    localStorage.removeItem("persist:admin-app");
+    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
+    disableDebugMockUser();
+    enableGuestMode();
+    dispatch(login_success({
+      loggedIn: true,
+      isGuest: true,
+      _id: 'guest-user-000',
+      id: 'guest-user-000',
+      fullName: 'Bookaroo Guest',
+      email: 'guest@bookaroo.local',
+      accountType: 'guest',
+      customerRole: { name: 'Guest' },
+      notifications: [],
+    }));
+    navigate('/properties');
+  };
+
   const handleProperty = () => {
     if (user.loggedIn) {
       if (propertyTotal >= activePlan?.activePlan?.[0]?.numberOfProperty) {
@@ -418,6 +440,14 @@ const Home = () => {
                   >
                     {propertyLoader ? t("messages.loading") : t("buttons.listProperty")}
                   </button>
+                  {!user?.loggedIn && (
+                    <button
+                      className="bg-white text-black border border-white px-10 py-1.5 rounded-[50px] ml-4 w-fit mt-4 lg:mt-0"
+                      onClick={handleGuestAccess}
+                    >
+                      {t("buttons.browseAsGuest") || "Browse as guest"}
+                    </button>
+                  )}
                 </div>
                 <div className="lg:absolute position-set relative 2xl:w-[700px] xl:w-[650px] lg:w-[500px] w-[100%] lg:col-span-6 col-span-full lg:mt-0 mt-5 ">
                   <div className="">

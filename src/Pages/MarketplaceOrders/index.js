@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { getMyOrders, confirmDelivery, openLitigation, postReview, requestCancellation, acceptCancellation, rejectCancellation } from '../../methods/api/marketplaceApi';
+import { isGuestMode } from '../../methods/guestMode';
 import { toast } from 'react-toastify';
 import PageLayout from '../../components/global/PageLayout';
 import { ServiceModal } from '../Marketplace';
@@ -57,6 +58,8 @@ const T = {
     sub: 'Historique de mes achats',
     loading: 'Chargement…',
     empty: 'Aucun achat pour l\'instant.',
+    emptyNoOrders: 'Vos commandes de services à la carte seront listées sur cet écran.',
+    errorFetch: 'Impossible de récupérer votre historique de commande. Veuillez contacter le support AnyHomes.',
     cols: { date:'Date achat', service:'Service', bien:'Bien concerné', pro:'Prestataire', num:'N° Commande', tarif:'Tarif payé', statut:'Statut service', livraison:'Date livraison', paiement:'Paiement prestataire' },
     status: { pending_payment:'En cours', paid:'En cours', accepted_by_pro:'En cours', delivered_by_pro:'Terminé', confirmed_by_buyer:'Terminé', cancelled:'Annulé', refunded:'Annulé', litigation_opened:'En cours' },
     // cancellation
@@ -87,6 +90,8 @@ const T = {
     sub: 'Purchase history',
     loading: 'Loading…',
     empty: 'No purchases yet.',
+    emptyNoOrders: 'Your à la carte service orders will be listed on this screen.',
+    errorFetch: 'Unable to retrieve your order history. Please contact AnyHomes support.',
     cols: { date:'Date', service:'Service', bien:'Property', pro:'Provider', num:'Order #', tarif:'Price paid', statut:'Status', livraison:'Delivery date', paiement:'Provider payment' },
     status: { pending_payment:'In progress', paid:'In progress', accepted_by_pro:'In progress', delivered_by_pro:'Completed', confirmed_by_buyer:'Completed', cancelled:'Cancelled', refunded:'Cancelled', litigation_opened:'In progress' },
     cancellation_requested: 'Cancellation requested',
@@ -346,9 +351,10 @@ function PostReleasePrompt({ order, onClose, onEvaluate }) {
 }
 
 /* ─── Ligne tableau ── */
-function OrderRow({ order, lang, onRate, onAction }) {
+function OrderRow({ order, lang, onRate, onAction, isMock }) {
   const t = T[lang];
   const svcTitle = order.service?.title_fr || order.service?.title || '—';
+  const propertyImage = order.property?.image || '/assets/img/prop-one.jpg';
   const dateAchat = order.createdAt ? new Date(order.createdAt).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {day:'2-digit',month:'2-digit',year:'numeric'}) : t.noDate;
   const dateLivraison = order.delivery_date || order.deliveredAt ? new Date(order.delivery_date || order.deliveredAt).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {day:'2-digit',month:'2-digit',year:'numeric'}) : t.noDate;
   const provName = order.provider?.name || order.service?.provider?.name || 'Pauline Dupont';
@@ -371,7 +377,7 @@ function OrderRow({ order, lang, onRate, onAction }) {
         {order.property ? (
           <div className="flex items-center gap-2">
             <div className="w-10 h-8 bg-gray-200 rounded overflow-hidden shrink-0">
-              {order.property.image ? <img src={order.property.image} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />}
+              <img src={propertyImage} alt="Bien concerné" className="w-full h-full object-cover" />
             </div>
             <div className="text-[12px] leading-tight">
               <div className="font-medium">{order.property.surface || '80 m²'}</div>
@@ -419,34 +425,36 @@ function OrderRow({ order, lang, onRate, onAction }) {
       <td className="py-3 px-3">
         <div className="flex flex-col gap-0.5 text-[12px]">
           {!isCancelled && !isDelivered && !isConfirmed && (
-            <button onClick={() => onAction('cancel', order)} className="text-[#47525E] hover:text-red-500 text-left font-bold">
+            <button disabled={isMock} onClick={isMock ? undefined : () => onAction('cancel', order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-[#47525E] hover:text-red-500 text-left font-bold'}>
               {t.actions.cancel}
             </button>
           )}
           {order.status === 'cancellation_requested' && (
-            <button onClick={() => onAction('respond', order)} className="text-red-600 hover:underline text-left font-bold">Répondre</button>
+            <button disabled={isMock} onClick={isMock ? undefined : () => onAction('respond', order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-red-600 hover:underline text-left font-bold'}>
+              Répondre
+            </button>
           )}
-          <button onClick={() => onAction('see', order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">
+          <button disabled={isMock} onClick={isMock ? undefined : () => onAction('see', order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-[#47525E] hover:text-[#976DD0] text-left font-bold'}>
             {t.actions.see}
           </button>
           {isDelivered && (
             <>
-              <button onClick={() => onAction('release', order)} className="text-[#976DD0] hover:underline text-left font-bold">
+              <button disabled={isMock} onClick={isMock ? undefined : () => onAction('release', order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-[#976DD0] hover:underline text-left font-bold'}>
                 {t.actions.release}
               </button>
             </>
           )}
           {showIssue && (
-            <button onClick={() => onAction('issue', order)} className="text-black font-bold hover:underline text-left">
+            <button disabled={isMock} onClick={isMock ? undefined : () => onAction('issue', order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-black hover:underline text-left font-bold'}>
               {t.actions.issue}
             </button>
           )}
           {isConfirmed && (
             <>
-              <button onClick={() => onRate(order)} className="text-[#976DD0] hover:underline text-left font-bold">
+              <button disabled={isMock} onClick={isMock ? undefined : () => onRate(order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-[#976DD0] hover:underline text-left font-bold'}>
                 {t.rateBtn}
               </button>
-              <button onClick={() => onAction('invoice', order)} className="text-[#47525E] hover:text-[#976DD0] text-left font-bold">
+              <button disabled={isMock} onClick={isMock ? undefined : () => onAction('invoice', order)} className={isMock ? 'text-gray-300 cursor-not-allowed text-left font-bold' : 'text-[#47525E] hover:text-[#976DD0] text-left font-bold'}>
                 {t.actions.invoice}
               </button>
             </>
@@ -457,59 +465,13 @@ function OrderRow({ order, lang, onRate, onAction }) {
   );
 }
 
-/* ─── Page principale ── */
-const MOCK_ORDERS = [
-  {
-    _id: 'ord-001', orderNumber: 'CMD-20260412-001', createdAt: '2026-04-12T10:30:00Z',
-    service: { title_fr: 'Estimation immobilière de votre bien', title_en: 'Property valuation', price_ttc: 0 },
-    property: { title: 'Appartement T3 — 12 rue de Béthune, Lille' },
-    provider: { name: 'Geoffroy Papelier', city: 'Lille' },
-    quantity: 1, totalAmount: 0, status: 'confirmed_by_buyer', payment_status: 'paid',
-    deliveredAt: '2026-04-18T14:00:00Z',
-    is_booking: true,
-  },
-  {
-    _id: 'ord-002', orderNumber: 'CMD-20260420-002', createdAt: '2026-04-20T09:15:00Z',
-    service: { title_fr: 'Séance photo professionnelle', title_en: 'Professional photo shoot', price_ttc: 120 },
-    property: { title: 'Appartement T3 — 12 rue de Béthune, Lille' },
-    provider: { name: 'Geoffroy Papelier', city: 'Lille' },
-    quantity: 1, totalAmount: 120, status: 'delivered_by_pro', payment_status: 'pending',
-    deliveredAt: '2026-04-25T11:00:00Z',
-  },
-  {
-    _id: 'ord-003', orderNumber: 'CMD-20260428-003', createdAt: '2026-04-28T16:45:00Z',
-    service: { title_fr: 'Rédaction & diffusion d’annonce', title_en: 'Listing writing & distribution', price_ttc: 50 },
-    property: { title: 'Maison T5 — 45 av. de la République, Marcq-en-Barœul' },
-    provider: { name: 'Michaël Fournet', city: 'Lille' },
-    quantity: 1, totalAmount: 50, status: 'accepted_by_pro', payment_status: 'paid',
-    deliveredAt: null,
-  },
-  {
-    _id: 'ord-004', orderNumber: 'CMD-20260502-004', createdAt: '2026-05-02T12:00:00Z',
-    service: { title_fr: 'Organisation et conduite des visites', title_en: 'Visit scheduling & hosting', price_ttc: 300 },
-    property: { title: 'Maison T5 — 45 av. de la République, Marcq-en-Barœul' },
-    provider: { name: 'Michaël Fournet', city: 'Lille' },
-    quantity: 1, totalAmount: 300, status: 'paid', payment_status: 'paid',
-    deliveredAt: null,
-  },
-  {
-    _id: 'ord-005', orderNumber: 'CMD-20260505-005', createdAt: '2026-05-05T08:30:00Z',
-    service: { title_fr: 'Mise en vente complète avec suivi', title_en: 'Full sale management', price_ttc: 1500 },
-    property: { title: 'Studio — 8 rue Nationale, Lille' },
-    provider: { name: 'Geoffroy Papelier', city: 'Lille' },
-    quantity: 1, totalAmount: 1500, status: 'cancelled', payment_status: 'refunded',
-    deliveredAt: null,
-  },
-];
-
-// Alias pour tests locaux (utilisé quand REACT_APP_DEBUG_MOCK_USER === 'true')
-const MOCK_CLIENT_ORDERS = MOCK_ORDERS;
-
 export default function MarketplaceOrders() {
   const [lang, setLang] = useState('fr');
   const t = T[lang];
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isMockData, setIsMockData] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
   const [ratingOrder, setRatingOrder] = useState(null);
   const [viewOrder, setViewOrder] = useState(null);
   const [invoiceOrder, setInvoiceOrder] = useState(null);
@@ -521,17 +483,25 @@ export default function MarketplaceOrders() {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
+    setFetchError(null);
+    setIsMockData(isGuestMode());
     try {
-      let orders = [];
-      if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
-        orders = MOCK_CLIENT_ORDERS;
-      } else {
-        const res = await getMyOrders(lang);
-        orders = res?.orders || res?.data || [];
+      const res = await getMyOrders(lang);
+      if (!res?.success) {
+        throw new Error(res?.message || 'Unable to fetch orders');
       }
-      setOrders(orders.length > 0 ? orders : MOCK_ORDERS);
-    } catch (e) { console.error(e); setOrders(MOCK_ORDERS); }
-    finally { setLoading(false); }
+      const ordersData = Array.isArray(res.data) ? res.data : [];
+      setOrders(ordersData);
+      if (ordersData.length === 0 && !isGuestMode()) {
+        setFetchError('empty');
+      }
+    } catch (e) {
+      console.error(e);
+      setOrders([]);
+      setFetchError('error');
+    } finally {
+      setLoading(false);
+    }
   }, [lang]);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
@@ -580,15 +550,22 @@ export default function MarketplaceOrders() {
           <>
             <h1 className="text-xl font-bold text-[#47525E]">{t.title}</h1>
             <p className="text-[13px] text-gray-400">{t.sub}</p>
-            <div className="flex gap-2 items-center">
-              <button onClick={fetchOrders} className="text-[13px] border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-50 text-[#47525E]">{t.refresh}</button>
-              <button onClick={() => setLang(l => l === 'fr' ? 'en' : 'fr')} className="text-xs border border-gray-300 rounded px-2 py-1 hover:bg-gray-100 text-[#47525E]">{t.switchLang}</button>
-            </div>
+            {isMockData && (
+              <div className="flex justify-end mt-3">
+                <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-[12px] font-semibold text-[#7c4b00] bg-[#fff4dd] shadow-[0_4px_12px_rgba(249,179,71,0.18)] border border-[rgba(249,179,71,0.35)]">
+                  Données fictives
+                </span>
+              </div>
+            )}
           </>
         </div>
 
         {loading ? (
           <div className="text-center py-20 text-gray-400">{t.loading}</div>
+        ) : fetchError === 'error' ? (
+          <div className="text-center py-20 text-gray-400">{t.errorFetch}</div>
+        ) : fetchError === 'empty' ? (
+          <div className="text-center py-20 text-gray-400">{t.emptyNoOrders}</div>
         ) : orders.length === 0 ? (
           <div className="text-center py-20 text-gray-400">{t.empty}</div>
         ) : (
@@ -610,7 +587,7 @@ export default function MarketplaceOrders() {
               </thead>
               <tbody>
                 {orders.map(order => (
-                  <OrderRow key={order._id} order={order} lang={lang} onRate={setRatingOrder} onAction={handleAction} />
+                  <OrderRow key={order._id} order={order} lang={lang} onRate={setRatingOrder} onAction={handleAction} isMock={isMockData} />
                 ))}
               </tbody>
             </table>

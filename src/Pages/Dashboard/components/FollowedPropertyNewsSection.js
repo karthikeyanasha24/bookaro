@@ -211,7 +211,7 @@ const getNewsType = (title = "") => {
   return "default";
 };
 
-const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
+const FollowedPropertyNewsSection = ({ section, loading, error, t, guestMode, onGuestActionAttempt }) => {
   const { i18n } = useTranslation();
   const [likedIds, setLikedIds] = useState({});
   const [openShareId, setOpenShareId] = useState(null);
@@ -338,6 +338,11 @@ const FollowedPropertyNewsSection = ({ section, loading, error, t }) => {
   };
 
   const openPropertyTimeline = (item) => {
+    if (guestMode) {
+      onGuestActionAttempt?.(t("dashboard.guestModal.feature.newsItem", "Voir l'actualité du bien"));
+      return;
+    }
+
     const timelineUrl = getPropertyTimelineUrl(item);
     window.open(timelineUrl, "_blank", "noopener,noreferrer");
   };

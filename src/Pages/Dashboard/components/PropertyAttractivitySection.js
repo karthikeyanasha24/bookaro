@@ -68,6 +68,8 @@ const PropertyAttractivitySection = ({ section, loading, error, period, onPeriod
                   className="attractivity-item-title attractivity-item-title-link"
                   target="_blank"
                   rel="noreferrer"
+                  data-guest-restricted="true"
+                  data-guest-feature="Accéder au bien"
                 >
                   {card?.property?.title}
                 </a>
@@ -76,6 +78,8 @@ const PropertyAttractivitySection = ({ section, loading, error, period, onPeriod
                   className="attractivity-card attractivity-card-link"
                   target="_blank"
                   rel="noreferrer"
+                  data-guest-restricted="true"
+                  data-guest-feature="Accéder au bien"
                 >
                   <div className="attractivity-body">
                     <img
@@ -103,7 +107,12 @@ const PropertyAttractivitySection = ({ section, loading, error, period, onPeriod
             ))}
           </div>
           <div className="dashboard-button-center attractivity-button-center">
-            <a href="/property1" className="dashboard-button">
+            <a
+              href="/property1"
+              className="dashboard-button"
+              data-guest-restricted="true"
+              data-guest-feature="Créer un bien"
+            >
               {t("dashboard.cta.createProperty", "Creer un bien")}
             </a>
           </div>

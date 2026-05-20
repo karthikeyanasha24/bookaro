@@ -100,7 +100,7 @@ const formatScore = (value) => {
   return numeric.toFixed(1);
 };
 
-const P2PReportSection = ({ section, loading, error, t }) => {
+const P2PReportSection = ({ section, loading, error, t, guestMode, onGuestActionAttempt }) => {
   const properties = section?.properties || [];
   const [expandedById, setExpandedById] = useState({});
   const navigate = useNavigate();
@@ -131,6 +131,11 @@ const P2PReportSection = ({ section, loading, error, t }) => {
   };
 
   const openP2PManagement = (entry) => {
+    if (guestMode) {
+      onGuestActionAttempt?.(t("dashboard.guestModal.feature.p2pReport", "Voir le rapport P2P"));
+      return;
+    }
+
     const route = entry?.action?.route || "/social-estimation";
     const propertyId = resolvePropertyId(entry);
     const target = propertyId ? `${route}?propertyId=${encodeURIComponent(propertyId)}` : route;
@@ -149,6 +154,11 @@ const P2PReportSection = ({ section, loading, error, t }) => {
   };
 
   const handleEstimateMyProperty = () => {
+    if (guestMode) {
+      onGuestActionAttempt?.(t("dashboard.guestModal.feature.estimateProperty", "Estimer mon bien"));
+      return;
+    }
+
     if (properties.length === 0) {
       navigate("/property1");
       return;
@@ -237,6 +247,8 @@ const P2PReportSection = ({ section, loading, error, t }) => {
                       className="p2p-report-row-image-link"
                       target="_blank"
                       rel="noreferrer"
+                      data-guest-restricted="true"
+                      data-guest-feature="Voir le bien"
                     >
                       <img
                         src={property.imageUrl || "/assets/img/dashboard/attractivity/attractivity-1.jpg"}
@@ -250,6 +262,8 @@ const P2PReportSection = ({ section, loading, error, t }) => {
                         className="p2p-report-row-title p2p-report-row-title-link"
                         target="_blank"
                         rel="noreferrer"
+                        data-guest-restricted="true"
+                        data-guest-feature="Voir le bien"
                       >
                         {property.title || "-"}
                       </a>
@@ -281,6 +295,8 @@ const P2PReportSection = ({ section, loading, error, t }) => {
                     className="p2p-report-metric-panel p2p-report-metric-panel-price p2p-report-metric-panel-clickable"
                     role="button"
                     tabIndex={0}
+                    data-guest-restricted="true"
+                    data-guest-feature="Ouvrir le rapport P2P"
                     onClick={() => openP2PManagement(entry)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
@@ -330,6 +346,8 @@ const P2PReportSection = ({ section, loading, error, t }) => {
                     className="p2p-report-metric-panel p2p-report-metric-panel-lifetime p2p-report-metric-panel-clickable"
                     role="button"
                     tabIndex={0}
+                    data-guest-restricted="true"
+                    data-guest-feature="Ouvrir le rapport P2P"
                     onClick={() => openP2PManagement(entry)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
@@ -369,6 +387,8 @@ const P2PReportSection = ({ section, loading, error, t }) => {
                     className="p2p-report-metric-panel p2p-report-metric-panel-qualitative p2p-report-metric-panel-clickable"
                     role="button"
                     tabIndex={0}
+                    data-guest-restricted="true"
+                    data-guest-feature="Ouvrir le rapport P2P"
                     onClick={() => openP2PManagement(entry)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
@@ -420,7 +440,13 @@ const P2PReportSection = ({ section, loading, error, t }) => {
         </div>
       )}
       <div className="dashboard-button-center p2p-report-button-center">
-        <button type="button" className="dashboard-button" onClick={handleEstimateMyProperty}>
+        <button
+          type="button"
+          className="dashboard-button"
+          data-guest-restricted="true"
+          data-guest-feature="Estimer mon bien"
+          onClick={handleEstimateMyProperty}
+        >
           {t("dashboard.cta.estimateMyProperty", "Estimer mon bien")}
         </button>
       </div>

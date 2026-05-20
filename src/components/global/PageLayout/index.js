@@ -14,6 +14,7 @@ import { removePropData } from "../../../models/string.model";
 import LoginModal from "../../common/Modal/LoginModal";
 import "./style.scss";
 import ApiClient from "../../../methods/api/apiClient";
+import { isDebugMockUser, isGuestMode } from "../../../methods/guestMode";
 import UpgradePlan from "../../common/Modal/UpgradePlan";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { login_success, logout } from "../../../actions/user";
@@ -65,12 +66,13 @@ const PageLayoutInner = ({ children }) => {
   const dispatch = useDispatch();
   const menuRef = useRef("");
 
-  // Check if user is logged in
+  // Check if user is logged in or in guest mode
   const isLoggedIn = user?.loggedIn;
+  const isGuest = user?.isGuest || isGuestMode();
 
   // Check if we should exclude sidebar from current route
   const excludeSidebarRoutes = ["/login", "/signup", "/forgotpassword", "/reset-password", "/otpverify", "/change-password", "/reset-email", "/reset-new-email", "/signup/pro", "/phone-number"];
-  const shouldShowSidebar = isLoggedIn && !excludeSidebarRoutes.some(route => pathname.startsWith(route));
+  const shouldShowSidebar = (isLoggedIn || isGuest) && !excludeSidebarRoutes.some(route => pathname.startsWith(route));
 
   // sidebar state is now initialized from localStorage synchronously to avoid
   // layout changes after first render
@@ -313,8 +315,8 @@ const PageLayoutInner = ({ children }) => {
   //   if (user?.loggedIn) getNotifications();
   // }, []);
   useEffect(() => {
-    // Ne jamais faire d'appel réseau en mode autonome (mock user)
-    if (process.env.REACT_APP_DEBUG_MOCK_USER !== 'true' && user.loggedIn) {
+    // Ne jamais faire d'appel réseau en mode autonome (mock user) ou en mode invité.
+    if (!isDebugMockUser() && user.loggedIn && !user.isGuest) {
       ApiClient.get(`user/detail`, { id: user?._id }).then((res) => {
         if (res.success) {
           dispatch(login_success(res?.data));
@@ -328,7 +330,7 @@ const PageLayoutInner = ({ children }) => {
     } else {
       setIsInChatPage(false);
     }
-    if (user.loggedIn) {
+    if (user.loggedIn && !user.isGuest) {
       notificationListener(navigate, setNotLength);
     }
   }, [location]);
@@ -398,9 +400,8 @@ const PageLayoutInner = ({ children }) => {
   };
 
   useEffect(() => {
-    if (user.loggedIn) {
+    if (user.loggedIn && !user.isGuest) {
       getAllProperty();
-    } else {
     }
   }, []);
 

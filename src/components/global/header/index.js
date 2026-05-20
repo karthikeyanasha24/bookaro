@@ -26,6 +26,9 @@ const Header = memo(function Header({ setIsOpen, isOpen, particularData }) {
     dispatch(logout());
     localStorage.removeItem("persist:admin-app");
     localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("guestMode");
+    localStorage.removeItem("debugMockUser");
     history("/login");
   };
 

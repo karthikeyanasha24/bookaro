@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-input-2/lib/style.css";
 import "react-quill/dist/quill.snow.css";
@@ -17,6 +17,7 @@ import configureStoreProd from "./config/configureStore.prod";
 import "./scss/main.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import ApiClient from "./methods/api/apiClient";
+import { isDebugMockUser, isGuestMode } from "./methods/guestMode";
 import { active_plan_success, clear_plan_success } from "./actions/activePlan";
 
 const { persistor, store } = configureStoreProd();
@@ -27,25 +28,33 @@ const PageRouter = ({ children }: any) => {
 };
 
 function App() {
+  const [isGuestApp, setIsGuestApp] = useState(isGuestMode());
+
+  useEffect(() => {
+    const updateGuestMode = () => setIsGuestApp(isGuestMode());
+    window.addEventListener('guestModeChanged', updateGuestMode);
+    return () => window.removeEventListener('guestModeChanged', updateGuestMode);
+  }, []);
+
   // Add `is-mounted` to body as soon as App mounts to enable guarded transitions
   useEffect(() => {
     try {
       document.body.classList.add('is-mounted');
-      // In debug/mock mode there is no PersistGate rehydration step,
+      // In debug/mock or guest mode there is no PersistGate rehydration step,
       // so mark the store as rehydrated immediately so UI is visible.
-      if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+      if (isDebugMockUser() || isGuestApp) {
         try { document.body.classList.add('is-rehydrated'); } catch (e) {}
       }
     } catch (e) {}
     return () => {
       try {
         document.body.classList.remove('is-mounted');
-        if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true') {
+        if (isDebugMockUser() || isGuestApp) {
           try { document.body.classList.remove('is-rehydrated'); } catch (e) {}
         }
       } catch (e) {}
     };
-  }, []);
+  }, [isGuestApp]);
 
   // Dev helper: observe DOM mutations (classes/attributes/children) to
   // detect which elements change during mount/hydration and cause flicker.
@@ -269,7 +278,7 @@ function App() {
   return (
     <>
       <Provider store={store}>
-        {process.env.REACT_APP_DEBUG_MOCK_USER === 'true' ? (
+        {isDebugMockUser() || isGuestApp ? (
           <Suspense
             fallback={
               <div id="loader" className="loaderDiv">

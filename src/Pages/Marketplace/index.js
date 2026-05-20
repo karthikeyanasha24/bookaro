@@ -502,7 +502,7 @@ function FeaturedCard({ pro, lang, onViewAgent }) {
   );
 }
 
-export function ServiceCard({ svc, lang, onView, onBuy }) {
+export function ServiceCard({ svc, lang, onView, onBuy, disableActions = false }) {
   const t = T[lang];
   const svcId = svc._id || svc.id;
   const [saved, setSaved] = useState(() => {
@@ -626,8 +626,9 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
             <>
               {/* Message icon button */}
               <button
-                onClick={e => { e.stopPropagation(); setShowContact(true); }}
-                className="flex items-center justify-center text-[#976DD0] hover:text-[#7d55b5] transition-colors p-0"
+                disabled={disableActions}
+                onClick={e => { e.stopPropagation(); if (!disableActions) setShowContact(true); }}
+                className={disableActions ? 'flex items-center justify-center text-gray-300 cursor-not-allowed transition-colors p-0' : 'flex items-center justify-center text-[#976DD0] hover:text-[#7d55b5] transition-colors p-0'}
                 aria-label={t.contact}
               >
                 <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -640,7 +641,7 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
               {/* Price and buy button aligned on the same line */}
               <div className="flex flex-1 items-center justify-end gap-3 min-w-0">
                 <span className="font-bold text-[#976DD0] text-[17px] truncate">{price} €</span>
-                <button onClick={e => { e.stopPropagation(); onBuy(svc); }} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors whitespace-nowrap">
+                <button disabled={disableActions} onClick={e => { e.stopPropagation(); if (!disableActions) onBuy(svc); }} className={disableActions ? 'bg-gray-200 text-gray-400 text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap cursor-not-allowed' : 'bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors whitespace-nowrap'}>
                   {t.buy}
                 </button>
               </div>
@@ -650,8 +651,9 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
               <span className="text-[16px] text-gray-400 font-semibold line-through">{price} €</span>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={e => { e.stopPropagation(); setShowContact(true); }}
-                  className="flex items-center justify-center text-[#976DD0] hover:text-[#7d55b5] transition-colors p-0"
+                  disabled={disableActions}
+                  onClick={e => { e.stopPropagation(); if (!disableActions) setShowContact(true); }}
+                  className={disableActions ? 'flex items-center justify-center text-gray-300 cursor-not-allowed transition-colors p-0' : 'flex items-center justify-center text-[#976DD0] hover:text-[#7d55b5] transition-colors p-0'}
                   aria-label={t.contact}
                 >
                   <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -662,7 +664,7 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
                   </svg>
                 </button>
                 <span className="rounded-full bg-[#F3E8FF] px-3 py-1 text-[#6D28D9] text-[13px] font-semibold whitespace-nowrap">Offert</span>
-                <button onClick={e => { e.stopPropagation(); onBuy(svc); }} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors whitespace-nowrap">
+                <button disabled={disableActions} onClick={e => { e.stopPropagation(); if (!disableActions) onBuy(svc); }} className={disableActions ? 'bg-gray-200 text-gray-400 text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap cursor-not-allowed' : 'bg-[#976DD0] hover:bg-[#7d55b5] text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors whitespace-nowrap'}>
                   {t.book}
                 </button>
               </div>
@@ -674,7 +676,7 @@ export function ServiceCard({ svc, lang, onView, onBuy }) {
   );
 }
 
-export function ServiceModal({ svc, lang, onClose, onBuy, hideActions = false, extraContent = null }) {
+export function ServiceModal({ svc, lang, onClose, onBuy, hideActions = false, disableActions = false, extraContent = null }) {
   const t = T[lang];
   const title = lang === "fr" ? (svc.title_fr || svc.title) : (svc.title_en || svc.title);
   const desc = lang === "fr" ? (svc.description_fr || svc.description) : (svc.description_en || svc.description);
@@ -773,11 +775,14 @@ export function ServiceModal({ svc, lang, onClose, onBuy, hideActions = false, e
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
           {!hideActions ? (
             <button
+              disabled={disableActions}
               onClick={() => {
-                if (!isLogged) setShowAuth(true);
-                else setShowContact(true);
+                if (!disableActions) {
+                  if (!isLogged) setShowAuth(true);
+                  else setShowContact(true);
+                }
               }}
-              className="border border-[#976DD0] text-[#976DD0] text-base font-semibold px-4 py-2 rounded-full hover:bg-[#F2ECF8] transition-colors"
+              className={disableActions ? 'border border-gray-200 text-gray-300 text-base font-semibold px-4 py-2 rounded-full bg-gray-100 cursor-not-allowed' : 'border border-[#976DD0] text-[#976DD0] text-base font-semibold px-4 py-2 rounded-full hover:bg-[#F2ECF8] transition-colors'}
             >
               Contacter {provName.split(" ")[0]}
             </button>
@@ -792,7 +797,7 @@ export function ServiceModal({ svc, lang, onClose, onBuy, hideActions = false, e
               </span>
             )}
             {!hideActions && (
-              <button onClick={() => onBuy(svc)} className="bg-[#976DD0] hover:bg-[#7d55b5] text-white text-base font-semibold px-7 py-2 rounded-full transition-colors">
+              <button disabled={disableActions} onClick={() => { if (!disableActions) onBuy(svc); }} className={disableActions ? 'bg-gray-200 text-gray-400 text-base font-semibold px-7 py-2 rounded-full cursor-not-allowed' : 'bg-[#976DD0] hover:bg-[#7d55b5] text-white text-base font-semibold px-7 py-2 rounded-full transition-colors'}>
                 {price > 0 ? t.buy : t.book}
               </button>
             )}

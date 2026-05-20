@@ -1,7 +1,8 @@
 
 import axios from 'axios';
+import { isGuestMode } from '../guestMode';
 
-const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:6089';
+const BASE = process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_URL || 'http://localhost:6089';
 
 const client = axios.create({
   baseURL: BASE,
@@ -16,8 +17,12 @@ client.interceptors.request.use((cfg) => {
   try {
     if (typeof window !== 'undefined') {
       const token = window.localStorage.getItem('token') || window.localStorage.getItem('access_token');
-      if (token) {
-        cfg.headers = cfg.headers || {};
+      cfg.headers = cfg.headers || {};
+      if (isGuestMode()) {
+        delete cfg.headers.Authorization;
+        cfg.headers['X-Guest-Mode'] = 'true';
+        cfg.params = { ...(cfg.params || {}), guest: 'true' };
+      } else if (token) {
         cfg.headers.Authorization = `Bearer ${token}`;
       }
     }

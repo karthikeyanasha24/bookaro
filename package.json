@@ -79,6 +79,7 @@
     "start": "cross-env PORT=8089 react-scripts start",
     "build": "CI=false react-scripts build",
     "test": "react-scripts test",
+    "check-guest-dashboard": "node scripts/checkGuestDashboardRequest.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

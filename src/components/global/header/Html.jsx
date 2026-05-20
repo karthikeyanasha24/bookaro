@@ -3,6 +3,7 @@ import { MdNotifications, MdPerson, MdEmail } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../sidebar";
 import LanguageSwitcher from "../../../LanguageSwitcher";
+import { isGuestMode } from "../../../methods/guestMode";
 
 const Html = ({
   isOpen,
@@ -12,6 +13,7 @@ const Html = ({
   notificationCount,
   showAccountMenu,
   setShowAccountMenu,
+  user,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,17 +39,17 @@ const Html = ({
 
       {/* CTA création de bien — décalé à droite du toggle de la sidebar */}
       <button
-        onClick={() => navigate('/property1')}
+        onClick={() => navigate(user?.isGuest || isGuestMode() ? '/signup' : '/property1')}
         className="ml-8 bg-[#976DD0] hover:bg-[#7d55b5] text-white text-[13px] font-semibold px-4 py-2 rounded-full transition-colors shadow-sm"
-        title="Créer le profil de mon bien"
+        title={user?.isGuest || isGuestMode() ? "S'inscrire" : "Créer le profil de mon bien"}
       >
-        Créer le profil de mon bien
+        {user?.isGuest || isGuestMode() ? "S'inscrire" : "Créer le profil de mon bien"}
       </button>
 
       <div className="flex items-center gap-4 ml-auto">
         <LanguageSwitcher />
-        {Number(messageCount) > 0 && (
-            <button
+        {!user?.isGuest && !isGuestMode() && Number(messageCount) > 0 && (
+          <button
             className="mx-2 animate-blink message-header-btn"
             title="Messages"
             onClick={() => navigate('/chat')}
@@ -55,20 +57,45 @@ const Html = ({
             <MdEmail className="menu-icon violet-message" size={22} />
           </button>
         )}
-        <button className="mx-2 notification-btn" title="Notifications" onClick={() => navigate('/notifications')}>
-          <MdNotifications className={`menu-icon${Number(notificationCount) > 0 ? ' violet-message' : ''}`} size={20} />
-        </button>
-        <div style={{position: 'relative', display: 'inline-block'}}>
-          <button className="mx-2" title="Account" onClick={() => setShowAccountMenu((v) => !v)}>
-            <MdPerson className="menu-icon" size={20} />
+        {user?.loggedIn && !user?.isGuest && !isGuestMode() && (
+          <button
+            className="mx-2 notification-btn"
+            title="Notifications"
+            onClick={() => navigate('/notifications')}
+            style={Number(notificationCount) > 0 ? {
+              backgroundColor: '#976DD0',
+              border: '1px solid #976DD0',
+              color: '#ffffff',
+              borderRadius: '999px',
+              padding: '8px',
+            } : {
+              backgroundColor: 'transparent',
+              border: '1px solid #976DD0',
+              color: '#976DD0',
+              borderRadius: '999px',
+              padding: '8px',
+            }}
+          >
+            <MdNotifications
+              className="menu-icon"
+              size={20}
+              style={{ color: Number(notificationCount) > 0 ? '#ffffff' : '#976DD0' }}
+            />
           </button>
-          {showAccountMenu &&
-            <div style={{position: 'absolute', right: 0, top: '100%', zIndex: 100}}>
-              {/* Le menu utilisateur sera injecté ici par PageLayout */}
-              {window.renderAccountMenu && window.renderAccountMenu()}
-            </div>
-          }
-        </div>
+        )}
+        {!user?.isGuest && !isGuestMode() && (
+          <div style={{position: 'relative', display: 'inline-block'}}>
+            <button className="mx-2" title="Account" onClick={() => setShowAccountMenu((v) => !v)}>
+              <MdPerson className="menu-icon" size={20} />
+            </button>
+            {showAccountMenu &&
+              <div style={{position: 'absolute', right: 0, top: '100%', zIndex: 100}}>
+                {/* Le menu utilisateur sera injecté ici par PageLayout */}
+                {window.renderAccountMenu && window.renderAccountMenu()}
+              </div>
+            }
+          </div>
+        )}
       </div>
 
       {isOpen1 && (

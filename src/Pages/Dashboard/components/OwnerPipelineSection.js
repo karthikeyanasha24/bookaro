@@ -123,6 +123,8 @@ const OwnerPipelineSection = ({ section, loading, error, t }) => {
                       className="p2p-report-row-image-link"
                       target="_blank"
                       rel="noreferrer"
+                      data-guest-restricted="true"
+                      data-guest-feature="Voir le bien"
                     >
                       <img
                         src={imageUrl}
@@ -139,6 +141,8 @@ const OwnerPipelineSection = ({ section, loading, error, t }) => {
                         className="p2p-report-row-title p2p-report-row-title-link"
                         target="_blank"
                         rel="noreferrer"
+                        data-guest-restricted="true"
+                        data-guest-feature="Voir le bien"
                       >
                         {entry?.property?.title || "-"}
                       </a>

@@ -6,6 +6,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { FiSearch, FiMapPin, FiChevronDown, FiMenu, FiX, FiUser } from "react-icons/fi";
 import LanguageSwitcher from "../../../LanguageSwitcher";
 import { getPostLoginRoute } from "../../onboarding/onboarding.hook";
+import { isGuestMode } from "../../../methods/guestMode";
 
 /**
  * MarketingHeader — header de la vitrine AnyHomes.
@@ -21,7 +22,8 @@ const MarketingHeader = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-  const isLoggedIn = !!user?.loggedIn;
+  const isGuest = Boolean(user?.isGuest || isGuestMode());
+  const isLoggedIn = Boolean(user?.loggedIn && !isGuest);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [buyForm, setBuyForm] = useState({ type: "", city: "" });
