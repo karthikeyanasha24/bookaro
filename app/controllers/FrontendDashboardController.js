@@ -416,6 +416,106 @@ module.exports = {
 
       const userId = user._id;
 
+      if (req.isGuest) {
+        console.log(`[FrontendDashboardController] guest dashboard overview for ${req.method} ${req.originalUrl}`);
+        const data = {
+          user: { id: user._id, firstName: user.firstName || user.fullName || 'Guest' },
+          meta: { generatedAt: new Date().toISOString(), period: req.query.period || 'day' },
+          sections: {
+            todoList: {
+              visible: true,
+              title: 'Votre ToDo Liste',
+              subtitle: 'Actions pour faire avancer votre projet immobilier',
+              emptyMessage: 'Vous retrouverez ici les actions à mener pour faire avancer votre projet immobilier',
+              _isMock: true,
+              items: [
+                {
+                  id: 'todo-1',
+                  type: 'SEND_SELLER_FILE',
+                  label: 'Envoyer dossier vendeur à Paul Dupont',
+                  role: 'OWNER',
+                  priority: 1,
+                  property: { id: 'prop-1', coverUrl: '/assets/img/dashboard/attractivity/attractivity-1.jpg', type: 'Maison', surface: 100, city: 'Paris' },
+                  action: { route: '/seller-file' },
+                },
+                {
+                  id: 'todo-2',
+                  type: 'BOOK_VISIT',
+                  label: 'Inviter Céline D. à visiter',
+                  role: 'OWNER',
+                  priority: 2,
+                  property: { id: 'prop-2', coverUrl: '/assets/img/dashboard/attractivity/attractivity-2.jpg', type: 'Maison', surface: 100, city: 'Paris' },
+                  lead: { id: 'lead-2', firstName: 'Céline', lastName: 'D.' },
+                  action: { route: '/real-estate-transaction-owner' },
+                },
+                {
+                  id: 'todo-3',
+                  type: 'SEND_BUYER_FILE',
+                  label: 'Envoyer dossier acheteur à Marc Leroy',
+                  role: 'OWNER',
+                  priority: 3,
+                  property: { id: 'prop-3', coverUrl: '/assets/img/dashboard/attractivity/attractivity-3.jpg', type: 'Appartement', surface: 78, city: 'Lyon' },
+                  action: { route: '/buyer-file' },
+                },
+              ],
+            },
+            propertyAttractivity: {
+              visible: true,
+              period: req.query.period || 'day',
+              emptyState: { message: 'Aucune donnée', ctaLabel: 'Ajouter un bien', ctaRoute: '/properties/new' },
+              _isMock: true,
+              cards: [
+                {
+                  propertyId: 'prop-1',
+                  property: { title: 'Maison familiale', coverUrl: '/assets/img/dashboard/attractivity/attractivity-1.jpg' },
+                  metrics: { views: { value: 300, deltaPct: 10 }, followers: { value: 30, deltaPct: 2 }, shares: { value: 7, deltaPct: -1 }, messages: { value: 5, deltaPct: 3 } },
+                },
+                {
+                  propertyId: 'prop-2',
+                  property: { title: 'Appartement lumineux', coverUrl: '/assets/img/dashboard/attractivity/attractivity-2.jpg' },
+                  metrics: { views: { value: 240, deltaPct: 6 }, followers: { value: 22, deltaPct: 1 }, shares: { value: 5, deltaPct: 1 }, messages: { value: 4, deltaPct: 2 } },
+                },
+                {
+                  propertyId: 'prop-3',
+                  property: { title: 'Loft urbain', coverUrl: '/assets/img/dashboard/attractivity/attractivity-3.jpg' },
+                  metrics: { views: { value: 198, deltaPct: 4 }, followers: { value: 18, deltaPct: 1 }, shares: { value: 6, deltaPct: 2 }, messages: { value: 3, deltaPct: 1 } },
+                },
+              ],
+            },
+            savedSearchResults: {
+              visible: true,
+              emptyState: { message: 'Aucun saved search', ctaLabel: 'Nouvelle recherche', ctaRoute: '/properties' },
+              _isMock: true,
+              cards: [
+                {
+                  savedSearchId: 'search-1',
+                  name: 'Search name ABCD',
+                  criteriaLabel: 'Vente, Paris',
+                  newResultsCount: 20,
+                  previewProperties: [
+                    { id: 'p-1', coverUrl: '/assets/img/dashboard/attractivity/attractivity-1.jpg', route: '/property-details?id=prop-1' },
+                    { id: 'p-2', coverUrl: '/assets/img/dashboard/attractivity/attractivity-2.jpg', route: '/property-details?id=prop-2' },
+                    { id: 'p-3', coverUrl: '/assets/img/dashboard/attractivity/attractivity-3.jpg', route: '/property-details?id=prop-3' },
+                    { id: 'p-4', coverUrl: '/assets/img/dashboard/attractivity/attractivity-4.webp', route: '/property-details?id=prop-4' },
+                    { id: 'p-5', coverUrl: '/assets/img/dashboard/attractivity/attractivity-5.jpg', route: '/property-details?id=prop-5' },
+                  ],
+                  action: { route: '/properties?search=true' },
+                },
+              ],
+            },
+            followedPropertyNews: mockFollowedPropertyNews,
+            pastTransactions: mockPastTransactions,
+            p2pEstimation: mockP2PEstimation,
+            p2pReport: mockP2PReport,
+            trainingCenter: mockTrainingCenter,
+            propertySearchPipeline: mockPropertySearchPipeline,
+            ownerPipeline: mockOwnerPipeline,
+          },
+        };
+
+        return res.status(200).json({ success: true, data });
+      }
+
       // --- propertyAttractivity: latest properties owned by user ---
       const properties = await db.property.find({ addedBy: userId, isDeleted: false }).sort({ createdAt: -1 }).limit(6).lean();
       const propertyAttractivity = {

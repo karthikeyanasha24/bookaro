@@ -5,7 +5,6 @@ global.redis_users = [];
 const connected_users = [];
 const db = require("../models");
 const { send_fcm_push_notification } = require("./FcmServices");
-const { options } = require("../routes");
 const { default: mongoose } = require("mongoose");
 const { duration } = require("moment");
 

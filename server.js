@@ -9,13 +9,23 @@ const app = express();
 
 const corsOptions = {
   origin: (origin, callback) => {
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
     const allowedOrigins = [
       'http://127.0.0.1:8089',
       'http://localhost:8089',
+      'https://127.0.0.1:8089',
+      'https://localhost:8089',
       'http://127.0.0.1:3000',
       'http://localhost:3000',
+      'https://127.0.0.1:3000',
+      'https://localhost:3000',
     ];
-    if (!origin || allowedOrigins.includes(origin)) {
+
+    const allowLocalHost = origin && /^(https?:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    if (!origin || allowedOrigins.includes(origin) || allowLocalHost) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

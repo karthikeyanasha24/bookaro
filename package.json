@@ -4,10 +4,11 @@
   "description": "Api repo for bookaroo",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/unit/frontendDashboardController.guest.test.js",
+    "test:guest-flow": "node test/integration/guest_dashboard_flow.test.js",
     "production": "NODE_ENV=production node server.js",
-    "start": "nodemon server.js",
-    "dev": "nodemon"
+    "start": "cross-env PORT=6089 nodemon server.js",
+    "dev": "cross-env PORT=6089 nodemon"
   },
   "keywords": [
     "Nodejs"

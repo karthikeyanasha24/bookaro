@@ -75,6 +75,35 @@ function generateToken() {
   return crypto.randomBytes(16).toString('hex');
 }
 
+const mockGuestProperties = [
+  {
+    propertyId: 'guest-prop-1',
+    title: 'Maison familiale',
+    summary: '5 pièces • 100 m² • Paris',
+    coverUrl: '/assets/img/dashboard/attractivity/attractivity-1.jpg',
+    publicUrl: `${FRONT_WEB_URL}/property-details?id=guest-prop-1`,
+    availablePhotos: [
+      { id: 'guest-photo-1', url: '/assets/img/dashboard/attractivity/attractivity-1.jpg', isCover: true },
+    ],
+    latestFlyer: null,
+  },
+  {
+    propertyId: 'guest-prop-2',
+    title: 'Appartement lumineux',
+    summary: '3 pièces • 64 m² • Lyon',
+    coverUrl: '/assets/img/dashboard/attractivity/attractivity-2.jpg',
+    publicUrl: `${FRONT_WEB_URL}/property-details?id=guest-prop-2`,
+    availablePhotos: [
+      { id: 'guest-photo-2', url: '/assets/img/dashboard/attractivity/attractivity-2.jpg', isCover: true },
+    ],
+    latestFlyer: null,
+  },
+];
+
+function findMockGuestProperty(propertyId) {
+  return mockGuestProperties.find((property) => property.propertyId === propertyId) || null;
+}
+
 async function buildMetricsSnapshot(property) {
   const likes = Array.isArray(property.like) ? property.like.length : 0;
   const followers = Array.isArray(property.follow) ? property.follow.length : 0;
@@ -267,6 +296,9 @@ exports.listOwnerProperties = async (req, res) => {
     });
 
     const total = await db.property.countDocuments(query);
+    if (items.length === 0 && (req.isGuest || userId === 'guest-user-000')) {
+      return res.json({ success: true, data: mockGuestProperties, pagination: { page: 1, limit: mockGuestProperties.length, total: mockGuestProperties.length } });
+    }
     return res.json({ success: true, data: items, pagination: { page: Number(page), limit: Number(limit), total } });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
@@ -416,9 +448,46 @@ exports.getPropertySetup = async (req, res) => {
       return res.status(400).json({ success: false, message: 'propertyId manquant' });
     }
 
-    const property = await db.property.findOne({ _id: propertyId, addedBy: userId, isDeleted: false }).lean();
-    if (!property) {
+    let property = await db.property.findOne({ _id: propertyId, addedBy: userId, isDeleted: false }).lean();
+    const guestProperty = !property && (req.isGuest || userId === 'guest-user-000') ? findMockGuestProperty(propertyId) : null;
+    if (!property && !guestProperty) {
       return res.status(404).json({ success: false, message: 'Propriété introuvable' });
+    }
+
+    if (guestProperty) {
+      const availableMetrics = [
+        { key: 'likes', label: 'Likes', value: 0 },
+        { key: 'views', label: 'Vues', value: 0 },
+        { key: 'shares', label: 'Partages', value: 0 },
+        { key: 'followers', label: 'Followers', value: 0 },
+        { key: 'interestsReceived', label: 'Sollicitations', value: 0 },
+        { key: 'messages', label: 'Messages', value: 0 },
+      ];
+
+      return res.json({
+        success: true,
+        data: {
+          property: {
+            id: guestProperty.propertyId,
+            title: guestProperty.title,
+            summary: guestProperty.summary,
+            publicUrl: guestProperty.publicUrl,
+          },
+          photos: guestProperty.availablePhotos.map((photo) => ({
+            id: photo.id,
+            url: photo.url,
+            isCover: photo.isCover || false,
+            originalName: photo.originalName || null,
+          })),
+          availableMetrics,
+          template: {
+            version: 'v1',
+            marketingHeadline: 'Scannez ce QR Code pour obtenir plus de détails sur ce bien',
+            marketingBody: 'Promotion de votre bien en quelques clics.',
+            brandFooter: '100% Gratuit AnyHomes.fr',
+          },
+        },
+      });
     }
 
     const metricsSnapshot = await buildMetricsSnapshot(property);
@@ -492,12 +561,13 @@ exports.createFlyer = async (req, res) => {
       return res.status(400).json({ success: false, message: 'selectedMetrics contient une valeur non autorisée' });
     }
 
-    const property = await db.property.findOne({ _id: propertyId, addedBy: userId, isDeleted: false }).lean();
-    if (!property) {
+    let property = await db.property.findOne({ _id: propertyId, addedBy: userId, isDeleted: false }).lean();
+    const guestProperty = !property && (req.isGuest || userId === 'guest-user-000') ? findMockGuestProperty(propertyId) : null;
+    if (!property && !guestProperty) {
       return res.status(404).json({ success: false, message: 'Propriété introuvable ou non autorisée' });
     }
 
-    const photos = Array.isArray(property.images) ? property.images : [];
+    const photos = Array.isArray(property?.images) ? property.images : guestProperty?.availablePhotos || [];
     let selectedPhoto = null;
     let selectedPhotoIndex = 0;
     const availablePhotoIds = photos.map((photo, index) => getPhotoIdentifier(photo, index));
@@ -517,11 +587,9 @@ exports.createFlyer = async (req, res) => {
       });
     }
 
-    if (!selectedPhoto) {
-      return res.status(400).json({ success: false, message: 'Photo sélectionnée invalide' });
-    }
-
-    const metricsSnapshot = await buildMetricsSnapshot(property);
+    const metricsSnapshot = property
+      ? await buildMetricsSnapshot(property)
+      : { likes: 0, followers: 0, views: 0, shares: 0, messages: 0, interestsReceived: 0 };
     const selectedMetricsSnapshot = {};
     selectedMetrics.forEach((metric) => {
       selectedMetricsSnapshot[metric] = metricsSnapshot[metric] ?? 0;
@@ -531,7 +599,7 @@ exports.createFlyer = async (req, res) => {
     const token = generateToken();
     const trackUrl = `${BACK_WEB_URL}/qr/${token}`;
     const qrCodeDataUrl = await qrcode.toDataURL(trackUrl, { errorCorrectionLevel: 'H', margin: 1, width: 360 });
-    const publicUrl = getPublicPropertyUrl(property._id);
+    const publicUrl = getPublicPropertyUrl(property?._id || guestProperty.propertyId);
     const selectedPhotoUrl = getPhotoUrl(selectedPhoto);
 
     const metricMap = {
@@ -544,8 +612,8 @@ exports.createFlyer = async (req, res) => {
     };
 
     const html = await renderFlyerHtml({
-      title: property.propertyTitle || property.name || 'Sans titre',
-      summary: buildPropertySummary(property),
+      title: property?.propertyTitle || property?.name || guestProperty.title || 'Sans titre',
+      summary: property ? buildPropertySummary(property) : guestProperty.summary,
       selectedPhotoUrl,
       qrCodeDataUrl,
       metrics: selectedMetrics.map((key) => ({
@@ -571,20 +639,40 @@ exports.createFlyer = async (req, res) => {
     await takeScreenshot(html, pngPath, 'png');
     await takeScreenshot(html, jpgPath, 'jpeg');
 
-    const flyer = await db.qrFlyers.create({
-      ownerId: userId,
-      propertyId: property._id,
-      selectedPhoto: normalizePhoto(selectedPhoto, 0),
-      selectedMetrics,
-      displayedMetricsSnapshot: selectedMetricsSnapshot,
-      publicUrl,
-      previewImageUrl: `${BACK_WEB_URL}/qr-flyers/${previewFileName}`,
-      pdfUrl: `${BACK_WEB_URL}/qr-flyers/${pdfFileName}`,
-      pngUrl: `${BACK_WEB_URL}/qr-flyers/${pngFileName}`,
-      jpgUrl: `${BACK_WEB_URL}/qr-flyers/${jpgFileName}`,
-      token,
-      status: 'ready',
-    });
+    let flyer;
+    if (guestProperty) {
+      flyer = {
+        _id: `guest-flyer-${token}`,
+        ownerId: userId,
+        propertyId: guestProperty.propertyId,
+        selectedPhoto: normalizePhoto(selectedPhoto, 0),
+        selectedMetrics,
+        displayedMetricsSnapshot: selectedMetricsSnapshot,
+        publicUrl,
+        previewImageUrl: `${BACK_WEB_URL}/qr-flyers/${previewFileName}`,
+        pdfUrl: `${BACK_WEB_URL}/qr-flyers/${pdfFileName}`,
+        pngUrl: `${BACK_WEB_URL}/qr-flyers/${pngFileName}`,
+        jpgUrl: `${BACK_WEB_URL}/qr-flyers/${jpgFileName}`,
+        token,
+        status: 'ready',
+        scansCount: 0,
+      };
+    } else {
+      flyer = await db.qrFlyers.create({
+        ownerId: userId,
+        propertyId: property._id,
+        selectedPhoto: normalizePhoto(selectedPhoto, 0),
+        selectedMetrics,
+        displayedMetricsSnapshot: selectedMetricsSnapshot,
+        publicUrl,
+        previewImageUrl: `${BACK_WEB_URL}/qr-flyers/${previewFileName}`,
+        pdfUrl: `${BACK_WEB_URL}/qr-flyers/${pdfFileName}`,
+        pngUrl: `${BACK_WEB_URL}/qr-flyers/${pngFileName}`,
+        jpgUrl: `${BACK_WEB_URL}/qr-flyers/${jpgFileName}`,
+        token,
+        status: 'ready',
+      });
+    }
 
     return res.json({
       success: true,
@@ -616,7 +704,17 @@ exports.downloadFlyer = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Format de téléchargement invalide' });
     }
 
-    const flyer = await db.qrFlyers.findOne({ _id: flyerId, ownerId: userId, isDeleted: false }).lean();
+    let flyer = await db.qrFlyers.findOne({ _id: flyerId, ownerId: userId, isDeleted: false }).lean();
+    if (!flyer && flyerId.startsWith('guest-flyer-') && (req.isGuest || userId === 'guest-user-000')) {
+      const token = flyerId.replace('guest-flyer-', '');
+      flyer = {
+        _id: flyerId,
+        pdfUrl: `${BACK_WEB_URL}/qr-flyers/${token}.pdf`,
+        pngUrl: `${BACK_WEB_URL}/qr-flyers/${token}.png`,
+        jpgUrl: `${BACK_WEB_URL}/qr-flyers/${token}.jpg`,
+      };
+    }
+
     if (!flyer) {
       return res.status(404).json({ success: false, message: 'Flyer introuvable' });
     }

@@ -23,6 +23,178 @@ function getModels(lang) {
   };
 }
 
+function getMockServices(lang) {
+  const isEn = lang === 'en';
+  return [
+    {
+      _id: 'mock-gp-1',
+      providerKey: 'geoffroy-papelier',
+      provider: {
+        name: 'Geoffroy Papelier',
+        role: isEn ? 'Advisor iad' : 'Conseiller iAD',
+        city: 'Lille',
+        avatar: '/assets/img/avatar/agent1.png',
+      },
+      category: { _id: 'mock-category-1', name: isEn ? 'Valuation' : 'Estimation', name_fr: 'Estimation', iconUrl: '/icons/estimation.svg' },
+      title_fr: 'Estimation',
+      title_en: 'Property valuation',
+      description: isEn
+        ? 'Fast property valuation with local market insights.'
+        : 'Estimation rapide de votre bien avec des insights du marché local.',
+      summary: isEn ? 'Expert agent, estimation offerte.' : 'Conseiller expert, estimation offerte.',
+      price_ttc: 0,
+      tarification_type: 'Offert',
+      zone_covered: 'Lille +10 KM',
+      quantity_label: '1 rapport d’estimation',
+      rating: 4.9,
+      reviewCount: 25,
+      status: 'active',
+      isFeatured: true,
+    },
+    {
+      _id: 'mock-gp-2',
+      providerKey: 'geoffroy-papelier',
+      provider: {
+        name: 'Geoffroy Papelier',
+        role: isEn ? 'Advisor iad' : 'Conseiller iAD',
+        city: 'Lille',
+        avatar: '/assets/img/avatar/agent1.png',
+      },
+      category: { _id: 'mock-category-2', name: isEn ? 'Visits' : 'Visites', name_fr: 'Visites', iconUrl: '/icons/visite.svg' },
+      title_fr: 'Visites',
+      title_en: 'Property visits',
+      description: isEn ? 'Accompanied visits for qualified buyers.' : 'Visites accompagnées pour acheteurs qualifiés.',
+      summary: isEn ? 'Pack of 10 visits with feedback.' : 'Pack de 10 visites avec compte-rendu.',
+      price_ttc: 300,
+      tarification_type: 'Forfait',
+      zone_covered: 'Lille +10 KM',
+      quantity_label: 'Pack 10 visites',
+      rating: 4.9,
+      reviewCount: 18,
+      status: 'active',
+      isFeatured: false,
+    },
+    {
+      _id: 'mock-mf-1',
+      providerKey: 'michael-fournet',
+      provider: {
+        name: 'Michaël Fournet',
+        role: isEn ? 'Advisor iad' : 'Conseiller iad',
+        city: 'Lille',
+        avatar: '/assets/img/avatar/agent2.png',
+      },
+      category: { _id: 'mock-category-3', name: isEn ? 'Negotiation' : 'Négociation', name_fr: 'Négociation', iconUrl: '/icons/negociation.svg' },
+      title_fr: 'Négociation',
+      title_en: 'Negotiation',
+      description: isEn ? 'Strong negotiation support to maximize your sale price.' : 'Accompagnement à la négociation pour maximiser votre prix de vente.',
+      summary: isEn ? 'Negotiation support from an experienced agent.' : 'Accompagnement négociation par un agent expérimenté.',
+      price_ttc: 0,
+      tarification_type: 'Offert',
+      zone_covered: 'Métropole lilloise',
+      quantity_label: '1 mandat de négociation',
+      rating: 4.9,
+      reviewCount: 30,
+      status: 'active',
+      isFeatured: true,
+    },
+    {
+      _id: 'mock-pd-1',
+      providerKey: 'pauline-dupont',
+      provider: {
+        name: 'Pauline Dupont',
+        role: isEn ? 'Independent advisor iad' : 'Agent indépendant IAD',
+        city: 'Lille',
+        avatar: '/assets/img/avatar/agent3.png',
+      },
+      category: { _id: 'mock-category-4', name: isEn ? 'Seller file' : 'Dossier vendeur', name_fr: 'Dossier vendeur', iconUrl: '/icons/dossier.svg' },
+      title_fr: 'Dossier vendeur',
+      title_en: 'Seller file preparation',
+      description: isEn ? 'Complete seller file for a fast and compliant sale.' : 'Dossier vendeur complet pour une vente rapide et conforme.',
+      summary: isEn ? 'Seller file preparation with expert support.' : 'Préparation du dossier vendeur avec support expert.',
+      price_ttc: 80,
+      tarification_type: 'Forfait',
+      zone_covered: 'Lille +5 KM',
+      quantity_label: '1 dossier complet',
+      rating: 5,
+      reviewCount: 8,
+      status: 'active',
+      isFeatured: false,
+    },
+  ];
+}
+
+function getMockOrders(lang) {
+  const isEn = lang === 'en';
+  return [
+    {
+      _id: 'ord-001',
+      orderNumber: 'CMD-20260412-001',
+      createdAt: '2026-04-12T10:30:00Z',
+      service: { title_fr: 'Estimation immobilière de votre bien', title_en: 'Property valuation', price_ttc: 0, imageUrls: [] },
+      property: { title: 'Appartement T3 — 12 rue de Béthune, Lille' },
+      provider: { name: 'Geoffroy Papelier', city: 'Lille' },
+      quantity: 1,
+      totalAmount: 0,
+      status: 'confirmed_by_buyer',
+      payment_status: 'paid',
+      deliveredAt: '2026-04-18T14:00:00Z',
+      is_booking: true,
+    },
+    {
+      _id: 'ord-002',
+      orderNumber: 'CMD-20260420-002',
+      createdAt: '2026-04-20T09:15:00Z',
+      service: { title_fr: 'Séance photo professionnelle', title_en: 'Professional photo shoot', price_ttc: 120, imageUrls: [] },
+      property: { title: 'Appartement T3 — 12 rue de Béthune, Lille' },
+      provider: { name: 'Geoffroy Papelier', city: 'Lille' },
+      quantity: 1,
+      totalAmount: 120,
+      status: 'delivered_by_pro',
+      payment_status: 'pending',
+      deliveredAt: '2026-04-25T11:00:00Z',
+    },
+    {
+      _id: 'ord-003',
+      orderNumber: 'CMD-20260428-003',
+      createdAt: '2026-04-28T16:45:00Z',
+      service: { title_fr: 'Rédaction & diffusion d’annonce', title_en: 'Listing writing & distribution', price_ttc: 50, imageUrls: [] },
+      property: { title: 'Maison T5 — 45 av. de la République, Marcq-en-Barœul' },
+      provider: { name: 'Michaël Fournet', city: 'Lille' },
+      quantity: 1,
+      totalAmount: 50,
+      status: 'accepted_by_pro',
+      payment_status: 'paid',
+      deliveredAt: null,
+    },
+    {
+      _id: 'ord-004',
+      orderNumber: 'CMD-20260502-004',
+      createdAt: '2026-05-02T12:00:00Z',
+      service: { title_fr: 'Organisation et conduite des visites', title_en: 'Visit scheduling & hosting', price_ttc: 300, imageUrls: [] },
+      property: { title: 'Maison T5 — 45 av. de la République, Marcq-en-Barœul' },
+      provider: { name: 'Michaël Fournet', city: 'Lille' },
+      quantity: 1,
+      totalAmount: 300,
+      status: 'paid',
+      payment_status: 'paid',
+      deliveredAt: null,
+    },
+    {
+      _id: 'ord-005',
+      orderNumber: 'CMD-20260505-005',
+      createdAt: '2026-05-05T08:30:00Z',
+      service: { title_fr: 'Mise en vente complète avec suivi', title_en: 'Full sale management', price_ttc: 1500, imageUrls: [] },
+      property: { title: 'Studio — 8 rue Nationale, Lille' },
+      provider: { name: 'Geoffroy Papelier', city: 'Lille' },
+      quantity: 1,
+      totalAmount: 1500,
+      status: 'cancelled',
+      payment_status: 'refunded',
+      deliveredAt: null,
+    },
+  ];
+}
+
 const hasCompleteFeaturedProfile = (pro) => {
   if (!pro) return false;
   return Boolean(
@@ -61,6 +233,12 @@ const buildFeaturedProPayload = (pro) => {
     ],
   };
 };
+
+const buildMockFavoritePayload = (service, index) => ({
+  _id: `mock-favorite-${index + 1}`,
+  service,
+  createdAt: new Date(),
+});
 
 /**
  * GET /marketplace/favorite-pros
@@ -155,6 +333,15 @@ exports.listServices = async (req, res) => {
       ProService.countDocuments(filter),
     ]);
 
+    if ((services.length === 0 || total === 0) && (req.isGuest || req.query.guest === 'true' || req.headers['x-guest-mode'] === 'true' || req.headers['x-guest-mode'] === '1')) {
+      const mockServices = getMockServices(lang);
+      return res.json({
+        success: true,
+        data: mockServices,
+        pagination: { page: 1, limit: mockServices.length, total: mockServices.length, pages: 1 },
+      });
+    }
+
     return res.json({
       success: true,
       data: services,
@@ -173,23 +360,37 @@ exports.getServiceDetail = async (req, res) => {
   try {
     const lang = req.query.lang || 'fr';
     const { ProService, ServiceReview } = getModels(lang);
+    const isGuestRequest = req.isGuest || req.query.guest === 'true' || req.headers['x-guest-mode'] === 'true' || req.headers['x-guest-mode'] === '1';
 
-    const service = await ProService.findOne({ _id: req.params.id, status: 'active' })
+    let service = await ProService.findOne({ _id: req.params.id, status: 'active' })
       .populate('category', 'name iconUrl')
       .populate('pro', 'name avatar email');
 
+    if (!service && isGuestRequest) {
+      const mockServices = getMockServices(lang);
+      service = mockServices.find((svc) => svc._id === req.params.id) || null;
+    }
+
     if (!service) return res.status(404).json({ success: false, message: 'Service introuvable' });
 
-    const reviews = await ServiceReview.find({ pro: service.pro, status: 'published' })
+    if (typeof service.toObject !== 'function') {
+      return res.json({
+        success: true,
+        data: {
+          ...service,
+          reviews: [],
+          avgRating: service.rating ?? null,
+        },
+      });
+    }
+
+    const reviewDocs = await ServiceReview.find({ pro: service.pro, status: 'published' })
       .sort({ createdAt: -1 })
       .limit(10)
       .populate('buyer', 'name avatar');
+    const avgRating = reviewDocs.length ? reviewDocs.reduce((sum, r) => sum + r.rating, 0) / reviewDocs.length : null;
 
-    const avgRating = reviews.length
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : null;
-
-    return res.json({ success: true, data: { ...service.toObject(), reviews, avgRating } });
+    return res.json({ success: true, data: { ...service.toObject(), reviews: reviewDocs, avgRating } });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
   }
@@ -299,13 +500,29 @@ exports.listOrders = async (req, res) => {
   try {
     const lang = req.query.lang || 'fr';
     const { ServiceOrder } = getModels(lang);
+    const isGuestRequest = req.isGuest || req.query.guest === 'true' || req.headers['x-guest-mode'] === 'true' || req.headers['x-guest-mode'] === '1';
+
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+
+    if (isGuestRequest) {
+      const mockData = getMockOrders(lang);
+      return res.json({
+        success: true,
+        data: mockData,
+        pagination: {
+          page,
+          limit: mockData.length,
+          total: mockData.length,
+          totalPages: 1,
+        },
+      });
+    }
+
     const buyerId = req.identity && req.identity._id;
     if (!buyerId) {
       return res.status(401).json({ success: false, message: 'Authentification requise' });
     }
-
-    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
 
     const filter = { buyer: buyerId };
     const [items, total] = await Promise.all([
@@ -666,14 +883,39 @@ exports.toggleFavorite = async (req, res) => {
  */
 exports.listFavorites = async (req, res) => {
   try {
+    const isGuestRequest = req.isGuest || req.query.guest === 'true' || req.headers['x-guest-mode'] === 'true' || req.headers['x-guest-mode'] === '1';
+    const lang = req.query.lang || 'fr';
+    const { ProService } = getModels(lang);
     const userId = req.identity && req.identity._id;
+
+    if (isGuestRequest && req.isGuest) {
+      const mockServices = getMockServices(lang);
+      const favorites = mockServices.slice(0, 2);
+      return res.json({ success: true, isMock: true, data: favorites });
+    }
+
     if (!userId) return res.status(401).json({ success: false, message: 'Authentification requise' });
 
-    const favorites = await ServiceFavorite.find({ user: userId })
-      .sort({ createdAt: -1 })
-      .populate('service');
+    const favoritesDocs = await ServiceFavorite.find({ user: userId }).sort({ createdAt: -1 });
+    const serviceIds = favoritesDocs.map((fav) => fav.service).filter(Boolean);
+    if (!serviceIds.length) {
+      return res.json({ success: true, data: [] });
+    }
 
-    return res.json({ success: true, data: favorites });
+    const services = await ProService.find({ _id: { $in: serviceIds }, status: 'active' })
+      .populate('category', 'name iconUrl name_fr')
+      .populate('pro', 'name avatar email');
+
+    const servicesById = services.reduce((acc, svc) => {
+      acc[svc._id.toString()] = svc;
+      return acc;
+    }, {});
+
+    const orderedServices = serviceIds
+      .map((serviceId) => servicesById[serviceId.toString()])
+      .filter(Boolean);
+
+    return res.json({ success: true, data: orderedServices });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Erreur serveur', error: err.message });
   }

@@ -14,6 +14,10 @@ module.exports = async (req, res, next) => {
     req.query.guest === "true" ||
     req.headers["x-guest-mode"] === "1";
 
+  const isChatGuestFallback =
+    !req.headers.authorization &&
+    req.url.split("?")[0].startsWith("/chat");
+
   const guestUser = {
     _id: "guest-user-000",
     id: "guest-user-000",
@@ -35,9 +39,10 @@ module.exports = async (req, res, next) => {
           token = credentials;
         }
       } else {
-        if (isGuestMode) {
+        if (isGuestMode || isChatGuestFallback) {
           req.identity = guestUser;
           req.isGuest = true;
+          console.log(`[AUTH] guest mode request: ${req.method} ${req.originalUrl}`);
           next();
           return;
         }
@@ -76,7 +81,7 @@ module.exports = async (req, res, next) => {
         },
       });
     }
-  } else if (isGuestMode) {
+  } else if (isGuestMode || isChatGuestFallback) {
     req.identity = guestUser;
     req.isGuest = true;
   } else {

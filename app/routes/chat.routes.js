@@ -7,6 +7,8 @@ router.get("/room-members",chat.getAllRoomMembers)
 router.get("/recent-chats",chat.getAllRecentChats)
 router.get("/unread-counts",chat.getAllUnreadCounts)
 router.get('/property-chats', chat.getAllPropertyChats)
+router.get('/debug', chat.debugGuest)
+router.get('/debug-full', chat.debugGuestFull)
 // router.get('/messageusers', controller.user.getInviteApplyList);
 
 module.exports = router;
