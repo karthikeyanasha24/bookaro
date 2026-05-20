@@ -55,6 +55,23 @@ export default function LanderCard({ card, i, result = (_) => { } }) {
         return landerNextStatus(status, card);
     };
 
+    const apartmentProfileImages = [
+        "/assets/img/Apartment.jpg",
+        "/assets/img/apartment.png",
+        "/assets/img/spacejoy-4xRP0Ajk9ys-unsplash.jpg",
+        "/assets/img/spacejoy-85pCvDWDMmI-unsplash.jpg",
+        "/assets/img/spacejoy-8Y8U9fduILs-unsplash.jpg",
+        "/assets/img/spacejoy-ctyssSFmXmU-unsplash.jpg",
+        "/assets/img/yann-maignan-x3BCSWCAtrY-unsplash.jpg",
+    ];
+
+    const getProfileImage = (card, index) => {
+        const fallback = apartmentProfileImages[index % apartmentProfileImages.length];
+        return card?.propertyId?.images?.[0]?.file
+            ? imagePath(card.propertyId.images[0].file)
+            : fallback;
+    };
+
     const getVideoId = (url) => {
         try {
             const parsed = new URL(url);
@@ -444,30 +461,32 @@ export default function LanderCard({ card, i, result = (_) => { } }) {
                 defaultMsg={defaultMsg}
                 setDefaultMsg={setDefaultMsg}
             />
-            <div className="xl:col-span-4 md:col-span-6 col-span-full bg-white border border-[#BEBEBE] rounded-[12px] relative py-2 md:mb-0 mb-4">
-                <div>
-                    <div className="absolute top-0 -left-6">
-                        <img
-                            alt=""
-                            src={imagePath(
-                                card?.propertyId?.images?.[0]?.file,
-                                "assets/img/man.jpg"
+            <div className="xl:col-span-4 md:col-span-6 col-span-full bg-white border border-[#BEBEBE] rounded-[12px] py-4 md:mb-0 mb-4">
+                <div className="px-4">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-[50px] h-[50px] rounded-full overflow-hidden shrink-0">
+                            <img
+                                alt="Property"
+                                src={getProfileImage(card, i)}
+                                onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = apartmentProfileImages[i % apartmentProfileImages.length];
+                                }}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div>
+                            <h5 className="text-[13.33px] font-semibold">
+                                {capLetter(card?.propertyId?.propertyTitle)}
+                            </h5>
+                            {(card?.propertyId?.city || card?.propertyId?.country) && (
+                                <p className="text-[13.33px] text-[#47525E]">
+                                    {card?.propertyId?.city || card?.propertyId?.country}{" "}
+                                    {card?.propertyId?.zipcode
+                                        ? "," + card?.propertyId?.zipcode
+                                        : ""}
+                                </p>
                             )}
-                            className="w-[50px] h-[50px] rounded-full object-cover shrink-0"
-                        />
-                    </div>
-                    <div className="px-10">
-                        <h5 className="text-[13.33px] font-semibold">
-                            {capLetter(card?.propertyId?.propertyTitle)}
-                        </h5>
-                        {(card?.propertyId?.city || card?.propertyId?.country) && (
-                            <p className="text-[13.33px] text-[#47525E]">
-                                {card?.propertyId?.city || card?.propertyId?.country}{" "}
-                                {card?.propertyId?.zipcode
-                                    ? "," + card?.propertyId?.zipcode
-                                    : ""}
-                            </p>
-                        )}
                         <p className="text-[13.33px] text-[#47525E] mt-1">
                             For {card?.propertyId?.propertyType}
                         </p>
@@ -477,6 +496,7 @@ export default function LanderCard({ card, i, result = (_) => { } }) {
                                 : "Owner Identity Not Verified"}
                         </span>
                     </div>
+                </div>
                     <div className="border-t pt-2 px-4 my-2">
                         <ul className="flex  ">
                             {+card?.propertyId?.surface > 0 && (

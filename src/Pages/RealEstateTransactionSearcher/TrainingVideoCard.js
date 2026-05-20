@@ -43,9 +43,13 @@ const TrainingVideoCard = ({ videoId, title,duration, thumbnail }) => {
                 >
                     {!showVideo ? (
                         <>
-                            <img
-                                src={thumbnail}
+                                    <img
+                                src={thumbnail || "/assets/img/Learningcenter.png"}
                                 alt="Play video"
+                                onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = "/assets/img/Learningcenter.png";
+                                }}
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute bg-[#000]/30 top-0 left-0 w-full h-full flex items-center justify-center text-white">

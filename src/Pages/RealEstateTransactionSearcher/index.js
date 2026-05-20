@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import LeadCards from "./LeadCards";
+import "../Dashboard/dashboard.css";
 
 const RealEstateTransactionSearcher = () => {
   const { t } = useTranslation();
@@ -87,6 +88,10 @@ const RealEstateTransactionSearcher = () => {
           <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
             {t("transactionSearcher.monitorTransactions")}
           </h2>
+
+          <div className="flex justify-end mt-4">
+            <span className="dashboard-section-mock-badge">Données fictives</span>
+          </div>
 
           {/* <div className="grid grid-cols-12 gap-5 mt-10 mb-16">
             <div className="lg:col-span-6 col-span-full">
