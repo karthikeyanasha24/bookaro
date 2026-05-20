@@ -33,15 +33,23 @@ const userImg = (img,modal='img') => {
 };
 
 const noImg = (img, modal = "img") => {
-  let  value = "/assets/img/placeholder.png";
-  if (img) value = `${environment.api}img/${img}`;
-  if(img =="User must be deleted")
-  {
+  let value = "/assets/img/placeholder.png";
+  if (img) {
+    if (
+      img.startsWith("http://") ||
+      img.startsWith("https://") ||
+      img.startsWith("/")
+    ) {
+      value = img;
+    } else {
+      value = `${environment.api}/img/${img}`;
+    }
+  }
+  if (img === "User must be deleted") {
     value = "/assets/img/placeholder.png";
   }
-  if (modal == "propertySidebar")
-  {
-     value = "/assets/img/man.jpg";
+  if (modal === "propertySidebar") {
+    value = "/assets/img/man.jpg";
   }
   return value;
 };
@@ -55,7 +63,7 @@ const video = (video,modal='videos') => {
 const document = (img, modal = "img") => {
   let value = "/assets/img/placeholder.png";
   // if (img) value = environment.api + 'img/' + img
-  if (img) value = `${environment.api}document/${img}`;
+  if (img) value = `${environment.api}/document/${img}`;
   return value;
 };
 

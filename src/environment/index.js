@@ -1,6 +1,6 @@
 // Version autonome : pas d'API backend
 const environment = {
-  api: '',
+  api: process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:6089',
   map_api_key: process.env.REACT_APP_MAP_API_KEY,
   stripe_public_key: process.env.REACT_APP_STRIPE_PUBLIC_KEY
 };

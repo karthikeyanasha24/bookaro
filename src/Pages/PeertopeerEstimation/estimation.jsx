@@ -23,19 +23,83 @@ import NewImageSlider from "./NewImageSlider";
 import GooglePlaceAutoComplete from "../../components/common/GooglePlaceAutoComplete";
 import addressModel from "../../models/address.model";
 import { useSelector } from "react-redux";
+import { isGuestMode } from "../../methods/guestMode";
 import { IoMdClose } from "react-icons/io";
 import FlwModal from "../../components/common/Modal/FlwModal";
 import LoginModal from "../../components/common/Modal/LoginModal";
 import { useNavigate } from "react-router-dom";
+import environment from "../../environment";
+
+const GUEST_PROPERTY_MOCKS = [
+  {
+    _id: "guest-property-1",
+    propertyTitle: "Maison de caractère à Paris",
+    address: "28 Rue des Rosiers, 75004 Paris",
+    propertyType: "Maison",
+    surface: 115,
+    propertyFloor: 2,
+    totalFloorBuilding: 3,
+    bedrooms: 3,
+    bathroom: 2,
+    referencePrice: 860000,
+    location: { lat: 48.8566, lng: 2.3522 },
+    zipcode: "75004",
+    images: [
+      `${environment.api}/assets/img/spacejoy-WQ35C1ZqCPk-unsplash.jpg`,
+      `${environment.api}/assets/img/jalg-tv-stand-Cmq9Sy5PW18-unsplash.jpg`,
+      `${environment.api}/assets/img/yann-maignan-x3BCSWCAtrY-unsplash.jpg`,
+      `${environment.api}/assets/img/spacejoy-GNs831kqdoM-unsplash.jpg`,
+      `${environment.api}/assets/img/spacejoy-8Y8U9fduILs-unsplash.jpg`,
+    ],
+    revenue_detail: [{ price: 18000 }, { price: 19000 }, { price: 17500 }],
+    renovation_work: [{ price: 12000 }, { price: 8500 }],
+    rating: [{ rating_value: 4 }, { rating_value: 5 }, { rating_value: 4 }],
+    isLiked: false,
+    isFollowed: false,
+  },
+  {
+    _id: "guest-property-2",
+    propertyTitle: "Appartement lumineux à Lyon",
+    address: "12 Rue de la République, 69002 Lyon",
+    propertyType: "Appartement",
+    surface: 82,
+    propertyFloor: 4,
+    totalFloorBuilding: 6,
+    bedrooms: 2,
+    bathroom: 1,
+    referencePrice: 420000,
+    location: { lat: 45.7640, lng: 4.8357 },
+    zipcode: "69002",
+    images: [
+      `${environment.api}/assets/img/spacejoy-ctyssSFmXmU-unsplash.jpg`,
+      `${environment.api}/assets/img/spacejoy-85pCvDWDMmI-unsplash.jpg`,
+      `${environment.api}/assets/img/levente-gyulai-nzPlsLZdcm8-unsplash.jpg`,
+      `${environment.api}/assets/img/spacejoy-4xRP0Ajk9ys-unsplash.jpg`,
+      `${environment.api}/assets/img/prydumano-design-VZ2z8ozzy10-unsplash.jpg`,
+    ],
+    revenue_detail: [{ price: 10500 }, { price: 11500 }],
+    renovation_work: [{ price: 4500 }],
+    rating: [{ rating_value: 3 }, { rating_value: 4 }],
+    isLiked: false,
+    isFollowed: false,
+  },
+];
 
 const Estimation = () => {
   const [data, setData] = useState([]);
   const [form, setForm] = useState({
     referencePrice: "underestimated",
     userReasonablePrice: 0,
+    ratePropertyTitle: 0,
+    ratePropertyPictures: 0,
+    rateInteriorDesign: 0,
+    rateLocation: 0,
+    rateCouldYouLiveIn: 0,
+    comment: "",
   });
   const history = useNavigate()
   const { user } = useSelector((state) => state);
+  const isGuest = user?.isGuest || isGuestMode();
   const [inputKey, setInputKey] = useState(0);
   const [currentLocation, setCurrentLocation] = useState("");
   const [location, setLocation] = useState([]);
@@ -95,6 +159,10 @@ const Estimation = () => {
   };
 
   useEffect(() => {
+    if (isGuest) {
+      return;
+    }
+
     if (user?.loggedIn) {
       const checkLocationPermission = () => {
         navigator.permissions.query({ name: "geolocation" }).then((result) => {
@@ -161,8 +229,7 @@ const Estimation = () => {
     } else {
       history("/login")
     }
-
-  }, []);
+  }, [user, isGuest, history]);
 
   const formatNumberWithSpaces = (num) => {
     if (num === null || num === undefined || isNaN(num)) return "0";
@@ -246,22 +313,45 @@ const Estimation = () => {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    setIsLoading(true);
+    let didReceiveData = false;
+    const fallbackTimer = setTimeout(() => {
+      if (isGuest && !didReceiveData) {
+        setData(GUEST_PROPERTY_MOCKS);
+        setIsLoading(false);
+      }
+    }, 1200);
 
-    socket.on("est-prop-list", (res) => {
+    const handleEstPropList = (res) => {
+      didReceiveData = true;
+      clearTimeout(fallbackTimer);
       setData(res?.data || []);
       setIsLoading(false);
+    };
+
+    socket.on("est-prop-list", handleEstPropList);
+    socket.on("connect_error", (error) => {
+      if (isGuest) {
+        clearTimeout(fallbackTimer);
+        setData(GUEST_PROPERTY_MOCKS);
+        setIsLoading(false);
+      }
     });
 
+    fetchData({ guest: isGuest });
+
     return () => {
-      socket.off("est-prop-list");
+      clearTimeout(fallbackTimer);
+      socket.off("est-prop-list", handleEstPropList);
+      socket.off("connect_error");
     };
-  }, []);
+  }, [isGuest]);
 
   const fetchData = (p) => {
     const payload = {
       ...p,
       count: 6,
+      guest: isGuest,
       loggedInUser: user?.id || user?._id,
     };
     socket.emit("est-prop-list", payload);
@@ -305,6 +395,11 @@ const Estimation = () => {
   };
 
   const handleEstimate = (item, index) => {
+    if (isGuest) {
+      toast.info("Connectez-vous pour soumettre votre estimation.");
+      return;
+    }
+
     const payload = {
       ...form,
       propertyId: item?._id || item?.id,
@@ -329,6 +424,7 @@ const Estimation = () => {
           rateInteriorDesign: 0,
           rateLocation: 0,
           rateCouldYouLiveIn: 0,
+          comment: "",
         });
         handleSkip(); // Use the skip handler after successful submission
       }
@@ -362,6 +458,7 @@ const Estimation = () => {
       const payload = {
         page: nextPage,
         count: 6,
+        guest: isGuest,
         loggedInUser: user?.id || user?._id,
         // zipcode: location.map((item) => item.zipcode),
       };
@@ -443,7 +540,7 @@ const Estimation = () => {
 
   const getAvrgRating = (rating) => {
     const average = rating.reduce((sum, r) => sum + Number(r.rating_value), 0) / rating.length;
-    return average
+    return Number(average.toFixed(2));
   }
 
   // const isFollow = (itm, key) => {
@@ -498,17 +595,28 @@ const Estimation = () => {
             data.map((item, index) => (
               <SwiperSlide key={`${item._id || item.id}-${index}`}>
                 <div className="container mx-auto px-5">
-                  <div className="relative mb-6 sm:mt-10 flex flex-wrap gap-y-2 justify-between items-center sm:block">
-                    <h5 className="text-[20px] font-[600] sm:text-center">
-                      Peer To Peer Estimation
-                    </h5>
-                    <button
-                      className="sm:absolute right-0 top-0 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[6px] px-4 py-1.5 text-[#fff]"
-                      onClick={(e) => open()}
-                    >
-                      Edit Location <FaLocationDot />
-                    </button>
+                  <div className="relative mb-3 sm:mt-6 flex flex-wrap gap-y-2 justify-between items-center sm:block">
+                    <div>
+                      <h5 className="text-[20px] font-[600] sm:text-center">
+                        Peer To Peer Estimation
+                      </h5>
+                    </div>
+                    {!isGuest && (
+                      <button
+                        className="sm:absolute right-0 top-0 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[6px] px-4 py-1.5 text-[#fff]"
+                        onClick={(e) => open()}
+                      >
+                        Edit Location <FaLocationDot />
+                      </button>
+                    )}
                   </div>
+                  {isGuest && (
+                    <div className="flex justify-end mb-3">
+                      <span className="dashboard-section-mock-badge inline-flex items-center justify-center px-3 py-1 rounded-full text-[12px] font-semibold text-[#7c4b00] bg-[#fff4dd] shadow-[0_4px_12px_rgba(249,179,71,0.18)] border border-[rgba(249,179,71,0.35)]">
+                        Données fictives
+                      </span>
+                    </div>
+                  )}
                   <div className="md:flex items-start gap-4 ">
                     <div className="md:w-[70%] mb-5 md:mb-0">
                       <div className="bg-[#fff] md:flex  md:h-[526px] rounded-[20px]">
@@ -620,27 +728,34 @@ const Estimation = () => {
                           </div>
                           <div className="border-t p-4 flex justify-center gap-6 items-center">
                             {item?.isFollowed ? (
-                              <button>
+                              <button
+                                type="button"
+                                disabled={isGuest}
+                                className="disabled:cursor-not-allowed disabled:opacity-50"
+                                onClick={() => isFollow(item, "unfollow")}
+                              >
                                 <RiHome2Fill
                                   className="text-[#976DD0]"
                                   size={20}
-                                  onClick={(e) =>
-                                    isFollow(item, "unfollow")
-                                  }
                                 />
                               </button>
                             ) : (
-                              <button>
-                                <RiHome2Line
-                                  size={20}
-                                  onClick={(e) => isFollow(item, "follow")}
-                                />
+                              <button
+                                type="button"
+                                disabled={isGuest}
+                                className="disabled:cursor-not-allowed disabled:opacity-50"
+                                onClick={() => isFollow(item, "follow")}
+                              >
+                                <RiHome2Line size={20} />
                               </button>
                             )}
 
                             {item?.isLiked ? (
                               <button
-                                onClick={(e) => isLiked(item, "unlike")}
+                                type="button"
+                                disabled={isGuest}
+                                className="disabled:cursor-not-allowed disabled:opacity-50"
+                                onClick={() => isLiked(item, "unlike")}
                               >
                                 <FaHeart
                                   className="text-[#976DD0]"
@@ -649,12 +764,18 @@ const Estimation = () => {
                               </button>
                             ) : (
                               <button
-                                onClick={(e) => isLiked(item, "like")}
+                                type="button"
+                                disabled={isGuest}
+                                className="disabled:cursor-not-allowed disabled:opacity-50"
+                                onClick={() => isLiked(item, "like")}
                               >
                                 <FaRegHeart size={18} />
                               </button>
                             )}
                             <button
+                              type="button"
+                              disabled={isGuest}
+                              className="disabled:cursor-not-allowed disabled:opacity-50"
                               onClick={() =>
                                 openShareModal(item?._id || item?.id)
                               }
@@ -669,10 +790,10 @@ const Estimation = () => {
                       </div>
                     </div>
 
-                    <div className="md:w-[30%]">
-                      <div className="h-full bg-[#fff] rounded-[20px] ml-auto p-4">
+                    <div className="md:w-[30%] px-4">
+                      <div className="h-full bg-[#fff] rounded-[20px] ml-auto px-6 py-6">
                         <h4 className="text-center text-[18px] font-[600] leading-tight text-[#5A5A5A]">
-                          What do you think about this property?
+                          How do you value this property ?
                         </h4>
                         <h5 className="text-[16px] text-[#47525E] mb-2 text-center">
                           You think reference price is:
@@ -713,7 +834,7 @@ const Estimation = () => {
                           €
                         </h5>
 
-                        <div className="w-full max-w-md mx-auto mb-2">
+                        <div className="w-full max-w-[300px] mx-auto mb-2">
                           <div className="flex justify-between items-center px-2 mb-2 text-gray-600 font-bold select-none">
                             <button
                               onClick={() => {
@@ -790,7 +911,7 @@ const Estimation = () => {
                         <h5 className="text-[16px] text-[#47525E]">
                           How would you rate:
                         </h5>
-                        <div className="rating-section">
+                        <div className="rating-section w-full max-w-[280px] ml-auto">
                           {[
                             {
                               name: "Property title",
@@ -815,14 +936,14 @@ const Estimation = () => {
                           ].map((itm, i) => (
                             <div
                               key={i}
-                              className="flex justify-between gap-4 items-center flex-row"
+                              className="flex justify-between gap-4 items-center flex-row min-w-0"
                             >
-                              <div className="flex items-center w-[100%]">
-                                <label className="block text-[14px] text-[#47525E] font-[600]">
+                              <div className="flex-1 min-w-0">
+                                <label className="block truncate text-[14px] text-[#47525E] font-[600]">
                                   {itm.name}
                                 </label>
                               </div>
-                              <div className="relative  w-[100%]">
+                              <div className="relative flex-shrink-0 min-w-[100px] w-[100px] text-right">
                                 <ReactStars
                                   count={5}
                                   size={19}
@@ -849,9 +970,9 @@ const Estimation = () => {
                           ))}
                         </div>
 
-                        <div className="">
+                        <div className="w-full max-w-[280px] ml-auto">
                           <textarea
-                            className="bg-white rounded-[7px] border-gray-300 border-[1px] outline-none focus:border-[#976DD0] p-2 px-3  md:w-[500px] w-full mb-2 mt-1 text-[#5A5A5A]"
+                            className="bg-white rounded-[7px] border-gray-300 border-[1px] outline-none focus:border-[#976DD0] p-2 px-3 w-full mb-2 mt-1 text-[#5A5A5A]"
                             placeholder="Advice/Comment for owner"
                             rows={2}
                             type="text"
@@ -867,10 +988,11 @@ const Estimation = () => {
 
                         <div className="flex flex-wrap justify-center items-center gap-2 ">
                           <button
-                            className="bg-[#976DD0] rounded-full hover:opacity-80 px-6 py-1 text-[14px] text-[#fff]"
+                            className={`rounded-full px-6 py-1 text-[14px] ${isGuest ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-[#976DD0] text-[#fff] hover:opacity-80'}`}
                             onClick={() => handleEstimate(item, index)}
+                            disabled={isGuest}
                           >
-                            Submit
+                            {isGuest ? 'Soumission désactivée' : 'Submit'}
                           </button>
                           <button
                             className="text-gray-500 font-[500] text-[16px] hover:underline"
@@ -888,16 +1010,18 @@ const Estimation = () => {
             ))
           ) : (
             <>
-              <div className="relative mb-6 sm:mt-10 flex flex-wrap gap-y-2 justify-between items-center sm:block">
+              <div className="relative mb-3 sm:mt-6 flex flex-wrap gap-y-2 justify-between items-center sm:block">
                 <h5 className="text-[20px] font-[600] sm:text-center">
                   Peer To Peer Estimation
                 </h5>
-                <button
-                  className="sm:absolute right-0 top-0 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[6px] px-4 py-1.5 text-[#fff]"
-                  onClick={(e) => open()}
-                >
-                  Edit Location <FaLocationDot />
-                </button>
+                {!isGuest && (
+                  <button
+                    className="sm:absolute right-0 top-0 bg-[#976DD0] hover:opacity-80 flex items-center gap-1 rounded-[6px] px-4 py-1.5 text-[#fff]"
+                    onClick={(e) => open()}
+                  >
+                    Edit Location <FaLocationDot />
+                  </button>
+                )}
               </div>
 
               <div className="text-center  min-h-[calc(100vh-200px)] flex items-center justify-center">
@@ -914,18 +1038,19 @@ const Estimation = () => {
           Open dialog
         </Button>
 
-        <Dialog
-          open={isOpen}
-          as="div"
-          className="relative z-10 focus:outline-none"
-          onClose={close}
-        >
-          <div className="fixed bg-[#976DD0] bg-opacity-70 inset-0 z-10 w-screen overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4">
-              <DialogPanel
-                transition
-                className="relative w-full max-w-md rounded-xl bg-white border py-10 px-6 duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
-              >
+        {!isGuest && (
+          <Dialog
+            open={isOpen}
+            as="div"
+            className="relative z-10 focus:outline-none"
+            onClose={close}
+          >
+            <div className="fixed bg-[#976DD0] bg-opacity-70 inset-0 z-10 w-screen overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4">
+                <DialogPanel
+                  transition
+                  className="relative w-full max-w-md rounded-xl bg-white border py-10 px-6 duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+                >
                 <button
                   className="outline-none text-[#000] absolute top-5 right-5"
                   onClick={close}
@@ -997,7 +1122,8 @@ const Estimation = () => {
               </DialogPanel>
             </div>
           </div>
-        </Dialog>
+          </Dialog>
+        )}
         <Dialog
           open={isImageModalOpen}
           as="div"
