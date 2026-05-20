@@ -75,6 +75,149 @@ const buildGuestEstimationProperties = (backendUrl) => {
   ];
 };
 
+const buildGuestCampaigns = (propertyId) => [
+  {
+    _id: "guest-campaign-1",
+    id: "guest-campaign-1",
+    campaignName: "Campagne de lancement",
+    startDate: new Date("2026-04-01"),
+    duration: "1Week",
+    pricePerSqm: 10800,
+    status: "active",
+    totalUsers: 42,
+    propertyLikes: 85,
+    propertyFollows: 32,
+    propertyShares: 12,
+  },
+  {
+    _id: "guest-campaign-2",
+    id: "guest-campaign-2",
+    campaignName: "Suivi social",
+    startDate: new Date("2026-03-15"),
+    duration: "1Month",
+    pricePerSqm: 9800,
+    status: "ended",
+    totalUsers: 28,
+    propertyLikes: 60,
+    propertyFollows: 18,
+    propertyShares: 8,
+  },
+];
+
+const buildGuestEstimationStats = () => ({
+  priceStats: [
+    {
+      underEstimatedProperties: 3,
+      appropriateProperties: 7,
+      expensiveProperties: 2,
+      minPrice: 9200,
+      maxPrice: 12300,
+      avgPrice: 10550,
+      totalUsers: 57,
+    },
+  ],
+  minPriceDocs: [{ createdAt: new Date() }],
+  maxPriceDocs: [{ createdAt: new Date() }],
+  minPriceDocCount: [{ count: 8 }],
+  maxPriceDocCount: [{ count: 5 }],
+  ratePropertyTitleCount: [
+    { _id: 1, count: 8 },
+    { _id: 2, count: 15 },
+    { _id: 3, count: 18 },
+    { _id: 4, count: 10 },
+    { _id: 5, count: 6 },
+  ],
+  ratePropertyPicturesCount: [
+    { _id: 1, count: 6 },
+    { _id: 2, count: 12 },
+    { _id: 3, count: 20 },
+    { _id: 4, count: 11 },
+    { _id: 5, count: 8 },
+  ],
+  rateInteriorDesignCount: [
+    { _id: 1, count: 7 },
+    { _id: 2, count: 13 },
+    { _id: 3, count: 19 },
+    { _id: 4, count: 11 },
+    { _id: 5, count: 7 },
+  ],
+  rateLocationCount: [
+    { _id: 1, count: 9 },
+    { _id: 2, count: 14 },
+    { _id: 3, count: 16 },
+    { _id: 4, count: 10 },
+    { _id: 5, count: 8 },
+  ],
+  rateCouldYouLiveInCount: [
+    { _id: 1, count: 10 },
+    { _id: 2, count: 12 },
+    { _id: 3, count: 18 },
+    { _id: 4, count: 9 },
+    { _id: 5, count: 8 },
+  ],
+  withinPlus0To5: [{ count: 14 }],
+  withinMinus0To5: [{ count: 12 }],
+  withinPlus5To10: [{ count: 10 }],
+  withinMinus5To10: [{ count: 8 }],
+  withinPlus10To20: [{ count: 6 }],
+  withinMinus10To20: [{ count: 5 }],
+  moreThanPlus20: [{ count: 2 }],
+  lessThanMinus20: [{ count: 3 }],
+});
+
+const buildGuestPriceDeviationBreakdown = () => ({
+  plus0To5: 24,
+  minus0To5: 21,
+  plus5To10: 18,
+  minus5To10: 14,
+  plus10To20: 11,
+  minus10To20: 9,
+  moreThanPlus20: 5,
+  lessThanMinus20: 6,
+});
+
+const buildGuestSocialEstimationResponse = (propertyId) => {
+  const baseProperty = buildGuestEstimationProperties(BACKEND_WEB_URL).find((property) => property._id === propertyId) || buildGuestEstimationProperties(BACKEND_WEB_URL)[0];
+  return {
+    success: true,
+    message: "Guest analytics fetched successfully.",
+    data: {
+      campaignStats: {
+        DayCampaignLimit: 1,
+        WeekCampaignLimit: 2,
+        MonthCampaignLimit: 3,
+        extraCampaignsPerDay: 0,
+        extraCampaignsPerWeek: 0,
+        extraCampaignsPerMonth: 0,
+        totalRunningCampaigns: 1,
+      },
+      estimationStats: buildGuestEstimationStats(),
+      priceDeviationBreakdown: buildGuestPriceDeviationBreakdown(),
+      socialEstimation: [85, 32, 12],
+      campaigns: buildGuestCampaigns(propertyId),
+    },
+  };
+};
+
+const buildGuestCampaignDetails = (campaignId) => ({
+  success: true,
+  message: "Guest campaign details fetched successfully.",
+  data: {
+    estimationStats: buildGuestEstimationStats(),
+    priceDeviationBreakdown: buildGuestPriceDeviationBreakdown(),
+    socialEstimation: [85, 32, 12],
+  },
+});
+
+const buildGuestLifetimePriceEstimation = (data) => ({
+  success: true,
+  totalCount: 34,
+  lastRecord: {
+    userReasonablePrice: parseInt(data.userReasonablePrice || 10550) || 10550,
+    createdAt: new Date(),
+  },
+});
+
 let io;
 
 exports.initializeSocket = function (startServer) {
@@ -1271,6 +1414,12 @@ exports.initializeSocket = function (startServer) {
     // })
 
     socket.on("owner-total-campaign-results", async (data) => {
+      const isGuestRequest = data?.guest === true || data?.guest === 'true' || data?.userId === 'guest-user-000';
+      if (isGuestRequest) {
+        const guestResponse = buildGuestSocialEstimationResponse(data?.propertyId);
+        return socket.emit("owner-total-campaign-results", guestResponse);
+      }
+
       if (data.userId && data.propertyId) {
         const { propertyId, userId } = data;
         const objectId = new mongoose.Types.ObjectId(propertyId);
@@ -1579,6 +1728,11 @@ exports.initializeSocket = function (startServer) {
 
     //event to show the owner side campaign estimation for each campaign
     socket.on("owner-per-campaign-results", async (data) => {
+      const isGuestRequest = data?.guest === true || data?.guest === 'true';
+      if (isGuestRequest) {
+        return socket.emit("owner-per-campaign-results", buildGuestCampaignDetails(data?.campaginId));
+      }
+
       if (data.campaginId) {
         const { campaginId } = data;
         const objectId = new mongoose.Types.ObjectId(campaginId);
@@ -1813,6 +1967,11 @@ exports.initializeSocket = function (startServer) {
 
     socket.on("lifetime-price-estimation", async (data) => {
       try {
+        const isGuestRequest = data?.guest === true || data?.guest === 'true';
+        if (isGuestRequest) {
+          return socket.emit("lifetime-price-estimation", buildGuestLifetimePriceEstimation(data));
+        }
+
         let matchCondition = null;
 
 
