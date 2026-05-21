@@ -1,7 +1,8 @@
 import ReactPaginate from 'react-paginate';
 import { useTranslation } from 'react-i18next';
-import { capLetter, imagePath, stringSeprator } from '../../models/string.model';
+import { capLetter, imagePath, stringSeprator, formatCurrency } from '../../models/string.model';
 import methodModel from '../../methods/methods';
+import { FaBed } from 'react-icons/fa6';
 
 const PropLeadSidebar = ({
     handleClickProperty,
@@ -15,16 +16,32 @@ const PropLeadSidebar = ({
     data,
     textChange,
     handlePageChange,
+    isGuest,
 }) => {
     const { t } = useTranslation();
     const tabs = [
         { label: t("buttons.all"), value: "" },
-        { label: t("home.tabs.offMarket"), value: true },
         { label: t("property.forSale"), value: "sale" },
         { label: t("property.forRent"), value: "rent" },
         { label: t("home.tabs.directory"), value: "directory" },
-        { label: t("transactionSidebar.transferred"), value: "transferred" },
+        // In guest mode Off-Market and Transferred filters are hidden.
+        // TODO: in prod connected mode, remove these filters entirely and
+        // ensure Off-Market properties are still displayed inside the
+        // sale/rent tabs according to the actual property status.
     ];
+
+    if (!isGuest) {
+        tabs.splice(1, 0, { label: t("home.tabs.offMarket"), value: true });
+        tabs.push({ label: t("transactionSidebar.transferred"), value: "transferred" });
+    }
+
+    const getLeadAvatars = (item) => {
+        const userImages = item?.userImages?.length > 0 && item?.userImages?.[0] != "User must be deleted"
+            ? item.userImages
+            : [];
+        const userLeads = item?.userLeads?.map((lead) => lead.profileImage || "/assets/img/default-user.jpg") || [];
+        return [...userImages, ...userLeads].slice(0, 5);
+    };
 
     return (
         <div className="lg:col-span-4 md:col-span-6 col-span-12 md:border-r border-[#C9C9C9] md:pe-8 md:h-full overflow-auto">
@@ -52,7 +69,37 @@ const PropLeadSidebar = ({
                 <ul className="mt-5">
                     {filteredData?.length > 0
                         ? filteredData?.map((item, i) => {
-                            console.log(item, "item")
+                            const property = item?.property || item?.propertyId || item || {};
+                            const getValue = (field) =>
+                                item?.[field] ??
+                                property?.[field] ??
+                                item?.property?.[field] ??
+                                item?.propertyId?.[field] ??
+                                null;
+                            const surface = getValue("surface");
+                            const rooms = getValue("rooms");
+                            const bedrooms = getValue("bedrooms");
+                            const rawPrice = getValue("price");
+                            const rawMonthlyCharges = getValue("propertyMonthlyCharges");
+                            const price = rawPrice !== undefined && rawPrice !== null ? rawPrice : null;
+                            const monthlyCharges = rawMonthlyCharges !== undefined && rawMonthlyCharges !== null ? rawMonthlyCharges : null;
+                            const rawPropertyType = getValue("propertyType");
+                            const propertyType = typeof rawPropertyType === "string" ? rawPropertyType.toLowerCase() : rawPropertyType;
+                            const title = getValue("propertyTitle");
+                            const address = getValue("address");
+                            const images = getValue("images") || [];
+                            const surfaceValue = Number(surface);
+                            const badgeStyles = {
+                                sale: "bg-[#E0F2FE] text-[#0369A1]",
+                                rent: "bg-[#FEF3C7] text-[#92400E]",
+                                directory: "bg-[#EEF2FF] text-[#3730A3]",
+                                offmarket: "bg-[#F3F4F6] text-[#52525B]",
+                                default: "bg-[#E5E7EB] text-[#374151]",
+                            };
+                            const badgeClass = badgeStyles[propertyType] || badgeStyles.default;
+                            const badgeLabel = propertyType === "offmarket" ? "Off-Market" : capLetter(propertyType) || "Type not available";
+                            const salePerM2 = propertyType === "sale" && price != null && surfaceValue > 0 ? Math.round(Number(price) / surfaceValue) : null;
+                            const rentPerM2 = propertyType === "rent" && monthlyCharges != null && surfaceValue > 0 ? Math.round(Number(monthlyCharges) / surfaceValue) : null;
                             return (
                                 <li key={i}
                                     className={`relative bg-white p-2 rounded-[8px] grid grid-cols-12 w-full gap-3 mb-3 cursor-pointer
@@ -71,64 +118,120 @@ const PropLeadSidebar = ({
                                     <div className="lg:col-span-5 col-span-full">
                                         <img
                                             src={imagePath(
-                                                item?.images?.[0]?.file,
+                                                images?.[0]?.file,
                                                 "assets/img/transaction/property-leads.jpg"
                                             )}
                                             alt=""
-                                            className="w-full h-[110px] rounded-[7px] object-cover"
+                                            className="w-full h-[160px] rounded-[7px] object-cover"
                                         />
                                     </div>
-                                    <div className="lg:col-span-7 col-span-full">
+                                    <div className="lg:col-span-7 col-span-full flex flex-col justify-between h-full">
                                         <p className="text-[#6B6B6B] text-[13px]">
-                                            {capLetter(stringSeprator(item?.propertyTitle, 25) || "House title")}
+                                            {capLetter(stringSeprator(title, 25) || "House title")}
                                         </p>
                                         <p className="text-[#343F4B] text-[12px] my-1">
-                                            {stringSeprator(item?.address, 25) || "Address not available"}
+                                            {stringSeprator(address, 25) || "Address not available"}
                                         </p>
-                                        <p className="text-[#343F4B] text-[12px] font-[600]">
-                                            {capLetter(item?.propertyType == "offmarket" ? "Off-Market" : item?.propertyType) || "Type not available"}
+                                        <ul className="flex flex-wrap items-center gap-3 text-[#47525E] text-[12px] mb-2">
+                                            {+surface > 0 && (
+                                                <li className="flex items-center gap-1">
+                                                    <img
+                                                        src="assets/img/prop/home.png"
+                                                        className="h-[14px] w-[14px]"
+                                                        alt="Surface"
+                                                    />
+                                                    {surface} m2
+                                                </li>
+                                            )}
+                                            {+rooms > 0 && (
+                                                <li className="flex items-center gap-1">
+                                                    <img
+                                                        src="assets/img/prop/bed.png"
+                                                        className="h-[12px] w-[14px]"
+                                                        alt="Rooms"
+                                                    />
+                                                    {rooms}
+                                                </li>
+                                            )}
+                                            {+bedrooms > 0 && (
+                                                <li className="flex items-center gap-1">
+                                                    <FaBed className="text-[#47525E] h-[14px] w-[14px]" />
+                                                    {bedrooms}
+                                                </li>
+                                            )}
+                                        </ul>
+                                        <p className={`inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-[600] text-center ${badgeClass}`}>
+                                            {badgeLabel}
                                         </p>
+                                        {(propertyType === "sale" || propertyType === "rent") && (
+                                            <div className="mt-1">
+                                                {propertyType === "sale" ? (
+                                                    <div className="flex items-center gap-2">
+                                                        {price != null ? (
+                                                            <h3 className="text-[#343F4B] text-[14px] font-semibold">
+                                                                {formatCurrency(price)} €
+                                                            </h3>
+                                                        ) : (
+                                                            <h3 className="text-[#343F4B] text-[14px] font-semibold">
+                                                                -
+                                                            </h3>
+                                                        )}
+                                                        {salePerM2 != null && (
+                                                            <span className="text-[#47525E] text-[12px]">
+                                                                {formatCurrency(salePerM2)} € /m2
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        {monthlyCharges != null ? (
+                                                            <h3 className="text-[#343F4B] text-[14px] font-semibold">
+                                                                {formatCurrency(monthlyCharges)} €
+                                                            </h3>
+                                                        ) : (
+                                                            <h3 className="text-[#343F4B] text-[14px] font-semibold">
+                                                                -
+                                                            </h3>
+                                                        )}
+                                                        {rentPerM2 != null && (
+                                                            <span className="text-[#47525E] text-[12px]">
+                                                                {formatCurrency(rentPerM2)} € /m2
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                         <div className="flex items-center justify-between w-full">
                                             <div className='flex gap-2 items-center '>
                                                 <p className="text-[#8492A6] text-[12px] w-[50%]">
                                                     <span className="text-[#343F4B] text-[12px] font-[600] me-1">
-                                                        {/* {item?.userLeads?.length || 0} */}
                                                         {item?.totalLeads || 0}
                                                     </span>
                                                     {t(+item?.totalLeads > 1 ? "transactionSidebar.leads" : "transactionSidebar.lead")}
                                                 </p>
-                                                <div className=" relative w-[50%] h-[25px] ml-auto flex">
-
-                                                    {/*  */}
-
-                                                    {(item?.userImages?.[0] != "User must be deleted" && item?.userImages?.length > 0) ? <>{item.userImages?.map(itm => {
-                                                        return <img
-                                                            src={methodModel.noImg(itm)}
-                                                            alt=""
-                                                            className="w-[25px] h-[25px] object-cover rounded-full absolute left-[15px]"
+                                                <div className="relative w-[100px] h-[25px] flex-shrink-0 overflow-hidden">
+                                                    {getLeadAvatars(item).map((itm, idx) => (
+                                                        <img
+                                                          key={idx}
+                                                          src={methodModel.noImg(itm)}
+                                                          alt="Profile"
+                                                          className="w-[25px] h-[25px] object-cover rounded-full border border-white"
+                                                          style={{
+                                                            position: "absolute",
+                                                            left: `${idx * 18}px`,
+                                                            zIndex: 10 - idx,
+                                                          }}
                                                         />
-                                                    }).slice(0, 3)}</> : <div className="w-[25px] h-[25px] bg-[#976DD0] flex justify-center items-center p-2 text-[#FFF] object-cover rounded-full absolute left-[15px]">
-                                                        <span className='sm:text-[14px] text-[12px] '>{item?.firstName?.[0]?.trim().charAt(0).toUpperCase()}{item?.lastName?.[0]?.trim().charAt(0).toUpperCase()}</span></div>}
-
-                                                    {/* <img
-                                                    src="assets/img/man.jpg"
-                                                    alt=""
-                                                    className="w-[25px] h-[25px] object-cover rounded-full absolute left-[15px]"
-                                                /> */}
+                                                    ))}
+                                                    {getLeadAvatars(item).length === 0 && (
+                                                      <div className="w-[25px] h-[25px] bg-[#976DD0] flex justify-center items-center text-[#FFF] rounded-full"
+                                                        style={{ position: "absolute", left: "0" }}>
+                                                        <span className='sm:text-[14px] text-[12px] '>{item?.firstName?.[0]?.trim().charAt(0).toUpperCase()}{item?.lastName?.[0]?.trim().charAt(0).toUpperCase()}</span>
+                                                      </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                            {Array.isArray(item?.userLeads) && item?.userLeads?.slice(0, 4)
-                                                .map((lead, index) => (
-                                                    <div className="relative w-[50%] h-[25px] flex">
-                                                        <img
-                                                            key={index}
-                                                            src={lead?.profileImage || "assets/img/default-user.jpg"}
-                                                            alt="User"
-                                                            className={`w-[25px] h-[25px] object-cover rounded-full absolute left-[${index * 15
-                                                                }px]`}
-                                                        />
-                                                    </div>
-                                                ))}
                                         </div>
                                         <p className="text-[#47525E] text-[12px]">
                                             {t("transactionSidebar.visitsBooked", { count: item?.visitBookedCount || 0 })}

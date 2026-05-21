@@ -117,6 +117,7 @@ export default function RenterCard({
   };
 
   const videoId = getVideoId(card?.funnel?.youtubeUrl)
+  const property = card?.propertyId || card?.property || {};
 
   const homeInventorySlots = useMemo(() => {
     const today = datepipeModel.datetostring(new Date().toISOString()); // Get today's date in YYYY-MM-DD format
@@ -944,7 +945,7 @@ export default function RenterCard({
           <div className=" absolute -top-3 -left-5">
             {card?.buyerId?.image ? <img
               alt=""
-              src={imagePath(card?.buyerId?.image, "assets/img/man.jpg")}
+              src={methodModel.userImg(card?.buyerId?.image)}
               className="w-[50px] h-[50px] rounded-full object-cover shrink-0"
             /> : <div className="w-[50px] bg-[#976DD0] h-[50px] flex justify-center items-center rounded-full object-cover shrink-0 text-[#FFF] sm:text-[24px] text-[22px] font-bold ">
               <span>{card.buyerId?.firstName?.trim().charAt(0).toUpperCase()}{card.buyerId?.lastName?.trim().charAt(0).toUpperCase()}</span></div>}
@@ -998,7 +999,7 @@ export default function RenterCard({
 
           <div class="border-t pt-2 px-4 my-2">
             <ul class="flex  ">
-              {card?.propertyId?.surface ? (
+              {property?.surface > 0 ? (
                 <>
                   <li class="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
                     <img
@@ -1006,14 +1007,14 @@ export default function RenterCard({
                       class="h-[15px] w-[14px]"
                       alt="img"
                     />
-                    {card?.propertyId?.surface} m2
+                    {property?.surface} m2
                   </li>
                 </>
               ) : (
                 <></>
               )}
 
-              {card?.propertyId?.rooms ? (
+              {property?.rooms > 0 ? (
                 <>
                   <li class="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
                     <img
@@ -1021,14 +1022,14 @@ export default function RenterCard({
                       class="h-[12px] w-[13px]"
                       alt="img"
                     />
-                    {card?.propertyId?.rooms || 0}
+                    {property?.rooms || 0}
                   </li>
                 </>
               ) : (
                 <></>
               )}
 
-              {card?.propertyId?.bathroom ? (
+              {(property?.bathroom || property?.bathrooms) > 0 ? (
                 <>
                   <li class="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
                     <img
@@ -1036,7 +1037,7 @@ export default function RenterCard({
                       class="h-[12px] w-[14px]"
                       alt="img"
                     />
-                    {card?.propertyId?.bathroom || 0}
+                    {property?.bathroom || property?.bathrooms || 0}
                   </li>
                 </>
               ) : (
@@ -1044,23 +1045,23 @@ export default function RenterCard({
               )}
             </ul>
 
-            {card?.propertyId?.propertyType === "rent" && (
+            {property?.propertyType === "rent" && (
               <div className="flex items-center gap-2 mt-1">
                 <h3 className="text-[19px] font-semibold">
-                  {formatCurrency(card?.propertyId?.propertyMonthlyCharges)} €
+                  {formatCurrency(property?.propertyMonthlyCharges)} €
                 </h3>
               </div>
             )}
 
-            {card?.propertyId?.propertyType === "sale" && (
+            {property?.propertyType === "sale" && (
               <div class="flex items-center gap-2 mt-1">
                 <h3 class="text-[19px] font-semibold">
-                  {pipeModel.number(card.propertyId?.price)} €
+                  {pipeModel.number(property?.price)} €
                 </h3>
                 <span class="text-[#47525E] text-[13.33px]">
                   {pipeModel.number(
-                    Number(card?.propertyId?.price) /
-                    (card?.propertyId?.surface || 1)
+                    Number(property?.price) /
+                    (property?.surface || 1)
                   )}
                   € /Sqm
                 </span>

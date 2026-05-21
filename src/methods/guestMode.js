@@ -24,7 +24,15 @@ export const disableGuestMode = () => {
 
 export const isGuestMode = () => {
   if (typeof window === 'undefined') return false;
-  return window.localStorage.getItem(GUEST_MODE_KEY) === 'true';
+  const guestModeStorage = window.localStorage.getItem(GUEST_MODE_KEY) === 'true';
+  if (guestModeStorage) return true;
+  const query = new URLSearchParams(window.location.search);
+  const guestParam = query.get('guest') === 'true';
+  if (guestParam) {
+    window.localStorage.setItem(GUEST_MODE_KEY, 'true');
+    window.dispatchEvent(new Event('guestModeChanged'));
+  }
+  return guestParam;
 };
 
 export const enableDebugMockUser = () => {

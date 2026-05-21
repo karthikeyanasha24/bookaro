@@ -1,5 +1,7 @@
 import environment from "../environment";
 
+const backendImageApi = environment.api?.replace(/:6090(?=\/|$)/, ":6089");
+
 const isTranslatePage = () => {
   let value = false;
   let url = window.location.href;
@@ -25,24 +27,40 @@ const generatekeysArr = (arr, key = "typeofresult") => {
   };
 };
 
-const userImg = (img,modal='img') => {
+const normalizeAbsoluteImageUrl = (img) => {
+  return img.replace(/(https?:\/\/(?:localhost|127\.0\.0\.1)):(6090)(?=\/|$)/, "$1:6089");
+};
+
+const userImg = (img, modal = 'img') => {
   let value = "/assets/img/person.jpg";
-  // if (img) value = environment.api + 'img/' + img
-  if (img) value = `${environment.api}/img/${img}`;
+  if (img) {
+    if (img.startsWith("http://") || img.startsWith("https://")) {
+      value = normalizeAbsoluteImageUrl(img);
+    } else if (img.startsWith("/") || img.startsWith("assets/")) {
+      value = `${backendImageApi}${img.startsWith("/") ? img : `/${img}`}`;
+    } else {
+      value = `${backendImageApi}/img/${img}`;
+    }
+  }
   return value;
 };
 
 const noImg = (img, modal = "img") => {
   let value = "/assets/img/placeholder.png";
   if (img) {
-    if (
-      img.startsWith("http://") ||
-      img.startsWith("https://") ||
-      img.startsWith("/")
-    ) {
-      value = img;
+    if (img.startsWith("http://") || img.startsWith("https://")) {
+      value = normalizeAbsoluteImageUrl(img);
+    } else if (img.startsWith("/") || img.startsWith("assets/")) {
+      if (
+        img.includes("assets/img/Prospect img/") ||
+        img.includes("assets/img/Prospect%20img/")
+      ) {
+        value = `${backendImageApi}${img.startsWith("/") ? img : `/${img}`}`;
+      } else {
+        value = img.startsWith("assets/") ? `/${img}` : img;
+      }
     } else {
-      value = `${environment.api}/img/${img}`;
+      value = `${backendImageApi}/img/${img}`;
     }
   }
   if (img === "User must be deleted") {
@@ -56,14 +74,14 @@ const noImg = (img, modal = "img") => {
 
 const video = (video,modal='videos') => {
   let value = "";
-  if (video) value = `${environment.api}/videos/${video}`;
+  if (video) value = `${backendImageApi}/videos/${video}`;
   return value;
 };
 
 const document = (img, modal = "img") => {
   let value = "/assets/img/placeholder.png";
   // if (img) value = environment.api + 'img/' + img
-  if (img) value = `${environment.api}/document/${img}`;
+  if (img) value = `${backendImageApi}/document/${img}`;
   return value;
 };
 

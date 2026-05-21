@@ -6,6 +6,7 @@ import PageLayout from "../../components/global/PageLayout";
 import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
+import { isGuestMode } from "../../methods/guestMode";
 import LeadCards from "./LeadCards";
 import ManageVisitSlot from "./ManageVisitSlot";
 import PropLeadSidebar from "./PropLeadSidebar";
@@ -24,15 +25,18 @@ const RealEstateTransactionOwner = () => {
   const [totalCard, setTotalCard] = useState(0);
   const [filteredData, setFilteredData] = useState([]);
   const [offerStatus, setOfferStatus] = useState(false);
-console.log(offerStatus, "offerStatus")
+  const [showMockBadge, setShowMockBadge] = useState(false);
+  const [debugInfo, setDebugInfo] = useState(null);
   const [applicationAccepted, setApplicationAccepted] = useState(false);
   const handleClickProperty = (item) => {
     if (!ownerPlan) return;
-    let propertyId = item?._id;
-    if (propertyId !== selectedProperty?._id) {
-      setSelectedProperty(item);
-    }
-    socket.emit("activityIndicatorCount", { propertyId: propertyId });
+    const propertyId = item?._id;
+    if (!propertyId) return;
+
+    setSelectedProperty(item);
+    getCards(propertyId, item);
+
+    socket.emit("activityIndicatorCount", { propertyId });
     const newArr = filteredData?.map((obj) => {
       if (obj._id === propertyId) {
         obj.activityIndicatorCount = 0;
@@ -40,33 +44,40 @@ console.log(offerStatus, "offerStatus")
       return obj;
     });
     if (newArr?.length > 0) {
-      setFilteredData([...newArr])
+      setFilteredData([...newArr]);
     }
   };
 
-  const getCards = (propertyId = selectedProperty?._id, f = {}) => {
-    if (!propertyId) return;
-    const filter = { propertyId, ...f, sortBy: "updatedAt desc" };
+  const getCards = (propertyId = selectedProperty?._id, property = selectedProperty, f = {}) => {
+    const resolvedPropertyId = propertyId || property?.propertyId?._id || property?._id;
+    if (!resolvedPropertyId) return;
+    const filter = { propertyId: resolvedPropertyId, ...f, sortBy: "updatedAt desc" };
     loader(true);
 
     let url = "interests/list";
-    if (selectedProperty.isTransferred) {
+    if (property?.isTransferred) {
       url = "interests/expiredInterests";
     }
 
     ApiClient.get(url, filter).then((res) => {
-      if (res?.data) {
-        let data = res.data.map((itm) => {
-          itm.isTransferred = selectedProperty.isTransferred;
+      setDebugInfo((prev) => ({
+        ...prev,
+        response: res,
+        stage: "getCardsResponse",
+        url,
+        filter,
+      }));
+      const responseData = res?.data || res?.Data || [];
+      if (Array.isArray(responseData)) {
+        let data = responseData.map((itm) => {
+          itm.isTransferred = property?.isTransferred;
           return itm;
         });
-        let instersLength = activePlan?.activePlan?.[0]?.numberOfInterest || 0;
-        let new_data = data;
-        // .slice(0, instersLength);
-        setCards(new_data);
-        setTotalCard(new_data?.length);
+        setCards(data);
+        setTotalCard(data.length);
         setOfferStatus(res?.offerStatus || false);
         setApplicationAccepted(res?.applicationAccepted || false);
+        setShowMockBadge((prev) => prev || !!res?.mockData || !!res?.isMock);
       }
       loader(false);
     });
@@ -76,7 +87,6 @@ console.log(offerStatus, "offerStatus")
     page: 1,
     count: 10,
     interestUpdatedTime: true,
-    userId: user?._id,
   });
   const [type, setType] = useState("");
   const [data, setData] = useState([]);
@@ -84,29 +94,29 @@ console.log(offerStatus, "offerStatus")
   const [name, setName] = useState("");
 
   const getData = (f = {}, updatePayload) => {
-
     if (updatePayload) {
-      setData(prev => {
-        const index = prev.findIndex(item => item._id == updatePayload.id);
+      setData((prev) => {
+        const index = prev.findIndex((item) => item._id == updatePayload.id);
         if (index >= 0) {
           prev[index] = {
             ...prev[index],
-            ...updatePayload
-          }
+            ...updatePayload,
+          };
         }
-        return prev
-      })
+        return prev;
+      });
 
-      return
+      return;
     }
 
     const filter = {
       ...filters,
+      userId: user?._id,
       ...f,
     };
     if (type) {
       filter.propertyType = type == true ? "" : type;
-      filter.offMarket = type == true ? true : false
+      filter.offMarket = type == true ? true : false;
     }
 
     let url = "property/myProperties";
@@ -115,29 +125,67 @@ console.log(offerStatus, "offerStatus")
       url = "interests/transferHistory";
     }
 
+    setDebugInfo({
+      stage: "getDataRequest",
+      url,
+      filter,
+      isGuestMode: isGuestMode(),
+      selectedPropertyId: selectedProperty?._id,
+    });
     loader(true);
     ApiClient.get(url, filter).then((res) => {
-      if (res.success) {
-        let data = res?.data || res?.Data || [];
-        data = data.map((itm) => {
-          itm._id = itm.propertyId?._id || itm._id;
-          itm.propertyTitle =
-            itm.propertyId?.propertyTitle || itm.propertyTitle;
-          itm.address = itm.propertyId?.address || itm.address;
-          itm.images = itm.propertyId?.images || itm.images;
+      setDebugInfo((prev) => ({
+        ...prev,
+        stage: "getDataResponse",
+        response: res,
+        url,
+        filter,
+      }));
+      const responseData = res?.data || res?.Data || [];
+      const success = res?.success !== false;
+      if (Array.isArray(responseData) && responseData.length > 0 && success) {
+        const mappedData = responseData.map((itm) => {
+          const property = itm.propertyId || itm.property || {};
+          itm._id = property._id || itm._id;
+          itm.propertyTitle = property.propertyTitle || itm.propertyTitle;
+          itm.address = property.address || itm.address;
+          itm.images = property.images || itm.images;
+          itm.surface = itm.surface ?? property.surface;
+          itm.rooms = itm.rooms ?? property.rooms;
+          itm.bedrooms = itm.bedrooms ?? property.bedrooms;
+          itm.price = itm.price ?? property.price;
+          itm.propertyMonthlyCharges =
+            itm.propertyMonthlyCharges ?? property.propertyMonthlyCharges;
+          itm.propertyType = itm.propertyType ?? property.propertyType;
           itm.totalLeads = itm.OldOwnerData?.totalLeads || itm.totalLeads;
           itm.userImages =
-            itm.OldOwnerData?.leadsImages || itm.userImages || [];
-          itm.isTransferred = url == "interests/transferHistory" ? true : false;
+            itm.OldOwnerData?.leadsImages ||
+            itm.userImages ||
+            itm.userLeads?.map((lead) => lead?.profileImage).filter(Boolean) ||
+            [];
+          itm.isTransferred = url == "interests/transferHistory";
           return itm;
         });
-        setData(data);
-        setFilteredData(data);
-        setTotal(res?.total || data?.length);
-
-        if (data.length) {
-          handleClickProperty(data[0]);
+        let finalData = mappedData;
+        if (type && type !== "" && type !== "transferred") {
+          if (type === true) {
+            finalData = mappedData.filter((item) => item.propertyType === "offmarket");
+          } else {
+            finalData = mappedData.filter((item) => item.propertyType === type);
+          }
         }
+        setData(mappedData);
+        setFilteredData(finalData);
+        setTotal(finalData.length);
+        setShowMockBadge((prev) => prev || !!res?.mockData || !!res?.isMock);
+
+        if (finalData.length > 0) {
+          handleClickProperty(finalData[0]);
+        }
+      } else if (success && Array.isArray(responseData)) {
+        setData(responseData);
+        setFilteredData(responseData);
+        setTotal(responseData.length);
       } else {
         setData([]);
         setFilteredData([]);
@@ -147,12 +195,34 @@ console.log(offerStatus, "offerStatus")
     });
   };
   useEffect(() => {
-    getData();
+    setShowMockBadge(isGuestMode());
+  }, []);
+
+  const handleTypeChange = (value) => {
+    setType(value);
+    setName("");
+    setFilters((prev) => ({ ...prev, page: 1 }));
+    setFilteredData([]);
+    setData([]);
+    setTotal(0);
+    setSelectedProperty(null);
+    setCards([]);
+    setTotalCard(0);
+    setOfferStatus(false);
+    setApplicationAccepted(false);
+  };
+
+  useEffect(() => {
+    getData({ page: 1 });
+  }, [user?._id]);
+
+  useEffect(() => {
+    getData({ page: 1 });
   }, [type]);
 
   useEffect(() => {
     if (selectedProperty) {
-      getCards(selectedProperty?._id);
+      getCards(selectedProperty?._id, selectedProperty);
     }
   }, [selectedProperty]);
 
@@ -197,9 +267,24 @@ console.log(offerStatus, "offerStatus")
                 {t("transactionOwner.ownerTransactionManagement")}
               </li>
             </ul>
-            <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
-              {t("transactionOwner.monitorTransactions")}
-            </h2>
+            <div className="flex flex-col items-center gap-3">
+              <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
+                {t("transactionOwner.monitorTransactions")}
+              </h2>
+              {showMockBadge && (
+                <span className="inline-flex items-center rounded-full bg-[#F4E6FF] text-[#5B21B6] px-3 py-1 text-[13px] font-semibold">
+                  Données fictives
+                </span>
+              )}
+            </div>
+            {process.env.NODE_ENV !== 'production' && debugInfo ? (
+              <div className="mt-4 p-3 rounded-lg bg-[#f9f9f9] border border-[#ddd] text-sm text-[#333]">
+                <div className="font-semibold mb-2">Debug</div>
+                <pre className="whitespace-pre-wrap break-words text-xs">
+                  {JSON.stringify(debugInfo, null, 2)}
+                </pre>
+              </div>
+            ) : null}
 
             <div className="grid grid-cols-12 gap-5 mt-10 mb-16">
               <div className="lg:col-span-6 col-span-full">
@@ -247,7 +332,7 @@ console.log(offerStatus, "offerStatus")
                 selectedProperty={selectedProperty}
                 filters={filters}
                 type={type}
-                setType={setType}
+                setType={handleTypeChange}
                 filteredData={filteredData}
                 setFilteredData={setFilteredData}
                 name={name}
@@ -256,6 +341,7 @@ console.log(offerStatus, "offerStatus")
                 data={data}
                 textChange={textChange}
                 handlePageChange={handlePageChange}
+                isGuest={isGuestMode()}
               />
 
               {ownerPlan ? (

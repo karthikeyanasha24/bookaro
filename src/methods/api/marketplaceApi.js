@@ -16,8 +16,6 @@ const request = async (method, path, body = null, lang = 'fr') => {
   const isGuest = isGuestMode();
 
   if (isGuest) {
-    delete headers.Authorization;
-    headers['X-Guest-Mode'] = 'true';
     url += '&guest=true';
   } else if (token) {
     headers['Authorization'] = `Bearer ${token}`;

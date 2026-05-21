@@ -18,9 +18,28 @@ export const queryParamToObj = (params) => {
     return Object.fromEntries(new URLSearchParams(params).entries());
 }
 export const imagePath = (path, dummy) => {
-    return path ?
-        `${process.env.REACT_APP_API_URL}img/${path}` :
-        dummy || "/assets/img/placeholder.png";
+    if (!path) return dummy || "/assets/img/placeholder.png";
+
+    const apiUrl = process.env.REACT_APP_API_URL
+        ? process.env.REACT_APP_API_URL.replace(/\/$/, "")
+        : "";
+
+    if (typeof path === "string") {
+        const normalized = path.replace(/(https?:\/\/(?:localhost|127\.0\.0\.1)):(6090)(?=\/|$)/, "$1:6089");
+        if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+            return normalized;
+        }
+        if (normalized.startsWith("/")) {
+            return normalized;
+        }
+        if (normalized.startsWith("assets/")) {
+            return `/${normalized}`;
+        }
+        const relative = normalized.startsWith("img/") ? normalized : `img/${normalized}`;
+        return apiUrl ? `${apiUrl}/${relative}` : `/${relative}`;
+    }
+
+    return dummy || "/assets/img/placeholder.png";
 }
 export const capLetter = (value) => {
     return value?.charAt(0)?.toUpperCase() + value?.slice(1)?.toLowerCase();
@@ -109,9 +128,10 @@ export const cleanObject = (inputObj) => {
     );
 };
 export const formatCurrency = (value) => {
-    if (!value) return "";
+    if (value === undefined || value === null || value === "") return "";
     let number = value?.toString()?.replace(/\D/g, "");
-    return number?.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    if (!number) return "";
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 export const removeHTMLTags = (str) => {
     return str?.replace(/<\/?[^>]+(>|$)/g, "")?.trim()?.replace("&nbsp;", " ");

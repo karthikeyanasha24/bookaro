@@ -20,7 +20,6 @@ client.interceptors.request.use((cfg) => {
       cfg.headers = cfg.headers || {};
       if (isGuestMode()) {
         delete cfg.headers.Authorization;
-        cfg.headers['X-Guest-Mode'] = 'true';
         cfg.params = { ...(cfg.params || {}), guest: 'true' };
       } else if (token) {
         cfg.headers.Authorization = `Bearer ${token}`;
