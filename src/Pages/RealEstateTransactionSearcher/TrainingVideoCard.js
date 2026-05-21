@@ -35,7 +35,7 @@ const TrainingVideoCard = ({ videoId, title,duration, thumbnail }) => {
 
 
     return (
-        <div className="border-t border-[#BEBEBE] p-3">
+        <div className="p-3">
             <div className="flex">
                 <div
                     className="w-[160px] relative min-w-[160px] aspect-video rounded overflow-hidden cursor-pointer"

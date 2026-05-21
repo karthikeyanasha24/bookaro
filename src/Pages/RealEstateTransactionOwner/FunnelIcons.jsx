@@ -42,13 +42,13 @@ const getActiveFunnelStep = (status) => {
 export default function FunnelIcons({ card }) {
   const activeStep = getActiveFunnelStep(card?.funnelStatus);
   const icons = [
-    "calendar",
-    "home",
-    "stars",
-    "euro",
-    "hands",
-    "calendar",
-    "key",
+    { name: "calendar", label: "Visit scheduled" },
+    { name: "home", label: "Visit hosted" },
+    { name: "stars", label: "Review submitted" },
+    { name: "euro", label: "Offer or application" },
+    { name: "hands", label: "Pre-sale step" },
+    { name: "calendar", label: "Contract signing" },
+    { name: "key", label: "Transfer complete" },
   ];
   const rejected = card?.funnelStatus === "owner reject the application";
 
@@ -57,15 +57,17 @@ export default function FunnelIcons({ card }) {
       <ul className="flex items-center justify-between p-4">
         {icons.map((icon, idx) => {
           const step = idx + 1;
-          const isActive = activeStep === step;
-          const imageName = `${icon}${isActive ? "-fill" : ""}${icon === "euro" && rejected ? "-red" : ""}`;
+          const isCompleted = activeStep !== null && step <= activeStep;
+          const imageName = `${icon.name}${isCompleted ? "-fill" : ""}${icon.name === "euro" && rejected ? "-red" : ""}`;
 
           return (
             <li key={idx} className="lg:w-[14%] flex items-center justify-center">
               <img
-                alt={icon}
+                alt={icon.name}
+                title={icon.label}
+                aria-label={icon.label}
                 src={`/assets/img/transaction/${imageName}.png`}
-                className={`w-[20px] ${isActive ? "opacity-100" : "opacity-50"}`}
+                className={`w-[20px] ${isCompleted ? "opacity-100" : "opacity-50"}`}
               />
             </li>
           );

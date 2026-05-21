@@ -4,11 +4,11 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoCalendarOutline } from "react-icons/io5";
-import { MdFolderOpen } from "react-icons/md";
+import { MdFolderOpen, MdMoreVert } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -105,6 +105,21 @@ const ManageVisitSlot = ({
 
   const [inviteModal, setInviteModal] = useState(false);
   const [invite, setInvite] = useState("");
+  const [showActions, setShowActions] = useState(false);
+  const actionMenuRef = useRef(null);
+  const isRentProperty = selectedProperty?.propertyType === "rent";
+
+  useEffect(() => {
+    if (!showActions) return;
+    const handleClickOutside = (e) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(e.target)) {
+        setShowActions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showActions]);
+
   const applyInvite = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!invite) return setError({ ...error, email: t("validation.emailRequired") });
@@ -138,93 +153,84 @@ const ManageVisitSlot = ({
         setidProofOpen={setidProofOpen}
         id={selectedProperty?._id}
       />
-      <h4 className="text-black text-center mb-10 font-[600] text-[18px]">
-        {t("transactionOwner.manageLeads")}
-      </h4>
-      <div className="grid xl:grid-cols-5 lg:grid-cols-3  md:grid-cols-2 md:gap-3 gap-0 mb-16">
-        {/* visit slots */}
-
-        <div className=" relative cursor-pointer flex md:mb-0 mb-3">
-          <div
-            className=" w-full bg-white p-3 rounded-[12px] flex items-center flex-col"
-            onClick={() => {
-              if (!selectedProperty?._id) return toast.error("Select property");
-              // if (!selectedProperty?.sellerFiles?.identityProof?.length)
-              //   return setidProofOpen(true);
-              openModal({
-                title: "Manage visit slots",
-                type: "visitSlots",
-                isToggleButton: true,
-              });
-            }}
+      <div className="relative flex items-center justify-center mb-4">
+        <h4 className="text-black text-center font-[600] text-[18px]">
+          {t("transactionOwner.manageLeads")}
+        </h4>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2" ref={actionMenuRef}>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center p-2 rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            onClick={() => setShowActions((prev) => !prev)}
           >
-            <div className="bg-[#000000] w-[30px] h-[30px] rounded-full p-1 flex items-center justify-center  shrink-0 mb-5 mt-3">
-              <IoCalendarOutline className="text-white" />
+            <MdMoreVert className="text-xl text-slate-700" />
+          </button>
+          {showActions && (
+            <div className="absolute right-0 mt-2 w-[220px] rounded-[12px] bg-white border border-gray-200 shadow-lg z-20">
+              <button
+                type="button"
+                className="w-full text-left px-4 py-3 text-sm text-[#343F4B] hover:bg-gray-100"
+                onClick={() => {
+                  openModal({ title: "Manage visit slots", type: "visitSlots", isToggleButton: true });
+                  setShowActions(false);
+                }}
+              >
+                {t("transactionOwner.manageVisitInvitations")}
+              </button>
+              <button
+                type="button"
+                className="w-full text-left px-4 py-3 text-sm text-[#343F4B] hover:bg-gray-100"
+                onClick={() => {
+                  openModal({ title: "Manage visit slots", type: "visitSlots", isToggleButton: true });
+                  setShowActions(false);
+                }}
+              >
+                {t("transactionOwner.visitSlots")}
+              </button>
+              {!isRentProperty && (
+                <button
+                  type="button"
+                  className="w-full text-left px-4 py-3 text-sm text-[#343F4B] hover:bg-gray-100"
+                  onClick={() => {
+                    if (!selectedProperty?._id) return toast.error("Select property");
+                    const sellerFileUrl = `/seller-file?id=${selectedProperty?._id}`;
+                    const newWindow = window.open(sellerFileUrl, "_blank", "noopener,noreferrer");
+                    if (newWindow) newWindow.opener = null;
+                    setShowActions(false);
+                  }}
+                >
+                  {t("transactionOwner.dossierVendeur")}
+                </button>
+              )}
+              <button
+                type="button"
+                className="w-full text-left px-4 py-3 text-sm text-[#343F4B] hover:bg-gray-100"
+                onClick={() => {
+                  if (!selectedProperty?._id) return toast.error("Select property");
+                  setInviteModal(true);
+                  setShowActions(false);
+                }}
+              >
+                {t("transactionOwner.inviteLead")}
+              </button>
+              {(offerStatus || applicationAccepted) && (
+                <button
+                  type="button"
+                  className="w-full text-left px-4 py-3 text-sm text-[#343F4B] hover:bg-gray-100"
+                  onClick={() => {
+                    if (!selectedProperty?._id) return toast.error("Select property");
+                    openModal({ title: "Manage signing slots", type: "signingSlots" });
+                    setShowActions(false);
+                  }}
+                >
+                  {t("transactionOwner.dateSignature")}
+                </button>
+              )}
             </div>
-            <div className="text-center">
-              <h5 className="text-[#47525E] text-sm font-semibold">
-                {t("transactionOwner.manageVisitSlots")}
-              </h5>
-              <p className="text-[12px] text-[#47525E]">
-                {t("transactionOwner.slotOpened", {
-                  count: slotsKey?.visitSlots?.length || 0,
-                })}{" "}
-                | {t("transactionOwner.automaticInvites")} {selectedProperty?.autoInvite ? "ON" : "OFF"}
-              </p>
-            </div>
-          </div>
-          <label
-            className={`absolute md:-top-2 md:-right-1 right-3 top-1/2 md:translate-y-0 -translate-y-1/2 w-[20px] h-[20px]  rounded-full border-2 cursor-pointer flex items-center justify-center
-                             ${slotsKey?.visitSlots?.length > 0
-                ? "bg-[#73339B] border-[#73339B] p-[10px] "
-                : "bg-white border-gray-300 p-[10px]"
-              }`}
-          >
-            {slotsKey?.visitSlots?.length > 0 && (
-              <span className="text-white text-lg">
-                <IoMdCheckmark />
-              </span>
-            )}
-          </label>
+          )}
         </div>
-        {/* seller files */}
-        <div className=" relative cursor-pointer flex md:mb-0 mb-3">
-          <div
-            className=" w-full bg-white p-3 rounded-[12px] flex items-center flex-col"
-            onClick={() => {
-              if (!selectedProperty?._id) return toast.error("Select property");
-              else navigate(`/seller-file?id=${selectedProperty?._id}`);
-            }}
-          >
-            <div className="bg-[#000000] w-[30px] h-[30px] rounded-full p-1 flex items-center justify-center  shrink-0 mb-5 mt-3">
-              <MdFolderOpen className="text-white" />
-            </div>
-            <div className="text-center">
-              <h5 className="text-[#47525E] text-sm font-semibold">
-                {t("transactionOwner.sellerFiles")}
-              </h5>
-              <p className="text-[12px] text-[#47525E]">
-                {t("transactionOwner.documentsAdded", {
-                  count: selectedProperty?.sellerFilesCount || 0,
-                })}
-              </p>
-            </div>
-          </div>
-          <label
-            className={`absolute md:-top-2 md:-right-1 right-3 top-1/2 md:translate-y-0 -translate-y-1/2 w-[20px] h-[20px]  rounded-full border-2 cursor-pointer flex items-center justify-center
-                             ${+selectedProperty?.sellerFilesCount > 0
-                ? "bg-[#73339B] border-[#73339B] p-[10px] "
-                : "bg-white border-gray-300 p-[10px]"
-              }`}
-          >
-            {+selectedProperty?.sellerFilesCount > 0 && (
-              <span className="text-white text-lg">
-                <IoMdCheckmark />
-              </span>
-            )}
-          </label>
-        </div>
-        {/* invite */}
+      </div>
+      <div className="grid xl:grid-cols-5 lg:grid-cols-3  md:grid-cols-2 md:gap-3 gap-0 mb-6">
         <Dialog
           open={inviteModal}
           onClose={() => {
@@ -285,67 +291,6 @@ const ManageVisitSlot = ({
             </DialogPanel>
           </div>
         </Dialog>
-        <div className=" relative cursor-pointer flex md:mb-0 mb-3">
-          <div
-            className=" w-full bg-white p-3 rounded-[12px] flex items-center flex-col"
-            onClick={() => {
-              if (!selectedProperty?._id) return toast.error("Select property");
-              setInviteModal(true);
-            }}
-          >
-            <div className="bg-[#000000] w-[30px] h-[30px] rounded-full p-1 flex items-center justify-center  shrink-0 mb-5 mt-3">
-              <AiOutlineUser className="text-white" />
-            </div>
-            <div className="text-center">
-              <h5 className="text-[#47525E] text-sm font-semibold">
-                {t("transactionOwner.inviteLead")}
-              </h5>
-            </div>
-          </div>
-        </div>
-        {/* signing dates */}
-        <div className=" relative cursor-pointer flex md:mb-0 mb-3">
-          <div
-            className={`w-full bg-white p-3 rounded-[12px] flex items-center flex-col ${(offerStatus || applicationAccepted)?"":"cursor-not-allowed"}`}
-            onClick={() => {
-              if (!selectedProperty?._id) return toast.error("Select property");
-              if (offerStatus || applicationAccepted) {
-                openModal({
-                  title: "Manage signing slots",
-                  type: "signingSlots",
-                });
-              }
-
-            }}
-          >
-            <div className="bg-[#000000] w-[30px] h-[30px] rounded-full p-1 flex items-center justify-center  shrink-0 mb-5 mt-3">
-              <IoCalendarOutline className="text-white" />
-            </div>
-            <div className="text-center">
-              <h5 className="text-[#47525E] text-sm font-semibold">
-                {t("transactionOwner.setSigningDates")}
-              </h5>
-              <p className="text-[12px] text-[#47525E]">
-                {t("transactionOwner.slotOpened", {
-                  count: slotsKey.signingSlots?.length || 0,
-                })}
-              </p>
-            </div>
-          </div>
-          <label
-            className={`absolute md:-top-2 md:-right-1 right-3 top-1/2 md:translate-y-0 -translate-y-1/2 w-[20px] h-[20px]  rounded-full border-2 cursor-pointer flex items-center justify-center
-                         ${slotsKey.signingSlots?.length
-                ? "bg-[#73339B] border-[#73339B] p-[10px] "
-                : "bg-white border-gray-300 p-[10px]"
-              }`}
-          >
-            {true && (
-              <span className="text-white text-lg">
-                <IoMdCheckmark />
-              </span>
-            )}
-          </label>
-        </div>
         {/* home inventory */}
         {(selectedProperty?.propertyType == "rent" &&
           selectedProperty?.contractSigned) && (

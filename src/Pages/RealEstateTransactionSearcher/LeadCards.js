@@ -818,77 +818,6 @@ const LeadCards = ({
                             <span className="text-[#389D93] text-sm font-medium">{card?.propertyId?.identityVerified ? "Owner Identity Verified" : "Owner Identity Not Verified"}</span>
                           </div>
                         </div>
-                        <div className="border-t pt-2 px-4 my-2">
-                          <ul className="flex  ">
-                            {+card?.propertyId?.surface > 0 && (
-                              <li className="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
-                                <img
-                                  src="assets/img/prop/home.png"
-                                  className="h-[15px] w-[14px]"
-                                  alt="img"
-                                />
-                                {card?.propertyId?.surface} m2
-                              </li>
-                            )}
-                            {+card?.propertyId?.rooms > 0 && (
-                              <li className="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
-                                <img
-                                  src="assets/img/prop/bed.png"
-                                  className="h-[12px] w-[13px]"
-                                  alt="img"
-                                />
-                                {card?.propertyId?.rooms || 0}
-                              </li>
-                            )}
-                            {+card?.propertyId?.bathroom > 0 && (
-                              <li className="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
-                                <img
-                                  src="assets/img/bed.png"
-                                  className="h-[12px] w-[14px]"
-                                  alt="img"
-                                />
-                                {card?.propertyId?.bathroom || 0}
-                              </li>
-                            )}
-                            {card?.propertyId?.energy_efficient && (
-                              <li className="flex items-center gap-1 text-[#47525E] text-[13.33px]">
-                                <img
-                                  src="assets/img/header/bulb.png"
-                                  className=" w-[14px]"
-                                  alt="img"
-                                />
-                                DPE : {card?.propertyId?.energy_efficient}
-                              </li>
-                            )}
-                          </ul>
-                          {card?.propertyId?.propertyType === "rent" && (
-                            <div className="flex items-center gap-2 mt-1">
-                              <h3 className="text-[19px] font-semibold">
-                                {formatCurrency(
-                                  card?.propertyId?.propertyMonthlyCharges ||
-                                  15000
-                                )}{" "}
-                                €
-                              </h3>
-                            </div>
-                          )}
-                          {card?.propertyId?.propertyType === "sale" && (
-                            <div className="flex items-center gap-2 mt-1">
-                              <h3 className="text-[19px] font-semibold">
-                                {formatCurrency(card?.propertyId?.price)} €
-                              </h3>
-                              <span className="text-[#47525E] text-[13.33px]">
-                                {formatCurrency(
-                                  (
-                                    card?.propertyId?.price /
-                                    card?.propertyId?.surface
-                                  )?.toFixed(0)
-                                )}
-                                € /Sqm
-                              </span>
-                            </div>
-                          )}
-                        </div>
                         <div className="px-4 min-h-[60px]">
                           {/* {card?.funnelStatus} */}
                           <h5 className="text-[#47525E] text-[14px]">
@@ -2151,17 +2080,20 @@ const LeadCards = ({
                           </button>
                         )}
                       </div>
-                      {card?.funnel?.youtubeUrl &&
-                        <> <h4 className="text-[#47525E] text-[14px] font-[600] text-center mb-3">
-                          Current step training
-                        </h4>  <TrainingVideoCard
+                      {card?.funnel?.youtubeUrl && (
+                        <div className="border-t border-[#E2E8F0] pt-4 mt-4">
+                          <h4 className="text-[#47525E] text-[14px] font-[600] text-center mb-3">
+                            Current step training
+                          </h4>
+                          <TrainingVideoCard
                             key={i}
                             title={card?.funnel?.title}
                             duration={card?.funnel?.duration}
                             videoId={videoId}
                             thumbnail={methodModel.userImg(card?.funnel?.image)}
-                          /></>
-                      }
+                          />
+                        </div>
+                      )}
                       <div className="cursor-pointer text-center underline" onClick={(e) => history("/training")}>More Trainings</div>
                     </div>
                   </>

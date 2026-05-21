@@ -318,9 +318,9 @@ const RealEstateTransactionOwner = () => {
                     </p>
                   </div>
                   <div>
-                    <button className="text-white bg-[#976DD0] rounded-[35px] px-2 py-2 w-[140px] text-[14px]">
+                    <Link to="/marketplace" className="inline-flex justify-center text-white bg-[#976DD0] rounded-[35px] px-2 py-2 w-[140px] text-[14px]">
                       {t("transactionOwner.seeServices")}
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -1550,19 +1550,26 @@ export default function BuyerCard({
           } lg:col-span-6 col-span-full bg-white  border border-[#BEBEBE] rounded-[12px] lg:mb-0 mb-4`}
       >
         <div className="relative">
-           <div className=" absolute -top-3 -left-5">
-            {card?.buyerId?.image ? <img
-              alt=""
-              src={methodModel.userImg(card?.buyerId?.image)}
-              className="w-[50px] h-[50px] rounded-full object-cover shrink-0"
-            /> : <div className="w-[50px] bg-[#976DD0] h-[50px] flex justify-center items-center rounded-full object-cover shrink-0 text-[#FFF] sm:text-[24px] text-[22px] font-bold ">
-              <span>{card.buyerId?.firstName?.trim().charAt(0).toUpperCase()}{card.buyerId?.lastName?.trim().charAt(0).toUpperCase()}</span></div>}
-          </div>
-          <div className="flex justify-between py-2 ">
-            <div className="px-10 ">
-              <h3 className="text-[#47525E] text-[14px] capitalize">
-                {card.buyerId?.fullName}
-              </h3>
+          <div className="flex items-center justify-between gap-4 px-6 py-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-[#976DD0] flex items-center justify-center text-[#FFF] text-[24px] font-bold shrink-0">
+                {card?.buyerId?.image ? (
+                  <img
+                    alt=""
+                    src={methodModel.userImg(card?.buyerId?.image)}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>
+                    {card.buyerId?.firstName?.trim().charAt(0).toUpperCase()}
+                    {card.buyerId?.lastName?.trim().charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-[#47525E] text-[14px] capitalize">
+                  {card.buyerId?.fullName}
+                </h3>
               {card.buyerId?.city && (
                 <p className="text-[#47525E] text-[14px]">
                   {card.buyerId?.city}, {card.buyerId?.country}
@@ -1579,28 +1586,23 @@ export default function BuyerCard({
                 )}
               </span>
             </div>
+          </div>
 
-            <div className="flex justify-content-end ml-auto me-4">
+            <div className="relative ml-auto">
               <Menu>
-                <MenuButton className="h-[20px]">
-                  <RxDotsHorizontal />
+                <MenuButton className="h-[36px] w-[36px] flex items-center justify-center rounded-full hover:bg-slate-100 transition">
+                  <RxDotsHorizontal className="text-xl text-slate-700" />
                 </MenuButton>
-                <MenuItems className="bg-white border p-2 px-4 rounded-[12px]">
-                  <MenuItem>
-                    <Link className="block text-[14px] py-1" to="/profile/Account">
-                      Settings
-                    </Link>
+                <MenuItems className="absolute right-0 mt-2 w-52 z-50 bg-white border border-[#E2E8F0] p-2 rounded-[12px] shadow-lg">
+                  <MenuItem as="button" className="block w-full text-left text-[14px] py-2 px-3 rounded-md hover:bg-slate-100" onClick={() => handleChat(card)}>
+                    Message
                   </MenuItem>
-                  <MenuItem>
-                    <Link className="block text-[14px] py-1" to="/help">
-                      Support
-                    </Link>
+                  <MenuItem as="button" className="block w-full text-left text-[14px] py-2 px-3 rounded-md hover:bg-slate-100" onClick={() => { if (!blurCard || !blurCardPlan) openModal(); }}>
+                    Transaction History
                   </MenuItem>
-                  {/* <MenuItem>
-                    <a className="block text-[14px] py-1" href="/license">
-                      License
-                    </a>
-                  </MenuItem> */}
+                  <MenuItem as="button" disabled={card?.funnelStatus == "cancelled"} className={`block w-full text-left text-[14px] py-2 px-3 rounded-md ${card?.funnelStatus == "cancelled" ? "text-slate-400 cursor-not-allowed" : "hover:bg-slate-100"}`} onClick={() => { if (card?.funnelStatus != "cancelled" && (!blurCard || !blurCardPlan)) setIsOpencancel(true); }}>
+                    {card?.funnelStatus == "cancelled" ? "Cancelled" : "Cancel"}
+                  </MenuItem>
                 </MenuItems>
               </Menu>
             </div>
@@ -1622,92 +1624,40 @@ export default function BuyerCard({
 
           </div>
 
-          <div class="border-t pt-2 px-4 my-2">
-            <ul class="flex  ">
-              {property?.surface > 0 ? (
-                <>
-                  <li class="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
-                    <img
-                      src="assets/img/prop/home.png"
-                      class="h-[15px] w-[14px]"
-                      alt="img"
-                    />
-                    {property?.surface} m2
-                  </li>
-                </>
-              ) : (
-                <></>
-              )}
+          <h4 className="text-[#47525E] font-semibold pb-2 border-b-[1px] border-[#976DD0] pt-4 mx-4">
+            {capLetter(
+              card?.propertyType == "rent" ? "Rental" : card?.propertyType
+            )}{" "}
+            funnel
+          </h4>
+          <FunnelIcons card={card} />
 
-              {property?.rooms > 0 ? (
-                <>
-                  <li class="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
-                    <img
-                      src="assets/img/prop/bed.png"
-                      class="h-[12px] w-[13px]"
-                      alt="img"
-                    />
-                    {property?.rooms || 0}
-                  </li>
-                </>
-              ) : (
-                <></>
-              )}
-
-              {(property?.bathroom || property?.bathrooms) > 0 ? (
-                <>
-                  <li class="flex items-center gap-1 text-[#47525E] text-[13.33px] me-4">
-                    <img
-                      src="assets/img/bed.png"
-                      class="h-[12px] w-[14px]"
-                      alt="img"
-                    />
-                    {property?.bathroom || property?.bathrooms || 0}
-                  </li>
-                </>
-              ) : (
-                <></>
-              )}
-            </ul>
-            <div class="flex items-center gap-2 mt-1">
-              <h3 class="text-[19px] font-semibold">
-                {pipeModel.number(property?.price)} €
-              </h3>
-              <span class="text-[#47525E] text-[13.33px]">
-                {pipeModel.number(
-                  Number(property?.price) /
-                  (property?.surface || 1)
-                )}
-                € /Sqm
+          <div className="px-4 mt-3">
+            <h5 className="text-[#47525E] text-[14px]">
+              Status:{" "}
+              <span className="text-[#47525E] font-[600]">
+                {currentStatus(card?.funnelStatus, card)}
               </span>
-            </div>
-          </div>
-          <div className="px-4 min-h-[60px]">
-            <div className="mt-4">
-              {/* {card?.funnelStatus} */}
-              <h5 className="text-[#47525E] text-[14px]">
-                Status:{" "}
+            </h5>
+            {(card?.funnelStatus == "renter assigned" ||
+              card?.funnelStatus == "transfered" ||
+              card?.funnelStatus == "renter transfered") ? null : (
+              <h5 className="text-[#47525E] text-[14px] ">
+                Next action:{" "}
                 <span className="text-[#47525E] font-[600]">
-                  {currentStatus(card?.funnelStatus, card)}
+                  {nextStatus(card?.funnelStatus, card)}
                 </span>
               </h5>
+            )}
+          </div>
+
+          <div className="px-4 min-h-[60px]">
+            <div className="mt-4">
               {card?.funnelStatus == "offer sent" && (
                 <h5 className="text-[#47525E] text-[14px] ">
                   Offer amount:{" "}
                   <span className="text-[#47525E] font-[600]">
                     {card?.makeOfferAmount}
-                  </span>
-                </h5>
-              )}
-              {card?.funnelStatus == "renter assigned" ||
-                card?.funnelStatus == "transfered" ||
-                card?.funnelStatus == "renter transfered" ? (
-                <></>
-              ) : (
-                <h5 className="text-[#47525E] text-[14px] ">
-                  Next action:{" "}
-                  <span className="text-[#47525E] font-[600]">
-                    {nextStatus(card?.funnelStatus, card)}
                   </span>
                 </h5>
               )}
@@ -1732,7 +1682,7 @@ export default function BuyerCard({
                   <h5 className="text-[#47525E] text-[14px]">
                     Suspensive conditions:{" "}
                     <span className="font-[600] ms-1">
-                      {formatCurrency(card.buyerPrice.conditions.length)}
+                      {formatCurrency(card?.buyerPrice.conditions.length)}
                     </span>
                   </h5>
                 )}
@@ -1758,52 +1708,13 @@ export default function BuyerCard({
               )}
             </div>
           </div>
-          <h4 className="text-[#47525E] font-semibold pb-2 border-b-[1px] border-[#976DD0] pt-4 mx-4">
-            {capLetter(
-              card?.propertyType == "rent" ? "Rental" : card?.propertyType
-            )}{" "}
-            funnel
-          </h4>
-          <FunnelIcons card={card} />
 
           {!card.isTransferred ? (
             <>
               <div className="flex gap-3 p-4 flex-wrap justify-center">
                 {Actions}
-                <button
-                  onClick={() => {
-                    handleChat(card);
-                  }}
-                  className="text-[#47525E] border border-[#8492A6] hover:bg-[#8492A6] hover:text-white transition px-4 py-1 rounded-[35px] text-[14px]  "
-                >
-                  Message
-                </button>
-                <button
-                  onClick={() => {
-                    if (!blurCard || !blurCardPlan) openModal();
-                  }}
-                  className="text-[#47525E] border border-[#8492A6] hover:bg-[#8492A6] hover:text-white transition px-4 py-1 rounded-[35px] text-[14px]  "
-                >
-                  Transaction History
-                  {/* Message */}
-                </button>
-                {!card?.finalSale && (
-                  <button
-                    className={`text-[#${card?.funnelStatus == "cancelled" ? "21C6BE" : "47525E"
-                      }] border border-[#8492A6] hover:bg-[#8492A6] hover:text-white transition px-4 py-1 rounded-[35px] text-[14px]`}
-                    disabled={card?.funnelStatus == "cancelled"}
-                    onClick={() => {
-                      if (
-                        card?.funnelStatus != "cancelled" &&
-                        (!blurCard || !blurCardPlan)
-                      )
-                        setIsOpencancel(true);
-                    }}
-                  >
-                    {card?.funnelStatus == "cancelled" ? "Cancelled" : "Cancel"}
-                  </button>
-                )}
-                <Dialog
+              </div>
+              <Dialog
                   open={isOpencancel}
                   onClose={() => setIsOpencancel(false)}
                   className="relative z-[9999]"
@@ -1837,26 +1748,24 @@ export default function BuyerCard({
                     </DialogPanel>
                   </div>
                 </Dialog>
-              </div>
             </>
           ) : (
             <></>
           )}
 
           {card?.funnel?.youtubeUrl && (
-            <>
-              {" "}
+            <div className="border-t border-[#E2E8F0] pt-4 mt-4">
               <h4 className="text-[#47525E] text-[14px] font-[600] text-center mb-3">
                 Current step training
-              </h4>{" "}
+              </h4>
               <TrainingVideoCard
                 key={i}
                 title={card?.funnel?.title}
                 duration={card?.funnel?.duration}
                 videoId={videoId}
                 thumbnail={methodModel.userImg(card?.funnel?.image)}
-              />{" "}
-            </>
+              />
+            </div>
           )}
           <div
             className="cursor-pointer text-center underline mb-4"

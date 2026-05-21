@@ -66,6 +66,7 @@ const PropLeadSidebar = ({
         <div className="lg:col-span-4 md:col-span-6 col-span-12 md:border-r border-[#C9C9C9] md:pe-8 md:h-[800px] overflow-auto">
             <div className="bg-white py-3 rounded-[8px] px-5">
                 <input
+                    className="w-full"
                     value={name}
                     onChange={(e) => textChange("name", e.target.value)}
                     type="search"
