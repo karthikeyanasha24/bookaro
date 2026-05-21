@@ -1547,9 +1547,9 @@ export default function BuyerCard({
       />
       <div
         className={`${blurCard || blurCardPlan ? "blur-sm" : ""
-          } lg:col-span-6 col-span-full bg-white  border border-[#BEBEBE] rounded-[12px] lg:mb-0 mb-4`}
+          } lg:col-span-6 col-span-full bg-white border border-[#BEBEBE] rounded-[12px] flex flex-col h-full lg:mb-0 mb-4`}
       >
-        <div className="relative">
+        <div className="relative flex flex-1 flex-col min-h-0">
           <div className="flex items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-[#976DD0] flex items-center justify-center text-[#FFF] text-[24px] font-bold shrink-0">
@@ -1651,7 +1651,7 @@ export default function BuyerCard({
             )}
           </div>
 
-          <div className="px-4 min-h-[60px]">
+          <div className="px-4">
             <div className="mt-4">
               {card?.funnelStatus == "offer sent" && (
                 <h5 className="text-[#47525E] text-[14px] ">

@@ -939,9 +939,9 @@ export default function RenterCard({
       />
       <div
         className={`${blurCard || blurCardPlan ? "blur-sm" : ""
-          } lg:col-span-6 col-span-full bg-white  border border-[#BEBEBE] rounded-[12px]`}
+          } lg:col-span-6 col-span-full bg-white border border-[#BEBEBE] rounded-[12px] flex flex-col h-full`}
       >
-        <div className="relative">
+        <div className="relative flex flex-1 flex-col min-h-0">
           <div className="flex items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-[#976DD0] flex items-center justify-center text-[#FFF] text-[24px] font-bold shrink-0">
@@ -1026,7 +1026,7 @@ export default function RenterCard({
             )}
           </div>
 
-          <div className="px-4 min-h-[60px]">
+          <div className="px-4">
             <div className="mt-4">
               {(activePlan?.activePlan?.[0]?.otherDetails?.leadsLevel?.key == "custom" && (activePlan?.activePlan?.[0]?.otherDetails?.leadsLevel?.value >= i + 1) || activePlan?.activePlan?.[0]?.otherDetails?.leadsLevel?.key == "unlimited") && (
                 <h5 className="text-[#47525E] flex gap-1 items-center text-[14px]">
