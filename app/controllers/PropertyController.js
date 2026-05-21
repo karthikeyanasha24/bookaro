@@ -100,17 +100,88 @@ function processArrayField(fieldData) {
   }
 }
 
+const GUEST_PROSPECT_IMAGES = [
+  "abdullah-ali-1w9I6H4aftw-unsplash.jpg",
+  "ahmet-sali-lqqpMXO_8Tc-unsplash.jpg",
+  "alex-sheldon-0ncyUZzWqmQ-unsplash.jpg",
+  "alex-sheldon-acRdRBYEZbM-unsplash.jpg",
+  "alex-suprun-ZHvM3XIOHoE-unsplash.jpg",
+  "andrey-k-Oj8GEnX5EMA-unsplash.jpg",
+  "auston-mtabane-7Zn1SrNzyR8-unsplash.jpg",
+  "christian-buehner-84E44EdD18o-unsplash.jpg",
+  "christian-buehner-JQFHdpOKz2k-unsplash.jpg",
+  "compagnons-a19OVaa2rzA-unsplash.jpg",
+  "gift-habeshaw-k_R6MvBjtMM-unsplash.jpg",
+  "gio-shravan-nMWqNf1r5TI-unsplash.jpg",
+  "hannah-busing-ff5K3-kYPHA-unsplash.jpg",
+  "jessica-felicio-_cvwXhGqG-o-unsplash.jpg",
+  "jim-hatch--920_CMaW88-unsplash.jpg",
+  "matthew-hamilton-tNCH0sKSZbA-unsplash.jpg",
+  "nicolas-horn-MTZTGvDsHFY-unsplash.jpg",
+  "seth-doyle-uJ8LNVCBjFQ-unsplash.jpg",
+  "shahin-khalaji-qTMRoHOHu0U-unsplash.jpg",
+  "sherise-van-dyk-X2OpvAPWSFE-unsplash.jpg"
+];
+
+const buildGuestProspectImage = (req, filename) => {
+  const origin = process.env.BACK_WEB_URL || "http://localhost:6089";
+  return encodeURI(`${origin}/assets/img/Prospect img/${filename}`);
+};
+
+const buildGuestUserLeads = (req, imageFiles) =>
+  imageFiles.map((filename) => ({ profileImage: buildGuestProspectImage(req, filename) }));
+
+const buildGuestPropertyImage = (req, filePath) => {
+  const origin = process.env.BACK_WEB_URL || "http://localhost:6089";
+  const path = filePath.startsWith("/") ? filePath : `/${filePath}`;
+  return encodeURI(`${origin}${path}`);
+};
+
+const buildGuestProperties = (req) => {
+  const saleLeadFiles = GUEST_PROSPECT_IMAGES.slice(0, 10);
+  const rentLeadFiles = GUEST_PROSPECT_IMAGES.slice(10, 20);
+  return [
+    {
+      _id: "guest-prop-sale",
+      propertyTitle: "Appartement 3 pièces - Paris 11e",
+      address: "12 Rue de la Paix, Paris",
+      propertyType: "sale",
+      images: [{ file: buildGuestPropertyImage(req, "assets/img/spacejoy-4xRP0Ajk9ys-unsplash.jpg") }],
+      totalLeads: 10,
+      userImages: saleLeadFiles.slice(0, 3).map((filename) => buildGuestProspectImage(req, filename)),
+      userLeads: buildGuestUserLeads(req, saleLeadFiles),
+      visitBookedCount: 4,
+      activityIndicatorCount: 2,
+      interestUpdatedTime: new Date(),
+      surface: "120",
+      rooms: "4",
+      bedrooms: "2",
+      price: 890000,
+    },
+    {
+      _id: "guest-prop-rent",
+      propertyTitle: "Studio 28 m² - Lille Centre",
+      address: "4 Rue de la Gare, Lille",
+      propertyType: "rent",
+      images: [{ file: buildGuestPropertyImage(req, "assets/img/spacejoy-85pCvDWDMmI-unsplash.jpg") }],
+      totalLeads: 10,
+      userImages: rentLeadFiles.slice(0, 3).map((filename) => buildGuestProspectImage(req, filename)),
+      userLeads: buildGuestUserLeads(req, rentLeadFiles),
+      visitBookedCount: 2,
+      activityIndicatorCount: 1,
+      interestUpdatedTime: new Date(),
+      surface: "28",
+      rooms: "1",
+      bedrooms: "0",
+      propertyMonthlyCharges: 2500,
+    },
+  ];
+};
+
 module.exports = {
   add: async (req, res) => {
+    const data = req.body;
     try {
-      let data = req.body;
-      if (!data.type && !data.propertyType && !data.address && !data.country && !data.propertyTitle) {
-        return res.status(500).json({
-          success: false,
-          message: constants.onBoarding.PAYLOAD_MISSING,
-        });
-      }
-
       const now = new Date();
 
       const startOfMonth = new Date(
@@ -3356,6 +3427,32 @@ module.exports = {
       let page = parseInt(req.query.page) || 1;
       let count = parseInt(req.query.count) || 10;
       let query = {};
+      const isGuestRequest =
+        req.isGuest === true ||
+        req.query.guest === "true" ||
+        req.query.guest === "1" ||
+        req.headers["x-guest-mode"] === "true" ||
+        req.headers["x-guest-mode"] === "1" ||
+        userId === "guest-user-000";
+
+      if (isGuestRequest) {
+        const guestProperties = buildGuestProperties(req);
+        const filteredProperties = propertyType
+          ? guestProperties.filter((property) => property.propertyType === propertyType)
+          : guestProperties;
+        const startIndex = (page - 1) * count;
+        const pagedProperties = filteredProperties.slice(startIndex, startIndex + count);
+
+        return res.status(200).json({
+          success: true,
+          message: "Guest properties loaded successfully.",
+          Data: pagedProperties,
+          total: filteredProperties.length,
+          mockData: true,
+          isMock: true,
+        });
+      }
+
       if (!userId) {
         return res.status(400).json({
           success: false,
@@ -3381,7 +3478,7 @@ module.exports = {
       }
 
       const findProperties = await db.property.find(query)
-        .select('id images propertyTitle address propertyType interestUpdatedTime visitSlots sellerFiles surface signingSlots homeInventorySlots autoInvite visitBookedCount contractSigned activityIndicatorCount')
+        .select('id images propertyTitle address propertyType interestUpdatedTime visitSlots sellerFiles surface rooms bedrooms price propertyMonthlyCharges signingSlots homeInventorySlots autoInvite visitBookedCount contractSigned activityIndicatorCount')
         .sort(sortCriteria)
         .limit(count)
         .skip((page - 1) * count)

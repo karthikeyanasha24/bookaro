@@ -1068,6 +1068,14 @@ exports.initializeSocket = function (startServer) {
 
     socket.on("activityIndicatorCount", async (data) => {
       if (data.propertyId) {
+        if (!mongoose.isValidObjectId(data.propertyId)) {
+          io.emit("activityIndicatorCount", {
+            status: 200,
+            data: { message: "Guest activity count ignored", },
+          });
+          return;
+        }
+
         const findProperty = await db.property.findOne({ _id: data.propertyId, isDeleted: false })
         if (findProperty) {
           await db.property.updateOne(

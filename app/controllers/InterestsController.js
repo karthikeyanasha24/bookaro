@@ -2,348 +2,241 @@ const db = require("../models");
 const Emails = require("../Emails/onBoarding");
 const visitInvite = require("../Emails/visitInvite");
 
-const buildGuestInterestCards = () => {
-  const buyer = { _id: "guest-user-000", fullName: "Bookaroo Guest" };
+const buildGuestProspectImage = (req, filename) => {
+  const origin = process.env.BACK_WEB_URL || "http://localhost:6089";
+  return encodeURI(`${origin}/assets/img/Prospect img/${filename}`);
+};
+
+const buildGuestLeadUsers = (req) => {
+  const images = [
+    "abdullah-ali-1w9I6H4aftw-unsplash.jpg",
+    "ahmet-sali-lqqpMXO_8Tc-unsplash.jpg",
+    "alex-sheldon-0ncyUZzWqmQ-unsplash.jpg",
+    "alex-sheldon-acRdRBYEZbM-unsplash.jpg",
+    "alex-suprun-ZHvM3XIOHoE-unsplash.jpg",
+    "andrey-k-Oj8GEnX5EMA-unsplash.jpg",
+    "auston-mtabane-7Zn1SrNzyR8-unsplash.jpg",
+    "christian-buehner-84E44EdD18o-unsplash.jpg",
+    "christian-buehner-JQFHdpOKz2k-unsplash.jpg",
+    "compagnons-a19OVaa2rzA-unsplash.jpg",
+    "gift-habeshaw-k_R6MvBjtMM-unsplash.jpg",
+    "gio-shravan-nMWqNf1r5TI-unsplash.jpg",
+    "hannah-busing-ff5K3-kYPHA-unsplash.jpg",
+    "jessica-felicio-_cvwXhGqG-o-unsplash.jpg",
+    "jim-hatch--920_CMaW88-unsplash.jpg",
+    "matthew-hamilton-tNCH0sKSZbA-unsplash.jpg",
+    "nicolas-horn-MTZTGvDsHFY-unsplash.jpg",
+    "seth-doyle-uJ8LNVCBjFQ-unsplash.jpg",
+    "shahin-khalaji-qTMRoHOHu0U-unsplash.jpg",
+    "sherise-van-dyk-X2OpvAPWSFE-unsplash.jpg",
+  ];
+
+  const names = [
+    "Nora Laurent",
+    "Luc Martin",
+    "Emma Leclerc",
+    "Paul Dubois",
+    "Chloe Moreau",
+    "Hugo Bernard",
+    "Lea Garnier",
+    "Theo Petit",
+    "Julie Rousseau",
+    "Marc Faure",
+    "Sophie Durand",
+    "Julien Morel",
+    "Camille Petit",
+    "Antoine Girard",
+    "Ines Lefevre",
+    "Sebastien Roy",
+    "Manon Lambert",
+    "Alexandre Caron",
+    "Claire Moulin",
+    "Thomas Barbier",
+  ];
+
+  const cities = [
+    "Paris",
+    "Lyon",
+    "Bordeaux",
+    "Nice",
+    "Toulouse",
+    "Marseille",
+    "Nantes",
+    "Strasbourg",
+    "Montpellier",
+    "Lille",
+    "Rouen",
+    "Aix-en-Provence",
+    "Dijon",
+    "Nancy",
+    "Rennes",
+    "Grenoble",
+    "Avignon",
+    "Angers",
+    "Metz",
+    "Perpignan",
+  ];
+
+  return images.map((filename, index) => ({
+    _id: `guest-user-${String(index + 1).padStart(3, "0")}`,
+    fullName: names[index],
+    image: buildGuestProspectImage(req, filename),
+    city: cities[index],
+    country: "France",
+  }));
+};
+
+const buildGuestInterestCards = (req) => {
+  const guestBuyers = buildGuestLeadUsers(req);
   const owner = { fullName: "Bookaroo Owner" };
 
-  const baseSaleProperties = [
-    {
-      propertyTitle: "Maison Lucie",
-      city: "Paris",
-      country: "France",
-      zipcode: "75011",
-      propertyType: "sale",
-      surface: 120,
-      rooms: 4,
-      bathroom: 2,
-      energy_efficient: "C",
-      price: 890000,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-1.jpg" }],
-      identityVerified: true,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "Appartement Victor",
-      city: "Lyon",
-      country: "France",
-      zipcode: "69006",
-      propertyType: "sale",
-      surface: 85,
-      rooms: 3,
-      bathroom: 1,
-      energy_efficient: "B",
-      price: 540000,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-2.jpg" }],
-      identityVerified: true,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "Loft Camille",
-      city: "Marseille",
-      country: "France",
-      zipcode: "13001",
-      propertyType: "sale",
-      surface: 105,
-      rooms: 3,
-      bathroom: 2,
-      energy_efficient: "D",
-      price: 650000,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-3.jpg" }],
-      identityVerified: false,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "Villa Anna",
-      city: "Nice",
-      country: "France",
-      zipcode: "06000",
-      propertyType: "sale",
-      surface: 145,
-      rooms: 5,
-      bathroom: 3,
-      energy_efficient: "B",
-      price: 1290000,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-4.jpg" }],
-      identityVerified: true,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "Maison Jules",
-      city: "Bordeaux",
-      country: "France",
-      zipcode: "33000",
-      propertyType: "sale",
-      surface: 170,
-      rooms: 6,
-      bathroom: 3,
-      energy_efficient: "A",
-      price: 1450000,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-5.jpg" }],
-      identityVerified: false,
-      addedBy: owner,
-    },
-  ];
+  const saleProperty = {
+    _id: "guest-prop-sale",
+    propertyTitle: "Appartement 3 pièces - Paris 11e",
+    city: "Paris",
+    country: "France",
+    zipcode: "75011",
+    propertyType: "sale",
+    surface: 120,
+    rooms: 4,
+    bathroom: 2,
+    energy_efficient: "C",
+    price: 890000,
+    images: [{ file: "/assets/img/spacejoy-4xRP0Ajk9ys-unsplash.jpg" }],
+    identityVerified: true,
+    addedBy: owner,
+  };
 
-  const baseRentProperties = [
-    {
-      propertyTitle: "Studio Jeanne",
-      city: "Paris",
-      country: "France",
-      zipcode: "75010",
-      propertyType: "rent",
-      surface: 28,
-      rooms: 1,
-      bathroom: 1,
-      energy_efficient: "C",
-      propertyMonthlyCharges: 1450,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-6.jpg" }],
-      identityVerified: true,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "T2 Clara",
-      city: "Lille",
-      country: "France",
-      zipcode: "59000",
-      propertyType: "rent",
-      surface: 48,
-      rooms: 2,
-      bathroom: 1,
-      energy_efficient: "B",
-      propertyMonthlyCharges: 1850,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-7.jpg" }],
-      identityVerified: true,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "Appartement Henri",
-      city: "Nantes",
-      country: "France",
-      zipcode: "44000",
-      propertyType: "rent",
-      surface: 65,
-      rooms: 3,
-      bathroom: 1,
-      energy_efficient: "D",
-      propertyMonthlyCharges: 2200,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-8.jpg" }],
-      identityVerified: false,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "T3 Elise",
-      city: "Toulouse",
-      country: "France",
-      zipcode: "31000",
-      propertyType: "rent",
-      surface: 78,
-      rooms: 3,
-      bathroom: 2,
-      energy_efficient: "B",
-      propertyMonthlyCharges: 2550,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-9.jpg" }],
-      identityVerified: true,
-      addedBy: owner,
-    },
-    {
-      propertyTitle: "Appartement Marc",
-      city: "Strasbourg",
-      country: "France",
-      zipcode: "67000",
-      propertyType: "rent",
-      surface: 92,
-      rooms: 4,
-      bathroom: 2,
-      energy_efficient: "A",
-      propertyMonthlyCharges: 3200,
-      images: [{ file: "assets/img/dashboard/attractivity/attractivity-10.jpg" }],
-      identityVerified: false,
-      addedBy: owner,
-    },
-  ];
+  const rentProperty = {
+    _id: "guest-prop-rent",
+    propertyTitle: "Studio 28 m² - Lille Centre",
+    city: "Lille",
+    country: "France",
+    zipcode: "59000",
+    propertyType: "rent",
+    surface: 28,
+    rooms: 1,
+    bathroom: 1,
+    energy_efficient: "C",
+    propertyMonthlyCharges: 1450,
+    images: [{ file: "/assets/img/spacejoy-85pCvDWDMmI-unsplash.jpg" }],
+    identityVerified: true,
+    addedBy: owner,
+  };
 
-  return [
+  const saleFunnelSteps = [
     {
-      _id: "guest-interest-sale-1",
-      buyerId: buyer,
-      propertyId: baseSaleProperties[0],
-      propertyType: "sale",
       funnelStatus: "interest sent",
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 3,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        title: "Visit the property",
-        image: "assets/img/dashboard/attractivity/attractivity-1.jpg",
-        duration: "2:15",
-      },
+      title: "Interest sent",
+      image: "assets/img/dashboard/attractivity/attractivity-1.jpg",
+      duration: "2:15",
     },
     {
-      _id: "guest-interest-sale-2",
-      buyerId: buyer,
-      propertyId: baseSaleProperties[1],
-      propertyType: "sale",
       funnelStatus: "invite user for a visit",
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 5,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
-        title: "Next steps for visit",
-        image: "assets/img/dashboard/attractivity/attractivity-2.jpg",
-        duration: "3:00",
-      },
+      title: "Invite user for a visit",
+      image: "assets/img/dashboard/attractivity/attractivity-2.jpg",
+      duration: "3:00",
     },
     {
-      _id: "guest-interest-sale-3",
-      buyerId: buyer,
-      propertyId: baseSaleProperties[2],
-      propertyType: "sale",
-      funnelStatus: "visit accept by user",
-      finalVisitDate: { date: new Date().toISOString(), from: "14:00", to: "15:00" },
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 4,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=oUFJJNQGwhk",
-        title: "Preparing for your visit",
-        image: "assets/img/dashboard/attractivity/attractivity-3.jpg",
-        duration: "2:40",
-      },
-    },
-    {
-      _id: "guest-interest-sale-4",
-      buyerId: buyer,
-      propertyId: baseSaleProperties[3],
-      propertyType: "sale",
-      funnelStatus: "offer sent",
-      makeOfferAmount: 1180000,
-      buyerPrice: {
-        amount: 1180000,
-        validity_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-        move_in: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        fundingType: ["Bank Loan"],
-        conditions: ["Obtaining a bank loan"],
-      },
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 6,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=oqmR3J2VeL0",
-        title: "How to place your offer",
-        image: "assets/img/dashboard/attractivity/attractivity-4.jpg",
-        duration: "1:55",
-      },
-    },
-    {
-      _id: "guest-interest-sale-5",
-      buyerId: buyer,
-      propertyId: baseSaleProperties[4],
-      propertyType: "sale",
-      funnelStatus: "contract signed by user",
-      ownerPrice: 1450000,
-      finalSale: true,
-      status: "active",
-      interestStatus: "completed",
-      totalLeads: 2,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=VYOjWnS4cMY",
-        title: "What happens after signing",
-        image: "assets/img/dashboard/attractivity/attractivity-5.jpg",
-        duration: "2:30",
-      },
-    },
-    {
-      _id: "guest-interest-rent-1",
-      buyerId: buyer,
-      propertyId: baseRentProperties[0],
-      propertyType: "rent",
-      funnelStatus: "interest sent",
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 8,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=2vjPBrBU-TM",
-        title: "Renting made easy",
-        image: "assets/img/dashboard/attractivity/attractivity-6.jpg",
-        duration: "2:24",
-      },
-    },
-    {
-      _id: "guest-interest-rent-2",
-      buyerId: buyer,
-      propertyId: baseRentProperties[1],
-      propertyType: "rent",
-      funnelStatus: "invite user for a visit",
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 7,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=lW9bG2Sgm_Y",
-        title: "Scheduling your rental visit",
-        image: "assets/img/dashboard/attractivity/attractivity-7.jpg",
-        duration: "2:10",
-      },
-    },
-    {
-      _id: "guest-interest-rent-3",
-      buyerId: buyer,
-      propertyId: baseRentProperties[2],
-      propertyType: "rent",
       funnelStatus: "visit hosted",
-      finalVisitDate: { date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), from: "11:00", to: "12:00" },
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 5,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=3tmd-ClpJxA",
-        title: "After the visit",
-        image: "assets/img/dashboard/attractivity/attractivity-8.jpg",
-        duration: "3:05",
-      },
+      title: "Visit hosted",
+      image: "assets/img/dashboard/attractivity/attractivity-3.jpg",
+      duration: "2:40",
     },
     {
-      _id: "guest-interest-rent-4",
-      buyerId: buyer,
-      propertyId: baseRentProperties[3],
-      propertyType: "rent",
       funnelStatus: "offer sent",
-      makeOfferAmount: 2500,
-      buyerPrice: {
-        amount: 2500,
-        validity_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        move_in: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
-        fundingType: ["Bank Transfer"],
-        conditions: ["No prior debt"],
-      },
-      status: "active",
-      interestStatus: "pending",
-      totalLeads: 11,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        title: "Rent offer process",
-        image: "assets/img/dashboard/attractivity/attractivity-9.jpg",
-        duration: "2:12",
-      },
+      title: "Offer sent",
+      image: "assets/img/dashboard/attractivity/attractivity-4.jpg",
+      duration: "1:55",
     },
     {
-      _id: "guest-interest-rent-5",
-      buyerId: buyer,
-      propertyId: baseRentProperties[4],
-      propertyType: "rent",
-      funnelStatus: "renter assigned",
-      status: "active",
-      interestStatus: "completed",
-      totalLeads: 13,
-      funnel: {
-        youtubeUrl: "https://www.youtube.com/watch?v=JGwWNGJdvx8",
-        title: "Welcome to your new home",
-        image: "assets/img/dashboard/attractivity/attractivity-10.jpg",
-        duration: "2:57",
-      },
+      funnelStatus: "contract signed by user",
+      title: "Contract signed",
+      image: "assets/img/dashboard/attractivity/attractivity-5.jpg",
+      duration: "2:30",
     },
   ];
+
+  const rentFunnelSteps = [
+    {
+      funnelStatus: "interest sent",
+      title: "Interest sent",
+      image: "assets/img/dashboard/attractivity/attractivity-6.jpg",
+      duration: "2:24",
+    },
+    {
+      funnelStatus: "invite user for a visit",
+      title: "Invite user for a visit",
+      image: "assets/img/dashboard/attractivity/attractivity-7.jpg",
+      duration: "2:10",
+    },
+    {
+      funnelStatus: "visit hosted",
+      title: "Visit hosted",
+      image: "assets/img/dashboard/attractivity/attractivity-8.jpg",
+      duration: "3:05",
+    },
+    {
+      funnelStatus: "offer sent",
+      title: "Offer sent",
+      image: "assets/img/dashboard/attractivity/attractivity-9.jpg",
+      duration: "2:12",
+    },
+    {
+      funnelStatus: "renter assigned",
+      title: "Renter assigned",
+      image: "assets/img/dashboard/attractivity/attractivity-10.jpg",
+      duration: "2:57",
+    },
+  ];
+
+  const saleCards = Array.from({ length: 10 }, (_, index) => {
+    const step = saleFunnelSteps[index % saleFunnelSteps.length];
+    const buyer = guestBuyers[index];
+    return {
+      _id: `guest-interest-sale-${index + 1}`,
+      buyerId: buyer,
+      propertyId: saleProperty,
+      propertyType: "sale",
+      funnelStatus: step.funnelStatus,
+      status: "active",
+      interestStatus: step.funnelStatus === "contract signed by user" ? "completed" : "pending",
+      totalLeads: 10,
+      offerStatus: step.funnelStatus === "offer sent",
+      applicationAccepted: step.funnelStatus === "contract signed by user",
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: step.title,
+        image: step.image,
+        duration: step.duration,
+      },
+    };
+  });
+
+  const rentCards = Array.from({ length: 10 }, (_, index) => {
+    const step = rentFunnelSteps[index % rentFunnelSteps.length];
+    const buyer = guestBuyers[index + 10];
+    return {
+      _id: `guest-interest-rent-${index + 1}`,
+      buyerId: buyer,
+      propertyId: rentProperty,
+      propertyType: "rent",
+      funnelStatus: step.funnelStatus,
+      status: "active",
+      interestStatus: step.funnelStatus === "renter assigned" ? "completed" : "pending",
+      totalLeads: 10,
+      offerStatus: step.funnelStatus === "offer sent",
+      applicationAccepted: step.funnelStatus === "renter assigned",
+      funnel: {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: step.title,
+        image: step.image,
+        duration: step.duration,
+      },
+    };
+  });
+
+  return [...saleCards, ...rentCards];
 };
 
 module.exports = {
@@ -621,12 +514,49 @@ module.exports = {
                 });
             }
 
+            const isGuestRequest =
+                req.isGuest === true ||
+                req.query.guest === true ||
+                req.query.guest === "true" ||
+                req.query.guest === "1" ||
+                req.headers["x-guest-mode"] === true ||
+                req.headers["x-guest-mode"] === "true" ||
+                req.headers["x-guest-mode"] === "1";
+
+            if (isGuestRequest) {
+                const cards = buildGuestInterestCards(req);
+                let filteredCards = cards;
+                if (propertyId) {
+                    filteredCards = filteredCards.filter(
+                        (card) => card.propertyId?._id === propertyId
+                    );
+                }
+                if (propertyType) {
+                    filteredCards = filteredCards.filter(
+                        (card) => card.propertyType === propertyType
+                    );
+                }
+                const response = {
+                    success: true,
+                    message: "Guest interests fetched successfully.",
+                    data: filteredCards,
+                    total: filteredCards.length,
+                    mockData: true,
+                    isMock: true,
+                };
+                response.offerStatus = filteredCards.some((interest) => interest.offerStatus);
+                response.applicationAccepted = filteredCards.some(
+                    (interest) => interest.applicationAccepted
+                );
+                return res.status(200).json(response);
+            }
+
             let propertyFilter = { propertyId, isDeleted: false };
 
             const buyerInterests = await db.interests.find(propertyFilter)
                 .populate({
                     path: "propertyId",
-                    select: "name location price propertyType city state country visitSlots changeRequestNote surface rooms bathrooms bathroom propertyMonthlyCharges homeInventorySlots signingSlots contractSigned propertyTransferRequest addedBy identityVerified",
+                    select: "propertyTitle address zipcode images name location price propertyType city state country visitSlots changeRequestNote surface rooms bedrooms bathrooms bathroom propertyMonthlyCharges homeInventorySlots signingSlots contractSigned propertyTransferRequest addedBy identityVerified",
                     match: propertyType ? { propertyType: propertyType } : {}
                 })
                 .populate("buyerId", "fullName firstName lastName email city country image createdAt buyerfileIdenityVerification renterfileIdenityVerification isDocumentVerified isDeclDocumentVerified documentGrade")
@@ -710,7 +640,7 @@ module.exports = {
                 req.headers["x-guest-mode"] === "1";
 
             if (isGuestRequest) {
-                const cards = buildGuestInterestCards();
+                const cards = buildGuestInterestCards(req);
                 const filteredCards = propertyType
                     ? cards.filter((card) => card.propertyType === propertyType)
                     : cards;
@@ -1506,7 +1436,7 @@ module.exports = {
                 })
                 .populate({
                     path: "propertyId",
-                    select: "id propertyTitle propertyType images name location city state country bathroom surface propertyType visitSlots price"
+                    select: "id propertyTitle address zipcode propertyType images name location city state country bedroom bedrooms bathroom surface propertyMonthlyCharges visitSlots price"
                 })
                 .skip(skip)
                 .limit(limit)
