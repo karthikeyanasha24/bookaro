@@ -1,0 +1,117 @@
+diff a/src/Pages/Dashboard/dashboard.css b/src/Pages/Dashboard/dashboard.css	(rejected hunks)
+@@ -1,3 +1,17 @@
++.dashboard-section-reset-animate {
++  animation: dashboardSectionFadeIn 0.5s cubic-bezier(0.4,0,0.2,1);
++}
++
++@keyframes dashboardSectionFadeIn {
++  from {
++    opacity: 0.2;
++    transform: scale(0.97);
++  }
++  to {
++    opacity: 1;
++    transform: scale(1);
++  }
++}
+ .dashboard-page {
+   background: #f3f5f9;
+   min-height: 100%;
+@@ -385,6 +399,7 @@
+   font-size: 11px;
+   color: #6b7280;
+   line-height: 1.25;
++  height: 42px;
+ }
+ 
+ .todo-card-property-image {
+@@ -406,8 +421,10 @@
+   line-height: 1.25;
+   overflow: hidden;
+   display: -webkit-box;
+-  -webkit-line-clamp: 1;
++  -webkit-line-clamp: 2;
+   -webkit-box-orient: vertical;
++  word-break: break-word;
++  height: 2.5em;
+ }
+ 
+ .attractivity-grid {
+@@ -2164,3 +2181,77 @@
+     -webkit-box-orient: vertical;
+   }
+ }
++
++/* Ajout animation pour la suppression de carte todo */
++.todo-card-animated {
++  transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
++}
++.todo-card-removing {
++  opacity: 0;
++  transform: translateX(40px) scale(0.98);
++  pointer-events: none;
++}
++.todo-card {
++  display: flex;
++  flex-direction: row;
++  align-items: stretch;
++  position: relative;
++}
++.todo-card-left {
++  position: absolute;
++  top: 50%;
++  left: 5px;
++  transform: translateY(-50%);
++  margin-left: 0;
++  z-index: 2;
++}
++.todo-card-left-compact {
++  margin-left: 2px;
++}
++.todo-card-main {
++  flex: 1 1 0%;
++  display: flex;
++  flex-direction: column;
++  min-width: 0;
++  margin-left: 32px;
++}
++.todo-card-main-compact {
++  margin-left: 22px;
++}
++.todo-card-delete-btn {
++  position: absolute;
++  top: -14px;
++  right: -14px;
++  margin: 0;
++  background: transparent;
++  border: none;
++  padding: 0;
++  z-index: 10;
++}
++.todo-card-delete-btn-circle .todo-delete-circle {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  width: 24px;
++  height: 24px;
++  border-radius: 50%;
++  background: #f6f6f7;
++  box-shadow: 0 2px 8px rgba(16,24,40,0.08);
++  border: 1.5px solid #e6eaf1;
++  transition: background 0.18s, box-shadow 0.18s;
++}
++.todo-card-delete-btn-circle .todo-delete-circle:hover {
++  background: #ececec;
++  box-shadow: 0 4px 12px rgba(16,24,40,0.13);
++}
++.todo-delete-x {
++  color: #b0b3b8;
++  font-size: 14px;
++  width: 14px;
++  height: 14px;
++  transition: color 0.18s;
++}
++.todo-card-delete-btn-circle .todo-delete-circle:hover .todo-delete-x {
++  color: #48464a;
++}
++/* Effet hover natif conservé */

@@ -1,0 +1,480 @@
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { Fragment, useContext, createContext, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { FaArrowRightLong } from "react-icons/fa6";
+import { GoDotFill } from "react-icons/go";
+import { IoMdMenu } from "react-icons/io";
+import { RxCross2 } from "react-icons/rx";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import socket from "../../../config/ChatSocket/socket";
+import { notificationListener } from "../../../config/Firebase/FirebaseAuth";
+import { removePropData } from "../../../models/string.model";
+import LoginModal from "../../common/Modal/LoginModal";
+import "./style.scss";
+import ApiClient from "../../../methods/api/apiClient";
+import { isDebugMockUser, isGuestMode } from "../../../methods/guestMode";
+import UpgradePlan from "../../common/Modal/UpgradePlan";
+import { ChevronUpIcon } from "@heroicons/react/20/solid";
+import { login_success, logout } from "../../../actions/user";
+import Sidebar from "../sidebar";
+import LanguageSwitcher from "../../../LanguageSwitcher";
+import Header from "../header";
+
+// Context permettant de détecter qu'on est déjà à l'intérieur d'un PageLayout
+// (le PageLayout racine est mont\u00e9 dans App.tsx au-dessus du Router et ne d\u00e9monte
+//  jamais ; les PageLayout imbriqu\u00e9s dans les pages se contentent de rendre
+//  leurs enfants pour \u00e9viter le clignotement).
+const PageLayoutContext = createContext(false);
+
+const PageLayout = ({ children }) => {
+  const insideLayout = useContext(PageLayoutContext);
+  if (insideLayout) {
+    // D\u00e9j\u00e0 un PageLayout racine au-dessus -> juste passer le contenu.
+    return <>{children}</>;
+  }
+  return <PageLayoutContext.Provider value={true}><PageLayoutInner>{children}</PageLayoutInner></PageLayoutContext.Provider>;
+};
+
+const PageLayoutInner = ({ children }) => {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem("sidebar_open");
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [projectData, setProjectData] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const activePlan = useSelector((state) => state.activePlan);
+  const [propertyTotal, setpropertyTotal] = useState(0);
+  const [propertyLoader, setpropertyLoader] = useState(false);
+  const [planModal, setplanModal] = useState(false);
+  const pathname = location.pathname;
+  const user = useSelector((state) => state.user);
+  const [loginModal, setloginModal] = useState(false);
+  const [notLength, setNotLength] = useState(0);
+  const [chatLength, setChatLength] = useState(0);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [isInChatPage, setIsInChatPage] = useState(false);
+  const dispatch = useDispatch();
+  const menuRef = useRef("");
+
+  // Check if user is logged in or in guest mode
+  const isLoggedIn = user?.loggedIn;
+  const isGuest = user?.isGuest || isGuestMode();
+
+  // Check if we should exclude sidebar from current route
+  const excludeSidebarRoutes = ["/login", "/signup", "/forgotpassword", "/reset-password", "/otpverify", "/change-password", "/reset-email", "/reset-new-email", "/signup/pro", "/phone-number"];
+  const shouldShowSidebar = (isLoggedIn || isGuest) && !excludeSidebarRoutes.some(route => pathname.startsWith(route));
+
+  // sidebar state is now initialized from localStorage synchronously to avoid
+  // layout changes after first render
+
+  // Toggle sidebar and save state
+  const toggleSidebar = () => {
+    const newState = !isSidebarOpen;
+    setIsSidebarOpen(newState);
+    localStorage.setItem("sidebar_open", JSON.stringify(newState));
+  };
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [pathname]);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  const Logout = () => {
+    dispatch(logout());
+    localStorage.removeItem("persist:admin-app");
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  const notificationRead = () => {
+    navigate("/notifications");
+    socket.emit("mark-as-read-noti", {
+      userId: user?.id || user?._id,
+    });
+  };
+
+  const projectMenus = [
+    {
+      head: "",
+      sub: [{ name: t("project.myProject"), url: "/project" }],
+    },
+    {
+      head: t("project.searcherSpace"),
+      sub: [
+        { name: t("project.searchAlert"), url: "/serach-alert" },
+        { name: t("project.propertiesFollowed"), url: "/followed-properties" },
+        { name: t("project.interactedProperties"), url: "/properties?favourites=true" },
+        { name: t("project.renterApplicationFile"), url: "/renter-file" },
+        { name: t("project.buyerFile"), url: "/buyer-file" },
+        {
+          name: t("project.manageTransaction"),
+          url: "/real-estate-transaction-searcher",
+        },
+        {
+          name: t("project.p2pEstimation"),
+          url: "/estimation",
+        },
+      ],
+    },
+    {
+      head: t("project.ownerSpace"),
+      sub: [
+        { name: t("project.myProperty"), url: "/my-properties" },
+        { name: t("buttons.listProperty"), url: "/property1" },
+        { name: t("project.sellerFile"), url: "/seller-file" },
+        {
+          name: t("project.manageTransaction"),
+          url: "/real-estate-transaction-owner",
+        },
+        {
+          name: t("project.manageP2pEstimation"),
+          url: "/social-estimation",
+        },
+      ],
+    },
+  ];
+
+  const accountMenu = [
+    {
+      name: t('header.account'),
+      title: t('header.account'),
+      image: (
+        <img src="/assets/img/header/account.png" className="w-[20px]" alt="" />
+      ),
+      url: "/profile/Account",
+      menu: (
+        <>
+          <ul className="bg-white py-4 pe-4 ps-2 right-0 rounded-[10px] absolute w-[200px] shadow-md border-0 border-[#00000024]">
+            {/* 1. Informations personnelles */}
+            <li
+              onClick={() => {
+                navigate("/profile/Account");
+              }}
+              className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
+            >
+              <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
+              <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
+              {t('header.personalInformation')}
+            </li>
+            {/* 6. Centre d’aide / Contact */}
+            <li
+              onClick={() => {
+                navigate("/contact-us");
+              }}
+              className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
+            >
+              <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
+              <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
+              {t('header.helpCenter')}
+            </li>
+            {/* 7. Déconnexion */}
+            <li
+              onClick={() => {
+                Logout()
+              }}
+              className="text-[#47525E] text-left font-normal cursor-pointer my-1 hover:text-[#976DD0] transition-all duration-500 ease-in-out flex items-center group text-[14px]"
+            >
+              <GoDotFill className="flex group-hover:hidden me-2 w-[15px] transition-all duration-500 ease-in-out" />
+              <FaArrowRightLong className="w-[15px] hidden group-hover:flex me-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out" />
+              {t('header.logout')}
+            </li>
+          </ul>
+        </>
+      ),
+    },
+  ]
+
+  const menus = [];  // Menus supprimés quand sidebar est affiché - À gérer via conditionalité
+
+
+  const mobMenus = [
+    {
+      name: t("header.plans"),
+      link: "/plan",
+      img: "/assets/img/header/bulb.png",
+    },
+    {
+      name: t("header.marketInsights"),
+      img: "/assets/img/header/home.png",
+      menu: [
+        {
+          name: t("header.transactions"),
+          link: "/past-transactions",
+        },
+        {
+          name: t("header.realEstatePros"),
+          link: "/real-estate-pros",
+        },
+        {
+          name: t("header.buildingPermits"),
+          link: "/building-permit",
+        },
+      ],
+    },
+    {
+      name: t("header.innovativeServices"),
+      link: "/real-estate-pros",
+      img: "/assets/img/header/hands.png",
+      menu: [
+        {
+          name: t("home.tabs.directory"),
+          link: "/real-estate-transaction-owner",
+        },
+        {
+          name: t("home.tabs.offMarket"),
+          link: "/real-estate-transaction-owner",
+        },
+        {
+          name: t("project.p2pEstimation"),
+          link: "/real-estate-transaction-owner",
+        },
+        {
+          name: t("header.transactionTool"),
+          link: "/real-estate-transaction-owner",
+        },
+      ],
+    },
+    {
+      name: t("header.realEstatePros"),
+      link: "/real-estate-pros",
+      img: "/assets/img/header/home.png",
+    },
+    {
+      key: "myProject",
+      name: t("project.myProject"),
+      img: "/assets/img/header/home.png",
+      menu: [
+        {
+          head: "",
+          sub: [{ name: t("project.myProject"), url: "/project" }],
+        },
+        {
+          head: t("project.searcherSpace"),
+          sub: [
+            { name: t("project.searchAlert"), url: "/serach-alert" },
+            { name: t("project.propertiesFollowed"), url: "/followed-properties" },
+            {
+              name: t("project.interactedProperties"),
+              url: "/properties?favourites=true",
+            },
+            { name: t("project.renterApplicationFile"), url: "/renter-file" },
+            { name: t("project.buyerFile"), url: "/buyer-file" },
+            {
+              name: t("project.manageTransaction"),
+              url: "/real-estate-transaction-searcher",
+            },
+          ],
+        },
+        {
+          head: t("project.ownerSpace"),
+          sub: [
+            { name: t("project.myProperty"), url: "/my-properties" },
+            { name: t("buttons.listProperty"), url: "/property1" },
+            { name: t("project.sellerFile"), url: "/seller-file" },
+            {
+              name: t("project.manageTransaction"),
+              url: "/real-estate-transaction-owner",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+  // const getNotifications = () => {
+  //   const dto = {
+  //     sendToId: user?._id,
+  //   };
+  //   loader(true);
+  //   ApiClient.get("notification/list", dto).then((res) => {
+  //     if (res.success) {
+  //       let unreadLen =
+  //         res?.data?.filter((ee) => ee.status != "read")?.length || "";
+  //       setNotLength(unreadLen);
+  //     }
+  //     loader(false);
+  //   });
+  // };
+  // useEffect(() => {
+  //   if (user?.loggedIn) getNotifications();
+  // }, []);
+  useEffect(() => {
+    // Ne jamais faire d'appel réseau en mode autonome (mock user) ou en mode invité.
+    if (!isDebugMockUser() && user.loggedIn && !user.isGuest) {
+      ApiClient.get(`user/detail`, { id: user?._id }).then((res) => {
+        if (res.success) {
+          dispatch(login_success(res?.data));
+        }
+      });
+    }
+  }, []);
+  useEffect(() => {
+    if (pathname === "/chat") {
+      setIsInChatPage(true);
+    } else {
+      setIsInChatPage(false);
+    }
+    if (user.loggedIn && !user.isGuest) {
+      notificationListener(navigate, setNotLength);
+    }
+  }, [location]);
+  // Listen for the 'notify-message' event from socket
+  useEffect(() => {
+    const onMessageNotification = (res) => {
+      if (res.status === 200) {
+        const newmsg = res.data.count_room_chat;
+        if (!isInChatPage) {
+          setChatLength((prev) => newmsg);
+          // setChatLength((prev) => (prev < 9 ? prev + 1 : 9));
+        }
+      }
+    };
+    socket.on("notify-message", onMessageNotification);
+    return () => {
+      socket.off("notify-message", onMessageNotification);
+    };
+  }, [isInChatPage, socket]);
+
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setTimeout(() => {
+          setProjectData("");
+        }, 100);
+      }
+    };
+    socket.emit("un-noti", {
+      user_id: user?.id || user?._id,
+    });
+    socket.on("un-noti", (res) => {
+      setNotLength(res?.data?.unread_count);
+    });
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const getAllProperty = () => {
+    const userId = user?.id || user?._id;
+    if (!userId) {
+      setpropertyLoader(false);
+      return;
+    }
+
+    setpropertyLoader(true);
+    ApiClient.get(
+      `property/listing?page=1&count=1000&status=active&addedBy=${userId
+      }&maxDistance=&userLat=&userLng=&propertyType=&userId=${user?.id || user?._id
+      }&loggedInUser=${user?.id || user?._id}`
+    )
+      .then((res) => {
+        if (res.success) {
+          setpropertyTotal(res.total);
+        }
+      })
+      .catch(() => {
+        setpropertyTotal(0);
+      })
+      .finally(() => {
+        setpropertyLoader(false);
+      });
+  };
+
+  useEffect(() => {
+    if (user.loggedIn && !user.isGuest) {
+      getAllProperty();
+    }
+  }, []);
+
+  const handleProperty = () => {
+    if (user.loggedIn) {
+      if (propertyTotal >= activePlan?.activePlan?.[0]?.numberOfProperty) {
+        setplanModal(true);
+        return;
+      }
+      removePropData();
+      return navigate("/property1");
+    } else {
+      setloginModal(true);
+    }
+  };
+
+
+  // Injection du menu utilisateur dans window pour accès depuis Html.jsx
+  window.renderAccountMenu = () => accountMenu[0].menu;
+
+  return (
+    <>
+      <LoginModal loginModal={loginModal} setloginModal={setloginModal} />
+      <UpgradePlan planModal={planModal} setplanModal={setplanModal} />
+      <div component="page-layout" className="page-layout-root">
+        {/* Sidebar à gauche */}
+        {shouldShowSidebar && (
+          <aside className={`sidebar-container hidden md:block ${!isSidebarOpen ? 'collapsed' : ''}`}>
+            <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+          </aside>
+        )}
+        <div className="flex-1 min-w-0">
+          {/* Header en haut */}
+          <Header setIsOpen={setIsSidebarOpen} isOpen={isSidebarOpen} particularData={null} showAccountMenu={showAccountMenu} setShowAccountMenu={setShowAccountMenu} />
+          {/* Main Content Area */}
+          <main
+            className={`page-content-wrapper ${shouldShowSidebar ? "with-sidebar" : "full-width"} ${
+              shouldShowSidebar ? (isSidebarOpen ? "sidebar-expanded" : "sidebar-collapsed") : ""
+            }`}
+          >
+            <div className="pageContent pb-24">{children}</div>
+          </main>
+          {/* Mobile Sidebar Overlay */}
+          {shouldShowSidebar && (
+            <Transition show={isMobileSidebarOpen} as={Fragment}>
+              <Dialog as="div" className="relative md:hidden z-40" onClose={() => setIsMobileSidebarOpen(false)}>
+                <Transition.Child as={Fragment} enter="ease-in-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in-out duration-300" leaveFrom="opacity-100" leaveTo="opacity-0">
+                  <div className="fixed inset-0 bg-black bg-opacity-50" />
+                </Transition.Child>
+                <div className="fixed inset-0 overflow-hidden">
+                  <div className="absolute inset-0 overflow-hidden">
+                    <Transition.Child as={Fragment} enter="transform transition ease-in-out duration-300" enterFrom="-translate-x-full" enterTo="translate-x-0" leave="transform transition ease-in-out duration-300" leaveFrom="translate-x-0" leaveTo="-translate-x-full">
+                      <Dialog.Panel className="relative w-full max-w-xs h-full bg-white shadow-xl">
+                        <Sidebar isOpen={false} onToggle={() => {}} />
+                      </Dialog.Panel>
+                    </Transition.Child>
+                  </div>
+                </div>
+              </Dialog>
+            </Transition>
+          )}
+          {/* Mobile Sidebar Toggle Button */}
+          {shouldShowSidebar && (
+            <button 
+              className="md:hidden fixed bottom-6 right-6 z-30 bg-[#976DD0] text-white rounded-full p-3 shadow-lg"
+              onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            >
+              <IoMdMenu className="text-xl" />
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+export default PageLayout;

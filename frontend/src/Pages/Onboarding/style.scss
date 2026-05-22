@@ -1,0 +1,26 @@
+.onboarding-page {
+  padding: 22px 22px 28px;
+
+  .onboarding-card-done {
+    border-color: #976dd0;
+    background-color: #faf7fe;
+  }
+
+  .onboarding-illustration {
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.page-content-wrapper.sidebar-collapsed .onboarding-page {
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.page-content-wrapper.sidebar-expanded .onboarding-page {
+  padding-left: 50px;
+  padding-right: 50px;
+}

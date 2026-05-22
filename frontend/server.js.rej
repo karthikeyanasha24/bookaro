@@ -1,0 +1,78 @@
+diff a/server.js b/server.js	(rejected hunks)
+@@ -1,10 +1,27 @@
+-// Get dependencies
++
+ const express = require('express');
+ const path = require('path');
+ const http = require('http');
++const { Server } = require('socket.io');
++
++
++// (Suppression de toute route de test, restauration à l'état d'origine)
++
+ 
+ const app = express();
+ 
++// --- CORS middleware to allow frontend requests ---
++app.use((req, res, next) => {
++  res.header('Access-Control-Allow-Origin', 'http://localhost:8089');
++  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
++  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
++  res.header('Access-Control-Allow-Credentials', 'true');
++  if (req.method === 'OPTIONS') {
++    return res.sendStatus(200);
++  }
++  next();
++});
++
+ app.use(express.json());
+ 
+ app.get('/api/dashboard/overview', (req, res) => {
+@@ -27,14 +44,7 @@ app.get('/api/dashboard/overview', (req, res) => {
+           title: 'To do list',
+           subtitle: 'Actions to drive your real-estate project',
+           emptyMessage: 'Here will be displayed actions you need to take to drive your real estate project to success',
+-          items: [
+-            {
+-              id: 'todo-1',
+-              label: 'Envoyer dossier vendeur à Paul Dupont',
+-              property: { coverUrl: '/assets/img/blogs/blog-2.png', type: 'Maison', surface: 100, city: 'Paris' },
+-              action: { route: '/seller-file' },
+-            },
+-          ],
++          items: [],
+         },
+         propertyAttractivity: {
+           visible: true,
+@@ -214,10 +224,15 @@ app.get('/api/dashboard/activity', (req, res) => {
+ });
+ 
+ // Point static path to dist
++
++// --- Static file serving and catch-all moved below API routes ---
++
++
++
++// --- Static file serving and catch-all route (must be after API routes) ---
+ app.use(express.static(path.join(__dirname, 'build')));
+-let url=path.join(__dirname, 'build/index.html')
+-console.log("url",url)
+-// Catch all other routes and return the index file
++let url = path.join(__dirname, 'build/index.html');
++console.log("url", url);
+ app.get('*', (req, res) => {
+   res.sendFile(path.join(__dirname, 'build/index.html'));
+ });
+@@ -232,6 +247,12 @@ app.set('port', port);
+  * Create HTTP server.
+  */
+ const server = http.createServer(app);
++const io = new Server(server, { cors: { origin: '*' } });
++
++io.on('connection', (socket) => {
++  console.log('Client connecté via WebSocket');
++  // Ici tu peux ajouter la logique temps réel (chat, notifications, etc.)
++});
+ 
+ /**
+  * Listen on provided port, on all network interfaces.

@@ -1,0 +1,24 @@
+diff a/src/reducers/modules/user.js b/src/reducers/modules/user.js	(rejected hunks)
+@@ -19,6 +19,10 @@ const initialState = process.env.REACT_APP_DEBUG_MOCK_USER === 'true' ? mockUser
+ };
+ 
+ export default function reducer(state = initialState, action) {
++  // Force le mock user uniquement si state vide ou non loggé
++  if (process.env.REACT_APP_DEBUG_MOCK_USER === 'true' && (!state || !state.loggedIn)) {
++    state = { ...mockUser };
++  }
+   switch (action.type) {
+     case 'LOGIN_SUCCESS':
+       return {
+@@ -31,10 +35,6 @@ export default function reducer(state = initialState, action) {
+       return initialState;
+ 
+     default:
+-      if (localStorage.getItem('token')) {
+-        return state;
+-      } else {
+-        return initialState
+-      }
++      return state;
+   }
+ }
