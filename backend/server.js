@@ -1,0 +1,165 @@
+const express = require("express");
+var cors = require("cors");
+let http = require("http");
+var bcrypt = require("bcrypt");
+
+const app = express();
+// CORS is configured below with credentials support for local frontend dev.
+
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    const allowedOrigins = [
+      'http://127.0.0.1:8089',
+      'http://localhost:8089',
+      'https://127.0.0.1:8089',
+      'https://localhost:8089',
+      'http://127.0.0.1:3000',
+      'http://localhost:3000',
+      'https://127.0.0.1:3000',
+      'https://localhost:3000',
+    ];
+
+    const allowLocalHost = origin && /^(https?:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    if (!origin || allowedOrigins.includes(origin) || allowLocalHost) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'X-Guest-Mode'],
+  exposedHeaders: ['Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // for preflight support
+
+// ── Stripe Webhook (doit être AVANT express.json pour avoir le raw body) ────
+app.post(
+  '/webhook/stripe',
+  express.raw({ type: 'application/json' }),
+  require('./app/modules/services-marketplace/webhooks/stripeWebhook'),
+);
+
+app.use(express.json());
+let socketService = require('./app/services/sockets')
+
+app.use(express.urlencoded({ extended: true }));
+//server static files
+
+app.use(express.static("public"));
+
+
+//Adding Middleware for authenticate request
+app.use("/", require("./app/middleware/auth"));
+app.use("/", require("./app/middleware/responseTimeMiddleware"));
+
+const db = require("./app/models");
+
+let routes = require("./app/routes");
+
+const { resetDailyMessageLimit } = require("./app/cron/message.cron");
+const { checkAndSendSubscriptionReminders } = require("./app/cron/subscription.cron");
+const { monthlyCampaignLimit } = require("./app/cron/campaign.cron.js");
+
+// require('./app/routes/users.routes')(app);
+// require('./app/routes/upload.routes')(app);
+// require('./app/routes/category.routes')(app);
+// require('./app/routes/roles.routes')(app);
+// Middleware to append io instance to req
+// app.use((req, res, next) => {
+//     req.io = getSocketIo(); // Append io instance to req
+//     next();
+// });
+
+db.mongoose.set("strictQuery", false);
+db.mongoose
+  .connect(db.url, {})
+  .then(async () => {
+    console.log("Connected to the database!");
+
+    // start Agenda first, then load jobs so scheduling happens only after Agenda is ready
+    try {
+      const agenda = require("./app/config/agenda.config");
+      try {
+        await agenda.start();
+        try {
+          require("./app/jobs/agenda.jobs")(agenda, db);
+          console.log("Agenda started and jobs loaded.");
+        } catch (e) {
+          console.error('Failed to load agenda jobs:', e);
+        }
+      } catch (e) {
+        console.error('Agenda failed to start, continuing without scheduled jobs:', e);
+      }
+    } catch (e) {
+      console.error('Agenda configuration not available, skipping job scheduler:', e);
+    }
+  })
+  .catch((err) => {
+    console.log("Cannot connect to the database!", err);
+    process.exit();
+  });
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to  Bookaroo" });
+});
+
+app.use("/", routes);
+// let rolesData = [
+//   { name: "admin", loginPortal: "admin", permissions: [] },
+//   { name: "user", loginPortal: "front", permissions: [] },
+// ];
+
+var usersData = {
+  fullName: "Bookaroo",
+  password: "123456789",
+  email: "bookaroo_admin@yopmail.com",
+  role: "admin",
+  status: "active",
+  isVerified: "Y",
+};
+
+const seedDb = async () => {
+  // if ((await db.users.countUsers()) == 0) {
+  //   await db.users.insertMany(rolesData);
+  // }
+
+  if ((await db.users.countDocuments()) == 0) {
+    // let adminRole = await db.roles.findOne({ name: "Admin" });
+    // if (adminRole) {
+    // for await (let itm of usersData) {
+    console.log(usersData.password);
+    usersData.password = await bcrypt.hashSync(
+      usersData.password,
+      bcrypt.genSaltSync(10)
+    );
+    // itm["role"] = adminRole._id;
+
+    await db.users.create(usersData);
+    // }
+    // }
+  }
+};
+seedDb();
+
+resetDailyMessageLimit();
+checkAndSendSubscriptionReminders();
+monthlyCampaignLimit();
+// set port, listen for requests
+const PORT = process.env.PORT || 6089;
+
+let startServer = http.createServer(app);
+socketService.initializeSocket(startServer)
+startServer.listen(PORT, function () {
+  console.log(`Server is running on port ${PORT}.`);
+});
+module.exports = app;

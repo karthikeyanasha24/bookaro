@@ -1,0 +1,215 @@
+{
+  "info": {
+    "name": "Bookaro — Services Marketplace",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base", "value": "http://localhost:5000" },
+    { "key": "token_admin", "value": "REMPLACER_PAR_TOKEN_ADMIN" },
+    { "key": "token_pro", "value": "REMPLACER_PAR_TOKEN_PRO" },
+    { "key": "token_buyer", "value": "REMPLACER_PAR_TOKEN_ACHETEUR" },
+    { "key": "demo_pro_id", "value": "REMPLACER_PAR_ID_PRO_MONGO" },
+    { "key": "service_id", "value": "" },
+    { "key": "order_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. ADMIN — Seed données de démo",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/admin/marketplace/seed",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"demoProId\": \"{{demo_pro_id}}\" }"
+        }
+      }
+    },
+    {
+      "name": "2. PUBLIC — Lister les services",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base}}/marketplace/services?lang=fr&page=1&limit=10",
+          "query": [
+            { "key": "lang", "value": "fr" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. PUBLIC — Lister les catégories",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/marketplace/categories?lang=fr"
+      }
+    },
+    {
+      "name": "4. PUBLIC — Détail d'un service",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/marketplace/services/{{service_id}}?lang=fr"
+      }
+    },
+    {
+      "name": "5. PRO — Onboarding Stripe Connect",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/pro/marketplace/stripe/onboard",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_pro}}" }
+        ]
+      }
+    },
+    {
+      "name": "6. PRO — Statut Stripe Connect",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/pro/marketplace/stripe/status",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_pro}}" }
+        ]
+      }
+    },
+    {
+      "name": "7. PRO — Créer un service",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/pro/marketplace/services?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_pro}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Diagnostic électrique complet\",\n  \"description\": \"Inspection complète de l'installation électrique de votre bien.\",\n  \"categoryId\": \"REMPLACER_PAR_ID_CATEGORIE\",\n  \"priceTTC\": 150,\n  \"priceHT\": 125,\n  \"tva\": 20,\n  \"duration\": 120,\n  \"quantity\": 10,\n  \"location\": { \"city\": \"Paris\", \"postalCode\": \"75001\" }\n}"
+        }
+      }
+    },
+    {
+      "name": "8. ACHETEUR — Créer une commande (+ PaymentIntent)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/marketplace/orders?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_buyer}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": \"{{service_id}}\",\n  \"quantity\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "9. ACHETEUR — Recréer un PaymentIntent (si expiré)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/marketplace/orders/{{order_id}}/pay?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_buyer}}" }
+        ]
+      }
+    },
+    {
+      "name": "10. PRO — Accepter la commande",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/pro/marketplace/orders/{{order_id}}/accept?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_pro}}" }
+        ]
+      }
+    },
+    {
+      "name": "11. PRO — Marquer livré",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/pro/marketplace/orders/{{order_id}}/deliver?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_pro}}" }
+        ]
+      }
+    },
+    {
+      "name": "12. ACHETEUR — Confirmer livraison (capture Stripe)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/marketplace/orders/{{order_id}}/confirm?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_buyer}}" }
+        ]
+      }
+    },
+    {
+      "name": "13. ACHETEUR — Ouvrir un litige",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/marketplace/orders/{{order_id}}/litigation?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_buyer}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"reason\": \"Travail non conforme à la description\" }"
+        }
+      }
+    },
+    {
+      "name": "14. ADMIN — Résoudre litige (remboursement)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/admin/marketplace/orders/{{order_id}}/resolve-litigation?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"decision\": \"refund\" }"
+        }
+      }
+    },
+    {
+      "name": "15. ACHETEUR — Laisser un avis",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/marketplace/reviews?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_buyer}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": \"{{service_id}}\",\n  \"orderId\": \"{{order_id}}\",\n  \"rating\": 5,\n  \"comment\": \"Excellent travail, très professionnel.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "16. PRO — Dashboard",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/pro/marketplace/dashboard?lang=fr",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_pro}}" }
+        ]
+      }
+    },
+    {
+      "name": "17. ADMIN — Statistiques globales",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/admin/marketplace/stats",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token_admin}}" }
+        ]
+      }
+    }
+  ]
+}

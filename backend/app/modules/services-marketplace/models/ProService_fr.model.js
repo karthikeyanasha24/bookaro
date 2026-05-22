@@ -1,0 +1,21 @@
+const mongoose = require('mongoose');
+
+const ProServiceFrSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String },
+  summary: { type: String },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceCategory_fr', required: true },
+  pro: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },
+  priceTTC: { type: Number, required: true },
+  quantity: { type: Number },
+  modality: { type: String },
+  city: { type: String, required: true },
+  radiusKm: { type: Number, required: true },
+  delivery_time: { type: String },
+  imageUrls: [{ type: String }],
+  status: { type: String, enum: ['draft', 'active', 'inactive', 'deleted'], default: 'draft' },
+  isFeatured: { type: Boolean, default: false },
+  order: { type: Number, default: 0 },
+}, { timestamps: true });
+
+module.exports = mongoose.model('ProService_fr', ProServiceFrSchema);
