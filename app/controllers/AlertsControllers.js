@@ -32,6 +32,45 @@ module.exports = {
     },
     getAlerts: async (req, res) => {
         try {
+            // If request is from guest mode, return two mock alerts
+            const isGuestReq = req.isGuest || req.query.guest === 'true' || req.headers['x-guest-mode'] === 'true';
+            if (isGuestReq) {
+                const mockAlerts = [
+                    {
+                        id: 'guest-alert-1',
+                        _id: 'guest-alert-1',
+                        name: 'Appartement centre',
+                        filteredData: {
+                            minPrice: 100000,
+                            maxPrice: 250000,
+                            rooms: 3,
+                            propertyType: 'apartment'
+                        },
+                        totalcount: 12
+                    },
+                    {
+                        id: 'guest-alert-2',
+                        _id: 'guest-alert-2',
+                        name: 'Maison avec jardin',
+                        filteredData: {
+                            minPrice: 250000,
+                            maxPrice: 600000,
+                            minSurface: 80,
+                            maxSurface: 200,
+                            propertyType: 'house'
+                        },
+                        totalcount: 5
+                    }
+                ];
+                return res.status(200).json({
+                    success: true,
+                    data: {
+                        message: 'Mock alerts for guest mode',
+                        alerts: mockAlerts,
+                        totalAlerts: mockAlerts.length,
+                    },
+                });
+            }
             let {
                 search,
                 rooms,
