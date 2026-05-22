@@ -22,7 +22,6 @@ const SearchAlert = () => {
   const [openPopup, setOpenPopup] = useState(false)
   const [alert, setAlert] = useState({
       reason: "",
-import { isGuestMode } from "../../methods/guestMode";
       email: user?.email,
       name: "",
   });
@@ -49,12 +48,6 @@ import { isGuestMode } from "../../methods/guestMode";
           if (res.success) {
             setOpenPopup(false);
             toast.success(res.message)
-  // refresh alerts when guest mode changes
-  useEffect(() => {
-    const onGuestChange = () => getAlerts();
-    window.addEventListener('guestModeChanged', onGuestChange);
-    return () => window.removeEventListener('guestModeChanged', onGuestChange);
-  }, []);
           }
         });
       }
@@ -127,7 +120,7 @@ import { isGuestMode } from "../../methods/guestMode";
                 className="text-[#47525E] cursor-pointer after"
               >
                 {t("project.myProject")}
-      <section className="pt-6 lg:pt-6 pb-[40px] bg-[#f2ecf8] relative">
+                <span className="mx-[4px]">|</span>
               </li>
               <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
                 {" "}
