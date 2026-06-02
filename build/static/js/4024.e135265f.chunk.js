@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[4024],{84024:(e,i,p)=>{p.r(i),p.d(i,{default:()=>r});const r={title:"Claim Ownership",url:"property-claim-ownership",detailApi:"property/claimOwnership/detail",listApi:"property/claimOwnership/get",statusChange:"property/claimOwnership/statusChange"}}}]);
+//# sourceMappingURL=4024.e135265f.chunk.js.map

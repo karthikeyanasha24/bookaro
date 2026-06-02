@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[149],{20149:(e,t,i)=>{i.r(t),i.d(t,{default:()=>s});const s={title:"Host",addTitle:"Host",role:"host",url:"host",addApi:"user/add",editApi:"user/admin/update-profile",detailApi:"user/detail",listApi:"user/listing",statusApi:"user/activate-deactivate/profile",deleteApi:"user/delete"}}}]);
+//# sourceMappingURL=149.0eae64f8.chunk.js.map

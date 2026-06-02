@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[4523],{44523:(o,e,k)=>{k.r(e),k.d(e,{default:()=>s});const s={}}}]);
+//# sourceMappingURL=4523.adaed600.chunk.js.map

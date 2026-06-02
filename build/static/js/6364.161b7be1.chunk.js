@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[6364],{66364:(t,i,d)=>{d.r(i),d.d(i,{default:()=>e});const e={check:"setting",title:"Admin Setting",addTitle:"Admin Setting",url:"admin-setting",editApi:"adminSettings/add-update",listApi:"adminSettings/detail",statusApi:"adminSettings/add-update"}}}]);
+//# sourceMappingURL=6364.161b7be1.chunk.js.map

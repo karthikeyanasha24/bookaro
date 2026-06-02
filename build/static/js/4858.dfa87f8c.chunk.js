@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[4858],{94858:(e,i,a)=>{a.r(i),a.d(i,{default:()=>d});const d={check:"company-review",title:"Company Review",addTitle:"Company Review",url:"review-company",addApi:"agencyReviews/add-review",listApi:"agencyReviews/listing",editApi:"agencyReviews/update",detailApi:"agencyReviews/detail",deleteApi:"agencyReviews/delete"}}}]);
+//# sourceMappingURL=4858.dfa87f8c.chunk.js.map

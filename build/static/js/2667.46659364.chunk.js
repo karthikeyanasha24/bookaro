@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[2667],{42667:(e,i,o)=>{o.r(i),o.d(i,{default:()=>r});const r={check:"review",title:"Review",addTitle:"Review",url:"revew",listApi:"reviews/admin/propertyReviews"}}}]);
+//# sourceMappingURL=2667.46659364.chunk.js.map

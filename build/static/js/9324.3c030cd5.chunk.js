@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[9324],{69324:(e,t,r)=>{r.r(t),r.d(t,{default:()=>s});const s={check:"user",title:"Reported Users",addTitle:"Reported User",url:"user-report",addApi:"user/add",detailApi:"reports/details",listApi:"reports/list",statusApi:"reports/edit",deleteApi:"reports/delete"}}}]);
+//# sourceMappingURL=9324.3c030cd5.chunk.js.map

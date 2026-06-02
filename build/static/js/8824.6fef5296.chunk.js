@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[8824],{8824:(i,t,a)=>{a.r(t),a.d(t,{default:()=>o});const o={check:"Estimation",title:"P2p Estimation",addTitle:"P2p Estimation",url:"p2p-estimation",listApi:"peerCampaign/list/campaign"}}}]);
+//# sourceMappingURL=8824.6fef5296.chunk.js.map

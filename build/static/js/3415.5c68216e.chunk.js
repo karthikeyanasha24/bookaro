@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[3415],{73415:(e,s,o)=>{o.r(s),o.d(s,{default:()=>i});const i={title:"Renter confidence scores",url:"confidence/users",listApi:"score/admin/users",detailApi:"score/admin/users/detail"}}}]);
+//# sourceMappingURL=3415.5c68216e.chunk.js.map

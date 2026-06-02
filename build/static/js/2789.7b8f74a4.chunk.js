@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[2789],{82789:(e,i,t)=>{t.r(i),t.d(i,{default:()=>d});const d={check:"properties",title:"Ratings",addTitle:"ratings",url:"property-ratings",addApi:"revenue/add",editApi:"revenue/edit",detailApi:"revenue/details",listApi:"revenue/listing",statusApi:"revenue/edit",deleteApi:"revenue/delete"}}}]);
+//# sourceMappingURL=2789.7b8f74a4.chunk.js.map

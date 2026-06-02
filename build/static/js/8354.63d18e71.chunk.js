@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[8354],{8354:(e,t,o)=>{o.r(t),o.d(t,{default:()=>i});const i={check:"properties",title:"Property Creation Validation",editApi:"property/editProperty",listApi:"property/listing"}}}]);
+//# sourceMappingURL=8354.63d18e71.chunk.js.map

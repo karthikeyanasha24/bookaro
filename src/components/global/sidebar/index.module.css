@@ -1,0 +1,26 @@
+.sm_sidebar {
+    width: 78px;
+    min-width: 78px;
+}
+
+.sm_sidebar ul li a {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.sm_sidebar ul li a span {
+    display: none;
+}
+
+.sm_sidebar ul li button {
+    width: fit-content;
+    margin: 0 auto;
+    gap: 4px !important;
+}
+
+/* .sm_sidebar ul li button > svg {
+	display: none;
+} */
+.sm_sidebar ul li button span span {
+    display: none;
+}

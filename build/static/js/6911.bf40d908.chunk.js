@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[6911],{16911:(e,t,o)=>{o.r(t),o.d(t,{default:()=>a});const a={check:"caetgorytype",title:"Category",addTitle:"Category",url:"blog-category-type",addApi:"blogCategories/create",editApi:"blogCategories/update",detailApi:"blogCategories/detail",listApi:"blogCategories/list",statusApi:"blogCategories/update",deleteApi:"blogCategories/delete"}}}]);
+//# sourceMappingURL=6911.bf40d908.chunk.js.map
