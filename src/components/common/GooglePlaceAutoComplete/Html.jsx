@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import environment from "../../../environment";
 import GooglePlacesAutocomplete, {
   geocodeByAddress,
 } from "react-google-places-autocomplete";
@@ -9,10 +8,10 @@ const Html = ({ searchText, search, placeholder, id, value, placeChange,disabled
   return (
     <>
       <GooglePlacesAutocomplete
-        apiKey={environment.map_api_key}
         selectProps={{
           isDisabled: disabled,
-          placeholder: searchText ? searchText : placeholder,
+          value: searchText ? { label: searchText, value: searchText } : null,
+          placeholder: placeholder || "Search address...",
           onChange: (e) => {
             geocodeByAddress(e.label)
               .then((results) => {

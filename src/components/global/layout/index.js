@@ -306,6 +306,11 @@ const Layout = memo(function Layout({ children }) {
             icon: <BiSolidSchool className="me-2 text-[16px]" />,
             url: "/schoolproperty",
           },
+          {
+            name: "School Types",
+            icon: <BiSolidSchool className="me-2 text-[16px]" />,
+            url: "/school-types",
+          },
         ],
       },
       {

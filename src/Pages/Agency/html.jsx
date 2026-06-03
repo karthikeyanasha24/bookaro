@@ -4,6 +4,7 @@ import { FiPlus } from "react-icons/fi";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { LiaEdit, LiaTrashAlt } from "react-icons/lia";
 import { PiEyeLight, PiFileCsv } from "react-icons/pi";
+import { FaEye } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../../components/Table";
@@ -18,6 +19,7 @@ const Html = ({
   filter,
   edit,
   view,
+  adminView,
   statusChange,
   pageChange,
   count,
@@ -138,6 +140,14 @@ const Html = ({
         return (
           <>
             <div className="flex items-center justify-start gap-1.5">
+              <Tooltip placement="top" title="Admin View">
+                <a
+                  className="border cursor-pointer hover:opacity-70 rounded-[35px] bg-purple-100 w-10 h-10 text-purple-700 flex items-center justify-center text-lg"
+                  onClick={() => adminView(itm.id || itm._id)}
+                >
+                  <FaEye />
+                </a>
+              </Tooltip>
               {isAllow(`read${shared.check}`) ? (
                 <Tooltip placement="top" title="View">
                   <a

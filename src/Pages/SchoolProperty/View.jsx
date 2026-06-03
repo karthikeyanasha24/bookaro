@@ -10,8 +10,15 @@ import methodModel from "../../methods/methods";
 
 const View = () => {
     const [data, setData] = useState();
+    const [schoolTypeOptions, setSchoolTypeOptions] = useState([]);
     const history = useNavigate();
     const { id } = useParams();
+
+    useEffect(() => {
+        ApiClient.get('school-types/list', { count: 100 }).then(res => {
+            if (res.success) setSchoolTypeOptions(res.data || []);
+        });
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -101,7 +108,7 @@ const View = () => {
                                         <div className=" flex flex-col">
                                             <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">School Type:</label>
                                             <p className="text-sm font-normal">
-                                                {data?.schoolType || "--"}
+                                                {schoolTypeOptions.find(t => t._id === data?.schoolType)?.name || data?.schoolType || "--"}
                                             </p>
                                         </div>
 

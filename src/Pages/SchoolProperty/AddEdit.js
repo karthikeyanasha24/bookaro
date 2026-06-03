@@ -18,6 +18,7 @@ const AddEdit = () => {
     const [form, setform] = useState({});
     const history = useNavigate();
     const [submitted, setSubmitted] = useState(false);
+    const [schoolTypeOptions, setSchoolTypeOptions] = useState([]);
 
     const formValidation = [
         { key: "schoolId", required: true },
@@ -27,6 +28,14 @@ const AddEdit = () => {
         { key: "schoolStatus", required: true },
         { key: "schoolType", required: true },
     ]
+
+    useEffect(() => {
+        ApiClient.get('school-types/list', { count: 100 }).then((res) => {
+            if (res.success) {
+                setSchoolTypeOptions(res.data.map((itm) => ({ id: itm._id, name: itm.name })));
+            }
+        });
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -86,13 +95,7 @@ const AddEdit = () => {
         }
     };
 
-    const schoolType = [
-        { id: "elementarySchool", name: "Elementary School" },
-        { id: "college", name: "College" },
-        { id: "kindergarten", name: "Kindergarten" },
-        { id: "elementaryPrimary", name: "Primary School" },
-        { id: "highschool", name: "High School" },
-    ];
+    const schoolType = schoolTypeOptions;
 
     const schoolStatus = [
         { id: "Private", name: "Private" },

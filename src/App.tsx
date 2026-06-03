@@ -104,12 +104,15 @@ function App() {
     { url: "/property/detail/:id", path: "Property/View" },
     { url: "/property/admin/:id", path: "Property/AdminView" },
     { url: "/property-requests", path: "PropertyRequests" },
-    { url: "/company/admin/:id", path: "EventOrganizer/AdminView" },
+    { url: "/company/admin/:id", path: "Agency/AdminView" },
 
     { url: "/schoolproperty", path: "SchoolProperty" }, // School Property Module Routes
     { url: "/schoolproperty/edit/:id", path: "SchoolProperty/AddEdit" },
     { url: "/schoolproperty/add", path: "SchoolProperty/AddEdit" },
     { url: "/schoolproperty/detail/:id", path: "SchoolProperty/View" },
+    { url: "/school-types", path: "SchoolTypes" }, // School Types Module Routes
+    { url: "/school-types/add", path: "SchoolTypes/AddEdit" },
+    { url: "/school-types/edit/:id", path: "SchoolTypes/AddEdit" },
 
     { url: "/verification", path: "DocumentVerification" }, // User verification(Declarative rating) Module Routes
     { url: "/verification/edit/:id", path: "DocumentVerification/AddEdit" },

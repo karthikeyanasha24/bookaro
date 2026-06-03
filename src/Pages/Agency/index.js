@@ -183,6 +183,10 @@ const Users = () => {
     history(url);
   };
 
+  const adminView = (id) => {
+    history(`/company/admin/${id}`);
+  };
+
   const uploadFile = (e) => {
     let files = e.target.files;
     let file = files?.item(0);
@@ -260,6 +264,7 @@ const Users = () => {
       <Html
         edit={edit}
         view={view}
+        adminView={adminView}
         clear={clear}
         sortClass={sortClass}
         sorting={sorting}
