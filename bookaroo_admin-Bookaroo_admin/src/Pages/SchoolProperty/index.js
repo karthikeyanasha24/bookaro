@@ -15,9 +15,13 @@ const SchoolProperty = () => {
     const [removeSchools, setremoveSchools] = useState([]);
     const [total, setTotal] = useState(0);
     const [loaging, setLoader] = useState(true);
+    const [schoolTypeOptions, setSchoolTypeOptions] = useState([]);
     const history = useNavigate();
 
     useEffect(() => {
+        ApiClient.get('school-types/list', { count: 100 }).then(res => {
+            if (res.success) setSchoolTypeOptions((res.data || []).map(t => ({ id: t._id, name: t.name })));
+        });
         setFilter({ ...filters, search: searchState.data });
         getData({ search: searchState.data, page: 1 });
     }, []);
@@ -215,13 +219,7 @@ const SchoolProperty = () => {
     };
 
 
-    const schoolType = [
-        { id: "elementarySchool", name: "Elementary School" },
-        { id: "college", name: "College" },
-        { id: "kindergarten", name: "Kindergarten" },
-        { id: "elementaryPrimary", name: "Primary School" },
-        { id: "highschool", name: "High School" },
-    ];
+    const schoolType = schoolTypeOptions;
 
     const schoolStatus = [
         { id: "Private", name: "Private" },

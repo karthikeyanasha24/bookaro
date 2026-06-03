@@ -73,7 +73,7 @@ const Html = ({
       key: "schoolType",
       name: "Type",
       render: (row) => {
-        return <span className="capitalize">{row?.schoolType || "--"}</span>;
+        return <span className="capitalize">{schoolType.find(t => t.id === row?.schoolType)?.name || row?.schoolType || "--"}</span>;
       },
     },
     // {

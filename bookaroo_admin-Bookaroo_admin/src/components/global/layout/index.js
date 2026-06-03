@@ -2,12 +2,12 @@ import { memo, useEffect, useRef, useState } from "react";
 import { AiOutlinePullRequest } from "react-icons/ai";
 import { BsHouseDoor } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { FaBlogger, FaFile, FaRegDotCircle, FaRegFile, FaRegQuestionCircle, FaRegStar, FaUserAlt, FaVideo } from "react-icons/fa";
+import { FaBlogger, FaFile, FaRegDotCircle, FaRegFile, FaRegQuestionCircle, FaRegStar, FaRocket, FaUserAlt, FaVideo } from "react-icons/fa";
 import { FaCircleQuestion } from "react-icons/fa6";
 import { FiLock } from "react-icons/fi";
 import { GoDuplicate } from "react-icons/go";
 import { LuCircleDotDashed, LuLogOut, LuUser2 } from "react-icons/lu";
-import { MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews } from "react-icons/md";
+import { MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings } from "react-icons/md";
 import { PiHouse, PiToolbox, PiToolboxFill } from "react-icons/pi";
 import { RiBloggerLine, RiContactsBook3Fill, RiContactsBook3Line, RiHomeWifiFill, RiUser2Fill } from "react-icons/ri";
 import { SiExpensify } from "react-icons/si";
@@ -18,7 +18,6 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../../actions/user";
 import methodModel from "../../../methods/methods";
 import { globalLogout } from "../../../models/string.models";
-import Header from "../header";
 import Sidebar from "../sidebar";
 import "./style.scss";
 import { IoSearchSharp } from "react-icons/io5";
@@ -32,12 +31,9 @@ const Layout = memo(function Layout({ children }) {
   const history = useNavigate();
   const location = useLocation();
   const scrollRef = useRef(null);
-  const [isOpen, setIsopen] = useState(() => {
-    const saved = localStorage.getItem("admin_sidebar_collapsed");
-    return saved === null ? false : saved === "true";
-  });
-  const dispatch = useDispatch()
+  const [isOpen, setIsopen] = useState(false);
   const sidebarWidth = isOpen ? 64 : 260;
+  const dispatch = useDispatch()
   // const [reviewPropCount, setReviewPropCount] = useState(0);
   const Logout = () => {
     dispatch(logout());
@@ -59,371 +55,464 @@ const Layout = memo(function Layout({ children }) {
   //     }
   //   });
   // };
-
   const menus = [
-    {
-      name: "Dashboard",
-      icon: <MdDashboard className="shrink-0 text-[18px]" />,
-      url: "/dashboard",
-      key: "",
-    },
-    {
-      name: "Staff",
-      icon: <RiUser2Fill className="shrink-0 text-[18px]" />,
-      url: "/staff",
-      key: "readstaff",
-      menu: [
-        {
-          name: "Staff",
-          icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
-          url: "/staff",
-          key: "readstaff",
-        },
-      ],
-    },
-    {
-      name: "Users",
-      icon: <FaUserAlt className="shrink-0 text-[18px]" />,
-      url: "/user",
-      key: "readuser",
-      menu: [
-        {
-          name: "Users",
-          icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
-          url: "/user",
-          key: "",
-        },
-        {
-          name: "Reported Users",
-          icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
-          url: "/user-report",
-        },
-      ],
-    },
+      // Priority order: Dashboard, Users, Company, Property, Marketplace, Financial credibility, Locative confidence, P2p Estimation
+      {
+        name: "Dashboard",
+        icon: <MdDashboard className="text-white text-[16px]" />,
+        url: "/dashboard",
+        key: "",
+      },
+      {
+        name: "Users",
+        icon: <FaUserAlt className="text-white text-[16px]" />,
+        url: "/user",
+        key: "readuser",
+        menu: [
+          {
+            name: "Users",
+            icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
+            url: "/user",
+            key: "",
+          },
+          {
+            name: "Reported Users",
+            icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
+            url: "/user-report",
+          },
+        ],
+      },
+      {
+        name: "Company",
+        icon: <PiToolboxFill className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/company",
+        key: "readcompany",
+        menu: [
+          {
+            name: "Company",
+            icon: <PiToolbox className="me-2 text-[16px]" />,
+            url: "/company",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Properties",
+        icon: <RiHomeWifiFill className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/property",
+        // key: "readproperties",
+        menu: [
+          {
+            name: "Properties",
+            icon: <PiHouse className="me-2 text-[16px]" />,
+            url: "/property",
+          },
+          {
+            name: "Claim Ownership Request",
+            icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
+            url: "/property-claim-ownership",
+          },
+          {
+            name: "Property Creation Validation",
+            icon: <AiOutlinePullRequest className="me-2 text-[16px]" />,
+            url: "/property-requests",
+          },
+          {
+            name: "State Type",
+            icon: <MdOutlineRealEstateAgent className="me-2 text-[16px]" />,
+            url: "/property-state",
+          },
+          {
+            name: "Revenue Type",
+            icon: <MdOutlinePayments className="me-2 text-[16px]" />,
+            url: "/property-revenue",
+          },
+          {
+            name: "Revenue Source",
+            icon: <TbCreditCardPay className="me-2 text-[16px]" />,
+            url: "/property-revenue-source",
+          },
+          {
+            name: "Expense Type",
+            icon: <SiExpensify className="me-2 text-[16px]" />,
+            url: "/property-expense",
+          },
+          {
+            name: "Renovation Type",
+            icon: <BsHouseDoor className="me-2 text-[16px]" />,
+            url: "/property-renovation",
+          },
+          {
+            name: "Ratings Type",
+            icon: <FaRegStar className="me-2 text-[16px]" />,
+            url: "/property-ratings",
+          },
+          {
+            name: "Preset Searches",
+            icon: <IoSearchSharp className="me-2 text-[16px]" />,
+            url: "/property-quick-search",
+          },
+        ]
+      },
+      {
+        name: "Marketplace",
+        icon: <MdOutlineHomeRepairService className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/marketplace",
+        key: "",
+        menu: [
+          {
+            name: "Gestion des services",
+            icon: <MdOutlineFeaturedPlayList className="me-2 text-[16px]" />,
+            url: "/marketplace/services",
+            key: "",
+          },
+          {
+            name: "Partenaires",
+            icon: <MdOutlineRealEstateAgent className="me-2 text-[16px]" />,
+            url: "/marketplace/partners",
+            key: "",
+          },
+          {
+            name: "Services offerts",
+            icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
+            url: "/marketplace/offered-services",
+            key: "",
+          },
+          {
+            name: "Transactions",
+            icon: <MdOutlinePayments className="me-2 text-[16px]" />,
+            url: "/marketplace/transactions",
+            key: "",
+          },
+          {
+            name: "Litiges",
+            icon: <MdReviews className="me-2 text-[16px]" />,
+            url: "/marketplace/litigations",
+            key: "",
+          },
+          {
+            name: "Demandes de service",
+            icon: <MdContentPaste className="me-2 text-[16px]" />,
+            url: "/marketplace/requests",
+            key: "",
+          },
+          {
+            name: "Paramètres",
+            icon: <MdSettings className="me-2 text-[16px]" />,
+            url: "/marketplace/settings",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Financial credibility",
+        icon: <TbCreditCardPay className="text-white text-[16px]" />,
+        url: "/score/users",
+        key: "",
+        menu: [
+          {
+            name: "General scores",
+            icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
+            url: "/score/users",
+            key: "",
+          },
+          {
+            name: "Lead scores",
+            icon: <MdOutlinePayments className="me-2 text-[16px]" />,
+            url: "/score/interests",
+            key: "",
+          },
+          {
+            name: "Parameters",
+            icon: <MdSettings className="me-2 text-[16px]" />,
+            url: "/score/parameters",
+            key: "",
+          },
+        ],
+      },
+      {
+        name: "Locative confidence",
+        icon: <MdOutlineRealEstateAgent className="text-white text-[16px]" />,
+        url: "/confidence/users",
+        key: "",
+        menu: [
+          {
+            name: "General confidence",
+            icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
+            url: "/confidence/users",
+            key: "",
+          },
+          {
+            name: "Lead confidence",
+            icon: <MdOutlinePayments className="me-2 text-[16px]" />,
+            url: "/confidence/leads",
+            key: "",
+          },
+        ],
+      },
+      {
+        name: "P2p Estimation",
+        icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/p2p-estimation",
+        key: "readEstimation",
+        menu: [
+          {
+            name: "P2p Estimation",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/p2p-estimation",
+            key: "readEstimation",
+          },
+        ]
+      },
 
-    {
-      name: "School",
-      icon: <BiSolidSchool className="shrink-0 text-[18px]" />,
-      url: "/schoolproperty",
-      tab: "school-property",
-      key: "readschoolproperty",
-      menu: [
-        {
-          name: "School",
-          icon: <BiSolidSchool className="me-2 text-[16px]" />,
-          url: "/schoolproperty",
-          // key: "readCategory",
-        },
-
-      ],
-    },
-    {
-      name: "Document Verification",
-      icon: <MdDomainVerification className="shrink-0 text-[18px]" />,
-      url: "/verification",
-      tab: "user-verification",
-      key: "readverification",
-      menu: [
-        {
-          name: "Document Verification",
-          icon: <MdDomainVerification className="me-2 text-[16px]" />,
-          url: "/verification",
-          // key: "readCategory",
-        },
-
-      ],
-    },
-    {
-      name: "Funnel Videos",
-      icon: <FaVideo className="shrink-0 text-[18px]" />,
-      url: "/funnelvideo",
-      tab: "funnel-video",
-      key: "readvideos",
-      menu: [
-        {
-          name: "Funnel Videos",
-          icon: <FaVideo className="me-2 text-[16px]" />,
-          url: "/funnelvideo",
-          // key: "readCategory",
-        },
-
-      ],
-    },
-    {
-      name: "Company",
-      icon: <PiToolboxFill className="shrink-0 text-[18px]" />,
-      url: "/company",
-      key: "readcompany",
-      menu: [
-        {
-          name: "Company",
-          icon: <PiToolbox className="me-2 text-[16px]" />,
-          url: "/company",
-          key: "",
-        },
-      ]
-    },
-    {
-      name: "Amenities",
-      icon: <MdFeaturedPlayList className="shrink-0 text-[18px]" />,
-      url: "/amenities",
-      key: "readamenities",
-      menu: [
-        {
-          name: "Amenities",
-          icon: <MdOutlineFeaturedPlayList className="me-2 text-[16px]" />,
-          url: "/amenities",
-          key: "",
-        },
-      ]
-    },
-    {
-      name: "Forms",
-      icon: <MdFeaturedPlayList className="shrink-0 text-[18px]" />,
-      url: "/category-form",
-      key: "readform",
-      menu: [
-        {
-          name: "Forms",
-          icon: <GoDuplicate className="me-2 text-[16px]" />,
-          url: "/category-form",
-          key: "readreadform",
-        },
-      ]
-    },
-
-    {
-      name: "Blogs",
-      icon: <FaBlogger className="shrink-0 text-[18px]" />,
-      url: "/blog",
-      key: "readblogs",
-      menu: [
-        {
-          name: "Blogs",
-          icon: <RiBloggerLine className="me-2 text-[16px]" />,
-          url: "/blog",
-          key: "",
-        },
-        {
-          name: "Category",
-          icon: <GoDuplicate className="me-2 text-[16px]" />,
-          url: "/blog-category-type",
-          // key: "readCategory",
-        },
-        {
-          name: "Sub Category",
-          icon: <MdContentPaste className="me-2 text-[16px]" />,
-          url: "/blog-category",
-          // key: "readcategory",
-        },
-
-      ]
-    },
-    {
-      name: "Content Management",
-      icon: <FaFile className="shrink-0 text-[18px]" />,
-      url: "/contentmanagement",
-      key: "readcontentmanagement",
-      menu: [
-        {
-          name: "Content Management",
-          icon: <FaRegFile className="me-2 text-[16px]" />,
-          url: "/contentmanagement",
-          key: "",
-        },
-      ]
-    },
-    {
-      name: "Properties",
-      icon: <RiHomeWifiFill className="shrink-0 text-[18px]" />,
-      url: "/property",
-      // key: "readproperties",
-      menu: [
-        {
-          name: "Properties",
-          icon: <PiHouse className="me-2 text-[16px]" />,
-          url: "/property",
-        },
-        // ...(reviewPropCount > 0
-        //   ? [
-        {
-          name: "Claim Ownership Request",
-          icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
-          url: "/property-claim-ownership",
-        },
-        {
-          name: "Property Removal",
-          icon: <AiOutlinePullRequest className="me-2 text-[16px]" />,
-          url: "/property-requests",
-        },
-        // ] : []),
-        {
-          name: "State Type",
-          icon: <MdOutlineRealEstateAgent className="me-2 text-[16px]" />,
-          url: "/property-state",
-        },
-        {
-          name: "Revenue Type",
-          icon: <MdOutlinePayments className="me-2 text-[16px]" />,
-          url: "/property-revenue",
-          // key: "",
-        },
-        {
-          name: "Revenue Source",
-          icon: <TbCreditCardPay className="me-2 text-[16px]" />,
-          url: "/property-revenue-source",
-          // key: "",
-        },
-        {
-          name: "Expense Type",
-          icon: <SiExpensify className="me-2 text-[16px]" />,
-          url: "/property-expense",
-          // key: "",
-        },
-        {
-          name: "Renovation Type",
-          icon: <BsHouseDoor className="me-2 text-[16px]" />,
-          url: "/property-renovation",
-          // key: "",
-        },
-        {
-          name: "Ratings Type",
-          icon: <FaRegStar className="me-2 text-[16px]" />,
-          url: "/property-ratings",
-          // key: "",
-        },
-        {
-          name: "Preset Searches",
-          icon: <IoSearchSharp className="me-2 text-[16px]" />,
-          url: "/property-quick-search",
-          // key: "",
-        },
-      ]
-    },
-    {
-      name: "Enquiry",
-      icon: <RiContactsBook3Fill className="shrink-0 text-[18px]" />,
-      url: "/enquiry",
-      // key: "readfaq",
-      menu: [
-        {
-          name: "Enquiry",
-          icon: <RiContactsBook3Line className="me-2 text-[16px]" />,
-          url: "/enquiry",
-          key: "",
-        },
-      ]
-    },
-    // {
-    //   name: "Preset Searches",
-    //   icon: <RiContactsBook3Fill className="shrink-0 text-[18px]" />,
-    //   url: "/presetSearch",
-    //   // key: "readfaq",
-    //   menu: [
-    //     {
-    //       name: "Preset Searches",
-    //       icon: <RiContactsBook3Line className="me-2 text-[16px]" />,
-    //       url: "/presetSearch",
-    //       key: "",
-    //     },
-    //   ]
-    // },
-    {
-      name: "Reviews",
-      icon: <MdReviews className="shrink-0 text-[18px]" />,
-      url: "/review",
-      // key: "readfaq",
-      menu: [
-        {
-          name: "Reviews",
-          icon: <MdReviews className="me-2 text-[16px]" />,
-          url: "/review",
-          key: "",
-        },
-        {
-          name: "Company Reviews",
-          icon: <MdReviews className="me-2 text-[16px]" />,
-          url: "/review-company",
-          key: "",
-        },
-      ]
-    },
-
-    {
-      name: "Services",
-      icon: <MdHomeRepairService className="shrink-0 text-[18px]" />,
-      url: "/service",
-      // key: "readfaq",
-      menu: [
-        {
-          name: "Services",
-          icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
-          url: "/service",
-          key: "",
-        },
-      ]
-    },
-    {
-      name: "Setting",
-      icon: <MdHomeRepairService className="shrink-0 text-[18px]" />,
-      url: "/admin-setting",
-      // key: "readfaq",
-      menu: [
-        {
-          name: "Admin Setting",
-          icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
-          url: "/admin-setting",
-          key: "",
-        },
-      ]
-    },
-    {
-      name: "FAQ",
-      icon: <FaCircleQuestion className="shrink-0 text-[18px]" />,
-      url: "/faq",
-      // key: "readfaq",
-      menu: [
-        {
-          name: "FAQ",
-          icon: <FaRegQuestionCircle className="me-2 text-[16px]" />,
-          url: "/faq",
-          key: "",
-        },
-      ]
-    },
-    {
-      name: "Plans",
-      icon: <TbCircleDotFilled className="shrink-0 text-[18px]" />,
-      url: "/plan",
-      menu: [
-        {
-          name: "Plans",
-          icon: <FaRegDotCircle className="me-2 text-[16px]" />,
-          url: "/plan",
-        },
-        {
-          name: "Plan Features",
-          icon: <LuCircleDotDashed className="me-2 text-[16px]" />,
-          url: "/plan-feature",
-        },
-      ]
-    }
+      // Remaining menus (kept in original order)
+      {
+        name: "Staff",
+        icon: <RiUser2Fill className="text-white text-[16px]" />,
+        url: "/staff",
+        key: "readstaff",
+        menu: [
+          {
+            name: "Staff",
+            icon: <LuUser2 className=" text-[14px] me-2 text-[16px]" />,
+            url: "/staff",
+            key: "readstaff",
+          },
+        ],
+      },
+      {
+        name: "Onboarding",
+        icon: <FaRocket className="text-white text-[16px]" />,
+        url: "/onboarding",
+        key: "",
+        menu: [
+          {
+            name: "Onboarding",
+            icon: <FaRocket className="me-2 text-[16px]" />,
+            url: "/onboarding",
+            key: "",
+          },
+        ],
+      },
+      {
+        name: "School",
+        icon: <BiSolidSchool className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/schoolproperty",
+        tab: "school-property",
+        key: "readschoolproperty",
+        menu: [
+          {
+            name: "School",
+            icon: <BiSolidSchool className="me-2 text-[16px]" />,
+            url: "/schoolproperty",
+          },
+          {
+            name: "School Types",
+            icon: <BiSolidSchool className="me-2 text-[16px]" />,
+            url: "/school-types",
+          },
+        ],
+      },
+      {
+        name: "Document Verification",
+        icon: <MdDomainVerification className="text-white text-[16px]" />,
+        url: "/verification",
+        tab: "user-verification",
+        key: "readverification",
+        menu: [
+          {
+            name: "Document Verification",
+            icon: <MdDomainVerification className="me-2 text-[16px]" />,
+            url: "/verification",
+          },
+        ],
+      },
+      {
+        name: "Video Content",
+        icon: <FaVideo className="text-white text-[16px]" />,
+        url: "/funnelvideo",
+        tab: "funnel-video",
+        key: "readvideos",
+        menu: [
+          {
+            name: "Video Content",
+            icon: <FaVideo className="me-2 text-[16px]" />,
+            url: "/funnelvideo",
+          },
+        ],
+      },
+      {
+        name: "Amenities",
+        icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/amenities",
+        key: "readamenities",
+        menu: [
+          {
+            name: "Amenities",
+            icon: <MdOutlineFeaturedPlayList className="me-2 text-[16px]" />,
+            url: "/amenities",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Forms",
+        icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/category-form",
+        key: "readform",
+        menu: [
+          {
+            name: "Forms",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/category-form",
+            key: "readreadform",
+          },
+        ]
+      },
+      {
+        name: "Blogs",
+        icon: <FaBlogger className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/blog",
+        key: "readblogs",
+        menu: [
+          {
+            name: "Blogs",
+            icon: <RiBloggerLine className="me-2 text-[16px]" />,
+            url: "/blog",
+            key: "",
+          },
+          {
+            name: "Category",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/blog-category-type",
+          },
+          {
+            name: "Sub Category",
+            icon: <MdContentPaste className="me-2 text-[16px]" />,
+            url: "/blog-category",
+          },
+        ]
+      },
+      {
+        name: "Content Management",
+        icon: <FaFile className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/contentmanagement",
+        key: "readcontentmanagement",
+        menu: [
+          {
+            name: "Content Management",
+            icon: <FaRegFile className="me-2 text-[16px]" />,
+            url: "/contentmanagement",
+          },
+        ]
+      },
+      {
+        name: "Enquiry",
+        icon: <RiContactsBook3Fill className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/enquiry",
+        menu: [
+          {
+            name: "Enquiry",
+            icon: <RiContactsBook3Line className="me-2 text-[16px]" />,
+            url: "/enquiry",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Reviews",
+        icon: <MdReviews className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/review",
+        menu: [
+          {
+            name: "Reviews",
+            icon: <MdReviews className="me-2 text-[16px]" />,
+            url: "/review",
+            key: "",
+          },
+          {
+            name: "Company Reviews",
+            icon: <MdReviews className="me-2 text-[16px]" />,
+            url: "/review-company",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Services",
+        icon: <MdHomeRepairService className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/service",
+        menu: [
+          {
+            name: "Services",
+            icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
+            url: "/service",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Setting",
+        icon: <MdHomeRepairService className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/admin-setting",
+        menu: [
+          {
+            name: "Admin Setting",
+            icon: <MdOutlineHomeRepairService className="me-2 text-[16px]" />,
+            url: "/admin-setting",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "FAQ",
+        icon: <FaCircleQuestion className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/faq",
+        menu: [
+          {
+            name: "FAQ",
+            icon: <FaRegQuestionCircle className="me-2 text-[16px]" />,
+            url: "/faq",
+            key: "",
+          },
+        ]
+      },
+      {
+        name: "Plans",
+        icon: <TbCircleDotFilled className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/plan",
+        menu: [
+          {
+            name: "Plans",
+            icon: <FaRegDotCircle className="me-2 text-[16px]" />,
+            url: "/plan",
+          },
+          {
+            name: "Plan Features",
+            icon: <LuCircleDotDashed className="me-2 text-[16px]" />,
+            url: "/plan-feature",
+          },
+        ]
+      }
   ];
 
-  const particularData = menus.filter((data) => {
-    return location?.pathname?.includes(data?.url);
-  });
+  const isActiveUrl = (url) => {
+    const path = location.pathname || "";
+    return url && (path === url || path.startsWith(`${url}/`));
+  };
+
+  const isActiveMenu = (data) => {
+    if (isActiveUrl(data?.url)) return true;
+    return (data?.menu || []).some((child) => isActiveUrl(child.url));
+  };
+
+  const particularData = menus.filter((data) => isActiveMenu(data));
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       history("/login");
     }
-    // getProps()
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("admin_sidebar_collapsed", String(isOpen));
-  }, [isOpen]);
 
   const logowhite = () => {
     let value = "/assets/img/logo.png";
@@ -439,6 +528,7 @@ const Layout = memo(function Layout({ children }) {
     let route = localStorage.getItem("route");
     history(route);
   };
+
   const { pathname } = useLocation();
   useEffect(() => {
     if (scrollRef.current) {
@@ -449,29 +539,27 @@ const Layout = memo(function Layout({ children }) {
   return (
     <>
       <div component="layout">
-        {/* Fills gap above sidebar (header starts at sidebarWidth; this keeps brand column continuous) */}
         <div
-          className="fixed left-0 top-0 z-[25] flex items-center justify-center border-b border-white/15 bg-[#976DD0] px-2 shadow-sm"
+          className="fixed left-0 top-0 z-[25] flex items-center justify-center border-b border-white/15 bg-[#976DD0] px-2"
           style={{ width: sidebarWidth, height: 71 }}
           aria-hidden="true"
         >
           {isOpen ? (
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/95 p-1 shadow-sm" title="Bookaroo">
-              <img src="/assets/img/logo.png" alt="" className="h-7 w-7 object-contain" />
+            <div className="flex h-14 w-14 items-center justify-center bg-transparent p-1" title="Anyhomes">
+              <img src="/assets/img/anyhomes-logo-white.png" alt="Anyhomes" className="h-14 w-14 object-contain" />
             </div>
           ) : (
-            <div className="w-full max-w-[220px] rounded-[10px] bg-white/95 p-2 shadow-sm">
-              <img src="/assets/img/logo.png" alt="Bookaroo" className="h-7 w-full max-w-[200px] object-contain object-left" />
+            <div className="w-full max-w-[220px] bg-transparent p-2">
+              <img src="/assets/img/anyhomes-logo-white.png" alt="Anyhomes" className="h-14 w-full max-w-[400px] object-contain object-left" />
             </div>
           )}
         </div>
-        <Header isOpen={isOpen} setIsOpen={setIsopen} particularData={particularData} sidebarWidth={sidebarWidth} />
         <div className="main-wrapper">
           <aside
             className="main-sidebar transition-[width] duration-300 fixed left-0 bg-[#976DD0]"
             style={{ top: 71, height: "calc(100vh - 71px)", width: sidebarWidth, zIndex: 20 }}
           >
-            <Sidebar isOpen={isOpen} menus={menus} />
+            <Sidebar isOpen={isOpen} menus={menus} particularData={particularData} />
           </aside>
           <main
             className="main"

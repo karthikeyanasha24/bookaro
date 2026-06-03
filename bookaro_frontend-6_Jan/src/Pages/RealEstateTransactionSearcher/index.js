@@ -4,11 +4,17 @@ import { MdFolderOpen } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../../components/global/PageLayout";
+import { useTranslation } from "react-i18next";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import LeadCards from "./LeadCards";
+import BuyerDocumentsModal from "./BuyerDocumentsModal";
+import RenterDocumentsModal from "./RenterDocumentsModal";
+import { isGuestMode } from "../../methods/guestMode";
+import "../Dashboard/dashboard.css";
 
 const RealEstateTransactionSearcher = () => {
+  const { t } = useTranslation();
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
@@ -19,11 +25,23 @@ const RealEstateTransactionSearcher = () => {
   });
   const [cards, setCards] = useState([]);
   const [totalCard, setTotalCard] = useState(0);
+  const [buyerModalOpen, setBuyerModalOpen] = useState(false);
+  const [renterModalOpen, setRenterModalOpen] = useState(false);
+
+  const countDocs = (filesObj) => {
+    if (!filesObj || typeof filesObj !== "object") return 0;
+    return Object.values(filesObj).reduce(
+      (acc, arr) => acc + (Array.isArray(arr) ? arr.length : 0),
+      0
+    );
+  };
+  const buyerDocsCount = countDocs(user?.buyerFiles);
+  const renterDocsCount = countDocs(user?.renterFiles);
 
   const tabs = [
-    { name: "All", value: "" },
-    { name: "Purchase", value: "sale" },
-    { name: "Rental", value: "rent" },
+    { name: t("buttons.all"), value: "" },
+    { name: t("transactionSearcher.purchase"), value: "sale" },
+    { name: t("transactionSearcher.rental"), value: "rent" },
   ];
   const [type, setType] = useState("");
 
@@ -53,38 +71,38 @@ const RealEstateTransactionSearcher = () => {
 
   const manageLeads = [
     {
-      head: "Manage buyer file",
-      subHead: "10 documents added",
+      head: t("transactionSearcher.manageBuyerFile"),
+      subHead: t("transactionSearcher.documentsAdded", { count: buyerDocsCount }),
       icon: (<MdFolderOpen className="text-white" />),
       toggle: false,
+      onClick: () => setBuyerModalOpen(true),
     },
     {
-      head: "Seller files",
-      subHead: "10 documents added",
+      head: "Dossier locataire",
+      subHead: t("transactionSearcher.documentsAdded", { count: renterDocsCount }),
       icon: (<MdFolderOpen className="text-white" />),
       toggle: false,
+      onClick: () => setRenterModalOpen(true),
     },
   ]
 
   return (
     <PageLayout>
-    <div className="  pt-14 lg:pt-16 pb-[100px]  bg-[#f2ecf8] relative">
+    <div className="  pt-14 lg:pt-16 pb-[100px]  bg-[#f3f5f9] relative">
       <div className="container   px-8 mx-auto xl:px-5 h-full ">
         <div className="lg:max-w-[1200px] mx-auto max-w-[100%] w-[100%]">
-          <ul className="flex items-center pb-[50px] md:text-[16px] sm:text-[14px] text-[13px]">
-            <li
-              onClick={() => navigate("/project")}
-              className="text-[#47525E] cursor-pointer after"
-            >
-              My Project<span className="mx-[4px]">|</span>
-            </li>
-            <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-              Home-seeker transaction management
-            </li>
-          </ul>
-          <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
-            Monitor your real-estate transactions
-          </h2>
+          <div className="text-center mx-auto max-w-lg">
+            <h2 className="text-black font-bold text-2xl">
+              {t("transactionSearcher.monitorTransactions")}
+            </h2>
+            {isGuestMode() && (
+              <div className="flex justify-center mt-4">
+                <span className="dashboard-section-mock-badge inline-flex items-center justify-center px-3 py-1 rounded-full text-[12px] font-semibold text-[#7c4b00] bg-[#fff4dd] shadow-[0_4px_12px_rgba(249,179,71,0.18)] border border-[rgba(249,179,71,0.35)]">
+                  Données fictives
+                </span>
+              </div>
+            )}
+          </div>
 
           {/* <div className="grid grid-cols-12 gap-5 mt-10 mb-16">
             <div className="lg:col-span-6 col-span-full">
@@ -132,7 +150,19 @@ const RealEstateTransactionSearcher = () => {
             <div className="col-span-12 md:mt-0 mt-8">
               <div className="grid grid-cols-12 md:gap-8 gap-0 mb-16 mx-auto max-w-[600px]">
                 {manageLeads?.map((itm, i) => (
-                  <div className="md:col-span-6 col-span-full relative cursor-pointer flex md:mb-0 mb-3 " >
+                  <div
+                    key={i}
+                    onClick={itm.onClick}
+                    role={itm.onClick ? "button" : undefined}
+                    tabIndex={itm.onClick ? 0 : undefined}
+                    onKeyDown={(e) => {
+                      if (itm.onClick && (e.key === "Enter" || e.key === " ")) {
+                        e.preventDefault();
+                        itm.onClick();
+                      }
+                    }}
+                    className="md:col-span-6 col-span-full relative cursor-pointer flex md:mb-0 mb-3 "
+                  >
                     <div className=" w-full bg-white p-3 rounded-[12px] flex items-center">
                       <div className="bg-[#000000] w-[30px] h-[30px] rounded-full p-1 flex items-center justify-center md:-ms-7 ms-1 shrink-0">
                         {itm.icon}
@@ -181,6 +211,8 @@ const RealEstateTransactionSearcher = () => {
         </div>
       </div>
     </div>
+    <BuyerDocumentsModal open={buyerModalOpen} onClose={() => setBuyerModalOpen(false)} />
+    <RenterDocumentsModal open={renterModalOpen} onClose={() => setRenterModalOpen(false)} />
   </PageLayout>
   );
 };

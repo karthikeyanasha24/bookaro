@@ -37,11 +37,34 @@ function App() {
     { url: "/user-report/edit/:id", path: "UserReport/AddEdit" },
     { url: "/user-report/add", path: "UserReport/AddEdit" },
     { url: "/user-report/detail/:id", path: "UserReport/View" },
+    { url: "/onboarding", path: "Onboarding" },
+    { url: "/onboarding/detail/:id", path: "Onboarding/View" },
+    { url: "/score/users", path: "ScoreUsers" },
+    { url: "/score/users/detail/:id", path: "ScoreUsers/View" },
+    { url: "/score/interests", path: "ScoreInterests" },
+    { url: "/score/interests/detail/:id", path: "ScoreInterests/View" },
+    { url: "/score/parameters", path: "ScoreParameters" },
+    { url: "/confidence/users", path: "ConfidenceUsers" },
+    { url: "/confidence/users/detail/:id", path: "ConfidenceUsers/View" },
+    { url: "/confidence/leads", path: "ConfidenceLeads" },
+    { url: "/confidence/leads/detail/:id", path: "ConfidenceLeads/View" },
 
     { url: "/company", path: "Agency" }, // Staff Module Routes
     { url: "/company/edit/:id", path: "Agency/AddEdit" },
     { url: "/company/add", path: "Agency/AddEdit" },
     { url: "/company/detail/:id", path: "Agency/View" },
+    { url: "/marketplace", path: "Marketplace" },
+    { url: "/marketplace/services", path: "Marketplace/Services" },
+    { url: "/marketplace/partners", path: "Marketplace/Partners" },
+    { url: "/marketplace/partners/:id", path: "Marketplace/PartnerDetail" },
+    { url: "/marketplace/offered-services", path: "Marketplace/OfferedServices" },
+    { url: "/marketplace/transactions", path: "Marketplace/Transactions" },
+    { url: "/marketplace/transactions/:id", path: "Marketplace/TransactionDetail" },
+    { url: "/marketplace/litigations", path: "Marketplace/Litigations" },
+    { url: "/marketplace/litigations/:id", path: "Marketplace/LitigationDetail" },
+    { url: "/marketplace/requests", path: "Marketplace/Requests" },
+    { url: "/marketplace/requests/:id", path: "Marketplace/RequestDetail" },
+    { url: "/marketplace/settings", path: "Marketplace/Settings" },
     { url: "/staff", path: "Staff" }, // Staff Module Routes
     { url: "/staff/edit/:id", path: "Staff/AddEdit" },
     { url: "/staff/add", path: "Staff/AddEdit" },
@@ -79,12 +102,17 @@ function App() {
     { url: "/property/add/:id/:step", path: "Property/AddEdit" },
     { url: "/property/:slug", path: "Property/AddEdit" },
     { url: "/property/detail/:id", path: "Property/View" },
+    { url: "/property/admin/:id", path: "Property/AdminView" },
     { url: "/property-requests", path: "PropertyRequests" },
+    { url: "/company/admin/:id", path: "Agency/AdminView" },
 
     { url: "/schoolproperty", path: "SchoolProperty" }, // School Property Module Routes
     { url: "/schoolproperty/edit/:id", path: "SchoolProperty/AddEdit" },
     { url: "/schoolproperty/add", path: "SchoolProperty/AddEdit" },
     { url: "/schoolproperty/detail/:id", path: "SchoolProperty/View" },
+    { url: "/school-types", path: "SchoolTypes" }, // School Types Module Routes
+    { url: "/school-types/add", path: "SchoolTypes/AddEdit" },
+    { url: "/school-types/edit/:id", path: "SchoolTypes/AddEdit" },
 
     { url: "/verification", path: "DocumentVerification" }, // User verification(Declarative rating) Module Routes
     { url: "/verification/edit/:id", path: "DocumentVerification/AddEdit" },
@@ -120,6 +148,7 @@ function App() {
     { url: "/property-ratings/add", path: "Ratings/AddEdit" },
     { url: "/property-ratings/edit/:id", path: "Ratings/AddEdit" },
     { url: "/property-ratings/detail/:id", path: "Ratings/View" },
+
     { url: "/property-quick-search", path: "QuickSearch" },
     { url: "/property-quick-search/add", path: "QuickSearch/AddEdit" },
     { url: "/property-quick-search/edit/:id", path: "QuickSearch/AddEdit" },
@@ -151,11 +180,16 @@ function App() {
     { url: "/review-company/add", path: "CompanyReview/AddEdit" },
     { url: "/review-company/detail/:id", path: "CompanyReview/View" },
 
+    { url: "/p2p-estimation", path: "P2pEstimation" }, // Staff Module Routes
+    { url: "/p2p-estimation/edit/:id", path: "P2pEstimation/AddEdit" },
+    { url: "/p2p-estimation/add", path: "P2pEstimation/AddEdit" },
+    { url: "/p2p-estimation/detail/:id", path: "P2pEstimation/View" },
+
     { url: "/admin-setting", path: "AdminSetting" },
     { url: "/admin-setting/edit/:id", path: "AdminSetting/AddEdit" },
     { url: "/admin-setting/detail/:id", path: "AdminSetting/View" },
 
-    { url: "/property-claim-ownership", path: "ClaimOwnerShip" }, 
+    { url: "/property-claim-ownership", path: "ClaimOwnerShip" },
     { url: "/property-claim-ownership/detail/:id", path: "ClaimOwnerShip/View" },
 
   ];

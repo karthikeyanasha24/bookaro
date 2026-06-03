@@ -13,6 +13,7 @@ import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import { removePropData } from "../../models/string.model";
 import { categorizeData } from "../propertySteps/shared";
+import { useTranslation } from "react-i18next";
 import { CommonCreteria } from "./commonCreteria/commonCreteria";
 import CommonFilter from "./commonFilters/CommonFilters";
 import CustomMap from "./CustomMap";
@@ -21,6 +22,7 @@ import PropertiesGrid from "./Propertygrid";
 import PropertiesList from "./Propertylist";
 
 const PropertyPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state);
   const params = new URLSearchParams(window.location.search);
@@ -50,6 +52,7 @@ const PropertyPage = () => {
   const [isOpen7, setIsOpen7] = useState(false);
   const [isOpen9, setIsOpen9] = useState(false);
   const [selectedTab, setSelectedTab] = useState(propertyType || "");
+  console.log(selectedTab,"selectedTab")
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [error, setError] = useState({ price: "", revenue: "", surface: "", proposal: "", alert: "", location: "" })
   const [priceRange, setPriceRange] = useState({ min: minPrice || "", max: maxPrice || "" })
@@ -109,8 +112,8 @@ const PropertyPage = () => {
   const addAlert = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     // if (!alert.reason) return setError({ ...error, alert: "Select reason" })
-    if (!alert.email) return setError({ ...error, alert: "Enter email address" })
-    if (!emailRegex.test(alert.email)) return setError({ ...error, alert: "Enter a valid email address" })
+    if (!alert.email) return setError({ ...error, alert: t("validation.emailRequired") })
+    if (!emailRegex.test(alert.email)) return setError({ ...error, alert: t("validation.invalidEmail") })
 
     // if (!alert.name) return setError({ ...error, alert: "Enter name" })
     const filteredData = Object.fromEntries(
@@ -132,7 +135,6 @@ const PropertyPage = () => {
   }
   const [upcomingCount, setUpcomingCount] = useState(0)
   const [showReset, setShowReset] = useState(false);
-  console.log(showReset,"=-=-=-=-=-=-=-=")
   const [view, setView] = useState("map");
   const [amenities, setAmenities] = useState({});
   const [accountType, setAccountType] = useState("");
@@ -194,13 +196,13 @@ const PropertyPage = () => {
 
   const deleteItem = (item) => {
     Swal.fire({
-      title: "Are you sure?",
+      title: t("modals.confirmTitle"),
       text: `Do you want to delete this Property`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#976DD0",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
+      confirmButtonText: t("buttons.yes"),
     }).then((result) => {
       if (result.isConfirmed) {
         loader(true);
@@ -310,29 +312,29 @@ const PropertyPage = () => {
 
   const handleApply = () => {
     if (indFilter?.propertyType === "offmarket" || indFilter?.propertyType === "directory") {
-      if (!proposal) return setError({ ...error, proposal: "Mark checked atleast a proposal" })
+      if (!proposal) return setError({ ...error, proposal: t("property.filters.proposalRequired") })
       setAllFilters({ ...allfilters, proposal: proposal, minPrice: "", maxPrice: "" });
     } else {
-      if (!priceRange?.min && !priceRange?.max) return setError({ ...error, price: "Enter range" })
+      if (!priceRange?.min && !priceRange?.max) return setError({ ...error, price: t("property.filters.enterRange") })
       if (priceRange?.max) {
-        if (+priceRange?.min >= +priceRange?.max) return setError({ ...error, price: "Enter correct range" })
+        if (+priceRange?.min >= +priceRange?.max) return setError({ ...error, price: t("validation.correctRange") })
       }
       setAllFilters({ ...allfilters, minPrice: priceRange?.min, maxPrice: priceRange?.max, proposal: "" });
     }
     setIsOpen2(false);
   };
   const handleApplyRevenues = () => {
-    if (!revenues?.min && !revenues?.max) return setError({ ...error, revenue: "Enter range" })
+    if (!revenues?.min && !revenues?.max) return setError({ ...error, revenue: t("property.filters.enterRange") })
     if (revenues?.max) {
-      if (+revenues?.min >= +revenues?.max) return setError({ ...error, revenue: "Enter correct range" })
+      if (+revenues?.min >= +revenues?.max) return setError({ ...error, revenue: t("validation.correctRange") })
     }
     setAllFilters({ ...allfilters, minRevenues: revenues?.min, maxRevenues: revenues?.max, });
     setIsOpen3(false);
   };
   const handleApplySurface = () => {
-    if (!surface?.min && !surface?.max) return setError({ ...error, surface: "Enter range" })
+    if (!surface?.min && !surface?.max) return setError({ ...error, surface: t("property.filters.enterRange") })
     if (surface?.max) {
-      if (+surface?.min >= +surface?.max) return setError({ ...error, surface: "Enter correct range" })
+      if (+surface?.min >= +surface?.max) return setError({ ...error, surface: t("validation.correctRange") })
     }
     setAllFilters({ ...allfilters, minSurface: surface?.min, maxSurface: surface?.max, });
     setIsOpen4(false);
@@ -378,6 +380,16 @@ const PropertyPage = () => {
       return value !== "" && value !== null && value !== undefined && value !== 0 && value !== false && !(Array.isArray(value) && value.length === 0);
     }).length;
     setShowReset(validValueCount !== 0);
+
+    // Synchroniser les filtres actifs vers l'URL
+    const urlParams = new URLSearchParams();
+    Object.entries(allfilters).forEach(([key, value]) => {
+      if (value !== "" && value !== null && value !== undefined && value !== 0 && value !== false && !(Array.isArray(value) && value.length === 0)) {
+        urlParams.set(key, value);
+      }
+    });
+    const newUrl = `${window.location.pathname}${urlParams.toString() ? `?${urlParams.toString()}` : ""}`;
+    window.history.replaceState({}, "", newUrl);
   }, [allfilters]);
 
   const getData = (f = {}) => {
@@ -595,7 +607,11 @@ const PropertyPage = () => {
   }
 
   const getFilterResult = () => {
-    let dto = { ...filters, ...indFilter, loggedInUser: user?._id }
+    let dto = {
+      ...filters, ...indFilter,
+      loggedInUser: user?._id, offMarket: (selectedTab == "offmarket" ? true : false) || (propertyType == "offmarket" ? true : false),
+      offMarket: (selectedTab == "offmarket" ? true : false) || (propertyType == "offmarket" ? true : false) || offMarket,
+    }
     if (user?.loggedIn) dto.userId = user?._id;
     if (dto?.propertyType == "rent" || dto?.propertyType == "sale" || dto?.propertyType == "directory") {
       delete dto.loggedInUser;
@@ -732,16 +748,16 @@ const PropertyPage = () => {
           />
 
           {view === "map" && (
-            <div className="bg-[#f9f9f9] py-10">
+            <div className="bg-[#f3f5f9] py-10">
               <div className=" items-center  mx-auto container lg:px-10 px-6">
                 {favourites && (
                   <ul className="flex items-center pb-[30px]">
                     <li onClick={() => navigate("/project")} className="text-[#47525E] cursor-pointer after">
-                      My Project
+                      {t("project.myProject")}
                       <span className="mx-[4px]">|</span></li>
 
                     <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-                      Interacted Properties</li>
+                      {t("project.interactedProperties")}</li>
                   </ul>
                 )}
                 <div className="grid grid-cols-12 md:gap-8 gap-0">
@@ -752,7 +768,7 @@ const PropertyPage = () => {
                     allfilters={allfilters}
                     handleSortBy={handleSortBy}
                   />
-                  <div className="xl:col-span-8 lg:col-span-8 md:col-span-6  col-span-12 lg:mb-0 mb-4 h-[700px] overflow-auto pe-3 md:mt-0 mt-5 ">
+                  <div className="xl:col-span-8 lg:col-span-8 md:col-span-6  col-span-12 lg:mb-0 mb-4 h-[700px] overflow-auto pe-3 md:mt-0 mt-5 scrollbar-hide ">
                     <div className="grid grid-cols-12 bg-[#f9f9f9] md:gap-4 gap-0 md:mt-0 mt-5">
                       {data?.length > 0 ? (
                         data.map((item, index) => {
@@ -793,23 +809,23 @@ const PropertyPage = () => {
                       ) : (
                         <div className="text-center col-span-12 my-8">
                           <img src="assets/img/no-data.svg" className="w-[400px] mx-auto " />
-                          No Records Found
+                          {t("messages.noRecordsFound")}
                         </div>
                       )}
                     </div>
                     <div className="flex justify-between items-center my-4 pe-3">
-                      <h4 className="text-[#47525E] font-[600] xl:text-[20px] text-[16px] w-[60%]">Be informed when new properties are listed</h4>
+                      <h4 className="text-[#47525E] font-[600] xl:text-[20px] text-[16px] w-[60%]">{t("property.alertPrompt")}</h4>
                       <button className="bg-[#976DD0] text-white px-3 py-2 rounded-[50px] text-[12px] font-[600]  w-fit"
-                        onClick={() => setIsOpen9(true)}>Activate alerts</button>
+                        onClick={() => setIsOpen9(true)}>{t("buttons.activateAlerts")}</button>
                     </div>
                     <div className={`paginationWrapper xl:flex-row flex-col ${total > filters?.count ? "" : "d-none"}`} >
                       <span className="xl:mb-0 mb-2 block">
-                        Show {data?.length} from {total} Properties
+                        {t("manageNotifications.showFromProperties", { count: data?.length, total })}
                       </span>
                       <ReactPaginate
-                        previousLabel="<Pre"
-                        nextLabel="Next>"
-                        breakLabel="..."
+                        previousLabel={t("pagination.previous")}
+                        nextLabel={t("pagination.next")}
+                        breakLabel={t("pagination.dots")}
                         pageRangeDisplayed={2}
                         marginPagesDisplayed={1}
                         pageCount={Math.ceil(total / filters.count)}
@@ -821,7 +837,7 @@ const PropertyPage = () => {
                       />
                     </div>
                   </div>
-                  <div className="xl:col-span-4  lg:col-span-4 md:col-span-6 col-span-12 border border-[#D2D2D2] rounded-[12px] lg:mb-0 mb-4 custom-map">
+                  <div className="xl:col-span-4  lg:col-span-4 md:col-span-6 col-span-12 border border-[#D2D2D2] rounded-[16px] overflow-hidden lg:mb-0 mb-4 custom-map">
                     <CustomMap
                       locations={locations}
                       hoveredLocation={hoveredLocation} />

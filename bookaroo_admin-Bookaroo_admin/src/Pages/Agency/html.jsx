@@ -4,6 +4,7 @@ import { FiPlus } from "react-icons/fi";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { LiaEdit, LiaTrashAlt } from "react-icons/lia";
 import { PiEyeLight, PiFileCsv } from "react-icons/pi";
+import { FaEye } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../../components/Table";
@@ -18,6 +19,7 @@ const Html = ({
   filter,
   edit,
   view,
+  adminView,
   statusChange,
   pageChange,
   count,
@@ -56,6 +58,14 @@ const Html = ({
       sort: true,
       render: (row) => {
         return <span className="">{row?.email}</span>;
+      },
+    },
+    {
+      key: "type",
+      name: "Type",
+      render: (row) => {
+        const type = row?.accountType === "pro" ? "Pro" : row?.role === "agency" ? "Agency" : row?.accountType || row?.role || "N/A";
+        return <span className="capitalize">{type}</span>;
       },
     },
     // {
@@ -130,6 +140,14 @@ const Html = ({
         return (
           <>
             <div className="flex items-center justify-start gap-1.5">
+              <Tooltip placement="top" title="Admin View">
+                <a
+                  className="border cursor-pointer hover:opacity-70 rounded-[35px] bg-purple-100 w-10 h-10 text-purple-700 flex items-center justify-center text-lg"
+                  onClick={() => adminView(itm.id || itm._id)}
+                >
+                  <FaEye />
+                </a>
+              </Tooltip>
               {isAllow(`read${shared.check}`) ? (
                 <Tooltip placement="top" title="View">
                   <a
@@ -204,6 +222,11 @@ const Html = ({
   // }, []);
 
 
+
+  const typeOptions = [
+    { id: "agency", name: "Agency" },
+    { id: "pro", name: "Pro" },
+  ];
 
   return (
     <Layout>
@@ -314,16 +337,32 @@ const Html = ({
                 style={{ display: 'none' }}
                 onChange={handleImport}
               />
-   <SelectDropdown
-              id="statusDropdown"
-              displayValue="name"
-              placeholder="All Status"
-              intialValue={filters.status}
-              result={(e) => {
-                changestatus(e.value);
-              }}
-              options={statusModel.list}
-            />
+              <SelectDropdown
+                id="typeDropdown"
+                displayValue="name"
+                placeholder="All Types"
+                intialValue={filters.accountType || filters.role}
+                result={(e) => {
+                  if (e.value === "pro") {
+                    filter({ accountType: e.value, role: "" });
+                  } else if (e.value === "agency") {
+                    filter({ role: e.value, accountType: "" });
+                  } else {
+                    filter({ role: "", accountType: "" });
+                  }
+                }}
+                options={typeOptions}
+              />
+              <SelectDropdown
+                id="statusDropdown"
+                displayValue="name"
+                placeholder="All Status"
+                intialValue={filters.status}
+                result={(e) => {
+                  changestatus(e.value);
+                }}
+                options={statusModel.list}
+              />
 
             </div>
             {/* {user?.role?.name == "Admin" && (
@@ -340,7 +379,7 @@ const Html = ({
             )} */}
          
 
-            {filters.status || filters.groupId || filters.role ? (
+            {filters.status || filters.groupId || filters.role || filters.accountType ? (
               <>
                 <button
                   className="bg-primary leading-10 h-10 inline-block shadow-btn px-6 hover:opacity-80 text-sm text-white rounded-lg ms-2"

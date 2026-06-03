@@ -42,6 +42,7 @@ router.use("/reviews", require("./reviews.routes"));
 router.use("/buildingPermits", require("./buildingPermit.routes"))
 router.use("/draft", require("./draftProperty.routes.js"))
 router.use("/schools", require("./schools.routes.js"));
+router.use("/school-types", require("./schoolTypes.routes.js"));
 router.use("/funnelUrl", require("./funnelUrl.routes.js"));
 router.use("/funnelVideoLike", require("./funnelVideoLike.routes.js"));
 router.use("/tags", require("./tags.routes.js"));
@@ -56,6 +57,8 @@ router.use("/support",require("./support.routes.js"));
 router.use("/adminDashboard", require("./adminDashboard.routes.js"));
 router.use("/dashboard", require("./frontendDashboard.routes.js"));
 router.use("/api/dashboard", require("./frontendDashboard.routes.js"));
+router.use("/score", require("./score.routes"));
+router.use("/scoreParameters", require("./scoreParameters.routes"));
 
 // ── Marketplace de services ────────────────────────────────────────────────
 router.use("/marketplace", require("../modules/services-marketplace/routes/public"));

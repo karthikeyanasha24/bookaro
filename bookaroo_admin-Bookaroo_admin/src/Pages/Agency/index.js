@@ -15,7 +15,7 @@ import "./style.scss";
 const Users = () => {
   const user = useSelector((state) => state.user);
   const searchState = { data: "" };
-  const [filters, setFilter] = useState({ page: 1, count: 10, search: "" });
+  const [filters, setFilter] = useState({ page: 1, count: 10, search: "", accountType: "" });
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [loaging, setLoader] = useState(true);
@@ -73,6 +73,7 @@ const Users = () => {
         status: "",
         page: 1,
         role: "",
+        accountType: "",
       }
     }
     setFilter({ ...filters, ...f });
@@ -182,6 +183,10 @@ const Users = () => {
     history(url);
   };
 
+  const adminView = (id) => {
+    history(`/company/admin/${id}`);
+  };
+
   const uploadFile = (e) => {
     let files = e.target.files;
     let file = files?.item(0);
@@ -197,9 +202,13 @@ const Users = () => {
 
   const exportfun = async () => {
     const token = await localStorage.getItem("token");
+    const params = new URLSearchParams();
+    if (filters.role) params.append("role", filters.role);
+    if (filters.accountType) params.append("accountType", filters.accountType);
+    const url = `${environment.api}agency/exportAgencyListing${params.toString() ? `?${params.toString()}` : ""}`;
     const req = await axios({
       method: "get",
-      url: `${environment.api}agency/exportAgencyListing`,
+      url,
       responseType: "blob",
       body: { token: token },
     });
@@ -255,6 +264,7 @@ const Users = () => {
       <Html
         edit={edit}
         view={view}
+        adminView={adminView}
         clear={clear}
         sortClass={sortClass}
         sorting={sorting}

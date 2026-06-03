@@ -32,17 +32,24 @@ import moment from "moment";
 import AddNewCard from "../CardDetail/AddNewCard";
 import { IoMdClose } from "react-icons/io";
 import { login_success } from "../../actions/user";
+import { isGuestMode } from "../../methods/guestMode";
+import { useTranslation } from 'react-i18next';
 
 const SocialEstimation = () => {
-  const stripePromise = environment?.stripe_public_key
-    ? loadStripe(environment.stripe_public_key)
-    : null;
+  const { t } = useTranslation();
+
+  const stripePromise = loadStripe(environment.stripe_public_key);
   const chartRef = useRef(null);
   const camppaginchartRef = useRef(null);
   const params = new URLSearchParams(window.location.search);
   const IsApp = params.get("isApp");
   const UserId = params.get("userId");
+  const requestedPropertyId = params.get("propertyId");
+  const shouldAutoStartCampaign = params.get("startCampaign") === "1";
+  const requestedPropertyIdRef = useRef(requestedPropertyId);
+  const shouldAutoStartCampaignRef = useRef(shouldAutoStartCampaign);
   const { user } = useSelector((state) => state);
+  const isGuest = user?.isGuest || isGuestMode();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [allCards, setAllCards] = useState([]);
   // const activePlan = useSelector((state) => state.activePlan);
@@ -169,15 +176,18 @@ const SocialEstimation = () => {
     const payload = {
       propertyId: propertyId,
       userId: user?.id || user?._id,
+      guest: isGuest,
     };
     socket.emit("owner-total-campaign-results", payload);
 
-    ApiClient.get(`peerCampaign/userCampaigns`, payload).then((res) => {
-      if (res.success) {
-        setcampagindata(res?.data);
-      }
-      loader(false);
-    });
+    if (!isGuest) {
+      ApiClient.get(`peerCampaign/userCampaigns`, payload).then((res) => {
+        if (res.success) {
+          setcampagindata(res?.data);
+        }
+        loader(false);
+      });
+    }
   };
 
   const handleCardSelect = async (cardId) => {
@@ -205,9 +215,10 @@ const SocialEstimation = () => {
     const newpayload = {
       propertyId: selectedProperty?._id,
       userReasonablePrice: avarageePrice,
+      guest: isGuest,
     };
     socket.emit("lifetime-price-estimation", newpayload);
-  }, [avarageePrice]);
+  }, [avarageePrice, selectedProperty?._id, isGuest]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -266,6 +277,15 @@ const SocialEstimation = () => {
       return;
     }
 
+    if (isGuest) {
+      socket.emit("est-prop-list", {
+        guest: true,
+        loggedInUser: "guest-user-000",
+        count: 6,
+      });
+      return;
+    }
+
     const filter = {
       ...filters,
       ...f,
@@ -302,22 +322,78 @@ const SocialEstimation = () => {
         setTotal(res?.total || data?.length);
 
         if (data.length) {
-          handleClickProperty(data[0]);
+          const matchingProperty = requestedPropertyIdRef.current
+            ? data.find((itm) => {
+                const candidateIds = [
+                  itm?._id,
+                  itm?.id,
+                  itm?.propertyId,
+                  itm?.propertyId?._id,
+                  itm?.propertyId?.id,
+                ];
+                return candidateIds
+                  .filter((value) => value !== undefined && value !== null)
+                  .map((value) => `${value}`)
+                  .includes(`${requestedPropertyIdRef.current}`);
+              })
+            : null;
+
+          handleClickProperty(matchingProperty || data[0]);
+
+          if (shouldAutoStartCampaignRef.current) {
+            setShowModal(true);
+            getNewCampagionData();
+            shouldAutoStartCampaignRef.current = false;
+          }
+        } else if (shouldAutoStartCampaignRef.current) {
+          setAlertModal(true);
+          shouldAutoStartCampaignRef.current = false;
         }
       } else {
         setData([]);
         setFilteredData([]);
         setTotal(0);
+
+        if (shouldAutoStartCampaignRef.current) {
+          setAlertModal(true);
+          shouldAutoStartCampaignRef.current = false;
+        }
       }
       loader(false);
     });
   };
   useEffect(() => {
-    if (user?.loggedIn) {
+    if (!isGuest) return;
+
+    const handleGuestPropertyList = (res) => {
+      const properties = res?.data || [];
+      setData(properties);
+      setFilteredData(properties);
+      setTotal(res?.total || properties.length);
+      if (!selectedProperty && properties.length > 0) {
+        setSelectedProperty(properties[0]);
+      }
+    };
+
+    socket.on("est-prop-list", handleGuestPropertyList);
+    socket.on("connect_error", () => {
+      setData([]);
+      setFilteredData([]);
+      setTotal(0);
+    });
+
+    return () => {
+      socket.off("est-prop-list", handleGuestPropertyList);
+      socket.off("connect_error");
+    };
+  }, [isGuest]);
+
+  useEffect(() => {
+    if (user?.loggedIn || isGuest) {
       getData();
       scrollToTop();
     }
-  }, [type, user?.loggedIn]);
+  }, [type, user?.loggedIn, isGuest]);
 
   useEffect(() => {
     if (selectedProperty) {
@@ -325,6 +401,9 @@ const SocialEstimation = () => {
       socket.on("owner-total-campaign-results", (res) => {
         const msg = res?.data;
         setCards(msg);
+        if (msg?.campaigns) {
+          setcampagindata(msg.campaigns);
+        }
         setavaragePrice(msg?.estimationStats?.priceStats?.[0]?.avgPrice || 0);
         setchart([
           {
@@ -506,7 +585,7 @@ const SocialEstimation = () => {
             text: "text-pink-100",
             range: "+10% to +20%",
             value:
-              res?.data?.estimationStats?.withinPlus10To10?.[0]?.count || 0,
+              res?.data?.estimationStats?.withinPlus10To20?.[0]?.count || 0,
           },
           {
             percent: res?.data?.priceDeviationBreakdown?.plus0To5,
@@ -852,7 +931,7 @@ const SocialEstimation = () => {
           text: "text-pink-100",
           range: "+10% to +20%",
           value:
-            res?.data?.estimationStats?.withinPlus10To10?.[0]?.count || 0,
+            res?.data?.estimationStats?.withinPlus10To20?.[0]?.count || 0,
         },
         {
           percent: res?.data?.priceDeviationBreakdown?.plus0To5,
@@ -996,10 +1075,12 @@ const SocialEstimation = () => {
   const getCampagionData = (id) => {
     const payload = {
       campaginId: id,
+      guest: isGuest,
     };
     socket.emit("owner-per-campaign-results", payload);
     const newpayload = {
       campaginId: id,
+      guest: isGuest,
     };
     socket.emit("lifetime-price-estimation", newpayload);
   };
@@ -1100,26 +1181,24 @@ const SocialEstimation = () => {
 
   return (
     <PageLayout>
-      <div className="  pt-14 lg:pt-16 pb-[100px]  bg-[#976DD0]/30 relative">
+      <div className="  pt-14 lg:pt-16 pb-[100px]  bg-[#f3f5f9] relative">
         <div className="container   px-8 mx-auto xl:px-5 h-full ">
           <div className="lg:max-w-[1200px] mx-auto max-w-[100%] w-[100%]">
-            <ul className="flex items-center pb-[50px] md:text-[16px] text-[14px]">
-              <li
-                onClick={() => navigate("/project")}
-                className="text-[#47525E] cursor-pointer after"
-              >
-                My Project<span className="mx-[4px]">|</span>
-              </li>
-              <li className="text-[#47525E] cursor-pointer capitalize font-[600]">
-                Real-estate social estimation
-              </li>
-            </ul>
-            <h2 className="text-black max-w-lg mx-auto font-bold text-2xl text-center ">
-              Peer to Peer estimation
-            </h2>
-            <h3 className="text-xl text-center">
-              Here is what potential buyers think about your property
-            </h3>
+            <div className="flex flex-col lg:flex-row lg:justify-between items-start lg:items-center gap-4 max-w-3xl mx-auto">
+              <div>
+                <h2 className="text-black font-bold text-2xl">
+                  Peer to Peer estimation
+                </h2>
+                <h3 className="text-xl">
+                  Here is what potential buyers think about your property
+                </h3>
+              </div>
+              {isGuest && (
+                <span className="dashboard-section-mock-badge whitespace-nowrap">
+                  Données fictives
+                </span>
+              )}
+            </div>
 
             <div className="grid grid-cols-12 mt-10 md:gap-8">
               <PropSidebar
@@ -1137,7 +1216,7 @@ const SocialEstimation = () => {
                 textChange={textChange}
                 handlePageChange={handlePageChange}
               />
-              <div className="lg:col-span-8 col-span-12 md:mt-0 mt-8">
+              <div className="lg:col-span-8 col-span-12 md:mt-0 mt-8 lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-2">
                 {showCampaign ? (
                   <>
                     <div className="flex justify-between items-center gap-3 ">
@@ -1298,7 +1377,8 @@ const SocialEstimation = () => {
                         </div>
                         <button
                           onClick={() => startCampagion()}
-                          className="z-[2] bg-purple-500 text-white px-5 py-2 rounded-full hover:bg-purple-600 transition"
+                          disabled={isGuest}
+                          className={`z-[2] bg-purple-500 text-white px-5 py-2 rounded-full transition ${isGuest ? "cursor-not-allowed opacity-60 bg-purple-300 hover:bg-purple-300" : "hover:bg-purple-600"}`}
                         >
                           Start new campaign
                         </button>
@@ -1868,25 +1948,25 @@ const SocialEstimation = () => {
                                     <div className="flex items-center space-x-1">
                                       <AiOutlineUser />
                                       <span className="text-purple-700 font-medium">
-                                        1 000
+                                        {item?.totalUsers || item?.userCount || 0}
                                       </span>
                                     </div>
                                     <div className="flex items-center space-x-1">
                                       <AiOutlineHome />
                                       <span className="text-purple-700 font-medium">
-                                        50
+                                        {item?.propertyFollows || item?.follows || 0}
                                       </span>
                                     </div>
                                     <div className="flex items-center space-x-1">
                                       <AiOutlineHeart />
                                       <span className="text-purple-700 font-medium">
-                                        100
+                                        {item?.propertyLikes || item?.likes || 0}
                                       </span>
                                     </div>
                                     <div className="flex items-center space-x-1">
                                       <AiOutlineHeart />
                                       <span className="text-purple-700 font-medium">
-                                        20
+                                        {item?.propertyShares || item?.shares || 0}
                                       </span>
                                     </div>
                                   </div>
@@ -2833,18 +2913,12 @@ const SocialEstimation = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative">
-            {stripePromise ? (
-              <Elements stripe={stripePromise}>
-                <AddNewCard
-                  onClose={() => setIsModalOpen(false)}
-                  getCards={getPaymentCards}
-                />
-              </Elements>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded">
-                Stripe is not configured. Set <code>REACT_APP_STRIPE_PUBLIC_KEY</code> in <code>.env</code>.
-              </div>
-            )}
+            <Elements stripe={stripePromise}>
+              <AddNewCard
+                onClose={() => setIsModalOpen(false)}
+                getCards={getPaymentCards}
+              />
+            </Elements>
           </div>
         </div>
       )}
