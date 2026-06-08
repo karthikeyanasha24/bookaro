@@ -21,6 +21,14 @@ const MarketplaceApi = {
   updatePartnerFlagsV2: (id, payload) => ApiClient.put(`admin/marketplace/partners/${id}/flags`, payload),
   updatePartnerBio: (id, payload) => ApiClient.put(`admin/marketplace/partners/${id}/bio`, payload),
 
+  // Admin service actions
+  validateService: (id) => ApiClient.post(`admin/marketplace/services/${id}/validate`),
+  rejectService: (id) => ApiClient.post(`admin/marketplace/services/${id}/reject`),
+  bulkValidateServices: (ids) => ApiClient.post('admin/marketplace/services/bulk-validate', { ids }),
+  bulkRejectServices: (ids) => ApiClient.post('admin/marketplace/services/bulk-reject', { ids }),
+  updateService: (id, payload) => ApiClient.put(`admin/marketplace/services/${id}`, payload),
+  deleteService: (id) => ApiClient.delete(`admin/marketplace/services/${id}`),
+
   // Litiges marketplace
   listLitigations: (params = {}) => ApiClient.get("admin/marketplace/litigations", params),
   getLitigationDetail: (id, params = {}) => ApiClient.get(`admin/marketplace/litigations/${id}`, params),

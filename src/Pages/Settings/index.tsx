@@ -2,17 +2,21 @@ import { TimePicker } from 'antd';
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Layout from "../../components/global/layout";
 import ChangePassword from "../../components/Profile/ChangePassword";
 import EditProfile from "../../components/Profile/Edit";
+import PartnerCard from "./PartnerCard";
 import ApiClient from "../../methods/api/apiClient";
 import methodModel from "../../methods/methods";
 
 const Settings = () => {
   const [tabs, setTabs] = useState("profile");
+  const [isPartner, setIsPartner] = useState(false);
   const [form, setForm]: any = useState({ startTime: null, endTime: null });
   const { tab }: any = useParams();
+  const reduxUser: any = useSelector((state: any) => state.user);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -44,6 +48,27 @@ const Settings = () => {
   };
 
   useEffect(() => {
+    const d = reduxUser || {};
+    const partnerFlag = !!(
+      d?.isLocalFavorite || d?.isGlobalFavorite ||
+      d?.partnerType === "local" || d?.partnerType === "global" ||
+      (d?.customerRole?.name && /partenaire|partner|pro/i.test(d.customerRole.name))
+    );
+    setIsPartner(partnerFlag);
+    // If Redux user doesn't have partner flags, fetch fresh details
+    if (!partnerFlag && reduxUser?._id) {
+      ApiClient.get('user/detail', { id: reduxUser._id }).then((res: any) => {
+        if (res.success && res.data) {
+          const u = res.data;
+          const fetchedFlag = !!(
+            u?.isLocalFavorite || u?.isGlobalFavorite ||
+            u?.partnerType === 'local' || u?.partnerType === 'global' ||
+            (u?.customerRole?.name && /partenaire|partner|pro/i.test(u.customerRole.name))
+          );
+          setIsPartner(fetchedFlag);
+        }
+      });
+    }
     if (tab) {
       if (tab == "settings") {
         // Hit api to update the admin available time
@@ -61,7 +86,7 @@ const Settings = () => {
     } else {
       setTabs("profile");
     }
-  }, [tab]);
+  }, [tab, reduxUser]);
 
   const handleTimePicker = (e: any, key: string) => {
     setForm((prev: any) => ({ ...prev, [key]: e }))
@@ -94,6 +119,17 @@ const Settings = () => {
                   Change Password
                 </a>
               </li>
+              {isPartner && (
+                <li className="nav-item">
+                  <a
+                    className={tabs == "partner-card" ? "nav-link active" : "nav-link"}
+                    href="#"
+                    onClick={() => setTabs("partner-card")}
+                  >
+                    Encart partenaire
+                  </a>
+                </li>
+              )}
             </ul>{" "}
           </>
         ) : (
@@ -175,6 +211,11 @@ const Settings = () => {
                   </div>
                 </form>
               </div>
+            </>
+          )}
+          {tabs === "partner-card" && (
+            <>
+              <PartnerCard />
             </>
           )}
         </div>

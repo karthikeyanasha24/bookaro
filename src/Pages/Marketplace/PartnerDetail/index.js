@@ -41,14 +41,14 @@ function BioTab({ partner, onSaved }) {
   useEffect(() => {
     if (!partner) return;
     setForm({
-      featuredSubheading: partner.featured?.subheading || "",
-      featuredTitle: partner.featured?.title || "",
-      featuredBio: partner.featured?.bio || "",
-      featuredExperienceYears: partner.featured?.experienceYears || 0,
-      featuredClientsAccompanied: partner.featured?.clientsAccompanied || 0,
-      featuredRatingNotes: partner.featured?.ratingNotes || "",
-      featuredSatisfactionRate: partner.featured?.satisfactionRate || "",
-      featuredProfilePhoto: partner.featured?.profilePhoto || "",
+      featuredSubheading: partner.featured?.subheading || partner.user?.featured?.subheading || "",
+      featuredTitle: partner.featured?.title || partner.user?.featured?.title || "",
+      featuredBio: partner.featured?.bio || partner.user?.featured?.bio || "",
+      featuredExperienceYears: partner.featured?.experienceYears || partner.user?.featured?.experienceYears || 0,
+      featuredClientsAccompanied: partner.featured?.clientsAccompanied || partner.user?.featured?.clientsAccompanied || 0,
+      featuredRatingNotes: partner.featured?.ratingNotes || partner.user?.featured?.ratingNotes || "",
+      featuredSatisfactionRate: partner.featured?.satisfactionRate || partner.user?.featured?.satisfactionRate || "",
+      featuredProfilePhoto: partner.featured?.profilePhoto || partner.user?.featured?.profilePhoto || "",
     });
   }, [partner]);
 
@@ -66,7 +66,7 @@ function BioTab({ partner, onSaved }) {
   };
 
   if (!editing) {
-    const f = partner.featured || {};
+    const f = partner.featured || partner.user?.featured || {};
     return (
       <div className="space-y-4">
         <div className="flex justify-end">

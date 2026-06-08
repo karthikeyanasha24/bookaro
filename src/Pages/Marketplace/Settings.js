@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, InputNumber, Button, Spin, message } from "antd";
+import { Form, InputNumber, Input, Button, Spin, message } from "antd";
 import Layout from "../../components/global/layout";
 import MarketplaceApi from "../../methods/api/marketplaceApi";
 
@@ -7,6 +7,8 @@ const MarketplaceSettings = () => {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [form] = Form.useForm();
 
   const fetchSettings = async () => {
     setLoading(true);
@@ -28,8 +30,33 @@ const MarketplaceSettings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Synchronise les champs du formulaire à chaque fois que settings est rechargé depuis la DB
+  useEffect(() => {
+    if (settings) {
+      form.setFieldsValue({
+        payoutDelayDays: settings.payoutDelayDays,
+        vatPercent: settings.vatPercent,
+        commissionPercentHT: settings.commissionPercentHT,
+        maxServicesPerPro: settings.maxServicesPerPro,
+        paymentInfo: settings.paymentInfo ?? '',
+      });
+      setIsDirty(false);
+    }
+  }, [settings, form]);
+
+  const handleValuesChange = (_, allValues) => {
+    if (!settings) return;
+    const changed =
+      allValues.payoutDelayDays !== settings.payoutDelayDays ||
+      allValues.vatPercent !== settings.vatPercent ||
+      allValues.commissionPercentHT !== settings.commissionPercentHT ||
+      allValues.maxServicesPerPro !== settings.maxServicesPerPro ||
+      (allValues.paymentInfo ?? '') !== (settings.paymentInfo ?? '');
+    setIsDirty(changed);
+  };
+
   const handleSubmit = async (values) => {
-    const { payoutDelayDays, vatPercent, commissionPercentHT, maxServicesPerPro } = values;
+    const { payoutDelayDays, vatPercent, commissionPercentHT, maxServicesPerPro, paymentInfo } = values;
 
     setSaving(true);
     try {
@@ -38,9 +65,11 @@ const MarketplaceSettings = () => {
         vatPercent,
         commissionPercentHT,
         maxServicesPerPro,
+        paymentInfo,
       });
       if (response.success) {
         message.success("Paramètres marketplace mis à jour.");
+        setIsDirty(false);
         fetchSettings();
       } else {
         message.error(response.message || "Impossible de mettre à jour les paramètres marketplace.");
@@ -62,12 +91,10 @@ const MarketplaceSettings = () => {
         </div>
         <Spin spinning={loading}>
           <Form
-            key={settings ? 'loaded' : 'empty'}
+            form={form}
             layout="vertical"
             onFinish={handleSubmit}
-            initialValues={
-              settings || { payoutDelayDays: 3, vatPercent: 20, commissionPercentHT: 25, maxServicesPerPro: 10 }
-            }
+            onValuesChange={handleValuesChange}
           >
             <Form.Item
               label="Délai automatique de paiement (jours)"
@@ -101,8 +128,17 @@ const MarketplaceSettings = () => {
               <InputNumber min={1} max={100} style={{ width: "100%" }} />
             </Form.Item>
 
+            <Form.Item
+              label="Facturation et paiement : votre argent est en sécurité (texte affiché sur chaque service)"
+              name="paymentInfo"
+              rules={[{ required: true, message: "Entrez le texte de facturation." }]}
+              extra={"Ce texte s'affiche dans la section \"Facturation et paiement\" de chaque service sur la marketplace."}
+            >
+              <Input.TextArea rows={4} />
+            </Form.Item>
+
             <Form.Item>
-              <Button type="primary" htmlType="submit" loading={saving}>
+              <Button type="primary" htmlType="submit" loading={saving} disabled={!isDirty}>
                 Enregistrer les paramètres
               </Button>
             </Form.Item>
