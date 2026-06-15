@@ -264,6 +264,19 @@ const Layout = memo(function Layout({ children }) {
           },
         ]
       },
+      {
+        name: "Data Import",
+        icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/data",
+        key: "readdata",
+        menu: [
+          {
+            name: "Import Past Transactions",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/data/import-transactions",
+          },
+        ],
+      },
 
       // Remaining menus (kept in original order)
       {

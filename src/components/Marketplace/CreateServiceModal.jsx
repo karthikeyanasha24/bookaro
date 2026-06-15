@@ -14,13 +14,15 @@ export default function CreateServiceModal({ service = null, onClose, onCreated 
   const [serviceTypes, setServiceTypes] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [vatPercent, setVatPercent] = useState(20);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   useEffect(() => {
     if (!service) return;
     const rawPriceTTC = service.priceTTC ?? service.price_ttc;
-    const priceVal = rawPriceTTC ? Math.round((rawPriceTTC / 1.2) * 100) / 100 : 0;
+    const factor = 1 + (Number(vatPercent) || 0) / 100;
+    const priceVal = rawPriceTTC ? Math.round((rawPriceTTC / factor) * 100) / 100 : 0;
     setForm({
       category: service.category?._id || service.category?.name_fr || service.category?.name || service.category || '',
       service: service.title || '',
@@ -38,7 +40,7 @@ export default function CreateServiceModal({ service = null, onClose, onCreated 
       d4: service.d4 || '',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [service]);
+  }, [service, vatPercent]);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,28 +71,43 @@ export default function CreateServiceModal({ service = null, onClose, onCreated 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await MarketplaceApi.getMarketplaceSettings();
+        const v = r?.data?.vatPercent ?? r?.vatPercent ?? 20;
+        if (!cancelled) setVatPercent(Number(v) || 20);
+      } catch (e) { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const handleSave = async (draft = false) => {
     setLoading(true);
     try {
       const htPrice = Number(form.price || 0);
+      const factor = 1 + (Number(vatPercent) || 0) / 100;
       const payload = {
         title: form.title,
         description: form.d2,
         summary: form.d3,
-        d1: form.d1,
+        price: Number(form.price || 0),
+        is_free: Boolean(form.isFree),
+        priceTTC: Math.round(htPrice * factor * 100) / 100,
         d4: form.d4,
         category: form.category,
         modality: form.modality,
-        priceTTC: form.isFree ? 0 : Math.round(htPrice * 1.2 * 100) / 100,
         city: form.zone,
         radiusKm: Number(form.radius || 0),
         delivery_time: form.deliveryTime,
         imageUrls: [],
         draft,
       };
-      const quantityValue = Number(form.qty?.replace(/\D/g, ''));
+      const quantityValue = Number(String(form.qty || '').replace(/\D/g, ''));
       if (!Number.isNaN(quantityValue) && quantityValue > 0) payload.quantity = quantityValue;
-      if (form.isFree) payload.priceTTC = 0;
+      // Do not force priceTTC to 0 when service is marked as offered.
+      // Keep `isFree` flag while sending the computed TTC to satisfy backend validation.
       if (isEdit && service?._id) {
         await MarketplaceApi.updateService(service._id, payload);
       } else {
@@ -185,7 +202,7 @@ export default function CreateServiceModal({ service = null, onClose, onCreated 
                 ) : (
                   <div className="flex items-center border border-gray-200 bg-gray-50 rounded-lg overflow-hidden px-3 py-2 text-[13px] text-[#976DD0] font-semibold">Offert</div>
                 )}
-                {!form.isFree && (<div className="text-[11px] text-gray-400 mt-1">Prix TTC: {Math.round((Number(form.price || 0) * 1.2) * 100) / 100} €</div>)}
+                {!form.isFree && (<div className="text-[11px] text-gray-400 mt-1">Prix TTC: {Math.round((Number(form.price || 0) * (1 + (Number(vatPercent) || 0) / 100)) * 100) / 100} €</div>)}
               </div>
 
               <div className="col-span-2">
