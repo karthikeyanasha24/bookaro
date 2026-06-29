@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkBookaroo_Frontend=self.webpackChunkBookaroo_Frontend||[]).push([[71],{70071:(o,e,a)=>{o.exports=a.p+"static/media/TodoListSection.migration.21e60baa912f66bcf3a9.md"}}]);

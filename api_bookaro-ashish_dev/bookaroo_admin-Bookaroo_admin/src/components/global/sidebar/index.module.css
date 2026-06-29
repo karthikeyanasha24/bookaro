@@ -1,0 +1,29 @@
+/* Collapsed rail: only hide text labels, NOT the icon wrapper */
+.sm_sidebar {
+    width: 64px;
+    min-width: 64px;
+}
+
+.sm_sidebar ul li a {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Was hiding ALL spans — that removed icons. Only hide the label span. */
+.sm_sidebar ul li a span.admin-sidebar__label {
+    display: none;
+}
+
+.sm_sidebar ul li button {
+    width: fit-content;
+    margin: 0 auto;
+    gap: 4px !important;
+}
+
+.sm_sidebar ul li button span span {
+    display: none;
+}
+
+.admin-sidebar__icon-wrap svg {
+    display: block;
+}

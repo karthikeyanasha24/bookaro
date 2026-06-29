@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Frontend=self.webpackChunkBookaroo_Frontend||[]).push([[3284],{43284:(e,d,o)=>{o.r(d),o.d(d,{shared:()=>t});const t={title:"Folder",get:"folder/list",add:"folder/add",edit:"folder/edit",details:"folder/details",deleteApi:"folder/delete"}}}]);
+//# sourceMappingURL=3284.ce8f35fb.chunk.js.map

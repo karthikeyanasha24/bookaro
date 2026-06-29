@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Frontend=self.webpackChunkBookaroo_Frontend||[]).push([[9517],{9517:(e,t,a)=>{a.r(t),a.d(t,{shared:()=>r});const r={title:"Search alerts",get:"alerts/get",add:"alerts/add",deleteApi:"alerts/delete"}}}]);
+//# sourceMappingURL=9517.8f475a57.chunk.js.map

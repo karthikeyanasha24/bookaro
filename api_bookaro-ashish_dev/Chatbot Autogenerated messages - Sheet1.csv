@@ -1,0 +1,58 @@
+,,,,,,,,,,,
+,Ref,Trigger event,Related event Log,Interaction purpose,Recipient,Frequency,Prompt content,context information from database,Action expected from user,Bookaroo target,Comments
+,,User visit Bookaroo website (unlogged or w/o account),,Welcome user and invite him to log in or create an account (seller or searcher),All users,Once,,,,Having all users with account created (searcher and first of all seller) and logged during their visits,
+,,User just created an account,,Welcome user and inform him on what he can get in our platform,All users,Once,,,List a property or start a first search,Get the user to use Bookaroo platform (features including financial profile for searcher),
+,,User created a first search of property,,Remind him that he can save his search to be notified,All users,Once,,,,Get the user to use Saved search feature,
+,,User listed his property as for sale on AnyHomes,,"Inform user onseller file feature, prompt him to anticipate and tell him what documents he should be gathering to save time",Owner,Once,,,,Get the seller to create its real estate goods profile,
+,,User visited the past transaction section,,Inform user on P2P estimation feature,Owner,Once,,,,Get the seller to know and use P2P estimation feature,
+,,User visited 5 property profile,,Ask user if he wants to know selling price of past transactions in this area. Bot should also mention to user that he can ask anytime.,All users,Once,,,,Info related to API Search past transaction,
+,,User visited more than 30 property profile but spent more than 2 months without sharing interest in a property,,Propose user to put him in contact with real estate agencies in that area to access exclusive content,,,,,,,
+,,User shared interest in a property that is for rent,,Inform user about rental file and financial credibility check to increase its chances to get that property,Potential renter,Once,,,,,
+,,User shared interest in a property that is for sale,,Inform user about buyer file and financial credibility check to increase its chances to get that property,Potential buyer,Once,,,,,
+,,Weekly update on a property user shared interest in,,"Inform user on : 
+- Number of interest shared (new people interested in the property)
+- Number of visits booked
+- Number of visit hosted
+- Number of visit review received
+- NUmber of offers received",Lead,Once a week,,,,,
+,,Weekly update on my property performance,,"Inform owner on:
+- Number of property profile visits
+- Number of likes
+- Number of interest shared (new people interested in the property)
+
+For properties for sale/Rental:
+- Number of visits booked
+- Number of visit hosted
+- Number of visit review received
+- Average post visit ratings
+- NUmber of offers received",Owner,Once a week,,,,,
+,,Owner received an interest for his property from a user ,,Give owner some advices on how to manage a lead properly to get the user visit the property,Owner,Once,,,,,
+,,Owner received no interest for his property (> 2 weeks),,Give owner some advices on how to rework its property information (incl. pricing),Owner,Once,,,,,
+,,User get invited by owner to visit the property,,Give the user some advices on how to prepare a visit (Sale or rental),Lead,Once,"Hi AI Module, this user will visit a property tomorrow. Please share with him your 10 best advices to make this visit a success and prepare his purchase. Please write as if you were directly talking to him.","Lead name : Paul
+Property caracteristics : House, Basement, celar, garden, 130 square metter, located in Paris, state is good, FOr sale since 2 months. The visite happens at 12 oclock.",,,
+,,User booked a visit slot,,Give owner advice on how to prepare a visit to showcase a property,Owner,Once,,,,,
+,,User booked a visit slot,,"Give lead advice on what to do during a visit no to miss anything, what questions to ask",Lead,Once,,,,,
+,,The visit took place,,"Remind lead that he can review the visit and that this will help next potential buyers, also explain him what documents he should ask before making an offer (pruchase).",Lead,Once,,,,,
+,,The visit took place,,"Remind owner on what to do right after a visit to increase chances to close (thanks the lead for the visit, ask if he would need extra informations, ...) also ask him to review the visit so that you can improve ...",Owner,Once,,,,,
+,,Lead evaluated the visit,,Tell owner how he could improve future visits thanks to feedback provided by lead through the visit review,Owner,Once,,,,,
+,,Lead evaluated the visit for a property for sale,,Remind lead that before making an offer he can request some specific documents,Lead,Once,,,,,
+,,Lead evaluated the visit for a property for sale,,Suggest owner to ask lead if he wants to received documentation before making an offer ?,Owner,Once,,,,,
+,,Lead made a purchase offer,,Tell owner to answer quick the offer not to loose the lead,Owner,Once,,,,,
+,,Lead applied for a rental,,Tell owner to answer quick the offer not to loose the lead,Owner,Once,,,,,
+,,Owner refused purchase offer,,Tell lead what he can do to pursue negociation with owner,Lead,Once,,,,,
+,,Owner refused rental application,,Tell lead what he can do to pursue negociation with owner,Lead,Once,,,,"What to do if the renter file is refused ??? Indiquer au postulant qu'il devrait demander aux propriétaire pourquoi sont dossier n'a pas été retenu afin de mieux préparer les candidatures suivantes, on même proposer au propriétaire de renforcer son dossier avec des garanties plus solides...",
+,,Owner accepted renter application,,Inform owner on how should the signing happens (incl. entry inventory),Owner,Once,,,,Get the owner to use platform features in order to have the smoother rental experience (real estate agent expertise),
+,,Owner accepted renter application,,Inform lead on how should the signing happens (incl. entry inventory),Lead,Once,,,,Get the lead to use platform features in order to have the smoother rental experience (real estate agent expertise),
+,,Owner accepted the purchase offer,,Tell owner what should be included in the presale contract and offer him to write it for him,Owner,Once,,,,Get the owner to use platform features in order to have the smoother transaction experience (real estate agent expertise),
+,,Owner accepted the purchase offer,,"Tell lead what are the next steps of the purchasing process, how he can get prepared and explain him what should be included in the presale contract",Lead,Once,,,,Get the lead to use platform features in order to have the smoother transaction experience (real estate agent expertise),
+,,Owner opened pre-sale signing slots,,"Inform owner on how should the signing happens (notary or not, ...)",Owner,Once,,,,Get the owner to use platform features in order to have the smoother transaction experience (real estate agent expertise),
+,,Owner opened pre-sale signing slots,,"Inform lead on how should the signing happens (notary or not, ...)",Lead,Once,,,,Get the lead to use platform features in order to have the smoother transaction experience (real estate agent expertise),
+,,Presale signing took place,,Inform owner on what he can do to prepare the final sale contrat signing and how should it happend,Owner,Once,,,,Get the owner to use platform features in order (information) to have the smoother transaction experience (real estate agent expertise),
+,,Presale signing took place,,Inform lead on what he can do to prepare the final sale contrat signing and how should it happend,Lead,Once,,,,Get the lead to use platform features in order (information) to have the smoother transaction experience (real estate agent expertise),
+,,Final sale took place,,Congratulate owner for the sale and remind him to transfer the ownership of the property profile to new owner,Owner,Once,,,,Get the owner to use platform features in order to finalize the transaction experience the smoother way (Bookaroo ownership transfer),
+,,Final sale took place,,Congratulate lead for the successfull transaction and remind him to ask owner to transfer the ownership so that he can keep adding value to its property on bookaroo,Lead,Once,,,,Get the lead to use platform features in order to make the owner finalize-ing the transaction experience the smoother way (Bookaroo ownership transfer),
+,,Final sale took place,,Inform other leads that the property has been sold to someone else,Lead (other leads),Once,,,,Get the other leads to be updated by situation in order that they interact with other properties,
+,,Owner transfered property profile ownership,,Thanks owner for the transfer and remind him to list in Directory mode the next property he will buy / or new property he bought so that bookaroo can add value to it,Owner (ex Owner),Once,,,,Get the ex owner to use platform features for its new / next real estate goods (property),
+,,Owner transfered property profile ownership,,Remind lead that he is the new owner of the property and he can now update property profile.,Lead (new Owner),Once,,,,Get the new owner to use platform features for its new real estate goods (property),
+,,Rental contract has been signed,,Congratulate owner for the renting and remind him to update its property status (no more on rental contract),Owner,Once,,,,Get the owner to make the information on its rental property up to date / accurate,
+,,Rental contract has been signed,,Inform other leads that the property has been rented to someone else,Lead (other leads),Once,,,,Get the other leads to be updated by situation in order that they interact with other properties,

@@ -1,0 +1,1 @@
+export const search_success = (data) => ({ type: 'SEARCH_SUCCESS', data });
