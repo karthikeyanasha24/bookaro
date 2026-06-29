@@ -2,7 +2,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { AiOutlinePullRequest } from "react-icons/ai";
 import { BsHouseDoor } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { FaBlogger, FaFile, FaRegDotCircle, FaRegFile, FaRegQuestionCircle, FaRegStar, FaRocket, FaUserAlt, FaVideo } from "react-icons/fa";
+import { FaBlogger, FaFile, FaRegDotCircle, FaRegFile, FaRegQuestionCircle, FaRegStar, FaRocket, FaUserAlt, FaVideo, FaGraduationCap, FaUsers } from "react-icons/fa";
 import { FaCircleQuestion } from "react-icons/fa6";
 import { FiLock } from "react-icons/fi";
 import { GoDuplicate } from "react-icons/go";
@@ -12,7 +12,7 @@ import { PiHouse, PiToolbox, PiToolboxFill } from "react-icons/pi";
 import { RiBloggerLine, RiContactsBook3Fill, RiContactsBook3Line, RiHomeWifiFill, RiUser2Fill } from "react-icons/ri";
 import { SiExpensify } from "react-icons/si";
 import { BiSolidSchool } from "react-icons/bi";
-import { TbCircleDotFilled, TbCreditCardPay } from "react-icons/tb";
+import { TbCircleDotFilled, TbCreditCardPay, TbQrcode } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../../actions/user";
@@ -277,6 +277,12 @@ const Layout = memo(function Layout({ children }) {
           },
         ],
       },
+      {
+        name: "QR Codes",
+        icon: <TbQrcode className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/qr-code-stats",
+        key: "",
+      },
 
       // Remaining menus (kept in original order)
       {
@@ -341,16 +347,48 @@ const Layout = memo(function Layout({ children }) {
         ],
       },
       {
-        name: "Video Content",
-        icon: <FaVideo className="text-white text-[16px]" />,
+        name: "Learning Center",
+        icon: <FaGraduationCap className="text-white text-[16px]" />,
         url: "/funnelvideo",
-        tab: "funnel-video",
-        key: "readvideos",
+        key: "readvideos,readblogs,readpersona",
         menu: [
           {
             name: "Video Content",
             icon: <FaVideo className="me-2 text-[16px]" />,
             url: "/funnelvideo",
+          },
+          {
+            name: "Blogs",
+            icon: <RiBloggerLine className="me-2 text-[16px]" />,
+            url: "/blog",
+            key: "",
+          },
+          {
+            name: "Blog Category",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/blog-category-type",
+          },
+          {
+            name: "Blog Sub Category",
+            icon: <MdContentPaste className="me-2 text-[16px]" />,
+            url: "/blog-category",
+          },
+          {
+            name: "Persona",
+            icon: <FaUsers className="me-2 text-[16px]" />,
+            url: "/persona",
+            key: "readpersona",
+          },
+          {
+            name: "Training Topic",
+            icon: <MdCategory className="me-2 text-[16px]" />,
+            url: "/training-topic",
+            key: "readtrainingtopic",
+          },
+          {
+            name: "Featured content",
+            icon: <MdOutlineFeaturedPlayList className="me-2 text-[16px]" />,
+            url: "/featured-content",
           },
         ],
       },
@@ -379,30 +417,6 @@ const Layout = memo(function Layout({ children }) {
             icon: <GoDuplicate className="me-2 text-[16px]" />,
             url: "/category-form",
             key: "readreadform",
-          },
-        ]
-      },
-      {
-        name: "Blogs",
-        icon: <FaBlogger className="text-[#fff] shrink-0 text-[16px]" />,
-        url: "/blog",
-        key: "readblogs",
-        menu: [
-          {
-            name: "Blogs",
-            icon: <RiBloggerLine className="me-2 text-[16px]" />,
-            url: "/blog",
-            key: "",
-          },
-          {
-            name: "Category",
-            icon: <GoDuplicate className="me-2 text-[16px]" />,
-            url: "/blog-category-type",
-          },
-          {
-            name: "Sub Category",
-            icon: <MdContentPaste className="me-2 text-[16px]" />,
-            url: "/blog-category",
           },
         ]
       },

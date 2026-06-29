@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[5818,6332,3951,1570],{35427:(e,a,s)=>{s.r(a),s.d(a,{default:()=>c});var l=s(21639),t=s(70579);const c=()=>(0,t.jsx)(l.A,{children:(0,t.jsxs)("div",{className:"p-6",children:[(0,t.jsx)("h3",{className:"text-2xl font-semibold text-[#111827]",children:"Marketplace"}),(0,t.jsx)("p",{className:"text-sm text-[#6B7280] mt-2",children:"Tableau de bord de la marketplace. S\xe9lectionnez une section dans le menu Marketplace."})]})})}}]);
-//# sourceMappingURL=5818.af97d7bd.chunk.js.map

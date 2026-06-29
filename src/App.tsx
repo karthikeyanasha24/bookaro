@@ -126,6 +126,11 @@ function App() {
     { url: "/funnelvideo", path: "FunnelVideo" },
     { url: "/funnelvideo/detail/:id", path: "FunnelVideo/View" },
 
+    { url: "/persona", path: "Persona" },
+    { url: "/persona/add", path: "Persona/AddEdit" },
+    { url: "/persona/edit/:id", path: "Persona/AddEdit" },
+    { url: "/persona/detail/:id", path: "Persona/View" },
+
     { url: "/property-revenue", path: "Revenue" },
     { url: "/property-revenue/add", path: "Revenue/AddEdit" },
     { url: "/property-revenue/edit/:id", path: "Revenue/AddEdit" },
@@ -194,6 +199,12 @@ function App() {
     { url: "/property-claim-ownership", path: "ClaimOwnerShip" },
     { url: "/property-claim-ownership/detail/:id", path: "ClaimOwnerShip/View" },
 
+    { url: "/training-topic", path: "TrainingTopic" },
+    { url: "/training-topic/add", path: "TrainingTopic/AddEdit" },
+    { url: "/training-topic/edit/:id", path: "TrainingTopic/AddEdit" },
+    { url: "/training-topic/detail/:id", path: "TrainingTopic/View" },
+
+    { url: "/qr-code-stats", path: "QRCodeStats" },
   ];
 
   sessionStorage.clear();

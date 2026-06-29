@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBookaroo_Admin=self.webpackChunkBookaroo_Admin||[]).push([[1940],{41940:(e,o,s)=>{s.r(o),s.d(o,{default:()=>t});const t={title:"School Types",addTitle:"School Type",url:"school-types",addApi:"school-types/add",editApi:"school-types/edit",detailApi:"school-types/detail",listApi:"school-types/list",deleteApi:"school-types/delete"}}}]);
+//# sourceMappingURL=1940.f44c6bd0.chunk.js.map
