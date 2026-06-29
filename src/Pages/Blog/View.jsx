@@ -65,20 +65,28 @@ const View = () => {
                     </label>
                     <p className="text-md font-normal">{data && data?.title}</p>
                   </div>}
-                  {data?.categoryId?.CategoryName && <div className="lg:col-span-6 col-span-full flex flex-col">
+                  {data?.personaName && <div className="lg:col-span-6 col-span-full flex flex-col">
                     <label className="font-medium text-md  text-[#676767] mb-1 block">
-                      Category
+                      Persona
                     </label>
                     <p className="text-md font-normal">
-                      {data && data?.categoryId?.CategoryName}
+                      {data?.personaName}
                     </p>
                   </div>}
-                  {data?.subCategoryId?.SubCategoryName && <div className="lg:col-span-6 col-span-full flex flex-col">
+                  {data?.topicName && <div className="lg:col-span-6 col-span-full flex flex-col">
+                    <label className="font-medium text-md  text-[#676767] mb-1 block">
+                      Training Topic
+                    </label>
+                    <p className="text-md font-normal">
+                      {data?.topicName}
+                    </p>
+                  </div>}
+                  {data?.contentLikeCount !== undefined && <div className="lg:col-span-6 col-span-full flex flex-col">
                     <label className="font-medium text-md  text-[#676767] mb-1 block">
                       Likes
                     </label>
                     <p className="text-md font-normal">
-                      {data && data?.contentLikeCount || 0}
+                      {data?.contentLikeCount || 0}
                     </p>
                   </div>}
                   {data?.contentDislikeCount && <div className="lg:col-span-6 col-span-full flex flex-col">

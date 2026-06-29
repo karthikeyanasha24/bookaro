@@ -36,6 +36,7 @@ const AddEdit = () => {
   const [users, setUsers] = useState([]);
   const [categoryTypeOptions, setcategoryTypeOptions] = useState([])
   const [subcategoryOption, setsubcateoryOption] = useState([])
+  const [allTopics, setAllTopics] = useState([])
   const formValidation = [
     { key: "title", required: true },
     { key: "description", required: true },
@@ -80,6 +81,15 @@ const AddEdit = () => {
             editor.clipboard.dangerouslyPasteHTML(data.description);
           }
 
+          // categoryId / subCategoryId can be raw ObjectId strings (from aggregate)
+          // or populated objects – handle both cases
+          const personaId = data?.personaData?.id || data?.personaData?._id
+            || data?.categoryId?.id || data?.categoryId?._id
+            || (typeof data?.categoryId === "string" ? data.categoryId : "");
+          const topicId = data?.topicData?.id || data?.topicData?._id
+            || data?.subCategoryId?.id || data?.subCategoryId?._id
+            || (typeof data?.subCategoryId === "string" ? data.subCategoryId : "");
+
           setform({
             title: data?.title || "",
             banner: data?.banner || "",
@@ -87,14 +97,14 @@ const AddEdit = () => {
             id: data?.id || data?._id,
             description: data?.description || "",
             metaTitle: data?.metaTitle || "",
-            categoryId: data?.categoryId?.id || data?.categoryId?._id || "",
+            categoryId: personaId,
             duration: data?.duration,
-            subCategoryId: data?.subCategoryId?.id || data?.subCategoryId?._id || "",
+            subCategoryId: topicId,
             images: imageData
           });
 
-          // Fetch subcategories
-          getSubCategory(data?.categoryId?.id || data?.categoryId?._id);
+          // Fetch subcategories filtered by persona
+          getSubCategory(personaId);
         }
         loader(false);
       });
@@ -107,6 +117,17 @@ const AddEdit = () => {
   useEffect(() => {
     getCategory()
     getUserData()
+    // Preload all topics
+    ApiClient.get("trainingTopic/list").then((res) => {
+      if (res.success) {
+        const data = res?.data?.map((item) => ({
+          id: item?.id || item?._id,
+          name: item?.name,
+          personaId: item?.persona?.id || item?.persona?._id || null,
+        }));
+        setAllTopics(data);
+      }
+    });
   }, [])
 
   const handleSubmit = (e) => {
@@ -136,26 +157,38 @@ const AddEdit = () => {
   }
 
   const getCategory = (p = {}) => {
-    ApiClient.get("blogCategories/list").then((res) => {
+    ApiClient.get("persona/list").then((res) => {
       if (res.success) {
         const data = res?.data?.map((item) => ({
           id: item?.id || item?._id,
-          name: item?.CategoryName,
+          name: item?.name,
         }));
         setcategoryTypeOptions(data);
       }
     });
   };
-  const getSubCategory = (category) => {
-    ApiClient.get("blogCategories/subCategory/list", { categoryId: category }).then((res) => {
-      if (res.success) {
-        const data = res?.data?.map((item) => ({
-          id: item?.id || item?._id,
-          name: item?.SubCategoryName,
-        }));
-        setsubcateoryOption(data);
-      }
-    });
+  const getSubCategory = (personaId) => {
+    if (!personaId) {
+      setsubcateoryOption([]);
+      return;
+    }
+    if (allTopics.length > 0) {
+      const filtered = allTopics.filter(t => t.personaId === personaId);
+      setsubcateoryOption(filtered);
+    } else {
+      ApiClient.get("trainingTopic/list").then((res) => {
+        if (res.success) {
+          const data = res?.data?.map((item) => ({
+            id: item?.id || item?._id,
+            name: item?.name,
+            personaId: item?.persona?.id || item?.persona?._id || null,
+          }));
+          setAllTopics(data);
+          const filtered = data.filter(t => t.personaId === personaId);
+          setsubcateoryOption(filtered);
+        }
+      });
+    }
   };
   const MultiUpload = (e) => {
     let files = e.target.files;
@@ -320,6 +353,15 @@ const AddEdit = () => {
               <div className="lg:col-span-6 col-span-12 flex  mb-5  flex-col ">
                 <FormControl
                   type="text"
+                  name="title_fr"
+                  label="Titre (FR)"
+                  value={form?.title_fr}
+                  onChange={(e) => setform({ ...form, title_fr: e })}
+                />
+              </div>
+              <div className="lg:col-span-6 col-span-12 flex  mb-5  flex-col ">
+                <FormControl
+                  type="text"
                   name="metaTitle"
                   label="Meta Title"
                   // placeholder="Enter Meta Title"
@@ -333,11 +375,11 @@ const AddEdit = () => {
                 <FormControl
                   type="select"
                   name="name"
-                  label="Category"
+                  label="Persona"
                   value={form.categoryId}
                   options={categoryTypeOptions}
                   onChange={(e) => {
-                    setform({ ...form, categoryId: e });
+                    setform({ ...form, categoryId: e, subCategoryId: '' });
                     getSubCategory(e)
                   }}
                   required
@@ -346,7 +388,7 @@ const AddEdit = () => {
 
                 {submitted && !form.categoryId && (
                   <div className="text-red-600 text-[13px] block">
-                    category is required
+                    Persona is required
                   </div>
                 )}
               </div>
@@ -354,7 +396,7 @@ const AddEdit = () => {
                 <FormControl
                   type="select"
                   name="name"
-                  label="Sub Category"
+                  label="Training Topics"
                   value={form.subCategoryId}
                   options={subcategoryOption}
                   onChange={(e) => {
@@ -366,7 +408,7 @@ const AddEdit = () => {
 
                 {submitted && !form.subCategoryId && (
                   <div className="text-red-600 text-[13px] block">
-                    cSub category is required
+                    Training Topic is required
                   </div>
                 )}
               </div>}
@@ -428,6 +470,16 @@ const AddEdit = () => {
                   <div className="d-block text-red-600">Description is required</div>
                 )}
 
+              </div>
+              <div className=" col-span-12 flex  mb-5  flex-col ">
+                <span className="text-[14px] mb-2 inline-block">Description (FR) <span className="text-gray-400 text-xs">— optionnel</span></span>
+                <ReactQuill
+                  value={form?.description_fr || ''}
+                  onChange={(e) => setform((prev) => ({ ...prev, description_fr: e }))}
+                  modules={modules}
+                  formats={formats}
+                  theme="snow"
+                />
               </div>
 
               {/* <div className=" col-span-12 flex  mb-5  flex-col ">

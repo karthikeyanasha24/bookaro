@@ -21,7 +21,9 @@ const AddEdit = () => {
   const user = useSelector((state) => state.user);
   const [form, setform] = useState({ videoOwner: user?.id || user?._id });
   const [topics, setTopics] = useState([]);
+  const [filteredTopics, setFilteredTopics] = useState([]);
   const [users, setUsers] = useState([]);
+  const [personaOptions, setPersonaOptions] = useState([]);
   const [tagError, setTagError] = useState('');
   const history = useNavigate();
   const [submitted, setSubmitted] = useState(false);
@@ -41,6 +43,12 @@ const AddEdit = () => {
     }
   };
 
+  // Load personas on mount
+  useEffect(() => {
+    fetchPersonas();
+  }, []);
+
+  // Load video data when editing (independent of personas being loaded)
   useEffect(() => {
     if (id) {
       loader(true);
@@ -57,27 +65,64 @@ const AddEdit = () => {
         loader(false);
       });
     }
-    getUserData()
   }, [id]);
 
   useEffect(() => {
+    getUserData()
+  }, []);
+
+  const fetchPersonas = () => {
+    ApiClient.get("persona/list")
+      .then((res) => {
+        if (res.success && res.data) {
+          // Sort by rank ascending
+          const sortedPersonas = [...res.data].sort((a, b) => {
+            const rankA = a.rank || 0;
+            const rankB = b.rank || 0;
+            if (rankA !== rankB) {
+              return rankA - rankB;
+            }
+            return a.name.localeCompare(b.name);
+          });
+          
+          const personasFromDB = sortedPersonas.map((persona) => ({
+            id: persona.name,
+            name: persona.name,
+          }));
+
+          setPersonaOptions(personasFromDB);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching personas:", error);
+      });
+  };
+
+  useEffect(() => {
     loader(true);
-    ApiClient.get(`funnelUrl/getAll`).then((res) => {
+    ApiClient.get(`trainingTopic/list`).then((res) => {
       if (res.success) {
-        const filtered = res.data.filter((item) => item?.topic);
-        const mapped = filtered.map((item) => ({
-          id: item.topic,
-          name: item.topic,
+        const mapped = res.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          personaName: item.persona?.name || null,
         }));
-        const uniqueTopics = Array.from(
-          new Map(mapped.map((topic) => [topic.id, topic])).values()
-        );
-        setTopics(uniqueTopics);
+        setTopics(mapped);
       }
       loader(false);
     });
     getUserData()
   }, [loader]);
+
+  // Filter topics by selected persona
+  useEffect(() => {
+    if (form?.type && topics.length > 0) {
+      const filtered = topics.filter(t => t.personaName === form.type);
+      setFilteredTopics(filtered);
+    } else {
+      setFilteredTopics([]);
+    }
+  }, [form?.type, topics]);
 
   const formatTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -88,6 +133,14 @@ const AddEdit = () => {
     return hours > 0
       ? `${hours}:${pad(minutes)}:${pad(seconds)}`
       : `${minutes}:${pad(seconds)}`;
+  };
+
+  const getStatusOptions = () => {
+    return [
+      { value: "draft", name: "Draft" },
+      { value: "published", name: "Published" },
+      { value: "archived", name: "Archived" },
+    ];
   };
 
   const addTag = () => {
@@ -220,19 +273,7 @@ const AddEdit = () => {
     });
   };
 
-  const getStatusOptions = () => {
-    if (form?.type === "owner_for_seller" || form?.type === "owner_for_rent") return shared.ownerStatusOptions
-    else if (form?.type === "seller") return shared.renterStatusOption
-    else if (form?.type === "buyer") return shared.byerStatusOption
-    else return shared.ownerStatusOptions
-  }
-
-  const TypeOption = [
-    { id: "owner_for_seller", name: "Owner Selling" },
-    { id: "owner_for_rent", name: "Owner Renting" },
-    { id: "seller", name: "Seller" },
-    { id: "buyer", name: "Buyer" },
-  ];
+  // Personas are now fetched from database via fetchPersonas()
 
 
   const handleAddTag = (e) => {
@@ -347,94 +388,54 @@ const AddEdit = () => {
                   onChange={(e) => setform({ ...form, title: e })}
                   required
                 />
+              </div>
+              <div className="">
+                <span className="text-[14px] mb-2 inline-block">Titre vidéo (FR) <span className="text-gray-400 text-xs">— optionnel</span></span>
+                <FormControl
+                  type="text"
+                  name="title_fr"
+                  value={form?.title_fr || ''}
+                  onChange={(e) => setform({ ...form, title_fr: e })}
+                />
                 {/* {submitted && !form.title && (
                   <div className="d-block text-red-600">Video Title is required</div>
                 )} */}
               </div>{" "}
+              <div className=" custom-drop flex   flex-col ">
+                <span className="text-[14px] mb-2 inline-block">Persona <span className="star">*</span></span>
+                <SelectDropdown
+                  id="personaDropdown"
+                  displayValue="name"
+                  placeholder="persona"
+                  className="capitalize"
+                  theme="search"
+                  isClearable={false}
+                  intialValue={form?.type}
+                  result={(e) => {
+                    setform({ ...form, type: e.value, topic: '' });
+                  }}
+                  options={personaOptions}
+                  required
+                />
+              </div>{" "}
               <div className="flex flex-col">
                 <div className="custom-drop">
-                  <span className="text-[14px] mb-2 inline-block">Traning Topics <span className="star">*</span></span>
-                  <div className="flex gap-2 items-center">
-                    <SelectDropdown
-                      id="statusDropdown"
-                      displayValue="name"
-                      placeholder="Traning Topics"
-                      className="capitalize w-full"
-                      theme="search"
-                      isClearable={false}
-                      intialValue={form?.topic}
-                      result={(e) => {
-                        setform({ ...form, topic: e.value });
-                      }}
-                      options={topics}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="p-2 bg-[#976DD0] text-white rounded-lg hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      onClick={() => setShowModal(true)}
-                    >
-                      {id ? "Edit" : "Add"}
-                    </button>
-                  </div>
+                  <span className="text-[14px] mb-2 inline-block">Training Topics <span className="star">*</span></span>
+                  <SelectDropdown
+                    id="statusDropdown"
+                    displayValue="name"
+                    placeholder="Training Topics"
+                    className="capitalize w-full"
+                    theme="search"
+                    isClearable={false}
+                    intialValue={form?.topic}
+                    result={(e) => {
+                      setform({ ...form, topic: e.value });
+                    }}
+                    options={filteredTopics}
+                    required
+                  />
                 </div>
-
-                {/* Modal */}
-                {showModal && (
-                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-
-                    <Button
-                      onClick={() => setShowModal(true)}
-                      className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-black/30"
-                    >
-                      Open dialog
-                    </Button>
-
-                    <Dialog
-                      open={showModal}
-                      as="div"
-                      className="relative z-[99] focus:outline-none"
-                      onClose={() => setShowModal(false)}
-                    >
-                      <div className="fixed inset-0 z-[99] w-screen overflow-y-auto bg-black/50 backdrop-blur-sm transition-opacity">
-                        <div className="flex min-h-full items-center justify-center p-4">
-                          <DialogPanel
-                            transition
-                            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
-                          >
-                            <DialogTitle as="h3" className="text-xl font-semibold text-gray-800 mb-4">
-                              Add New Topic
-                            </DialogTitle>
-
-                            <input
-                              type="text"
-                              placeholder="Enter topic name"
-                              className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              value={newTopic}
-                              onChange={(e) => setNewTopic(e.target.value)}
-                            />
-
-                            <div className="flex justify-end gap-3">
-                              <button
-                                onClick={() => setShowModal(false)}
-                                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-                              >
-                                Cancel
-                              </button>
-                              <button
-                                onClick={handleAddTopic}
-                                className="px-4 py-2 rounded-md bg-[#976DD0] text-white hover:opacity-80 transition"
-                              >
-                                Save
-                              </button>
-                            </div>
-                          </DialogPanel>
-                        </div>
-                      </div>
-                    </Dialog>
-
-                  </div>
-                )}
               </div>
               <div className="">
                 <span className="text-[14px] mb-2 inline-block">Tags <span className="star">*</span></span>
@@ -551,26 +552,6 @@ const AddEdit = () => {
                 <p className="text-[15px]">
                   Funnel Status.
                 </p>
-              </div>
-              <div className=" custom-drop flex   flex-col ">
-                <span className="text-[14px] mb-2 inline-block">Persona <span className="star">*</span></span>
-                <SelectDropdown
-                  id="statusDropdown"
-                  displayValue="name"
-                  placeholder="persona"
-                  className="capitalize"
-                  theme="search"
-                  isClearable={false}
-                  intialValue={form?.type}
-                  result={(e) => {
-                    setform({ ...form, type: e.value });
-                  }}
-                  options={TypeOption}
-                  required
-                />
-                {/* {submitted && !form.type && (
-                  <div className="d-block text-red-600">Please Select type</div>
-                )} */}
               </div>
               {form?.type && form?.isFunnel && <div className=" flex    flex-col ">
                 <label className="text-sm mb-2 block">
