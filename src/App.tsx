@@ -168,6 +168,9 @@ function App() {
     { url: "/plan-feature/detail/:id", path: "Features/View" },
     { url: "/enquiry", path: "Enquiry" },
     { url: "/enquiry/detail/:id", path: "Enquiry/View" },
+    { url: "/user-requests", path: "UserRequests" },
+    { url: "/property-attractivity/profile-activity", path: "PropertyAttractivity/ProfileActivity" },
+    { url: "/property-attractivity/attractivity-index", path: "PropertyAttractivity/AttractivityIndex" },
     { url: "/review", path: "Review" },
     { url: "/service", path: "Service" },
     { url: "/service/add", path: "Service/AddEdit" },
@@ -205,6 +208,7 @@ function App() {
     { url: "/training-topic/detail/:id", path: "TrainingTopic/View" },
 
     { url: "/qr-code-stats", path: "QRCodeStats" },
+    { url: "/referral", path: "ReferralAdmin" },
   ];
 
   sessionStorage.clear();

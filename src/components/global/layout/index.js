@@ -4,10 +4,10 @@ import { BsHouseDoor } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { FaBlogger, FaFile, FaRegDotCircle, FaRegFile, FaRegQuestionCircle, FaRegStar, FaRocket, FaUserAlt, FaVideo, FaGraduationCap, FaUsers } from "react-icons/fa";
 import { FaCircleQuestion } from "react-icons/fa6";
-import { FiLock } from "react-icons/fi";
+import { FiLock, FiActivity } from "react-icons/fi";
 import { GoDuplicate } from "react-icons/go";
 import { LuCircleDotDashed, LuLogOut, LuUser2 } from "react-icons/lu";
-import { MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings } from "react-icons/md";
+import { MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlineInbox, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings, MdTrendingUp } from "react-icons/md";
 import { PiHouse, PiToolbox, PiToolboxFill } from "react-icons/pi";
 import { RiBloggerLine, RiContactsBook3Fill, RiContactsBook3Line, RiHomeWifiFill, RiUser2Fill } from "react-icons/ri";
 import { SiExpensify } from "react-icons/si";
@@ -283,6 +283,20 @@ const Layout = memo(function Layout({ children }) {
         url: "/qr-code-stats",
         key: "",
       },
+      {
+        name: "Referral Program",
+        icon: <FaUsers className="text-white text-[16px]" />,
+        url: "/referral",
+        key: "",
+        menu: [
+          {
+            name: "Analytics & Tracking",
+            icon: <MdDashboard className="me-2 text-[16px]" />,
+            url: "/referral",
+            key: "",
+          },
+        ],
+      },
 
       // Remaining menus (kept in original order)
       {
@@ -443,6 +457,35 @@ const Layout = memo(function Layout({ children }) {
             icon: <RiContactsBook3Line className="me-2 text-[16px]" />,
             url: "/enquiry",
             key: "",
+          },
+        ]
+      },
+      {
+        name: "User Requests",
+        icon: <MdOutlineInbox className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/user-requests",
+        menu: [
+          {
+            name: "User Requests",
+            icon: <MdOutlineInbox className="me-2 text-[16px]" />,
+            url: "/user-requests",
+          },
+        ]
+      },
+      {
+        name: "Property Attractivity",
+        icon: <MdTrendingUp className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/property-attractivity/profile-activity",
+        menu: [
+          {
+            name: "Profile Activity",
+            icon: <FiActivity className="me-2 text-[16px]" />,
+            url: "/property-attractivity/profile-activity",
+          },
+          {
+            name: "Attractivity Index",
+            icon: <MdTrendingUp className="me-2 text-[16px]" />,
+            url: "/property-attractivity/attractivity-index",
           },
         ]
       },
