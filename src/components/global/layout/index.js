@@ -8,7 +8,7 @@ import { FiLock, FiActivity } from "react-icons/fi";
 import { GoDuplicate } from "react-icons/go";
 import { LuCircleDotDashed, LuLogOut, LuUser2 } from "react-icons/lu";
 import { MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlineInbox, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings, MdTrendingUp } from "react-icons/md";
-import { PiHouse, PiToolbox, PiToolboxFill } from "react-icons/pi";
+import { PiHouse, PiLeafFill, PiToolbox, PiToolboxFill } from "react-icons/pi";
 import { RiBloggerLine, RiContactsBook3Fill, RiContactsBook3Line, RiHomeWifiFill, RiUser2Fill } from "react-icons/ri";
 import { SiExpensify } from "react-icons/si";
 import { BiSolidSchool } from "react-icons/bi";
@@ -56,7 +56,7 @@ const Layout = memo(function Layout({ children }) {
   //   });
   // };
   const menus = [
-      // Priority order: Dashboard, Users, Company, Property, Marketplace, Financial credibility, Locative confidence, P2p Estimation
+      // Priority order: Dashboard, Users, Company, Property, Marketplace, Financial credibility, Locative confidence, Estimations consolidées
       {
         name: "Dashboard",
         icon: <MdDashboard className="text-white text-[16px]" />,
@@ -251,15 +251,21 @@ const Layout = memo(function Layout({ children }) {
         ],
       },
       {
-        name: "P2p Estimation",
+        name: "P2P Estimations",
         icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
         url: "/p2p-estimation",
         key: "readEstimation",
         menu: [
           {
-            name: "P2p Estimation",
+            name: "Estimations consolidées",
             icon: <GoDuplicate className="me-2 text-[16px]" />,
             url: "/p2p-estimation",
+            key: "readEstimation",
+          },
+          {
+            name: "Campagnes",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/p2p-estimation/campaigns",
             key: "readEstimation",
           },
         ]

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Input, Select, Button, Space, Spin, Tag } from "antd";
 import Layout from "../../components/global/layout";
 import Table from "../../components/Table";
 import MarketplaceApi from "../../methods/api/marketplaceApi";
+import methodModel from "../../methods/methods";
 
 const STATUSES = [
   { value: "pending_payment", label: "Paiement en attente" },
@@ -19,6 +20,21 @@ const STATUSES = [
   { value: "cancelled", label: "Annulé" },
   { value: "refunded", label: "Remboursé" },
 ];
+
+const STATUS_FR = {
+  pending_payment:      { label: "Paiement en attente",   color: "bg-yellow-100 text-yellow-800" },
+  paid:                 { label: "Payé",                  color: "bg-blue-100 text-blue-800" },
+  payment_failed:       { label: "Échec paiement",        color: "bg-red-100 text-red-800" },
+  accepted_by_pro:      { label: "Accepté par le pro",    color: "bg-indigo-100 text-indigo-800" },
+  in_progress:          { label: "En cours",              color: "bg-blue-100 text-blue-700" },
+  delivered_by_pro:     { label: "Livré",                 color: "bg-teal-100 text-teal-800" },
+  cancellation_requested:{ label: "Annulation demandée", color: "bg-orange-100 text-orange-800" },
+  confirmed_by_buyer:   { label: "Confirmé",             color: "bg-green-100 text-green-800" },
+  litigation_opened:    { label: "Litige en cours",       color: "bg-red-100 text-red-700" },
+  payout_released:      { label: "Pro payé",              color: "bg-green-100 text-green-700" },
+  cancelled:            { label: "Annulé",                color: "bg-gray-100 text-gray-600" },
+  refunded:             { label: "Remboursé",             color: "bg-gray-100 text-gray-500" },
+};
 
 const SORT_OPTIONS = [
   { value: "createdAt", label: "Date de transaction" },
@@ -80,12 +96,24 @@ const MarketplaceTransactions = () => {
         key: "proName",
         name: "Nom du pro",
         sort: true,
-        render: (row) => <span>{row.proSnapshot?.name || "—"}</span>,
+        render: (row) => {
+          const proId = row.proSnapshot?._id;
+          const proName = row.proSnapshot?.fullName || row.proSnapshot?.companyName || row.proSnapshot?.name || "—";
+          return proId
+            ? <Link to={`/user/detail/${proId}`} className="text-purple-700 font-medium hover:underline">{proName}</Link>
+            : <span>{proName}</span>;
+        },
       },
       {
         key: "buyerName",
         name: "Nom du client",
-        render: (row) => <span>{row.buyer?.name || "—"}</span>,
+        render: (row) => {
+          const buyerId = row.buyer?._id;
+          const buyerName = row.buyer?.name || row.buyer?.fullName || "—";
+          return buyerId
+            ? <Link to={`/user/detail/${buyerId}`} className="text-purple-700 font-medium hover:underline">{buyerName}</Link>
+            : <span>{buyerName}</span>;
+        },
       },
       {
         key: "serviceTitle",
@@ -97,25 +125,32 @@ const MarketplaceTransactions = () => {
         key: "property",
         name: "Bien sélectionné",
         render: (row) => {
-          const property = row.propertyId || row.property_id || row.property || {};
-          const propertyId = property._id || property.id || property.propertyId || null;
-          const propertyUrl = propertyId ? `/property/detail/${propertyId}` : null;
-          const propertyImage = property.imageUrls?.[0]?.file || property.images?.[0]?.file || property.image || null;
-          const propertyTitle = property.propertyTitle || property.title || property.name || "—";
+          const property = row.property_id || row.propertyId || {};
+          const propertyId = property._id || property.id || null;
+          const propertyPath = propertyId ? `/property/detail/${propertyId}` : null;
+          const imgFile = property.images?.[0]?.file || null;
+          const propertyTitle = property.propertyTitle || property.title || "—";
+          const subtitle = property.city || property.zipcode || property.address || null;
           return (
             <div className="flex items-center gap-2">
-              <a href={propertyUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded overflow-hidden bg-gray-100 shrink-0 block">
-                {propertyImage ? (
-                  <img src={propertyImage} alt={propertyTitle} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No image</div>
-                )}
-              </a>
+              {propertyPath ? (
+                <Link to={propertyPath} className="w-10 h-10 rounded overflow-hidden bg-gray-100 shrink-0 block hover:opacity-80">
+                  {imgFile ? (
+                    <img src={methodModel.noImg(imgFile)} alt={propertyTitle} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">—</div>
+                  )}
+                </Link>
+              ) : (
+                <div className="w-10 h-10 rounded overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center text-gray-400 text-xs">—</div>
+              )}
               <div className="min-w-0">
-                <a href={propertyUrl || '#'} target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:underline block text-[#111827]">
-                  {propertyTitle}
-                </a>
-                <div className="text-xs text-gray-500">{property.city || property.zipcode || property.address || '—'}</div>
+                {propertyPath ? (
+                  <Link to={propertyPath} className="text-sm font-medium hover:underline block text-[#111827]">{propertyTitle}</Link>
+                ) : (
+                  <span className="text-sm text-gray-400">{propertyTitle}</span>
+                )}
+                {subtitle && <div className="text-xs text-gray-500">{subtitle}</div>}
               </div>
             </div>
           );
@@ -137,6 +172,19 @@ const MarketplaceTransactions = () => {
         key: "status",
         name: "Statut",
         render: (row) => <Tag>{row.status}</Tag>,
+      },
+      {
+        key: "frontStatus",
+        name: "Statut front",
+        render: (row) => {
+          const s = STATUS_FR[row.status];
+          if (!s) return <span className="text-gray-400 text-xs">{row.status || "—"}</span>;
+          return (
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${s.color}`}>
+              {s.label}
+            </span>
+          );
+        },
       },
     ],
     []

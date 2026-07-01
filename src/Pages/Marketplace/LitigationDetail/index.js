@@ -55,19 +55,24 @@ const LitigationDetail = () => {
   const confirmResolve = async () => {
     const result = await Swal.fire({
       title: "Clôturer le litige",
-      text: "Choisissez comment résoudre ce litige :",
+      html: "Choisissez comment résoudre ce litige :",
       icon: "warning",
       showDenyButton: true,
       showCancelButton: true,
       confirmButtonText: "Libérer le paiement au pro",
       denyButtonText: "Rembourser l'acheteur",
+      cancelButtonText: "Clôturer sans action financière",
+      cancelButtonColor: "#6B7280",
     });
 
     if (result.isConfirmed) {
       await handleResolve("release");
     } else if (result.isDenied) {
       await handleResolve("refund");
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      await handleResolve("close");
     }
+    // dismiss via × ou Escape → ne rien faire
   };
 
   if (loading || !litigation) {
@@ -216,6 +221,7 @@ const statusLabel = (status) => {
   if (status === "litigation_opened") return "Ouvert";
   if (status === "payout_released") return "Résolu - Paiement libéré";
   if (status === "refunded") return "Résolu - Remboursé";
+  if (status === "delivered_by_pro") return "Clôturé - En attente de confirmation";
   return status || "—";
 };
 

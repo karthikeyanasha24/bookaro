@@ -19,6 +19,7 @@ const Enquiry = () => {
     const [selectedproperty, setselectedproperty] = useState();
     const [total, setTotal] = useState(0);
     const [loaging, setLoader] = useState(true);
+    const [stats, setStats] = useState(null);
     const history = useNavigate();
     const [expandedRows, setExpandedRows] = useState({});
 
@@ -27,6 +28,9 @@ const Enquiry = () => {
         propertyList()
         setFilter({ ...filters, search: searchState.data });
         getData({ search: searchState.data, page: 1 });
+        ApiClient.get("admin/campaigns/estimation-stats").then((res) => {
+            if (res.success) setStats(res.data);
+        });
     }, []);
 
     const sortClass = (key) => {
@@ -148,9 +152,35 @@ const Enquiry = () => {
     const isAllow = (key = "") => {
         let permissions = user.permissions?.[0];
         let value = permissions?.[key];
-        // return true;
         if (user.role == 'admin') value = true
         return value;
+    };
+
+    const exportCSV = () => {
+        if (!data || data.length === 0) return;
+        const PERCEPTION = { underestimated: "Sous-estimé", appropriate: "Cohérent", expensive: "Sur-estimé" };
+        const headers = ["Bien","Ville","Estimateur","Prix réf.","Perception","Estimation","Titre","Photos","Déco","Emplacement","Y habiter","Commentaire","Date"];
+        const rows = data.map((r) => [
+            r?.property?.propertyTitle || "",
+            r?.property?.city || "",
+            r?.user?.fullName || "",
+            r?.property?.referencePrice || "",
+            PERCEPTION[r?.referencePrice] || r?.referencePrice || "",
+            r?.userReasonablePrice || "",
+            r?.ratePropertyTitle ?? "",
+            r?.ratePropertyPictures ?? "",
+            r?.rateInteriorDesign ?? "",
+            r?.rateLocation ?? "",
+            r?.rateCouldYouLiveIn ?? "",
+            (r?.comment || "").replace(/,/g, ";"),
+            r?.createdAt ? new Date(r.createdAt).toLocaleDateString("fr-FR") : "",
+        ]);
+        const csv = [headers, ...rows].map((row) => row.map((v) => `"${v}"`).join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = `estimations-${new Date().toISOString().slice(0,10)}.csv`;
+        a.click(); URL.revokeObjectURL(url);
     };
     const toggleExpanded = (rowId) => {
         setExpandedRows(prev => ({
@@ -185,7 +215,8 @@ const Enquiry = () => {
                 property={property}
                 selectedproperty={selectedproperty}
                 setselectedproperty={setselectedproperty}
-
+                stats={stats}
+                exportCSV={exportCSV}
             />
         </>
     );

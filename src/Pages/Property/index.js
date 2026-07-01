@@ -205,7 +205,7 @@ const Events = () => {
   };
 
   const view = (id) => {
-     window.open(`https://book.jcsoftwaresolution.in/property-details?id=${id}`, '_blank');
+     window.open(`http://localhost:8089/property-details?id=${id}`, '_blank');
   };
 
   const adminView = (id) => {

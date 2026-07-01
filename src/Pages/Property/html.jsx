@@ -6,6 +6,7 @@ import { PiEyeLight, PiFileCsv } from "react-icons/pi";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
+import methodModel from "../../methods/methods";
 import SelectDropdown from "../../components/common/SelectDropdown";
 import Layout from "../../components/global/layout";
 import statusModel from "../../models/status.model";
@@ -48,6 +49,34 @@ const Html = ({
 
   const columns = [
     {
+      key: "image",
+      name: "Photo",
+      render: (row) => {
+        const img = row?.images?.[0]?.file;
+        return (
+          <Link to={`/property/detail/${row.id}`}>
+            <img
+              src={methodModel.noImg(img)}
+              alt="bien"
+              className="w-12 h-12 rounded-lg object-cover border border-gray-200 hover:opacity-80 transition-opacity"
+            />
+          </Link>
+        );
+      },
+    },
+    {
+      key: "ref",
+      name: "Réf",
+      render: (row) => {
+        const ref = row?._id ? row._id.toString().slice(-8).toUpperCase() : "--";
+        return (
+          <Link to={`/property/detail/${row.id}`} className="font-mono text-xs text-purple-700 hover:underline">
+            {ref}
+          </Link>
+        );
+      },
+    },
+    {
       key: "propertyType",
       name: "Type de bien",
       sort: true,
@@ -83,10 +112,10 @@ const Html = ({
       key: "owner",
       name: "Propriétaire",
       render: (row) => {
-        const user = row.addedBy || row.owner || null;
-        const id = user && (user._id || user.id || user);
-        const name = user && (user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim()) || "--";
-        return id ? <Link to={`/user/detail/${id}`} className="text-purple-700 hover:underline">{name}</Link> : <span className="text-gray-400">{name}</span>
+        const user = row.addedBy_details || null;
+        const id = user?._id || row.addedBy || null;
+        const name = user ? (user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim()) : "--";
+        return id ? <Link to={`/user/detail/${id}`} className="text-purple-700 hover:underline font-medium">{name || "--"}</Link> : <span className="text-gray-400">{name}</span>;
       }
     },
     {
