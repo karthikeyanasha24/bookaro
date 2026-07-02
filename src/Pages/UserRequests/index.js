@@ -8,6 +8,7 @@ import { FaRegClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { PiLeafFill } from "react-icons/pi";
 import Swal from "sweetalert2";
 import moment from "moment";
+import environment from "../../environment";
 
 const formatDate = (d) => {
   if (!d) return "\u2014";
@@ -35,6 +36,33 @@ const TABS = [
   { value: "account_deletion", label: "Suppression compte" },
   { value: "other", label: "Autre" },
   { value: "energy_renovation", label: "R\u00e9novation \u00e9nerg\u00e9tique", isReno: true },
+  { value: "property_report", label: "Signalement profil", isReport: true },
+  { value: "pro_request", label: "Pro request", isProRequest: true },
+];
+
+const PRO_REQUEST_COLS = [
+  { key: "reporter", label: "Nom et pr\u00e9nom" },
+  { key: "phone", label: "T\u00e9l\u00e9phone" },
+  { key: "email", label: "Email" },
+  { key: "likeToBuy", label: "D\u00e9lai achat" },
+  { key: "owner", label: "Propri\u00e9taire" },
+  { key: "noMarketing", label: "No marketing" },
+  { key: "messageText", label: "Message" },
+  { key: "property", label: "Bien" },
+  { key: "status", label: "Statut" },
+  { key: "actions", label: "Actions" },
+];
+
+const REPORT_COLS = [
+  { key: "ref", label: "R\u00e9f\u00e9rence" },
+  { key: "date", label: "Date" },
+  { key: "reporter", label: "Nom et pr\u00e9nom" },
+  { key: "email", label: "Email" },
+  { key: "phone", label: "T\u00e9l\u00e9phone" },
+  { key: "property", label: "Bien signal\u00e9" },
+  { key: "reason", label: "Raison" },
+  { key: "status", label: "Statut" },
+  { key: "actions", label: "Actions" },
 ];
 
 const ENERGY_RENO_COLS = [
@@ -62,9 +90,19 @@ const UserRequests = () => {
   const [renoData, setRenoData] = useState([]);
   const [renoTotal, setRenoTotal] = useState(0);
   const [renoFilters, setRenoFilters] = useState({ page: 1, count: 20, status: "" });
+  const [reportData, setReportData] = useState([]);
+  const [reportTotal, setReportTotal] = useState(0);
+  const [reportFilters, setReportFilters] = useState({ page: 1, count: 20, status: "" });
+  const [reasonModal, setReasonModal] = useState(null);
+  const [proMsgModal, setProMsgModal] = useState(null);
+  const [proReqData, setProReqData] = useState([]);
+  const [proReqTotal, setProReqTotal] = useState(0);
+  const [proReqFilters, setProReqFilters] = useState({ page: 1, count: 20, status: "" });
 
   const activeTab = filters.type;
   const isRenoTab = activeTab === "energy_renovation";
+  const isReportTab = activeTab === "property_report";
+  const isProRequestTab = activeTab === "pro_request";
 
   const getData = (p = {}) => {
     const f = { ...filters, ...p };
@@ -87,11 +125,37 @@ const UserRequests = () => {
     });
   };
 
+  const getReportData = (p = {}) => {
+    const f = { ...reportFilters, ...p };
+    loader(true);
+    ApiClient.get("property-report/listing", f).then((res) => {
+      if (res.success) {
+        setReportData(res.data.map((r) => ({ ...r, id: r._id || r.id })));
+        setReportTotal(res.total);
+      }
+      loader(false);
+    });
+  };
+
+  const getProReqData = (p = {}) => {
+    const f = { ...proReqFilters, ...p };
+    loader(true);
+    ApiClient.get("pro-request/listing", f).then((res) => {
+      if (res.success) {
+        setProReqData(res.data.map((r) => ({ ...r, id: r._id || r.id })));
+        setProReqTotal(res.total);
+      }
+      loader(false);
+    });
+  };
+
   useEffect(() => { getData(); }, []);
 
   const handleTabChange = (type) => {
     setFilters((prev) => ({ ...prev, type, page: 1, status: "" }));
     if (type === "energy_renovation") getRenoData({ page: 1, status: "" });
+    else if (type === "property_report") getReportData({ page: 1, status: "" });
+    else if (type === "pro_request") getProReqData({ page: 1, status: "" });
     else getData({ type, page: 1, status: "" });
   };
 
@@ -100,17 +164,50 @@ const UserRequests = () => {
     if (isRenoTab) {
       setRenoFilters((prev) => ({ ...prev, status, page: 1 }));
       getRenoData({ status, page: 1 });
+    } else if (isReportTab) {
+      setReportFilters((prev) => ({ ...prev, status, page: 1 }));
+      getReportData({ status, page: 1 });
+    } else if (isProRequestTab) {
+      setProReqFilters((prev) => ({ ...prev, status, page: 1 }));
+      getProReqData({ status, page: 1 });
     } else {
       getData({ status, page: 1 });
     }
   };
 
   const exportCSV = () => {
-    const rows = isRenoTab ? renoData : data;
-    if (!rows.length) { toast.info("Aucune donnée à exporter"); return; }
+    const rows = isRenoTab ? renoData : isReportTab ? reportData : isProRequestTab ? proReqData : data;
+    if (!rows.length) { toast.info("Aucune donn\u00e9e \u00e0 exporter"); return; }
 
     let headers, getCells;
-    if (isRenoTab) {
+    if (isProRequestTab) {
+      headers = ["Date", "Pr\u00e9nom", "Nom", "Email", "T\u00e9l\u00e9phone", "D\u00e9lai achat", "Propri\u00e9taire", "Message", "R\u00e9f bien", "Statut"];
+      getCells = (row) => [
+        row.createdAt ? moment(row.createdAt).format("DD/MM/YYYY") : "",
+        row.firstName || "",
+        row.lastName || "",
+        row.email || "",
+        row.phone || "",
+        row.likeToBuy === "Later" ? "Plus tard" : "Maintenant",
+        row.alreadyOwnProperty ? "Oui" : "Non",
+        row.messageText || "",
+        row.propertyRef || "",
+        row.status || "pending",
+      ];
+    } else if (isReportTab) {
+      headers = ["R\u00e9f\u00e9rence", "Date", "Pr\u00e9nom", "Nom", "Email", "T\u00e9l\u00e9phone", "ID Bien", "Raison", "Statut"];
+      getCells = (row) => [
+        row.ref || "",
+        row.createdAt ? moment(row.createdAt).format("DD/MM/YYYY") : "",
+        row.firstName || "",
+        row.lastName || "",
+        row.email || "",
+        row.phone || "",
+        row.propertyRef || row.propertyId || "",
+        row.reason || "",
+        row.status || "pending",
+      ];
+    } else if (isRenoTab) {
       headers = ["Propriétaire", "Email", "Téléphone", "Type de bien", "Adresse", "CP", "Ville", "Surface", "Pièces", "Chauffage", "Mode conso.", "Conso. (kWh/m²)", "GES (kgCO₂/m²)", "Date diagnostic", "Statut", "Date demande"];
       getCells = (row) => [
         [row.firstName, row.lastName].filter(Boolean).join(" "),
@@ -150,7 +247,7 @@ const UserRequests = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = isRenoTab ? "devis-renovation.csv" : `demandes-${activeTab || "toutes"}.csv`;
+    a.download = isProRequestTab ? "pro-requests.csv" : isReportTab ? "signalements-profil.csv" : isRenoTab ? "devis-renovation.csv" : `demandes-${activeTab || "toutes"}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -193,6 +290,229 @@ const UserRequests = () => {
   };
 
   const pendingCount = data.filter((r) => r.status === "pending").length;
+
+  const updateReportStatus = (row, newStatus) => {
+    loader(true);
+    ApiClient.put("property-report/status", { id: row.id || row._id, status: newStatus }).then((res) => {
+      if (res.success) {
+        setReportData((prev) => prev.map((r) => (r.id === (row.id || row._id)) ? { ...r, status: newStatus } : r));
+        toast.success("Statut mis \u00e0 jour");
+      } else { toast.error(res.message || "Erreur"); }
+      loader(false);
+    });
+  };
+
+  const updateProReqStatus = (row, newStatus) => {
+    loader(true);
+    ApiClient.put("pro-request/status", { id: row.id || row._id, status: newStatus }).then((res) => {
+      if (res.success) {
+        setProReqData((prev) => prev.map((r) => (r.id === (row.id || row._id)) ? { ...r, status: newStatus } : r));
+        toast.success("Statut mis \u00e0 jour");
+      } else { toast.error(res.message || "Erreur"); }
+      loader(false);
+    });
+  };
+
+  const renderProRequestCell = (row, key) => {
+    switch (key) {
+      case "reporter": {
+        const name = [row?.firstName, row?.lastName].filter(Boolean).join(" ") || "\u2014";
+        const userId = row?.userId;
+        return (
+          <td key={key} className="px-3 py-3">
+            {userId ? (
+              <a href={`/user/detail/${userId}`} target="_blank" rel="noreferrer"
+                className="font-medium text-[#976DD0] hover:underline whitespace-nowrap">
+                {name}
+              </a>
+            ) : (
+              <p className="font-medium text-[#343F4B] whitespace-nowrap">{name}</p>
+            )}
+          </td>
+        );
+      }
+      case "phone":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs whitespace-nowrap">{row?.phone || "\u2014"}</td>;
+      case "email":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs">{row?.email || "\u2014"}</td>;
+      case "likeToBuy": {
+        const label = row?.likeToBuy === "Later" ? "Plus tard" : "Maintenant";
+        const cls = row?.likeToBuy === "Later" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-emerald-50 text-emerald-700 border-emerald-200";
+        return (
+          <td key={key} className="px-3 py-3">
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${cls}`}>{label}</span>
+          </td>
+        );
+      }
+      case "owner": {
+        const label = row?.alreadyOwnProperty ? "Oui" : "Non";
+        const cls = row?.alreadyOwnProperty ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-gray-50 text-gray-600 border-gray-200";
+        return (
+          <td key={key} className="px-3 py-3">
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${cls}`}>{label}</span>
+          </td>
+        );
+      }
+      case "noMarketing": {
+        const checked = row?.noMarketingEmails === true;
+        return (
+          <td key={key} className="px-3 py-3 text-center">
+            {checked
+              ? <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">Oui</span>
+              : <span className="text-xs text-gray-400">Non</span>}
+          </td>
+        );
+      }
+      case "messageText":
+        return (
+          <td key={key} className="px-3 py-3 text-[#47525E] max-w-[180px]">
+            {row?.messageText ? (
+              <>
+                <span className="line-clamp-2 text-xs">{row.messageText}</span>
+                {row.messageText.length > 60 && (
+                  <button onClick={() => setProMsgModal(row.messageText)}
+                    className="text-[10px] text-[#976DD0] underline mt-0.5 block">
+                    Voir tout
+                  </button>
+                )}
+              </>
+            ) : <span className="text-gray-400 text-xs">\u2014</span>}
+          </td>
+        );
+      case "property": {
+        const imgUrl = row?.propertyImage ? `${environment.api}img/${row.propertyImage}` : null;
+        const propId = row?.propertyId;
+        const propRef = row?.propertyRef || propId;
+        return (
+          <td key={key} className="px-3 py-3">
+            {imgUrl && (
+              <a href={`/property/admin/${propId}`} target="_blank" rel="noreferrer">
+                <img src={imgUrl} alt="" className="w-12 h-8 rounded object-cover mb-1" />
+              </a>
+            )}
+            {propRef && (
+              <a href={`/property/admin/${propId}`} target="_blank" rel="noreferrer"
+                className="text-xs text-[#976DD0] underline whitespace-nowrap block">
+                {propRef}
+              </a>
+            )}
+            {!imgUrl && !propRef && <span className="text-gray-400 text-xs">\u2014</span>}
+          </td>
+        );
+      }
+      case "status": {
+        const s = row?.status || "pending";
+        const cfg = STATUS_CONFIG[s] || STATUS_CONFIG.pending;
+        return (
+          <td key={key} className="px-3 py-3">
+            <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${cfg.cls}`}>
+              {cfg.icon}{cfg.label}
+            </span>
+          </td>
+        );
+      }
+      case "actions": {
+        const s = row?.status || "pending";
+        return (
+          <td key={key} className="px-3 py-3">
+            {s === "pending" ? (
+              <div className="flex gap-2">
+                <button onClick={() => updateProReqStatus(row, "processed")} className="text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-full transition-colors whitespace-nowrap">Traiter</button>
+                <button onClick={() => updateProReqStatus(row, "rejected")} className="text-xs bg-white hover:bg-red-50 text-red-500 border border-red-200 px-3 py-1 rounded-full transition-colors">Rejeter</button>
+              </div>
+            ) : (
+              <button onClick={() => updateProReqStatus(row, "pending")} className="text-xs text-[#8492A6] hover:text-[#976DD0] underline whitespace-nowrap">Remettre en attente</button>
+            )}
+          </td>
+        );
+      }
+      default:
+        return <td key={key} className="px-3 py-3">\u2014</td>;
+    }
+  };
+
+  const renderReportCell = (row, key) => {
+    switch (key) {
+      case "ref":
+        return <td key={key} className="px-3 py-3 text-xs font-mono text-[#976DD0] whitespace-nowrap">{row?.ref || "\u2014"}</td>;
+      case "date":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs whitespace-nowrap">{row?.createdAt ? moment(row.createdAt).format("DD/MM/YYYY") : "\u2014"}</td>;
+      case "reporter": {
+        const name = [row?.firstName, row?.lastName].filter(Boolean).join(" ") || "\u2014";
+        return (
+          <td key={key} className="px-3 py-3">
+            <p className="font-medium text-[#343F4B] whitespace-nowrap">{name}</p>
+          </td>
+        );
+      }
+      case "email":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs">{row?.email || "\u2014"}</td>;
+      case "phone":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs whitespace-nowrap">{row?.phone || "\u2014"}</td>;
+      case "property": {
+        const propRef = row?.propertyRef || row?.propertyId;
+        if (!propRef) return <td key={key} className="px-3 py-3 text-gray-400">\u2014</td>;
+        const imgUrl = row?.propertyImage ? `${environment.api}img/${row.propertyImage}` : null;
+        return (
+          <td key={key} className="px-3 py-3">
+            {imgUrl && (
+              <img src={imgUrl} alt="" className="w-10 h-10 rounded object-cover mb-1" />
+            )}
+            <a
+              href={`/property/admin/${row?.propertyId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-[#976DD0] underline whitespace-nowrap"
+            >
+              {row?.propertyRef || row?.propertyId}
+            </a>
+          </td>
+        );
+      }
+      case "reason":
+        return (
+          <td key={key} className="px-3 py-3 text-[#47525E] max-w-[220px]">
+            <span className="line-clamp-2 text-xs">{row?.reason || "\u2014"}</span>
+            {row?.reason && row.reason.length > 60 && (
+              <button
+                onClick={() => setReasonModal(row.reason)}
+                className="text-[10px] text-[#976DD0] underline mt-0.5 block"
+              >
+                Voir tout
+              </button>
+            )}
+          </td>
+        );
+      case "status": {
+        const s = row?.status || "pending";
+        const cfg = STATUS_CONFIG[s] || STATUS_CONFIG.pending;
+        return (
+          <td key={key} className="px-3 py-3">
+            <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${cfg.cls}`}>
+              {cfg.icon}{cfg.label}
+            </span>
+          </td>
+        );
+      }
+      case "actions": {
+        const s = row?.status || "pending";
+        return (
+          <td key={key} className="px-3 py-3">
+            {s === "pending" ? (
+              <div className="flex gap-2">
+                <button onClick={() => updateReportStatus(row, "processed")} className="text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-full transition-colors whitespace-nowrap">Traiter</button>
+                <button onClick={() => updateReportStatus(row, "rejected")} className="text-xs bg-white hover:bg-red-50 text-red-500 border border-red-200 px-3 py-1 rounded-full transition-colors">Rejeter</button>
+              </div>
+            ) : (
+              <button onClick={() => updateReportStatus(row, "pending")} className="text-xs text-[#8492A6] hover:text-[#976DD0] underline whitespace-nowrap">Remettre en attente</button>
+            )}
+          </td>
+        );
+      }
+      default:
+        return <td key={key} className="px-3 py-3">\u2014</td>;
+    }
+  };
 
   const renderRenoCell = (row, key) => {
     switch (key) {
@@ -281,6 +601,10 @@ const UserRequests = () => {
             <p className="text-sm text-[#8492A6]">
               {isRenoTab
                 ? `${renoTotal} demande${renoTotal > 1 ? "s" : ""} de r\u00e9novation \u00e9nerg\u00e9tique`
+                : isReportTab
+                ? `${reportTotal} signalement${reportTotal > 1 ? "s" : ""}`
+                : isProRequestTab
+                ? `${proReqTotal} demande${proReqTotal > 1 ? "s" : ""} pro`
                 : `${total} demande${total > 1 ? "s" : ""} au total`}
             </p>
           </div>
@@ -298,6 +622,8 @@ const UserRequests = () => {
               }`}
             >
               {tab.isReno && <PiLeafFill className={filters.type === tab.value ? "text-white" : "text-green-500"} />}
+              {tab.isReport && <span className={filters.type === tab.value ? "text-white" : "text-[#976DD0]"}>⚠️</span>}
+              {tab.isProRequest && <span className={filters.type === tab.value ? "text-white" : "text-[#976DD0]"}>🏠</span>}
               {tab.label}
             </button>
           ))}
@@ -328,7 +654,59 @@ const UserRequests = () => {
           </button>
         </div>
 
-        {isRenoTab ? (
+        {isProRequestTab ? (
+          <div className="bg-white rounded-xl border border-[#E8EBF0] overflow-x-auto">
+            {proReqData.length === 0 ? (
+              <div className="py-16 text-center text-[#8492A6]">
+                <MdOutlineInbox className="text-[48px] mx-auto mb-3 opacity-30" />
+                <p>Aucune demande pro pour le moment</p>
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-[#F7F8FA] border-b border-[#E8EBF0]">
+                  <tr>
+                    {PRO_REQUEST_COLS.map((col) => (
+                      <th key={col.key} className="text-left px-3 py-3 text-[#8492A6] font-semibold whitespace-nowrap">{col.label}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {proReqData.map((row, i) => (
+                    <tr key={row.id || row._id} className={`border-b border-[#F0F2F5] hover:bg-[#FAFBFC] transition-colors ${i % 2 !== 0 ? "bg-[#FAFBFC]/40" : ""}`}>
+                      {PRO_REQUEST_COLS.map((col) => renderProRequestCell(row, col.key))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        ) : isReportTab ? (
+          <div className="bg-white rounded-xl border border-[#E8EBF0] overflow-x-auto">
+            {reportData.length === 0 ? (
+              <div className="py-16 text-center text-[#8492A6]">
+                <MdOutlineInbox className="text-[48px] mx-auto mb-3 opacity-30" />
+                <p>Aucun signalement pour le moment</p>
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-[#F7F8FA] border-b border-[#E8EBF0]">
+                  <tr>
+                    {REPORT_COLS.map((col) => (
+                      <th key={col.key} className="text-left px-3 py-3 text-[#8492A6] font-semibold whitespace-nowrap">{col.label}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {reportData.map((row, i) => (
+                    <tr key={row.id || row._id} className={`border-b border-[#F0F2F5] hover:bg-[#FAFBFC] transition-colors ${i % 2 !== 0 ? "bg-[#FAFBFC]/40" : ""}`}>
+                      {REPORT_COLS.map((col) => renderReportCell(row, col.key))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        ) : isRenoTab ? (
           <div className="bg-white rounded-xl border border-[#E8EBF0] overflow-x-auto">
             {renoData.length === 0 ? (
               <div className="py-16 text-center text-[#8492A6]">
@@ -429,6 +807,50 @@ const UserRequests = () => {
           </div>
         )}
       </div>
+
+      {/* ── Modal raison du signalement ────────────────────────────────── */}
+      {reasonModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          onClick={() => setReasonModal(null)}
+        >
+          <div
+            className="bg-white rounded-[12px] w-full max-w-lg p-6 shadow-xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-lg leading-none"
+              onClick={() => setReasonModal(null)}
+            >
+              ✕
+            </button>
+            <h3 className="text-[15px] font-[600] text-[#343F4B] mb-3">Raison du signalement</h3>
+            <p className="text-sm text-[#47525E] whitespace-pre-wrap leading-relaxed">{reasonModal}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal message pro request ──────────────────────────────────── */}
+      {proMsgModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          onClick={() => setProMsgModal(null)}
+        >
+          <div
+            className="bg-white rounded-[12px] w-full max-w-lg p-6 shadow-xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-lg leading-none"
+              onClick={() => setProMsgModal(null)}
+            >
+              ✕
+            </button>
+            <h3 className="text-[15px] font-[600] text-[#343F4B] mb-3">Message du prospect</h3>
+            <p className="text-sm text-[#47525E] whitespace-pre-wrap leading-relaxed">{proMsgModal}</p>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };
