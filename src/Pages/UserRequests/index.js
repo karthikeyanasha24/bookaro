@@ -39,11 +39,10 @@ const TABS = [
 
 const ENERGY_RENO_COLS = [
   { key: "owner", label: "Propri\u00e9taire" },
+  { key: "email", label: "Email" },
+  { key: "phone", label: "T\u00e9l\u00e9phone" },
   { key: "type", label: "Type de bien" },
   { key: "address", label: "Adresse / CP" },
-  { key: "propertyFloor", label: "\u00c9tage" },
-  { key: "building", label: "Ann\u00e9e constr." },
-  { key: "totalFloorBuilding", label: "Nb \u00e9tages" },
   { key: "surface", label: "Surface" },
   { key: "rooms", label: "Pi\u00e8ces" },
   { key: "heatingType", label: "Chauffage" },
@@ -77,11 +76,11 @@ const UserRequests = () => {
   };
 
   const getRenoData = (p = {}) => {
-    const f = { ...renoFilters, ...p, contact: "true" };
+    const f = { ...renoFilters, ...p };
     loader(true);
-    ApiClient.get("property/listing", f).then((res) => {
+    ApiClient.get("renovation-quote-requests/listing", f).then((res) => {
       if (res.success) {
-        setRenoData(res.data.map((r) => ({ ...r, id: r._id })));
+        setRenoData(res.data.map((r) => ({ ...r, id: r._id || r.id })));
         setRenoTotal(res.total);
       }
       loader(false);
@@ -106,6 +105,56 @@ const UserRequests = () => {
     }
   };
 
+  const exportCSV = () => {
+    const rows = isRenoTab ? renoData : data;
+    if (!rows.length) { toast.info("Aucune donnée à exporter"); return; }
+
+    let headers, getCells;
+    if (isRenoTab) {
+      headers = ["Propriétaire", "Email", "Téléphone", "Type de bien", "Adresse", "CP", "Ville", "Surface", "Pièces", "Chauffage", "Mode conso.", "Conso. (kWh/m²)", "GES (kgCO₂/m²)", "Date diagnostic", "Statut", "Date demande"];
+      getCells = (row) => [
+        [row.firstName, row.lastName].filter(Boolean).join(" "),
+        row.email || "",
+        row.phone || "",
+        row.type || "",
+        row.address || "",
+        row.zipcode || "",
+        row.city || "",
+        row.surface ? `${row.surface} m²` : "",
+        row.rooms || "",
+        row.heatingType?.name || row.heatingType || "",
+        row.energymode?.name  || row.energymode  || "",
+        row.energyConsumption || "",
+        row.emissions || "",
+        row.dateOfDiagnosis ? moment(row.dateOfDiagnosis).format("DD/MM/YYYY") : "",
+        row.status || "pending",
+        row.createdAt ? moment(row.createdAt).format("DD/MM/YYYY") : "",
+      ];
+    } else {
+      headers = ["Date", "Prénom", "Nom", "Email", "Téléphone", "Type", "Message", "Statut"];
+      getCells = (row) => [
+        row.createdAt ? moment(row.createdAt).format("DD/MM/YYYY") : "",
+        row.firstName || "",
+        row.lastName  || "",
+        row.email     || "",
+        row.phone     || "",
+        TYPE_LABELS[row.type] || row.type || "",
+        row.message   || "",
+        row.status    || "",
+      ];
+    }
+
+    const escape = (v) => `"${String(v).replace(/"/g, '""')}"`;
+    const csv = [headers.map(escape).join(","), ...rows.map((r) => getCells(r).map(escape).join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = isRenoTab ? "devis-renovation.csv" : `demandes-${activeTab || "toutes"}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const updateStatus = (id, status) => {
     loader(true);
     ApiClient.put("user-requests/status", { id, status }).then((res) => {
@@ -119,9 +168,9 @@ const UserRequests = () => {
 
   const updateRenoStatus = (row, newStatus) => {
     loader(true);
-    ApiClient.put("property/editProperty", { id: row.id || row._id, request_status: newStatus }).then((res) => {
+    ApiClient.put("renovation-quote-requests/status", { id: row.id || row._id, status: newStatus }).then((res) => {
       if (res.success) {
-        setRenoData((prev) => prev.map((r) => (r.id === (row.id || row._id)) ? { ...r, request_status: newStatus } : r));
+        setRenoData((prev) => prev.map((r) => (r.id === (row.id || row._id)) ? { ...r, status: newStatus } : r));
         toast.success("Statut mis \u00e0 jour");
       } else { toast.error(res.message || "Erreur"); }
       loader(false);
@@ -148,15 +197,17 @@ const UserRequests = () => {
   const renderRenoCell = (row, key) => {
     switch (key) {
       case "owner": {
-        const u = row?.addedBy_details;
-        const name = u?.fullName || [u?.firstName, u?.lastName].filter(Boolean).join(" ") || "\u2014";
+        const name = [row?.firstName, row?.lastName].filter(Boolean).join(" ") || "\u2014";
         return (
           <td key={key} className="px-3 py-3">
             <p className="font-medium text-[#343F4B] whitespace-nowrap">{name}</p>
-            {u?.email && <p className="text-[#8492A6] text-xs">{u.email}</p>}
           </td>
         );
       }
+      case "email":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs">{row?.email || "\u2014"}</td>;
+      case "phone":
+        return <td key={key} className="px-3 py-3 text-[#47525E] text-xs whitespace-nowrap">{row?.phone || "\u2014"}</td>;
       case "type":
         return <td key={key} className="px-3 py-3 capitalize text-[#47525E]">{row?.type || "\u2014"}</td>;
       case "address":
@@ -166,30 +217,24 @@ const UserRequests = () => {
             {row?.zipcode && <span className="ml-1 text-xs text-gray-400">({row.zipcode})</span>}
           </td>
         );
-      case "propertyFloor":
-        return <td key={key} className="px-3 py-3 text-center text-[#47525E]">{row?.propertyFloor ?? "\u2014"}</td>;
-      case "building":
-        return <td key={key} className="px-3 py-3 text-[#47525E]">{row?.building || "\u2014"}</td>;
-      case "totalFloorBuilding":
-        return <td key={key} className="px-3 py-3 text-center text-[#47525E]">{row?.totalFloorBuilding ?? "\u2014"}</td>;
       case "surface":
         return <td key={key} className="px-3 py-3 text-[#47525E]">{row?.surface ? `${row.surface} m\u00b2` : "\u2014"}</td>;
       case "rooms":
         return <td key={key} className="px-3 py-3 text-center text-[#47525E]">{row?.rooms ?? "\u2014"}</td>;
       case "heatingType":
-        return <td key={key} className="px-3 py-3 capitalize text-[#47525E]">{row?.heatingType?.name || "\u2014"}</td>;
+        return <td key={key} className="px-3 py-3 capitalize text-[#47525E]">{row?.heatingType?.name || row?.heatingType || "\u2014"}</td>;
       case "energymode":
-        return <td key={key} className="px-3 py-3 capitalize text-[#47525E]">{row?.energymode?.name || "\u2014"}</td>;
+        return <td key={key} className="px-3 py-3 capitalize text-[#47525E]">{row?.energymode?.name || row?.energymode || "\u2014"}</td>;
       case "energyConsumption":
         return <td key={key} className="px-3 py-3 text-[#47525E]">{row?.energyConsumption || "\u2014"}</td>;
       case "emissions":
         return <td key={key} className="px-3 py-3 text-[#47525E]">{row?.emissions || "\u2014"}</td>;
       case "diagnosisDate": {
-        const d = row?.diagnosisDate || row?.dateOfDiagnosis;
+        const d = row?.dateOfDiagnosis;
         return <td key={key} className="px-3 py-3 text-[#47525E] whitespace-nowrap">{d ? moment(d).format("DD/MM/YYYY") : "\u2014"}</td>;
       }
       case "status": {
-        const s = row?.request_status || "pending";
+        const s = row?.status || "pending";
         const cfg = STATUS_CONFIG[s] || STATUS_CONFIG.pending;
         return (
           <td key={key} className="px-3 py-3">
@@ -200,7 +245,7 @@ const UserRequests = () => {
         );
       }
       case "actions": {
-        const s = row?.request_status || "pending";
+        const s = row?.status || "pending";
         return (
           <td key={key} className="px-3 py-3">
             {s === "pending" ? (
@@ -275,6 +320,12 @@ const UserRequests = () => {
               </>
             )}
           </select>
+          <button
+            onClick={exportCSV}
+            className="ml-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border border-[#976DD0] text-[#976DD0] bg-white hover:bg-[#976DD0] hover:text-white transition-all whitespace-nowrap"
+          >
+            ↓ Export CSV
+          </button>
         </div>
 
         {isRenoTab ? (
@@ -282,7 +333,7 @@ const UserRequests = () => {
             {renoData.length === 0 ? (
               <div className="py-16 text-center text-[#8492A6]">
                 <PiLeafFill className="text-[48px] mx-auto mb-3 opacity-20 text-green-500" />
-                <p>Aucune demande de r\u00e9novation \u00e9nerg\u00e9tique</p>
+                <p>Aucune demande de rénovation énergétique</p>
               </div>
             ) : (
               <table className="w-full text-sm">
