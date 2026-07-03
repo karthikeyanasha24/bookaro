@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "antd";
-import { FaArrowLeft, FaArrowTrendUp, FaBuilding, FaChartLine, FaFolderOpen, FaHeart, FaMapLocationDot, FaQrcode, FaRegCircleCheck, FaUserLarge } from "react-icons/fa6";
+import { FaArrowLeft, FaArrowTrendUp, FaBuilding, FaChartLine, FaFolderOpen, FaHeart, FaMapLocationDot, FaQrcode, FaRegCircleCheck, FaUserLarge, FaCreditCard } from "react-icons/fa6";
 import Layout from "../../components/global/layout";
 import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
@@ -21,6 +21,7 @@ const tabs = [
   { key: "qr", label: "QR Code" },
   { key: "activite", label: "Activité" },
   { key: "confiance", label: "Indice de confiance" },
+  { key: "abonnement", label: "Abonnement" },
 ];
 
 const PROFILE_LABELS = {
@@ -125,6 +126,8 @@ const View = () => {
   const [scoreDetail, setScoreDetail] = useState(null);
   const [interestScores, setInterestScores] = useState([]);
   const [confianceSubTab, setConfianceSubTab] = useState("buyer");
+  const [subscriptionActive, setSubscriptionActive] = useState(null);
+  const [subscriptionHistory, setSubscriptionHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -174,9 +177,10 @@ const View = () => {
         ApiClient.get("user/admin/activity", { userId: id, limit: 100 }),
         ApiClient.get(`score/admin/users/${id}`),
         ApiClient.get("score/admin/interests", { buyerId: id, limit: 50 }),
+        ApiClient.get("subscription/list", { userId: id }),
       ]);
 
-      const [userRes, onboardingRes, interestsRes, followsRes, ordersRes, favoritesRes, campaignsRes, qrRes, activityRes, scoreDetailRes, interestScoresRes] = responses;
+      const [userRes, onboardingRes, interestsRes, followsRes, ordersRes, favoritesRes, campaignsRes, qrRes, activityRes, scoreDetailRes, interestScoresRes, subscriptionRes] = responses;
 
       if (userRes.status === "fulfilled" && userRes.value?.success) {
         const userData = userRes.value.data || null;
@@ -232,6 +236,11 @@ const View = () => {
 
       if (interestScoresRes.status === "fulfilled" && interestScoresRes.value?.success) {
         setInterestScores(toArray(interestScoresRes.value.data));
+      }
+
+      if (subscriptionRes.status === "fulfilled" && subscriptionRes.value?.success) {
+        setSubscriptionActive(subscriptionRes.value.active || null);
+        setSubscriptionHistory(toArray(subscriptionRes.value.data));
       }
     } catch (err) {
       setError(err?.message || "Une erreur est survenue lors du chargement.");
@@ -808,6 +817,169 @@ const View = () => {
     );
   };
 
+  const STATUS_COLORS = {
+    active: "bg-emerald-100 text-emerald-700",
+    trialing: "bg-blue-100 text-blue-700",
+    canceled: "bg-red-100 text-red-700",
+    inactive: "bg-gray-100 text-gray-500",
+  };
+  const STATUS_LABELS = {
+    active: "Actif",
+    trialing: "Période d'essai",
+    canceled: "Annulé",
+    inactive: "Inactif",
+  };
+  const INTERVAL_LABELS = { month: "Mensuel", year: "Annuel" };
+
+  const renderAbonnementTab = () => {
+    const planName = subscriptionActive?.planId?.name || subscriptionActive?.planType || null;
+    const planInterval = subscriptionActive?.interval;
+    const planPrice = subscriptionActive?.amount;
+    const activePricing = subscriptionActive?.planId?.pricing || [];
+    const displayPrice = planPrice != null && planPrice > 0
+      ? formatCurrency(planPrice)
+      : activePricing.find((p) => p.interval === (planInterval || "month"))?.unit_amount != null
+        ? formatCurrency(activePricing.find((p) => p.interval === (planInterval || "month"))?.unit_amount)
+        : null;
+    const directPlan = !subscriptionActive && data?.planId && typeof data.planId === "object" ? data.planId : null;
+
+    return (
+      <div className="space-y-6">
+        {/* Abonnement actuel */}
+        <div className="shadow-box rounded-2xl bg-white overflow-hidden">
+          <div className="p-4 border-b font-medium text-[#976DD0] flex items-center gap-3">
+            <div className="bg-[#996dca21] p-3 rounded-md"><FaCreditCard className="text-[18px]" /></div>
+            Abonnement actuel
+          </div>
+          <div className="p-5">
+            {subscriptionActive ? (
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                  <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Plan</div>
+                  <div className="mt-1 text-sm font-semibold text-[#111827] capitalize">{planName || "--"}</div>
+                </div>
+                <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                  <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Statut</div>
+                  <div className="mt-1">
+                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[subscriptionActive.status] || "bg-gray-100 text-gray-600"}`}>
+                      {STATUS_LABELS[subscriptionActive.status] || subscriptionActive.status || "--"}
+                    </span>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                  <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Facturation</div>
+                  <div className="mt-1 text-sm font-medium text-[#111827]">
+                    {INTERVAL_LABELS[planInterval] || planInterval || "--"}
+                    {displayPrice ? <span className="ml-1 text-[#976DD0]">· {displayPrice}</span> : null}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                  <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Expire le</div>
+                  <div className="mt-1 text-sm font-medium text-[#111827]">
+                    {subscriptionActive.validUpto ? new Date(subscriptionActive.validUpto).toLocaleDateString("fr-FR") : "Sans limite"}
+                  </div>
+                </div>
+                {subscriptionActive.status === "trialing" && subscriptionActive.trialEnd ? (
+                  <div className="md:col-span-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+                    <div className="text-[12px] uppercase tracking-[0.16em] text-blue-500">Fin de la période d'essai</div>
+                    <div className="mt-1 text-sm font-medium text-[#111827]">{new Date(subscriptionActive.trialEnd).toLocaleDateString("fr-FR")}</div>
+                  </div>
+                ) : null}
+                {subscriptionActive.subscriptionId ? (
+                  <div className="md:col-span-2 rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                    <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">ID Stripe</div>
+                    <div className="mt-1 text-xs font-mono text-[#6B7280] break-all">{subscriptionActive.subscriptionId}</div>
+                  </div>
+                ) : null}
+              </div>
+            ) : directPlan ? (
+              <div>
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-medium text-amber-700">
+                  Plan assigné directement (sans souscription Stripe)
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                    <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Plan</div>
+                    <div className="mt-1 text-sm font-semibold text-[#111827] capitalize">{directPlan.name || "--"}</div>
+                  </div>
+                  <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                    <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Type</div>
+                    <div className="mt-1">
+                      <span className="inline-flex rounded-full px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 capitalize">
+                        {directPlan.planType || "free"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                    <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Off-Market</div>
+                    <div className="mt-1 text-sm font-medium text-[#111827]">{directPlan.offMarket ? "Oui" : "Non"}</div>
+                  </div>
+                  <div className="rounded-xl border border-[#EEE6FA] bg-[#FAFAFB] px-4 py-3">
+                    <div className="text-[12px] uppercase tracking-[0.16em] text-[#6B7280]">Nb biens max</div>
+                    <div className="mt-1 text-sm font-medium text-[#111827]">{directPlan.numberOfProperty ?? "--"}</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <EmptyState title="Aucun abonnement actif" description="Cet utilisateur n'a pas d'abonnement actif ou en essai." />
+            )}
+          </div>
+        </div>
+
+        {/* Historique */}
+        <div className="shadow-box rounded-2xl bg-white overflow-hidden">
+          <div className="p-4 border-b font-medium text-[#976DD0]">Historique des abonnements</div>
+          <div className="p-5">
+            {subscriptionHistory.length ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-[#F5F0FD] text-[#6B7280]">
+                      <th className="text-left px-4 py-2 font-medium">Plan</th>
+                      <th className="text-left px-4 py-2 font-medium">Facturation</th>
+                      <th className="text-left px-4 py-2 font-medium">Montant</th>
+                      <th className="text-left px-4 py-2 font-medium">Statut</th>
+                      <th className="text-left px-4 py-2 font-medium">Début</th>
+                      <th className="text-left px-4 py-2 font-medium">Expiration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subscriptionHistory.map((sub, idx) => {
+                      const pName = sub?.planId?.name || sub?.planType || "--";
+                      const rowPrice = sub.amount > 0
+                        ? formatCurrency(sub.amount)
+                        : (sub?.planId?.pricing || []).find((p) => p.interval === (sub.interval || "month"))?.unit_amount != null
+                          ? formatCurrency((sub?.planId?.pricing || []).find((p) => p.interval === (sub.interval || "month"))?.unit_amount)
+                          : "--";
+                      return (
+                        <tr key={sub._id || idx} className="border-b last:border-0 hover:bg-[#FAF7FF]">
+                          <td className="px-4 py-3 font-medium text-[#111827] capitalize">{pName}</td>
+                          <td className="px-4 py-3 text-[#374151]">{INTERVAL_LABELS[sub.interval] || sub.interval || "--"}</td>
+                          <td className="px-4 py-3 text-[#374151]">{rowPrice}</td>
+                          <td className="px-4 py-3">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[sub.status] || "bg-gray-100 text-gray-600"}`}>
+                              {STATUS_LABELS[sub.status] || sub.status || "--"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-[#9CA3AF] whitespace-nowrap">{formatDate(sub.createdAt)}</td>
+                          <td className="px-4 py-3 text-[#9CA3AF] whitespace-nowrap">
+                            {sub.validUpto ? new Date(sub.validUpto).toLocaleDateString("fr-FR") : "–"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptyState title="Aucun historique" description="Aucun abonnement passé ou présent enregistré pour cet utilisateur." />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Layout>
       <div className="wrapper_section space-y-6">
@@ -867,6 +1039,7 @@ const View = () => {
                 {activeTab === "qr" ? renderQrTab() : null}
                 {activeTab === "activite" ? renderActiviteTab() : null}
                 {activeTab === "confiance" ? renderConfianceTab() : null}
+                {activeTab === "abonnement" ? renderAbonnementTab() : null}
               </>
             )}
           </div>

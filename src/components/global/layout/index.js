@@ -251,6 +251,12 @@ const Layout = memo(function Layout({ children }) {
         ],
       },
       {
+        name: "Lead BizDev",
+        icon: <MdTrendingUp className="text-white text-[16px]" />,
+        url: "/bizdev-leads",
+        key: "",
+      },
+      {
         name: "P2P Estimations",
         icon: <MdFeaturedPlayList className="text-[#fff] shrink-0 text-[16px]" />,
         url: "/p2p-estimation",

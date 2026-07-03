@@ -67,6 +67,7 @@ function App() {
     { url: "/marketplace/settings", path: "Marketplace/Settings" },
     { url: "/data", element: <Navigate to="/data/import-transactions" /> },
     { url: "/data/import-transactions", path: "TransactionsImport" },
+    { url: "/bizdev-leads", path: "BizDevLeads" },
     { url: "/staff", path: "Staff" }, // Staff Module Routes
     { url: "/staff/edit/:id", path: "Staff/AddEdit" },
     { url: "/staff/add", path: "Staff/AddEdit" },
