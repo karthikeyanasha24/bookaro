@@ -20,6 +20,9 @@ const AddEdit = () => {
     planType: "",
     numberOfProperty: "",
     numberOfInterest: "",
+    dailyCampaignLimit: "",
+    weeklyCampaignLimit: "",
+    monthlyCampaignLimit: "",
     pricing: [
       {
         unit_amount: 0,
@@ -92,6 +95,9 @@ const AddEdit = () => {
             otherDetails: res?.data?.otherDetails,
             numberOfProperty: res?.data?.numberOfProperty,
             numberOfInterest: res?.data?.numberOfInterest,
+            dailyCampaignLimit: res?.data?.dailyCampaignLimit ?? "",
+            weeklyCampaignLimit: res?.data?.weeklyCampaignLimit ?? "",
+            monthlyCampaignLimit: res?.data?.monthlyCampaignLimit ?? "",
           });
         }
         loader(false);
@@ -416,6 +422,37 @@ const AddEdit = () => {
                   onChange={(e) => handleChange("numberOfProperty", e)}
                   required
                 />
+              </div>
+              <div className="col-span-full mb-3">
+                <label className="text-sm font-medium text-[#111827] block border-b pb-2 mb-3">
+                  Campagnes P2P Estimation
+                </label>
+                <div className="grid grid-cols-12 gap-3">
+                  <div className="lg:col-span-4 col-span-full">
+                    <FormControl
+                      type="number"
+                      label="Nombre de campagnes - 24h"
+                      value={form?.dailyCampaignLimit}
+                      onChange={(e) => handleChange("dailyCampaignLimit", e)}
+                    />
+                  </div>
+                  <div className="lg:col-span-4 col-span-full">
+                    <FormControl
+                      type="number"
+                      label="Nombre de campagnes - 7 jours"
+                      value={form?.weeklyCampaignLimit}
+                      onChange={(e) => handleChange("weeklyCampaignLimit", e)}
+                    />
+                  </div>
+                  <div className="lg:col-span-4 col-span-full">
+                    <FormControl
+                      type="number"
+                      label="Nombre de campagnes - 30 jours"
+                      value={form?.monthlyCampaignLimit}
+                      onChange={(e) => handleChange("monthlyCampaignLimit", e)}
+                    />
+                  </div>
+                </div>
               </div>
               <div className=" col-span-full mb-10">
                 <FormControl

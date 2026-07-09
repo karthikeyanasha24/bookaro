@@ -274,6 +274,12 @@ const Layout = memo(function Layout({ children }) {
             url: "/p2p-estimation/campaigns",
             key: "readEstimation",
           },
+          {
+            name: "Price per SQM",
+            icon: <GoDuplicate className="me-2 text-[16px]" />,
+            url: "/p2p-estimation/price-per-sqm",
+            key: "readEstimation",
+          },
         ]
       },
       {

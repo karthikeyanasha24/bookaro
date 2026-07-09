@@ -95,6 +95,26 @@ const View = () => {
                     </p>
                   </div>}
 
+                  {(data?.dailyCampaignLimit !== undefined || data?.weeklyCampaignLimit !== undefined || data?.monthlyCampaignLimit !== undefined) && (
+                    <div className="col-span-full">
+                      <label className="text-[14px] text-[#0000009c] tracking-wider mb-2 block border-b pb-2">Campagnes P2P Estimation :</label>
+                      <div className="grid grid-cols-12 gap-4 mt-2">
+                        <div className="lg:col-span-4 col-span-full flex flex-col">
+                          <label className="text-[13px] text-[#0000009c] mb-1">24h :</label>
+                          <p className="text-sm font-normal">{data?.dailyCampaignLimit ?? "--"}</p>
+                        </div>
+                        <div className="lg:col-span-4 col-span-full flex flex-col">
+                          <label className="text-[13px] text-[#0000009c] mb-1">7 jours :</label>
+                          <p className="text-sm font-normal">{data?.weeklyCampaignLimit ?? "--"}</p>
+                        </div>
+                        <div className="lg:col-span-4 col-span-full flex flex-col">
+                          <label className="text-[13px] text-[#0000009c] mb-1">30 jours :</label>
+                          <p className="text-sm font-normal">{data?.monthlyCampaignLimit ?? "--"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {data?.feature?.length > 0 && <div className="col-span-full flex flex-col">
                     <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">Features:</label>
                     <p className="text-[13px] flex flex-wrap gap-2 text-black capitalize min-h-[35px] rounded-md items-center capitalize py-2 leading-[18px]">

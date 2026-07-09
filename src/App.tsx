@@ -197,6 +197,7 @@ function App() {
     { url: "/p2p-estimation/detail/:id", path: "P2pEstimation/View" },
     { url: "/p2p-estimation/campaigns", path: "P2pEstimation/Campaigns" },
     { url: "/p2p-estimation/campaigns/:id", path: "P2pEstimation/CampaignDetail" },
+    { url: "/p2p-estimation/price-per-sqm", path: "P2pEstimation/PricePerSqm" },
 
     { url: "/admin-setting", path: "AdminSetting" },
     { url: "/admin-setting/edit/:id", path: "AdminSetting/AddEdit" },
