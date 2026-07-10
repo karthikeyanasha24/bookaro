@@ -213,6 +213,9 @@ function App() {
 
     { url: "/qr-code-stats", path: "QRCodeStats" },
     { url: "/referral", path: "ReferralAdmin" },
+    { url: "/moteur-immo", path: "MoteurImmoImport" },
+    { url: "/moteur-immo/detail/:id", path: "MoteurImmoImport/View" },
+    { url: "/moteur-immo-runs", path: "MoteurImmoRuns" },
   ];
 
   sessionStorage.clear();

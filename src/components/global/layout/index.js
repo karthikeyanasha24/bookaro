@@ -296,6 +296,26 @@ const Layout = memo(function Layout({ children }) {
         ],
       },
       {
+        name: "MoteurImmo",
+        icon: <MdOutlineRealEstateAgent className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/moteur-immo",
+        key: "",
+        menu: [
+          {
+            name: "Import report",
+            icon: <MdFeaturedPlayList className="me-2 text-[16px]" />,
+            url: "/moteur-immo",
+            key: "",
+          },
+          {
+            name: "Runs",
+            icon: <FiActivity className="me-2 text-[16px]" />,
+            url: "/moteur-immo-runs",
+            key: "",
+          },
+        ],
+      },
+      {
         name: "QR Codes",
         icon: <TbQrcode className="text-[#fff] shrink-0 text-[16px]" />,
         url: "/qr-code-stats",
