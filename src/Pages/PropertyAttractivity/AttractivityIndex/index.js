@@ -116,10 +116,11 @@ const AttractivityIndex = () => {
         {/* Formula info */}
         <div className="bg-[#ede5f7] border border-[#c9a8e8] rounded-[12px] px-5 py-3 mb-6 text-sm text-[#5a3e78]">
           <strong>Formule :</strong>{" "}
-          I = [0.20×Vues + 0.18×Likes + 0.17×Follows + 0.20×Intérêts + 0.10×Partages + 0.08×Visites + 0.05×Messages + 0.02×DuréeMoy]
-          &nbsp;× Bonus nouveauté &nbsp;× 100
+          I = <strong>20%</strong>×Visibilité + <strong>30%</strong>×Engagement + <strong>50%</strong>×Intention<br />
+          Visibilité = ½×(Vues + Durée),&nbsp; Engagement = ¼×(Likes + Partages + Follows + Revisites),&nbsp; Intention = ⅓×(Intérêts + Messages + Demandes visite)
+          &nbsp;× Bonus fraîcheur &nbsp;× 100
           <span className="ml-2 text-xs opacity-70">
-            (valeurs normalisées par le 95e percentile de la plateforme)
+            (tous les signaux normalisés par le 95e percentile de la plateforme)
           </span>
         </div>
 
@@ -171,6 +172,9 @@ const AttractivityIndex = () => {
           >
             <option value="attractivityIndex_desc">Index ↓ (meilleurs)</option>
             <option value="attractivityIndex_asc">Index ↑ (plus faibles)</option>
+            <option value="visibility_desc">Visibilité ↓</option>
+            <option value="engagement_desc">Engagement ↓</option>
+            <option value="intent_desc">Intention ↓</option>
             <option value="createdAt_desc">Date de création ↓</option>
           </select>
         </div>
@@ -190,13 +194,16 @@ const AttractivityIndex = () => {
                   <th className="px-4 py-3 text-left">Prix</th>
                   <th className="px-4 py-3 text-left">Propriétaire</th>
                   <th className="px-4 py-3 text-left">Ancienneté</th>
-                  <th className="px-4 py-3 text-left min-w-[170px]">Attractivity Index</th>
+                  <th className="px-4 py-3 text-left min-w-[110px]">Visibilité</th>
+                  <th className="px-4 py-3 text-left min-w-[110px]">Engagement</th>
+                  <th className="px-4 py-3 text-left min-w-[110px]">Intention</th>
+                  <th className="px-4 py-3 text-left min-w-[170px]">Index Global</th>
                 </tr>
               </thead>
               <tbody>
                 {data.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="px-4 py-10 text-center text-gray-400">
+                    <td colSpan={13} className="px-4 py-10 text-center text-gray-400">
                       Aucun bien trouvé
                     </td>
                   </tr>
@@ -281,9 +288,23 @@ const AttractivityIndex = () => {
                           {fmtAge(item.ageDays)}
                         </td>
 
-                        {/* Attractivity Index */}
+                        {/* Visibilité */}
                         <td className="px-4 py-3">
-                          <IndexGauge value={item.attractivityIndex} />
+                          <IndexGauge value={item.visibilityScore} />
+                        </td>
+                        {/* Engagement */}
+                        <td className="px-4 py-3">
+                          <IndexGauge value={item.engagementScore} />
+                        </td>
+                        {/* Intention */}
+                        <td className="px-4 py-3">
+                          <IndexGauge value={item.intentScore} />
+                        </td>
+                        {/* Attractivity Index global */}
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1">
+                            <IndexGauge value={item.attractivityIndex} />
+                          </div>
                         </td>
                       </tr>
                     );

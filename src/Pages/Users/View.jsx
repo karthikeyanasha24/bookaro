@@ -293,6 +293,7 @@ const View = () => {
           <Field label="Mobile" value={data?.mobileNo ? `+${data.mobileNo}` : "--"} />
           <Field label="Ville" value={data?.city} />
           <Field label="Pays" value={data?.country} />
+          <Field label="Langue" value={data?.language === 'en' ? 'English' : 'Français'} />
           {data?.image ? (
             <div className="sm:col-span-2">
               <div className="text-[#6B7280] mb-2">Image</div>

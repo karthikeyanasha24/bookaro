@@ -298,9 +298,15 @@ const Layout = memo(function Layout({ children }) {
       {
         name: "MoteurImmo",
         icon: <MdOutlineRealEstateAgent className="text-[#fff] shrink-0 text-[16px]" />,
-        url: "/moteur-immo",
+        url: "/moteur-immo-dashboard",
         key: "",
         menu: [
+          {
+            name: "Dashboard",
+            icon: <FiActivity className="me-2 text-[16px]" />,
+            url: "/moteur-immo-dashboard",
+            key: "",
+          },
           {
             name: "Import report",
             icon: <MdFeaturedPlayList className="me-2 text-[16px]" />,
@@ -311,6 +317,12 @@ const Layout = memo(function Layout({ children }) {
             name: "Runs",
             icon: <FiActivity className="me-2 text-[16px]" />,
             url: "/moteur-immo-runs",
+            key: "",
+          },
+          {
+            name: "Agency Reveal",
+            icon: <FiActivity className="me-2 text-[16px]" />,
+            url: "/agency-reveal",
             key: "",
           },
         ],

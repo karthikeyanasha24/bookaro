@@ -215,7 +215,9 @@ function App() {
     { url: "/referral", path: "ReferralAdmin" },
     { url: "/moteur-immo", path: "MoteurImmoImport" },
     { url: "/moteur-immo/detail/:id", path: "MoteurImmoImport/View" },
+    { url: "/moteur-immo-dashboard", path: "MoteurImmoDashboard" },
     { url: "/moteur-immo-runs", path: "MoteurImmoRuns" },
+    { url: "/agency-reveal", path: "AgencyReveal" },
   ];
 
   sessionStorage.clear();
