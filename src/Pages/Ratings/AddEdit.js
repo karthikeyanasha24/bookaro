@@ -15,6 +15,7 @@ const AddEdit = () => {
   const [form, setform] = useState({
     name: "",
     type: "Ratings",
+    placeholderUrl: "",
   });
   const history = useNavigate();
   const [submitted, setSubmitted] = useState(false);
@@ -27,6 +28,7 @@ const AddEdit = () => {
         if (res.success) {
           setform({
             name: res?.data?.name || "",
+            placeholderUrl: res?.data?.placeholderUrl || "",
             image: res?.data?.image || "",
             id: res?.data?.id || res?.data?._id,
           });
@@ -110,6 +112,16 @@ const AddEdit = () => {
                 {submitted && !form.name && (
                   <div className="d-block text-red-600">Name is required</div>
                 )}
+              </div>
+              <div className="lg:col-span-6 col-span-12 flex mb-5 flex-col">
+                <FormControl
+                  type="text"
+                  name="placeholderUrl"
+                  label="Placeholder URL"
+                  placeholder="https://example.com/profile"
+                  value={form?.placeholderUrl}
+                  onChange={(e) => setform({ ...form, placeholderUrl: e })}
+                />
               </div>
             </div>
           </div>

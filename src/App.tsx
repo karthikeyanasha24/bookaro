@@ -218,6 +218,7 @@ function App() {
     { url: "/moteur-immo-dashboard", path: "MoteurImmoDashboard" },
     { url: "/moteur-immo-runs", path: "MoteurImmoRuns" },
     { url: "/agency-reveal", path: "AgencyReveal" },
+    { url: "/llm-monitoring", path: "LlmMonitoring" },
   ];
 
   sessionStorage.clear();

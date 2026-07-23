@@ -328,6 +328,12 @@ const Layout = memo(function Layout({ children }) {
         ],
       },
       {
+        name: "LLM Monitoring",
+        icon: <MdTrendingUp className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/llm-monitoring",
+        key: "",
+      },
+      {
         name: "QR Codes",
         icon: <TbQrcode className="text-[#fff] shrink-0 text-[16px]" />,
         url: "/qr-code-stats",
