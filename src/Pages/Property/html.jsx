@@ -212,152 +212,120 @@ const Html = ({
         </div>
       </div>
       <div className="shadow-box w-full bg-white rounded-lg mt-6">
-        <div className="flex p-4 items-center flex-wrap gap-2">
-          <form className="flex items-center max-w-sm gap-2" onSubmit={(e) => { e.preventDefault(); filter(); }}>
-            <label htmlFor="simple-search" className="sr-only">Search</label>
-            <div className="relative w-full">
-              <input
-                type="text"
-                id="simple-search"
-                value={filters.search}
-                onChange={(e) => setFilter({ ...filters, search: e.target.value })}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-[#976DD0] block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orange-500 dark:focus:border-orange-500 pr-10"
-                placeholder="Search"
-              />
-              {filters?.search && (
-                <i className="fa fa-times absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm" aria-hidden="true" onClick={(e) => clear("search")}></i>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Ville"
-                value={filters.address || ""}
-                onChange={(e) => setFilter({ ...filters, address: e.target.value })}
-                className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
-              />
-              <select
-                value={filters.propertyType || ""}
-                onChange={(e) => setFilter({ ...filters, propertyType: e.target.value })}
-                className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
-              >
-                <option value="">Type de bien</option>
-                <option value="house">Maison</option>
-                <option value="apartment">Appartement</option>
-                <option value="land">Terrain</option>
-                <option value="studio">Studio</option>
-                <option value="other">Autre</option>
-              </select>
-              <select
-                value={filters.status || ""}
-                onChange={(e) => setFilter({ ...filters, status: e.target.value })}
-                className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
-              >
-                <option value="">Statut</option>
-                {statusModel.list.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-              <input
-                type="number"
-                placeholder="Min surface m²"
-                value={filters.minSurface || ""}
-                onChange={(e) => setFilter({ ...filters, minSurface: e.target.value })}
-                className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 w-28"
-              />
-              <input
-                type="number"
-                placeholder="Max surface m²"
-                value={filters.maxSurface || ""}
-                onChange={(e) => setFilter({ ...filters, maxSurface: e.target.value })}
-                className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 w-28"
-              />
-            </div>
-            <button type="submit" className="p-3 text-sm font-medium text-white bg-blue-700 rounded-lg border border-[#976DD0] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              <svg
-                className="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+        <div className="flex flex-col p-4 gap-3">
+          <div className="flex items-center flex-wrap gap-2">
+            <form className="flex items-center max-w-sm gap-2" onSubmit={(e) => { e.preventDefault(); filter(); }}>
+              <label htmlFor="simple-search" className="sr-only">Search</label>
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  id="simple-search"
+                  value={filters.search}
+                  onChange={(e) => setFilter({ ...filters, search: e.target.value })}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-[#976DD0] block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orange-500 dark:focus:border-orange-500 pr-10"
+                  placeholder="Search"
                 />
-              </svg>
-              <span className="sr-only">Search</span>
-            </button>
-          </form>
-          <div className="flex gap-2 ml-auto flex-wrap">
-            <div className="flex">
-              <button className="!px-2.5 text-[#3C3E49] text-sm font-normal py-2.5 flex items-center justify-center gap-2 bg-[#fff] rounded-lg shadow-btn hover:bg-[#F3F2F5] border border-[#D0D5DD] transition-all focus:ring-2 ring-[#F1F2F3] disabled:bg-[#F3F2F5] disabled:cursor-not-allowed me-2" onClick={() => HandleSampleCsv()}>
-                <PiFileCsv className="text-typo text-xl" />  Sample CSV
+                {filters?.search && (
+                  <i className="fa fa-times absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm" aria-hidden="true" onClick={(e) => clear("search")}></i>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Ville"
+                  value={filters.address || ""}
+                  onChange={(e) => setFilter({ ...filters, address: e.target.value })}
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
+                />
+                <select
+                  value={filters.propertyType || ""}
+                  onChange={(e) => setFilter({ ...filters, propertyType: e.target.value })}
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
+                >
+                  <option value="">Type de bien</option>
+                  <option value="house">Maison</option>
+                  <option value="apartment">Appartement</option>
+                  <option value="land">Terrain</option>
+                  <option value="studio">Studio</option>
+                  <option value="other">Autre</option>
+                </select>
+                <select
+                  value={filters.status || ""}
+                  onChange={(e) => setFilter({ ...filters, status: e.target.value })}
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
+                >
+                  <option value="">Statut</option>
+                  {statusModel.list.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  placeholder="Min surface m²"
+                  value={filters.minSurface || ""}
+                  onChange={(e) => setFilter({ ...filters, minSurface: e.target.value })}
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 w-28"
+                />
+                <input
+                  type="number"
+                  placeholder="Max surface m²"
+                  value={filters.maxSurface || ""}
+                  onChange={(e) => setFilter({ ...filters, maxSurface: e.target.value })}
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 w-28"
+                />
+              </div>
+              <button type="submit" className="p-3 text-sm font-medium text-white bg-blue-700 rounded-lg border border-[#976DD0] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                </svg>
+                <span className="sr-only">Search</span>
               </button>
-              <button className="!px-2.5 text-[#3C3E49] text-sm font-normal py-2.5 flex items-center justify-center gap-2 bg-[#fff] rounded-lg shadow-btn hover:bg-[#F3F2F5] border border-[#D0D5DD] transition-all focus:ring-2 ring-[#F1F2F3] disabled:bg-[#F3F2F5] disabled:cursor-not-allowed me-2" onClick={() => exportfun()}>
-                <PiFileCsv className="text-typo text-xl" />  Export CSV
-              </button>
-              <button
-                className="!px-2.5 text-[#3C3E49] text-sm font-normal py-2.5 flex items-center justify-center gap-2 bg-[#fff] rounded-lg shadow-btn hover:bg-[#F3F2F5] border border-[#D0D5DD] transition-all focus:ring-2 ring-[#F1F2F3] disabled:bg-[#F3F2F5] disabled:cursor-not-allowed me-2"
-                onClick={() => fileInputRef.current.click()}
-              >
-                <PiFileCsv className="text-typo text-xl" /> Import CSV
-              </button>
-
-              <input
-                type="file"
-                accept=".csv"
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-                onChange={handleImport}
+            </form>
+            <div className="flex gap-2 flex-wrap">
+              <MultiSelectDropdown
+                id="statusDropdown"
+                displayValue="name"
+                className="capitalize"
+                theme="search"
+                intialValue={amentiesOptions}
+                result={(e) => setAmentiesOptions(e?.value)}
+                options={categoryOptions}
+                isClearable={false}
+                required
               />
+              <SelectDropdown
+                id="statusDropdown"
+                displayValue="name"
+                placeholder="All Status"
+                theme="search"
+                isClearable={false}
+                isSingle={false}
+                intialValue={filters?.status}
+                result={(e) => { handleFilter(e.value, 'status') }}
+                options={statusModel.list}
+              />
+              {(filters?.status || filters?.type || filters?.categories ||
+                filters?.host || filters?.venue || amentiesOptions?.length > 0) && (
+                  <button onClick={() => clear()} className="bg-primary leading-10 h-10 inline-block shadow-btn px-6 hover:opacity-80 text-sm text-white rounded-lg">
+                    Reset
+                  </button>
+                )}
             </div>
-            {/* <SelectDropdown
-              id="statusDropdown"
-              displayValue="name"
-              placeholder="All Amenities"
-              className="capitalize"
-              theme="search"
-              isClearable={false}
-              intialValue={filters?.amenities}
-              result={(e) => { handleFilter(e.value, "amenities") }}
-              options={categoryOptions}
-            /> */}
-            <MultiSelectDropdown
-              id="statusDropdown"
-              displayValue="name"
-              className="capitalize"
-              theme="search"
-              intialValue={amentiesOptions}
-              result={(e) => setAmentiesOptions(e?.value)}
-              options={categoryOptions}
-              isClearable={false}
-              required
-            />
-            <SelectDropdown
-              id="statusDropdown"
-              displayValue="name"
-              placeholder="All Status"
-              theme="search"
-              isClearable={false}
-              isSingle={false}
-              intialValue={filters?.status}
-              result={(e) => { handleFilter(e.value, 'status') }}
-              options={statusModel.list}
-            />
-            {(filters?.status || filters?.type || filters?.categories ||
-              filters?.host || filters?.venue || amentiesOptions?.length > 0) && (
-                <button
-                  onClick={() => clear()}
-                  className="bg-primary leading-10 h-10 inline-block shadow-btn px-6 hover:opacity-80 text-sm text-white rounded-lg">
-                  Reset
-                </button>
-              )}
           </div>
-        </div>
+          <div className="flex items-center gap-2">
+            <button className="!px-2.5 text-[#3C3E49] text-sm font-normal py-2.5 flex items-center justify-center gap-2 bg-[#fff] rounded-lg shadow-btn hover:bg-[#F3F2F5] border border-[#D0D5DD] transition-all focus:ring-2 ring-[#F1F2F3] disabled:bg-[#F3F2F5] disabled:cursor-not-allowed" onClick={() => HandleSampleCsv()}>
+              <PiFileCsv className="text-typo text-xl" />  Sample CSV
+            </button>
+            <button className="!px-2.5 text-[#3C3E49] text-sm font-normal py-2.5 flex items-center justify-center gap-2 bg-[#fff] rounded-lg shadow-btn hover:bg-[#F3F2F5] border border-[#D0D5DD] transition-all focus:ring-2 ring-[#F1F2F3] disabled:bg-[#F3F2F5] disabled:cursor-not-allowed" onClick={() => exportfun()}>
+              <PiFileCsv className="text-typo text-xl" />  Export CSV
+            </button>
+            <button
+              className="!px-2.5 text-[#3C3E49] text-sm font-normal py-2.5 flex items-center justify-center gap-2 bg-[#fff] rounded-lg shadow-btn hover:bg-[#F3F2F5] border border-[#D0D5DD] transition-all focus:ring-2 ring-[#F1F2F3] disabled:bg-[#F3F2F5] disabled:cursor-not-allowed"
+              onClick={() => fileInputRef.current.click()}
+            >
+              <PiFileCsv className="text-typo text-xl" /> Import CSV
+            </button>
+            <input type="file" accept=".csv" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImport} />
 
         {loaging ? (
           <div className="text-center py-4">
