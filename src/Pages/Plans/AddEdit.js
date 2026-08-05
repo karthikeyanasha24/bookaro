@@ -38,6 +38,8 @@ const AddEdit = () => {
       },
     ],
     description: "",
+    whiteLabelEnabled: false,
+    whiteLabelMaxLeads: "",
     feature: [],
     otherDetails: {
       msgToDirectory: { key: "unlimited", value: "" },
@@ -98,6 +100,8 @@ const AddEdit = () => {
             dailyCampaignLimit: res?.data?.dailyCampaignLimit ?? "",
             weeklyCampaignLimit: res?.data?.weeklyCampaignLimit ?? "",
             monthlyCampaignLimit: res?.data?.monthlyCampaignLimit ?? "",
+            whiteLabelEnabled: res?.data?.whiteLabelEnabled ?? false,
+            whiteLabelMaxLeads: res?.data?.whiteLabelMaxLeads ?? "",
           });
         }
         loader(false);
@@ -1218,10 +1222,56 @@ const AddEdit = () => {
               </div>
             </div>
 
-            <div className="text-right">
+            {/* ── Marque Blanche ─────────────────────────────────────────────*/}
+            <div className="border-t pt-6 mt-6">
+              <h4 className="text-[16px] font-semibold text-[#976DD0] mb-4">Marque Blanche</h4>
+              <div className="mb-5 grid grid-cols-12">
+                <div className="lg:col-span-6 col-span-full">
+                  <p className="text-[14px] font-normal text-[#333] me-10">
+                    Activer la marque blanche
+                  </p>
+                  <p className="text-[12px] text-gray-500 mt-1">
+                    Permet aux pros souscrivant à ce plan d'accéder aux fonctionnalités marque blanche.
+                  </p>
+                </div>
+                <div className="lg:col-span-6 col-span-full">
+                  <Switch
+                    checked={form?.whiteLabelEnabled}
+                    onChange={(checked) =>
+                      setform({ ...form, whiteLabelEnabled: checked })
+                    }
+                    className="group inline-flex h-4 w-8 items-center rounded-full bg-gray-400 transition data-[checked]:bg-blue-600"
+                  >
+                    <span className="size-2 translate-x-1 rounded-full bg-white transition group-data-[checked]:translate-x-5" />
+                  </Switch>
+                </div>
+              </div>
+              {form?.whiteLabelEnabled && (
+                <div className="mb-5 grid grid-cols-12">
+                  <div className="lg:col-span-6 col-span-full">
+                    <p className="text-[14px] font-normal text-[#333] me-10">
+                      Nombre max de leads
+                    </p>
+                  </div>
+                  <div className="lg:col-span-6 col-span-full">
+                    <input
+                      type="number"
+                      placeholder="50"
+                      value={form?.whiteLabelMaxLeads}
+                      onChange={(e) =>
+                        setform({ ...form, whiteLabelMaxLeads: e.target.value })
+                      }
+                      className="border p-2 rounded w-full"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="text-right mt-6">
               <button
                 type="submit"
-                className="text-white bg-[#976DD0] bg-[#976DD0] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2"
+                className="text-white bg-[#976DD0] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2"
               >
                 {form && form?.id ? "Update" : "Save"}
               </button>

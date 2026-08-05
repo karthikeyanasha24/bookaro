@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FaArrowLeft, FaBuilding, FaUser, FaListCheck,
@@ -869,6 +870,71 @@ export default function CompanyAdminView() {
                 {assignMsg.text}
               </div>
             ) : null}
+          </div>
+        </div>
+
+        {/* Marque Blanche — activation manuelle */}
+        <div className="shadow-sm rounded-2xl bg-white border border-gray-100 overflow-hidden">
+          <div className="p-4 border-b font-medium text-purple-600 flex items-center gap-3">
+            <div className="bg-purple-50 p-3 rounded-md"><FaStar className="text-[18px]" /></div>
+            Marque Blanche
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <div className="text-sm font-medium text-gray-800">Statut actuel</div>
+                <div className="mt-1">
+                  <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${apiData?.user?.whiteLabelActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                    {apiData?.user?.whiteLabelActive ? "Activée" : "Désactivée"}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs text-gray-500 max-w-md">
+                  Activez ou désactivez manuellement la marque blanche pour cette entreprise.
+                  {apiData?.user?.whiteLabelActive
+                    ? " L'entreprise a actuellement accès aux fonctionnalités marque blanche."
+                    : " L'entreprise n'a pas accès aux fonctionnalités marque blanche."}
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    loader(true);
+                    const res = await ApiClient.put("api/white-label/admin-toggle", {
+                      userId: id,
+                      active: !apiData?.user?.whiteLabelActive,
+                    });
+                    if (res?.success) {
+                      setApiData((prev) => ({
+                        ...prev,
+                        user: { ...prev.user, whiteLabelActive: !prev.user?.whiteLabelActive },
+                      }));
+                      toast.success(
+                        apiData?.user?.whiteLabelActive
+                          ? "Marque blanche désactivée"
+                          : "Marque blanche activée"
+                      );
+                    }
+                  } catch (e) {
+                    toast.error("Erreur lors de la modification");
+                  } finally {
+                    loader(false);
+                  }
+                }}
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition ${
+                  apiData?.user?.whiteLabelActive
+                    ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                    : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
+              >
+                {apiData?.user?.whiteLabelActive ? "Désactiver" : "Activer"}
+              </button>
+            </div>
+            {apiData?.user?.whiteLabelActive && (
+              <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                <FaCircleCheck className="text-green-500" />
+                Le plan de l'entreprise peut aussi activer/désactiver cette fonctionnalité automatiquement.
+              </div>
+            )}
           </div>
         </div>
 

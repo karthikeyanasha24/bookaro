@@ -156,6 +156,9 @@ function App() {
     { url: "/property-ratings/add", path: "Ratings/AddEdit" },
     { url: "/property-ratings/edit/:id", path: "Ratings/AddEdit" },
     { url: "/property-ratings/detail/:id", path: "Ratings/View" },
+    { url: "/property-highlights", path: "ValorizationItem" },
+    { url: "/property-highlights/add", path: "ValorizationItem/AddEdit" },
+    { url: "/property-highlights/edit/:id", path: "ValorizationItem/AddEdit" },
 
     { url: "/property-quick-search", path: "QuickSearch" },
     { url: "/property-quick-search/add", path: "QuickSearch/AddEdit" },
@@ -219,6 +222,11 @@ function App() {
     { url: "/moteur-immo-runs", path: "MoteurImmoRuns" },
     { url: "/agency-reveal", path: "AgencyReveal" },
     { url: "/llm-monitoring", path: "LlmMonitoring" },
+    // Marque Blanche
+    { url: "/white-label", path: "WhiteLabel" },
+    { url: "/white-label/users", path: "WhiteLabel/Users" },
+    { url: "/white-label/stats", path: "WhiteLabel/Stats" },
+    { url: "/white-label/plans", path: "WhiteLabel/Plans" },
   ];
 
   sessionStorage.clear();

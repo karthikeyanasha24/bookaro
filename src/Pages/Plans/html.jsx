@@ -69,6 +69,28 @@ const Html = ({
       },
     },
     {
+      key: "whiteLabelEnabled",
+      name: "White Label",
+      render: (row) => {
+        return row?.whiteLabelEnabled ? (
+          <span className="inline-flex rounded-full bg-green-100 text-green-700 px-3 py-1 text-xs font-medium">Activé</span>
+        ) : (
+          <span className="text-sm text-gray-400">—</span>
+        );
+      },
+    },
+    {
+      key: "whiteLabelMaxLeads",
+      name: "Max Leads",
+      render: (row) => {
+        return row?.whiteLabelEnabled ? (
+          <span className="text-sm font-medium">{row?.whiteLabelMaxLeads ?? 50}</span>
+        ) : (
+          <span className="text-sm text-gray-400">—</span>
+        );
+      },
+    },
+    {
       key: "action",
       name: "Action",
       render: (itm) => {

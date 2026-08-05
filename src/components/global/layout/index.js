@@ -7,7 +7,7 @@ import { FaCircleQuestion } from "react-icons/fa6";
 import { FiLock, FiActivity } from "react-icons/fi";
 import { GoDuplicate } from "react-icons/go";
 import { LuCircleDotDashed, LuLogOut, LuUser2 } from "react-icons/lu";
-import { MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlineInbox, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings, MdTrendingUp } from "react-icons/md";
+import { MdBusiness, MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlineInbox, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings, MdTrendingUp } from "react-icons/md";
 import { PiHouse, PiLeafFill, PiToolbox, PiToolboxFill } from "react-icons/pi";
 import { RiBloggerLine, RiContactsBook3Fill, RiContactsBook3Line, RiHomeWifiFill, RiUser2Fill } from "react-icons/ri";
 import { SiExpensify } from "react-icons/si";
@@ -146,6 +146,11 @@ const Layout = memo(function Layout({ children }) {
             name: "Ratings Type",
             icon: <FaRegStar className="me-2 text-[16px]" />,
             url: "/property-ratings",
+          },
+          {
+            name: "Property Highlights",
+            icon: <FaRegStar className="me-2 text-[16px]" />,
+            url: "/property-highlights",
           },
           {
             name: "Preset Searches",
@@ -323,6 +328,38 @@ const Layout = memo(function Layout({ children }) {
             name: "Agency Reveal",
             icon: <FiActivity className="me-2 text-[16px]" />,
             url: "/agency-reveal",
+            key: "",
+          },
+        ],
+      },
+      {
+        name: "Marque Blanche",
+        icon: <MdBusiness className="text-[#fff] shrink-0 text-[16px]" />,
+        url: "/white-label",
+        key: "",
+        menu: [
+          {
+            name: "Agences",
+            icon: <MdBusiness className="me-2 text-[16px]" />,
+            url: "/white-label",
+            key: "",
+          },
+          {
+            name: "Utilisateurs",
+            icon: <FaUserAlt className="me-2 text-[16px]" />,
+            url: "/white-label/users",
+            key: "",
+          },
+          {
+            name: "Indicateurs",
+            icon: <MdDashboard className="me-2 text-[16px]" />,
+            url: "/white-label/stats",
+            key: "",
+          },
+          {
+            name: "Plans",
+            icon: <MdSettings className="me-2 text-[16px]" />,
+            url: "/white-label/plans",
             key: "",
           },
         ],
