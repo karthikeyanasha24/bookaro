@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import "./App.css";
+import PageTitle from "./components/PageTitle";
 import {
   BrowserRouter as Router,
   Routes,
@@ -216,6 +217,8 @@ function App() {
 
     { url: "/qr-code-stats", path: "QRCodeStats" },
     { url: "/referral", path: "ReferralAdmin" },
+    { url: "/referral-program", path: "ReferralProgramAdmin" },
+    { url: "/learning-content", path: "LearningContentAdmin" },
     { url: "/moteur-immo", path: "MoteurImmoImport" },
     { url: "/moteur-immo/detail/:id", path: "MoteurImmoImport/View" },
     { url: "/moteur-immo-dashboard", path: "MoteurImmoDashboard" },
@@ -249,6 +252,7 @@ function App() {
             }
           >
             <Router>
+              <PageTitle routes={routes} />
               <Routes>
                 {routes.map((itm, index) => {
                   const Element = lazy(() => import(`./Pages/${itm.path}`));

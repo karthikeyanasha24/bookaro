@@ -40,6 +40,8 @@ const AddEdit = () => {
     description: "",
     whiteLabelEnabled: false,
     whiteLabelMaxLeads: "",
+    learningCenterEnabled: false,
+    marketplaceEnabled: false,
     feature: [],
     otherDetails: {
       msgToDirectory: { key: "unlimited", value: "" },
@@ -102,6 +104,8 @@ const AddEdit = () => {
             monthlyCampaignLimit: res?.data?.monthlyCampaignLimit ?? "",
             whiteLabelEnabled: res?.data?.whiteLabelEnabled ?? false,
             whiteLabelMaxLeads: res?.data?.whiteLabelMaxLeads ?? "",
+            learningCenterEnabled: res?.data?.learningCenterEnabled ?? false,
+            marketplaceEnabled: res?.data?.marketplaceEnabled ?? false,
           });
         }
         loader(false);
@@ -1218,6 +1222,58 @@ const AddEdit = () => {
                       </>
                     )}
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Learning Center ────────────────────────────────────────────*/}
+            <div className="border-t pt-6 mt-6">
+              <h4 className="text-[16px] font-semibold text-[#976DD0] mb-4">Learning Center</h4>
+              <div className="mb-5 grid grid-cols-12">
+                <div className="lg:col-span-6 col-span-full">
+                  <p className="text-[14px] font-normal text-[#333] me-10">
+                    Activer le Learning Center
+                  </p>
+                  <p className="text-[12px] text-gray-500 mt-1">
+                    Permet aux pros souscrivant à ce plan de publier du contenu (vidéos et articles) dans le Learning Center.
+                  </p>
+                </div>
+                <div className="lg:col-span-6 col-span-full">
+                  <Switch
+                    checked={form?.learningCenterEnabled}
+                    onChange={(checked) =>
+                      setform({ ...form, learningCenterEnabled: checked })
+                    }
+                    className="group inline-flex h-4 w-8 items-center rounded-full bg-gray-400 transition data-[checked]:bg-blue-600"
+                  >
+                    <span className="size-2 translate-x-1 rounded-full bg-white transition group-data-[checked]:translate-x-5" />
+                  </Switch>
+                </div>
+              </div>
+            </div>
+
+            {/* ── MarketPlace ─────────────────────────────────────────────────*/}
+            <div className="border-t pt-6 mt-6">
+              <h4 className="text-[16px] font-semibold text-[#976DD0] mb-4">MarketPlace</h4>
+              <div className="mb-5 grid grid-cols-12">
+                <div className="lg:col-span-6 col-span-full">
+                  <p className="text-[14px] font-normal text-[#333] me-10">
+                    Activer la MarketPlace
+                  </p>
+                  <p className="text-[12px] text-gray-500 mt-1">
+                    Permet aux pros souscrivant à ce plan d'accéder à la marketplace de services.
+                  </p>
+                </div>
+                <div className="lg:col-span-6 col-span-full">
+                  <Switch
+                    checked={form?.marketplaceEnabled}
+                    onChange={(checked) =>
+                      setform({ ...form, marketplaceEnabled: checked })
+                    }
+                    className="group inline-flex h-4 w-8 items-center rounded-full bg-gray-400 transition data-[checked]:bg-blue-600"
+                  >
+                    <span className="size-2 translate-x-1 rounded-full bg-white transition group-data-[checked]:translate-x-5" />
+                  </Switch>
                 </div>
               </div>
             </div>

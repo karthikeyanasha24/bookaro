@@ -47,6 +47,10 @@ const MarketplaceApi = {
   // Marketplace settings
   getMarketplaceSettings: () => ApiClient.get("admin/marketplace/settings"),
   updateMarketplaceSettings: (payload) => ApiClient.put("admin/marketplace/settings", payload),
+
+  // Commission AnyHomes par user pro (vu depuis la fiche admin du pro)
+  getCompanyCommission: (id) => ApiClient.get(`user/admin/company-detail/${id}`),
+  updateCompanyCommission: (id, payload) => ApiClient.put(`user/admin/company-detail/${id}/commission`, payload),
 };
 
 export default MarketplaceApi;

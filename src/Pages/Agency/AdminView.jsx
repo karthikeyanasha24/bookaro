@@ -5,7 +5,7 @@ import {
   FaArrowLeft, FaBuilding, FaUser, FaListCheck,
   FaHouse, FaMoneyBillWave, FaChartBar, FaStar,
   FaEnvelope, FaPhone, FaEarthEurope, FaClock,
-  FaCircleCheck, FaCircleXmark, FaEye, FaCreditCard,
+  FaCircleCheck, FaCircleXmark, FaEye, FaCreditCard, FaGraduationCap, FaStore,
 } from "react-icons/fa6";
 import Layout from "../../components/global/layout";
 import ApiClient from "../../methods/api/apiClient";
@@ -149,6 +149,7 @@ const TABS = [
   { id: "services", label: "Services à la carte", icon: <FaListCheck /> },
   { id: "transactions", label: "Les transactions", icon: <FaMoneyBillWave /> },
   { id: "marketplace", label: "MarketPlace", icon: <FaChartBar /> },
+  { id: "whiteLabel", label: "Marque Blanche", icon: <FaStore /> },
   { id: "abonnement", label: "Abonnement", icon: <FaCreditCard /> },
 ];
 
@@ -167,9 +168,38 @@ export default function CompanyAdminView() {
   const [assignPlanId, setAssignPlanId] = useState("");
   const [assignMsg, setAssignMsg] = useState(null);
 
+  // Commission AnyHomes (onglet Marketplace)
+  const [commissionDraft, setCommissionDraft] = useState("");
+  const [commissionSaving, setCommissionSaving] = useState(false);
+
+  // Marque blanche (onglet Marque Blanche)
+  const [whiteLabelOverview, setWhiteLabelOverview] = useState(null);
+  const [wlCommissionDraft, setWlCommissionDraft] = useState("");
+  const [wlCommissionSaving, setWlCommissionSaving] = useState(false);
+  const [wlLoading, setWlLoading] = useState(false);
+
   useEffect(() => {
     loadData();
   }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Chargement des stats marque blanche quand l'onglet est actif
+  useEffect(() => {
+    if (activeTab !== "whiteLabel") return;
+    setWlLoading(true);
+    ApiClient.get(`user/admin/company-detail/${id}/white-label-overview`)
+      .then((res) => {
+        if (res?.success) {
+          setWhiteLabelOverview(res.data);
+          setWlCommissionDraft(res.data?.marketplaceWhiteLabelCommissionPercentHT != null
+            ? String(res.data.marketplaceWhiteLabelCommissionPercentHT)
+            : (res.data?.defaultWhiteLabelCommissionPercentHT != null
+              ? String(res.data.defaultWhiteLabelCommissionPercentHT)
+              : ""));
+        }
+      })
+      .catch(() => setWhiteLabelOverview(null))
+      .finally(() => setWlLoading(false));
+  }, [activeTab, id]);
 
   const loadData = () => {
     setLoading(true);
@@ -676,13 +706,101 @@ export default function CompanyAdminView() {
     );
   };
 
+  const saveUserCommission = async () => {
+    const raw = String(commissionDraft).replace(",", ".");
+    const value = raw === "" ? null : Number(raw);
+    if (value !== null && (Number.isNaN(value) || value < 0 || value > 100)) {
+      toast.error("Le taux de commission doit être entre 0 et 100.");
+      return;
+    }
+    setCommissionSaving(true);
+    try {
+      const res = await ApiClient.put(`user/admin/company-detail/${id}/commission`, { commissionPercentHT: value });
+      if (res?.success) {
+        toast.success("Taux de commission mis à jour.");
+        loadData();
+      } else {
+        toast.error(res?.message || "Erreur lors de la sauvegarde.");
+      }
+    } catch {
+      toast.error("Erreur réseau.");
+    } finally {
+      setCommissionSaving(false);
+    }
+  };
+
+  const renderCommissionZone = () => {
+    const global = apiData.globalCommissionPercentHT;
+    const userRate = apiData.marketplaceCommissionPercentHT;
+    const effective = apiData.effectiveCommissionPercentHT;
+    const currentDraft = commissionDraft === ""
+      ? (userRate != null ? String(userRate) : (global != null ? String(global) : ""))
+      : commissionDraft;
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex-1 min-w-[220px]">
+            <div className="flex items-center gap-2 mb-1">
+              <FaMoneyBillWave className="text-purple-600" />
+              <span className="font-semibold text-gray-800">Commission AnyHomes (HT)</span>
+            </div>
+            <p className="text-sm text-gray-500">
+              Taux appliqué aux services vendus par ce pro. Global : <strong>{global != null ? `${global}%` : "25%"}</strong>
+              {userRate != null && (
+                <> · Personnalisé : <strong className="text-purple-700">{userRate}%</strong></>
+              )}
+            </p>
+            <div className="flex items-center gap-2 mt-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={currentDraft}
+                  onChange={(e) => setCommissionDraft(e.target.value)}
+                  placeholder={global != null ? `${global}` : "25"}
+                  className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                />
+                <span className="text-gray-500 text-sm">%</span>
+              </div>
+              <button
+                onClick={saveUserCommission}
+                disabled={commissionSaving}
+                className="px-4 py-2 rounded-full text-sm font-medium text-white disabled:opacity-60"
+                style={{ background: "var(--brand,#976DD0)" }}
+              >
+                {commissionSaving ? "Enregistrement…" : "Enregistrer"}
+              </button>
+              {userRate != null && (
+                <button
+                  onClick={() => { setCommissionDraft(""); saveUserCommission(); }}
+                  disabled={commissionSaving}
+                  className="px-4 py-2 rounded-full text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50"
+                >
+                  Réinitialiser au global
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">Taux effectif appliqué aux nouvelles commandes : <strong>{effective != null ? `${effective}%` : "—"}</strong>. Le taux est figé au moment de la commande.</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderMarketplace = () => {
     const stats = apiData.marketplaceStats || [];
     if (stats.length === 0) {
-      return <p className="text-sm text-gray-400 mt-4">Aucun service actif sur la marketplace.</p>;
+      return (
+        <div>
+          {renderCommissionZone()}
+          <p className="text-sm text-gray-400 mt-4">Aucun service actif sur la marketplace.</p>
+        </div>
+      );
     }
     return (
       <div>
+        {renderCommissionZone()}
         <div className="mb-4 text-sm text-gray-500">{stats.length} service(s) analysé(s)</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {stats.map((s) => (
@@ -738,6 +856,114 @@ export default function CompanyAdminView() {
             value={fmtEur(stats.reduce((a, s) => a + s.totalRevenueTTC, 0))}
             color="bg-green-50 text-green-700"
           />
+        </div>
+      </div>
+    );
+  };
+
+  const saveWhiteLabelCommission = async () => {
+    const raw = String(wlCommissionDraft).replace(",", ".");
+    const value = raw === "" ? null : Number(raw);
+    if (value !== null && (Number.isNaN(value) || value < 0 || value > 100)) {
+      toast.error("Le taux de commission marque blanche doit être entre 0 et 100.");
+      return;
+    }
+    setWlCommissionSaving(true);
+    try {
+      const res = await ApiClient.put(`user/admin/company-detail/${id}/white-label-commission`, { commissionPercentHT: value });
+      if (res?.success) {
+        toast.success("Marge marque blanche mise à jour.");
+        setWhiteLabelOverview((prev) => ({ ...prev, marketplaceWhiteLabelCommissionPercentHT: value }));
+      } else {
+        toast.error(res?.message || "Erreur lors de la sauvegarde.");
+      }
+    } catch {
+      toast.error("Erreur réseau.");
+    } finally {
+      setWlCommissionSaving(false);
+    }
+  };
+
+  const renderWhiteLabel = () => {
+    const wl = whiteLabelOverview;
+    if (!wl) {
+      return <p className="text-sm text-gray-400">{wlLoading ? "Chargement…" : "Aucune donnée marque blanche."}</p>;
+    }
+    const currentDraft = wlCommissionDraft;
+    const effective = wl.marketplaceWhiteLabelCommissionPercentHT != null
+      ? wl.marketplaceWhiteLabelCommissionPercentHT
+      : (wl.defaultWhiteLabelCommissionPercentHT != null ? wl.defaultWhiteLabelCommissionPercentHT : 10);
+    return (
+      <div className="space-y-6">
+        {/* Section marge AnyHomes Marque Blanche */}
+        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
+          <div className="flex items-center gap-2 mb-1">
+            <FaMoneyBillWave className="text-purple-600" />
+            <span className="font-semibold text-gray-800">Marge AnyHomes Marque Blanche (HT)</span>
+          </div>
+          <p className="text-sm text-gray-500">
+            Valeur par défaut (marketplace) : <strong>{wl.defaultWhiteLabelCommissionPercentHT != null ? `${wl.defaultWhiteLabelCommissionPercentHT}%` : "10%"}</strong>
+            {wl.marketplaceWhiteLabelCommissionPercentHT != null && (
+              <> · Forcée : <strong className="text-purple-700">{wl.marketplaceWhiteLabelCommissionPercentHT}%</strong></>
+            )}
+          </p>
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={currentDraft}
+                onChange={(e) => setWlCommissionDraft(e.target.value)}
+                placeholder={wl.defaultWhiteLabelCommissionPercentHT != null ? `${wl.defaultWhiteLabelCommissionPercentHT}` : "10"}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+              <span className="text-gray-500 text-sm">%</span>
+            </div>
+            <button
+              onClick={saveWhiteLabelCommission}
+              disabled={wlCommissionSaving}
+              className="px-4 py-2 rounded-full text-sm font-medium text-white disabled:opacity-60"
+              style={{ background: "#976DD0" }}
+            >
+              {wlCommissionSaving ? "Enregistrement…" : "Enregistrer"}
+            </button>
+          </div>
+          <p className="text-xs text-gray-400 mt-2">Taux effectif appliqué aux nouvelles commandes marketplace de la marque blanche : <strong>{effective}%</strong>. Figé au moment de la commande.</p>
+        </div>
+
+        {/* Stats marque blanche */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <div className="text-xs text-gray-500 mb-1">Date d'activation</div>
+            <div className="text-sm font-semibold text-gray-800">{wl.whiteLabelActivatedAt ? new Date(wl.whiteLabelActivatedAt).toLocaleDateString("fr-FR") : "—"}</div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <div className="text-xs text-gray-500 mb-1">Membres (users)</div>
+            <div className="text-xl font-bold text-gray-900">{wl.membersCount || 0}</div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <div className="text-xs text-gray-500 mb-1">Biens</div>
+            <div className="text-xl font-bold text-gray-900">{wl.propertyCount || 0}</div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <div className="text-xs text-gray-500 mb-1">Transactions conclues (vente/location)</div>
+            <div className="text-xl font-bold text-gray-900">{wl.transactionsConcluded || 0}</div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <div className="text-xs text-gray-500 mb-1">Services vendus (marketplace)</div>
+            <div className="text-xl font-bold text-gray-900">{wl.marketplaceOrders || 0}</div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
+            <div className="text-xs text-gray-500 mb-1">Visites homepage marketing</div>
+            <div className="text-xl font-bold text-gray-900">{wl.whiteLabelViews || 0}</div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white border border-gray-100 p-5">
+          <div className="text-sm text-gray-500">
+            Slug : <strong>{wl.agencySlug || "—"}</strong> · Statut : <strong>{wl.whiteLabelActive ? "Actif" : "Inactif"}</strong>
+          </div>
         </div>
       </div>
     );
@@ -889,10 +1115,7 @@ export default function CompanyAdminView() {
                   </span>
                 </div>
                 <p className="mt-2 text-xs text-gray-500 max-w-md">
-                  Activez ou désactivez manuellement la marque blanche pour cette entreprise.
-                  {apiData?.user?.whiteLabelActive
-                    ? " L'entreprise a actuellement accès aux fonctionnalités marque blanche."
-                    : " L'entreprise n'a pas accès aux fonctionnalités marque blanche."}
+                  Activer/désactiver manuellement la marque blanche pour cette entreprise.
                 </p>
               </div>
               <button
@@ -908,11 +1131,7 @@ export default function CompanyAdminView() {
                         ...prev,
                         user: { ...prev.user, whiteLabelActive: !prev.user?.whiteLabelActive },
                       }));
-                      toast.success(
-                        apiData?.user?.whiteLabelActive
-                          ? "Marque blanche désactivée"
-                          : "Marque blanche activée"
-                      );
+                      toast.success(apiData?.user?.whiteLabelActive ? "Marque blanche désactivée" : "Marque blanche activée");
                     }
                   } catch (e) {
                     toast.error("Erreur lors de la modification");
@@ -930,6 +1149,120 @@ export default function CompanyAdminView() {
               </button>
             </div>
             {apiData?.user?.whiteLabelActive && (
+              <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                <FaCircleCheck className="text-green-500" />
+                Le plan de l'entreprise peut aussi activer/désactiver cette fonctionnalité automatiquement.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Learning Center — activation manuelle */}
+        <div className="shadow-sm rounded-2xl bg-white border border-gray-100 overflow-hidden">
+          <div className="p-4 border-b font-medium text-purple-600 flex items-center gap-3">
+            <div className="bg-purple-50 p-3 rounded-md"><FaGraduationCap className="text-[18px]" /></div>
+            Learning Center
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <div className="text-sm font-medium text-gray-800">Statut actuel</div>
+                <div className="mt-1">
+                  <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${apiData?.user?.learningCenterEnabled ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                    {apiData?.user?.learningCenterEnabled ? "Activé" : "Désactivé"}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs text-gray-500 max-w-md">
+                  Activer/désactiver l'accès au Learning Center (publication de contenu) pour cette entreprise.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    loader(true);
+                    const res = await ApiClient.put(`user/admin/company-detail/${id}/learning-center`, {
+                      active: !apiData?.user?.learningCenterEnabled,
+                    });
+                    if (res?.success) {
+                      setApiData((prev) => ({
+                        ...prev,
+                        user: { ...prev.user, learningCenterEnabled: !prev.user?.learningCenterEnabled },
+                      }));
+                      toast.success(apiData?.user?.learningCenterEnabled ? "Learning Center désactivé" : "Learning Center activé");
+                    }
+                  } catch (e) {
+                    toast.error("Erreur lors de la modification");
+                  } finally {
+                    loader(false);
+                  }
+                }}
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition ${
+                  apiData?.user?.learningCenterEnabled
+                    ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                    : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
+              >
+                {apiData?.user?.learningCenterEnabled ? "Désactiver" : "Activer"}
+              </button>
+            </div>
+            {apiData?.user?.learningCenterEnabled && (
+              <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                <FaCircleCheck className="text-green-500" />
+                Le plan de l'entreprise peut aussi activer/désactiver cette fonctionnalité automatiquement.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Marketplace — activation manuelle */}
+        <div className="shadow-sm rounded-2xl bg-white border border-gray-100 overflow-hidden">
+          <div className="p-4 border-b font-medium text-purple-600 flex items-center gap-3">
+            <div className="bg-purple-50 p-3 rounded-md"><FaStore className="text-[18px]" /></div>
+            Marketplace
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <div className="text-sm font-medium text-gray-800">Statut actuel</div>
+                <div className="mt-1">
+                  <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${apiData?.user?.marketplaceEnabled ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                    {apiData?.user?.marketplaceEnabled ? "Activé" : "Désactivé"}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs text-gray-500 max-w-md">
+                  Activer/désactiver l'accès à la marketplace de services pour cette entreprise.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    loader(true);
+                    const res = await ApiClient.put(`user/admin/company-detail/${id}/marketplace`, {
+                      active: !apiData?.user?.marketplaceEnabled,
+                    });
+                    if (res?.success) {
+                      setApiData((prev) => ({
+                        ...prev,
+                        user: { ...prev.user, marketplaceEnabled: !prev.user?.marketplaceEnabled },
+                      }));
+                      toast.success(apiData?.user?.marketplaceEnabled ? "Marketplace désactivée" : "Marketplace activée");
+                    }
+                  } catch (e) {
+                    toast.error("Erreur lors de la modification");
+                  } finally {
+                    loader(false);
+                  }
+                }}
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition ${
+                  apiData?.user?.marketplaceEnabled
+                    ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                    : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
+              >
+                {apiData?.user?.marketplaceEnabled ? "Désactiver" : "Activer"}
+              </button>
+            </div>
+            {apiData?.user?.marketplaceEnabled && (
               <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
                 <FaCircleCheck className="text-green-500" />
                 Le plan de l'entreprise peut aussi activer/désactiver cette fonctionnalité automatiquement.
@@ -1001,6 +1334,7 @@ export default function CompanyAdminView() {
       case "services": return renderServices();
       case "transactions": return renderTransactions();
       case "marketplace": return renderMarketplace();
+      case "whiteLabel": return renderWhiteLabel();
       case "abonnement": return renderAbonnement();
       default: return null;
     }

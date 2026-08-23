@@ -7,7 +7,7 @@ import { FaCircleQuestion } from "react-icons/fa6";
 import { FiLock, FiActivity } from "react-icons/fi";
 import { GoDuplicate } from "react-icons/go";
 import { LuCircleDotDashed, LuLogOut, LuUser2 } from "react-icons/lu";
-import { MdBusiness, MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlineInbox, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdSettings, MdTrendingUp } from "react-icons/md";
+import { MdBusiness, MdCategory, MdContentPaste, MdDashboard, MdDomainVerification, MdFeaturedPlayList, MdHomeRepairService, MdOutlineFeaturedPlayList, MdOutlineHomeRepairService, MdOutlineInbox, MdOutlinePayments, MdOutlineRealEstateAgent, MdReviews, MdRedeem, MdSettings, MdTrendingUp } from "react-icons/md";
 import { PiHouse, PiLeafFill, PiToolbox, PiToolboxFill } from "react-icons/pi";
 import { RiBloggerLine, RiContactsBook3Fill, RiContactsBook3Line, RiHomeWifiFill, RiUser2Fill } from "react-icons/ri";
 import { SiExpensify } from "react-icons/si";
@@ -377,15 +377,29 @@ const Layout = memo(function Layout({ children }) {
         key: "",
       },
       {
-        name: "Referral Program",
+        name: "Invite monitoring",
         icon: <FaUsers className="text-white text-[16px]" />,
         url: "/referral",
         key: "",
         menu: [
           {
-            name: "Analytics & Tracking",
+            name: "Invite monitoring",
             icon: <MdDashboard className="me-2 text-[16px]" />,
             url: "/referral",
+            key: "",
+          },
+        ],
+      },
+      {
+        name: "Programme de parrainage",
+        icon: <MdRedeem className="text-white text-[16px]" />,
+        url: "/referral-program",
+        key: "",
+        menu: [
+          {
+            name: "Programme de parrainage",
+            icon: <MdRedeem className="me-2 text-[16px]" />,
+            url: "/referral-program",
             key: "",
           },
         ],
@@ -459,6 +473,12 @@ const Layout = memo(function Layout({ children }) {
         url: "/funnelvideo",
         key: "readvideos,readblogs,readpersona",
         menu: [
+          {
+            name: "Pro content",
+            icon: <FaGraduationCap className="me-2 text-[16px]" />,
+            url: "/learning-content",
+            key: "",
+          },
           {
             name: "Video Content",
             icon: <FaVideo className="me-2 text-[16px]" />,

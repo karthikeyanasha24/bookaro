@@ -74,7 +74,7 @@ const Login = () => {
           onSubmit={hendleSubmit}
         >
           <span className=" xl:w-[150px] z-[99] mb-5 block mx-auto text-center">
-            <img src="/assets/img/logo.png" className="w-[200px] mx-auto" alt="logo" />
+            <img src="/assets/img/anyhomes-logo.png" className="w-[240px] mx-auto" alt="logo" />
           </span>
 
           <div className="mt-5 ">

@@ -37,6 +37,7 @@ const MarketplaceSettings = () => {
         payoutDelayDays: settings.payoutDelayDays,
         vatPercent: settings.vatPercent,
         commissionPercentHT: settings.commissionPercentHT,
+        whiteLabelCommissionPercentHT: settings.whiteLabelCommissionPercentHT,
         maxServicesPerPro: settings.maxServicesPerPro,
         paymentInfo: settings.paymentInfo ?? '',
       });
@@ -50,13 +51,14 @@ const MarketplaceSettings = () => {
       allValues.payoutDelayDays !== settings.payoutDelayDays ||
       allValues.vatPercent !== settings.vatPercent ||
       allValues.commissionPercentHT !== settings.commissionPercentHT ||
+      allValues.whiteLabelCommissionPercentHT !== settings.whiteLabelCommissionPercentHT ||
       allValues.maxServicesPerPro !== settings.maxServicesPerPro ||
       (allValues.paymentInfo ?? '') !== (settings.paymentInfo ?? '');
     setIsDirty(changed);
   };
 
   const handleSubmit = async (values) => {
-    const { payoutDelayDays, vatPercent, commissionPercentHT, maxServicesPerPro, paymentInfo } = values;
+    const { payoutDelayDays, vatPercent, commissionPercentHT, whiteLabelCommissionPercentHT, maxServicesPerPro, paymentInfo } = values;
 
     setSaving(true);
     try {
@@ -64,6 +66,7 @@ const MarketplaceSettings = () => {
         payoutDelayDays,
         vatPercent,
         commissionPercentHT,
+        whiteLabelCommissionPercentHT,
         maxServicesPerPro,
         paymentInfo,
       });
@@ -116,6 +119,14 @@ const MarketplaceSettings = () => {
               label="Marge Anyhomes sur le HT (%)"
               name="commissionPercentHT"
               rules={[{ required: true, message: "Entrez la commission HT." }]}
+            >
+              <InputNumber min={0} max={100} style={{ width: "100%" }} />
+            </Form.Item>
+
+            <Form.Item
+              label="Marge Anyhomes Marque Blanche sur le HT (%)"
+              name="whiteLabelCommissionPercentHT"
+              rules={[{ required: true, message: "Entrez la commission marque blanche HT." }]}
             >
               <InputNumber min={0} max={100} style={{ width: "100%" }} />
             </Form.Item>
