@@ -1,5 +1,5 @@
 import { Tooltip } from "antd";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiCopy } from "react-icons/fi";
 import { LiaEdit, LiaTrashAlt } from "react-icons/lia";
 import { PiEyeLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ const Html = ({
   filter,
   edit,
   view,
+  duplicateItem,
   statusChange,
   pageChange,
   count,
@@ -84,7 +85,11 @@ const Html = ({
       name: "Max Leads",
       render: (row) => {
         return row?.whiteLabelEnabled ? (
-          <span className="text-sm font-medium">{row?.whiteLabelMaxLeads ?? 50}</span>
+          <span className="text-sm font-medium">
+            {row?.whiteLabelMaxLeads != null && row?.whiteLabelMaxLeads !== ""
+              ? row?.whiteLabelMaxLeads
+              : "—"}
+          </span>
         ) : (
           <span className="text-sm text-gray-400">—</span>
         );
@@ -111,6 +116,11 @@ const Html = ({
                   </a>
                 </Tooltip>
               ) : (<></>)}
+              <Tooltip placement="top" title="Duplicate">
+                <a onClick={(e) => duplicateItem(itm.id)} className="border cursor-pointer  hover:opacity-70 rounded-[35px] bg-[#00988e1c] w-10 h-10 !text-primary flex items-center justify-center text-lg text-[#222]">
+                  <FiCopy />
+                </a>
+              </Tooltip>
               {isAllow(`delete${shared.check}`) ? (
                 <Tooltip placement="top" title="Delete">
                   <span onClick={() => deleteItem(itm.id)} className="border cursor-pointer  hover:opacity-70 rounded-[35px] bg-[#00988e1c] w-10 h-10 !text-primary flex items-center justify-center text-lg text-[#222]">

@@ -6,6 +6,34 @@ import ApiClient from "../../methods/api/apiClient";
 import loader from "../../methods/loader";
 import shared from "./shared";
 
+const OTHER_DETAILS_LABELS = {
+  msgToDirectory: "Send message to owners of properties listed in Directory",
+  msgToSaleRent: "Send message to owner of property listed for sale or rent",
+  accessToOffMarketProps: "Access to Off-Market properties",
+  browsePastTrans: "Browse past transaction database",
+  browseBuildingPermits: "Browse building permits",
+  trainingOnBuying: "Training on buying a property",
+  createPropProfileSaleRentDirectory:
+    "Create property profiles under Sale, rental or Directory",
+  listPropAsOffMarket: "List properties under Off-Market section",
+  msgBox: "Message box",
+  leadFilter: "Lead filtering",
+  realEstateMinitoring: "Real-estate transaction monitoring tool",
+  trainingOnSelling: "Training on selling your property",
+  profileSection: "Profile section",
+  leadsLevel: "Leads level of financiability check",
+  marketplaceServices: "MarketPlace — nombre de services",
+};
+
+const otherDetailValue = (item) => {
+  if (!item) return "--";
+  if (item.key === "unlimited") return "Unlimited";
+  if (item.key === "custom") return item.value || "--";
+  return item.value || "--";
+};
+
+const dash = (v) => (v === undefined || v === null || v === "" ? "--" : v);
+
 const View = () => {
   const [data, setData] = useState();
   const navigate = useNavigate();
@@ -67,34 +95,143 @@ const View = () => {
                     </p>
                   </div>}
 
-                  {data?.planType && <div className="lg:col-span-6   col-span-full flex flex-col">
+                  <div className="lg:col-span-6   col-span-full flex flex-col">
                     <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">Plan Type:</label>
                     <p className="text-sm font-normal">
-                      {data?.planType}
+                      {dash(data?.planType)}
                     </p>
-                  </div>}
+                  </div>
 
-                  {data?.pricing?.[0]?.unit_amount && <div className="lg:col-span-6   col-span-full flex flex-col">
-                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">price:</label>
+                  <div className="lg:col-span-6   col-span-full flex flex-col">
+                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">User type:</label>
+                    <p className="text-sm font-normal capitalize">
+                      {dash(data?.userType)}
+                    </p>
+                  </div>
+
+                  <div className="lg:col-span-6   col-span-full flex flex-col">
+                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">Status:</label>
                     <p className="text-sm font-normal">
-                      {data?.pricing?.[0]?.unit_amount}
+                      {dash(data?.status)}
                     </p>
-                  </div>}
+                  </div>
 
-                  {data?.numberOfInterest && <div className="lg:col-span-6   col-span-full flex flex-col">
-                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">No. of Interest:</label>
-                    <p className="text-sm font-normal">
-                      {data?.numberOfInterest || "--"}
-                    </p>
-                  </div>}
+                  {/* ── Pricing ───────────────────────────────────────────*/}
+                  <div className="col-span-full">
+                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-2 block border-b pb-2">
+                      Pricing
+                    </label>
+                    <div className="grid grid-cols-12 gap-4 mt-2">
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">Prix mensuel :</label>
+                        <p className="text-sm font-normal">
+                          {dash(data?.pricing?.[0]?.unit_amount)} €{" "}
+                          <span className="text-[12px] text-gray-500">
+                            {data?.pricing?.[0]?.interval || "month"}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">Prix annuel :</label>
+                        <p className="text-sm font-normal">
+                          {dash(data?.pricing?.[1]?.unit_amount)} €{" "}
+                          <span className="text-[12px] text-gray-500">
+                            {data?.pricing?.[1]?.interval || "year"}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">
+                          Réduction annuelle :
+                        </label>
+                        <p className="text-sm font-normal">
+                          {dash(data?.annualDiscount) === "--" ? "--" : `${data?.annualDiscount} %`}
+                        </p>
+                        {Number(data?.pricing?.[0]?.unit_amount) > 0 &&
+                          Number(data?.pricing?.[1]?.unit_amount) > 0 && (
+                            <p className="text-[12px] text-[#329A90] mt-0.5">
+                              Économisez{" "}
+                              {Math.max(
+                                0,
+                                Number(data?.pricing?.[0]?.unit_amount) * 12 -
+                                  Number(data?.pricing?.[1]?.unit_amount)
+                              )}{" "}
+                              €/an
+                            </p>
+                          )}
+                      </div>
+                    </div>
+                  </div>
 
-                  {data?.numberOfProperty && <div className="lg:col-span-6   col-span-full flex flex-col">
-                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-1">No. of Property:</label>
-                    <p className="text-sm font-normal">
-                      {data?.numberOfProperty || "--"}
-                    </p>
-                  </div>}
+                  {/* ── Quotas ───────────────────────────────────────────*/}
+                  <div className="col-span-full">
+                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-2 block border-b pb-2">
+                      Quotas
+                    </label>
+                    <div className="grid grid-cols-12 gap-4 mt-2">
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">
+                          Max number of lead per property :
+                        </label>
+                        <p className="text-sm font-normal">{dash(data?.numberOfInterest)}</p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">No. of Property :</label>
+                        <p className="text-sm font-normal">{dash(data?.numberOfProperty)}</p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">Off-Market :</label>
+                        <p className="text-sm font-normal">
+                          {data?.offMarket === true ? "Yes" : data?.offMarket === false ? "No" : "--"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
+                  {/* ── Options du plan ───────────────────────────────────*/}
+                  <div className="col-span-full">
+                    <label className="text-[14px] text-[#0000009c] tracking-wider mb-2 block border-b pb-2">
+                      Options du plan
+                    </label>
+                    <div className="grid grid-cols-12 gap-4 mt-2">
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">White-label (Marque Blanche) :</label>
+                        <p className="text-sm font-normal">
+                          {data?.whiteLabelEnabled === true ? "Activé" : data?.whiteLabelEnabled === false ? "Désactivé" : "--"}
+                        </p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">White-label max leads :</label>
+                        <p className="text-sm font-normal">{dash(data?.whiteLabelMaxLeads)}</p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">Learning Center :</label>
+                        <p className="text-sm font-normal">
+                          {data?.learningCenterEnabled === true ? "Activé" : data?.learningCenterEnabled === false ? "Désactivé" : "--"}
+                        </p>
+                      </div>
+                      <div className="lg:col-span-4 col-span-full flex flex-col">
+                        <label className="text-[13px] text-[#0000009c] mb-1">Marketplace :</label>
+                        <p className="text-sm font-normal">
+                          {data?.marketplaceEnabled === true ? "Activé" : data?.marketplaceEnabled === false ? "Désactivé" : "--"}
+                        </p>
+                      </div>
+                      {data?.trialPeriod !== undefined && data?.trialPeriod !== null && (
+                        <div className="lg:col-span-4 col-span-full flex flex-col">
+                          <label className="text-[13px] text-[#0000009c] mb-1">Essai (jours) :</label>
+                          <p className="text-sm font-normal">{data?.trialPeriod}</p>
+                        </div>
+                      )}
+                      {data?.hasTrial !== undefined && data?.hasTrial !== null && (
+                        <div className="lg:col-span-4 col-span-full flex flex-col">
+                          <label className="text-[13px] text-[#0000009c] mb-1">Essai actif :</label>
+                          <p className="text-sm font-normal">{data?.hasTrial ? "Oui" : "Non"}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* ── Campagnes P2P ───────────────────────────────────*/}
                   {(data?.dailyCampaignLimit !== undefined || data?.weeklyCampaignLimit !== undefined || data?.monthlyCampaignLimit !== undefined) && (
                     <div className="col-span-full">
                       <label className="text-[14px] text-[#0000009c] tracking-wider mb-2 block border-b pb-2">Campagnes P2P Estimation :</label>
@@ -111,6 +248,34 @@ const View = () => {
                           <label className="text-[13px] text-[#0000009c] mb-1">30 jours :</label>
                           <p className="text-sm font-normal">{data?.monthlyCampaignLimit ?? "--"}</p>
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Autres fonctionnalités (otherDetails) ─────────────*/}
+                  {data?.otherDetails &&
+                    Object.keys(OTHER_DETAILS_LABELS).some(
+                      (k) => !!data?.otherDetails?.[k]
+                    ) && (
+                    <div className="col-span-full">
+                      <label className="text-[14px] text-[#0000009c] tracking-wider mb-2 block border-b pb-2">
+                        Autres fonctionnalités (Property seller innovative features)
+                      </label>
+                      <div className="grid grid-cols-12 gap-4 mt-2">
+                        {Object.keys(OTHER_DETAILS_LABELS).map((key) => {
+                          const item = data?.otherDetails?.[key];
+                          if (!item) return null;
+                          return (
+                            <div key={key} className="lg:col-span-6 col-span-full flex flex-col">
+                              <label className="text-[13px] text-[#0000009c] mb-1">
+                                {OTHER_DETAILS_LABELS[key]} :
+                              </label>
+                              <p className="text-sm font-normal">
+                                {otherDetailValue(item)}
+                              </p>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

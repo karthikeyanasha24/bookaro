@@ -17,6 +17,7 @@ const AddEdit = () => {
   const [form, setform] = useState({
     name: "",
     role: "monthly",
+    userType: "individual",
     planType: "",
     numberOfProperty: "",
     numberOfInterest: "",
@@ -37,11 +38,14 @@ const AddEdit = () => {
         interval_count: 1,
       },
     ],
+    annualDiscount: 0,
     description: "",
     whiteLabelEnabled: false,
     whiteLabelMaxLeads: "",
     learningCenterEnabled: false,
     marketplaceEnabled: false,
+    trialPeriod: 0,
+    hasTrial: false,
     feature: [],
     otherDetails: {
       msgToDirectory: { key: "unlimited", value: "" },
@@ -58,6 +62,7 @@ const AddEdit = () => {
       trainingOnSelling: { key: "", value: "" },
       profileSection: { key: "", value: "" },
       leadsLevel: { key: "unlimited", value: "" },
+      marketplaceServices: { key: "unlimited", value: "" },
     },
   });
   const [features, setFeatures] = useState([]);
@@ -80,6 +85,14 @@ const AddEdit = () => {
     { id: "free", name: "Free" },
     { id: "paid", name: "Paid" },
   ];
+  const userTypeOptions = [
+    { id: "individual", name: "Individual" },
+    { id: "pro", name: "Pro" },
+  ];
+  const discountOptions = [0, 5, 10, 15, 20, 25, 30, 40, 50].map((v) => ({
+    id: String(v),
+    name: `${v}%`,
+  }));
 
   useEffect(() => {
     getAllFeatures();
@@ -92,11 +105,16 @@ const AddEdit = () => {
             id: res?.data?.id || res?.data?._id,
             name: res?.data?.name,
             role: res?.data?.role,
+            userType: res?.data?.userType ?? "individual",
             planType: res?.data?.planType,
             pricing: res?.data?.pricing,
+            annualDiscount: res?.data?.annualDiscount ?? 0,
             feature: res?.data?.feature?.map((item) => item?.id || item?._id),
             description: res?.data?.description,
-            otherDetails: res?.data?.otherDetails,
+            otherDetails: {
+              ...form.otherDetails,
+              ...(res?.data?.otherDetails || {}),
+            },
             numberOfProperty: res?.data?.numberOfProperty,
             numberOfInterest: res?.data?.numberOfInterest,
             dailyCampaignLimit: res?.data?.dailyCampaignLimit ?? "",
@@ -106,6 +124,8 @@ const AddEdit = () => {
             whiteLabelMaxLeads: res?.data?.whiteLabelMaxLeads ?? "",
             learningCenterEnabled: res?.data?.learningCenterEnabled ?? false,
             marketplaceEnabled: res?.data?.marketplaceEnabled ?? false,
+            trialPeriod: res?.data?.trialPeriod ?? 0,
+            hasTrial: res?.data?.hasTrial ?? false,
           });
         }
         loader(false);
@@ -169,10 +189,6 @@ const AddEdit = () => {
       err.browsePastTrans = "Please enter value for past transactions";
     }
 
-    if (otherDetails?.createPropProfileSaleRentDirectory?.key === 'custom' && !otherDetails?.createPropProfileSaleRentDirectory?.value) {
-      err.createPropProfileSaleRentDirectory = "Please enter value for property profiles";
-    }
-
     if (otherDetails?.leadsLevel?.key === 'custom' && !otherDetails?.leadsLevel?.value) {
       err.leadsLevel = "Please enter value for leads level";
     }
@@ -193,6 +209,15 @@ const AddEdit = () => {
     } else {
       delete value.id;
     }
+    // Unification : le champ « No. of Property » pilote aussi
+    // createPropProfileSaleRentDirectory (create/update feature).
+    value.otherDetails = {
+      ...(value.otherDetails || {}),
+      createPropProfileSaleRentDirectory:
+        Number(value.numberOfProperty) > 0
+          ? { key: "custom", value: String(value.numberOfProperty) }
+          : { key: "unlimited", value: "" },
+    };
     loader(true);
     ApiClient.allApi(url, value, method)
       .then((res) => {
@@ -227,6 +252,20 @@ const AddEdit = () => {
     setErrors({ ...errors, [key]: "" });
   };
 
+  const handleAnnualDiscount = (value) => {
+    const pct = Number(value) || 0;
+    const monthly = Number(form?.pricing?.[0]?.unit_amount) || 0;
+    const annually = Math.round(monthly * 12 * (1 - pct / 100));
+    setform((prev) => ({
+      ...prev,
+      annualDiscount: pct,
+      pricing: prev.pricing?.map((p, i) =>
+        i === 1 ? { ...p, unit_amount: annually } : p
+      ),
+    }));
+    setErrors({ ...errors, annually: "" });
+  };
+
   const changeOtherDetails = (key, isChecked, option) => {
     setform((prevForm) => ({
       ...prevForm,
@@ -237,7 +276,7 @@ const AddEdit = () => {
             key: option,
             value:
               option === "custom"
-                ? prevForm.otherDetails[key].value || ""
+                ? prevForm.otherDetails[key]?.value || ""
                 : "",
           }
           : { key: "", value: "" },
@@ -353,11 +392,34 @@ const AddEdit = () => {
                   }}
                   options={planTypeOptions}
                   isClearable={false}
-                  disabled={form?.id}
                 />
                 {errors.planType && (
                   <p className="text-red-500 text-xs">{errors.planType}</p>
                 )}
+              </div>
+              <div className="lg:col-span-6 col-span-full mb-3">
+                <label>
+                  User type <span className="text-red-600">*</span>
+                </label>
+                <SelectDropdown
+                  placeholder="Select User type"
+                  id="userTypeDropdown"
+                  displayValue="name"
+                  className="mt-1"
+                  theme="search"
+                  intialValue={form?.userType}
+                  result={(e) => handleChange("userType", e?.value)}
+                  options={userTypeOptions}
+                  isClearable={false}
+                />
+                {errors.userType && (
+                  <p className="text-red-500 text-xs">{errors.userType}</p>
+                )}
+              </div>
+              <div className="col-span-full mb-3">
+                <label className="text-sm font-medium text-[#111827] block border-b pb-2 mb-3">
+                  Pricing (Mensuel / Annuel)
+                </label>
               </div>
               <div className="lg:col-span-6 col-span-full mb-3">
                 <FormControl
@@ -366,19 +428,21 @@ const AddEdit = () => {
                   value={form?.pricing?.[0]?.unit_amount}
                   onChange={(e) => {
                     if (!e) return;
+                    const pct = Number(form?.annualDiscount) || 0;
+                    const annually = Math.round(Number(e) * 12 * (1 - pct / 100));
                     setform((prevForm) => ({
                       ...prevForm,
                       pricing: prevForm.pricing?.map((p, i) =>
-                        i === 0 ? { ...p, unit_amount: Number(e) } : p
+                        i === 0
+                          ? { ...p, unit_amount: Number(e) }
+                          : { ...p, unit_amount: annually }
                       ),
                     }));
                     setErrors({ ...errors, monthly: "" });
                   }}
-                  disabled={form?.id || form?.planType === "free"}
+                  disabled={form?.planType === "free"}
                   className={
-                    form?.id || form?.planType === "free"
-                      ? "cursor-not-allowed"
-                      : ""
+                    form?.planType === "free" ? "cursor-not-allowed" : ""
                   }
                   maxlength={10}
                 />
@@ -401,11 +465,9 @@ const AddEdit = () => {
                     }));
                     setErrors({ ...errors, annually: "" });
                   }}
-                  disabled={form?.id || form?.planType === "free"}
+                  disabled={form?.planType === "free"}
                   className={
-                    form?.id || form?.planType === "free"
-                      ? "cursor-not-allowed"
-                      : ""
+                    form?.planType === "free" ? "cursor-not-allowed" : ""
                   }
                   maxlength={10}
                 />
@@ -414,9 +476,59 @@ const AddEdit = () => {
                 )}
               </div>
               <div className="lg:col-span-6 col-span-full mb-3">
+                <label>
+                  Réduction annuelle (%) <span className="text-red-600">*</span>
+                </label>
+                <SelectDropdown
+                  placeholder="Choisir un pourcentage de réduction"
+                  id="annualDiscountDropdown"
+                  displayValue="name"
+                  className="mt-1"
+                  theme="search"
+                  intialValue={
+                    form?.annualDiscount != null
+                      ? String(form?.annualDiscount)
+                      : "0"
+                  }
+                  result={(e) => handleAnnualDiscount(e?.value)}
+                  options={discountOptions}
+                  isClearable={false}
+                  disabled={form?.planType === "free"}
+                />
+                <p className="text-[12px] text-gray-500 mt-1">
+                  Le prix annuel est recalculé automatiquement :{" "}
+                  <strong>prix mensuel × 12 × (1 − réduction)</strong>.
+                </p>
+                {errors.annualDiscount && (
+                  <p className="text-red-500 text-xs">{errors.annualDiscount}</p>
+                )}
+              </div>
+              <div className="lg:col-span-6 col-span-full mb-3">
                 <FormControl
                   type="number"
-                  label="No. of Interest"
+                  label="Montant réduction annuelle (€/an)"
+                  value={
+                    Number(form?.pricing?.[1]?.unit_amount) > 0
+                      ? Math.max(
+                          0,
+                          Number(form?.pricing?.[0]?.unit_amount || 0) * 12 -
+                            Number(form?.pricing?.[1]?.unit_amount || 0)
+                        )
+                      : ""
+                  }
+                  disabled
+                  className="cursor-not-allowed"
+                />
+                {Number(form?.annualDiscount) > 0 && (
+                  <p className="text-[12px] text-[#976DD0] mt-1">
+                    Économisez {form?.annualDiscount}% en souscrivant à l’année.
+                  </p>
+                )}
+              </div>
+              <div className="lg:col-span-6 col-span-full mb-3">
+                <FormControl
+                  type="number"
+                  label="Max number of lead per property"
                   value={form?.numberOfInterest}
                   onChange={(e) => handleChange("numberOfInterest", e)}
                   required
@@ -953,75 +1065,10 @@ const AddEdit = () => {
                 <p className="text-[14px] font-normal text-[#333] mb-2">
                   Create property profiles under Sale, rental or Directory
                 </p>
-                <div className="grid grid-cols-12">
-                  <div className="lg:col-span-6 col-span-full">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={
-                          form?.otherDetails?.createPropProfileSaleRentDirectory
-                            ?.key == "unlimited"
-                        }
-                        onChange={(e) =>
-                          changeOtherDetails(
-                            "createPropProfileSaleRentDirectory",
-                            e.target.checked,
-                            "unlimited"
-                          )
-                        }
-                        className="mr-2 h-4 w-4 cursor-pointer"
-                      />
-                      Unlimited
-                    </label>
-                  </div>
-                  <div className="lg:col-span-6 col-span-full">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={
-                          form?.otherDetails?.createPropProfileSaleRentDirectory
-                            ?.key == "custom"
-                        }
-                        onChange={(e) =>
-                          changeOtherDetails(
-                            "createPropProfileSaleRentDirectory",
-                            e.target.checked,
-                            "custom"
-                          )
-                        }
-                        className="mr-2 h-4 w-4 cursor-pointer"
-                      />
-                      Custom
-                    </label>
-                  </div>
-                  <div className=" col-span-full">
-                    {form?.otherDetails?.createPropProfileSaleRentDirectory
-                      ?.key == "custom" && (
-                        <>
-                          <input
-                            type="number"
-                            placeholder="Count of profiles"
-                            value={
-                              form?.otherDetails?.createPropProfileSaleRentDirectory
-                                ?.value
-                            }
-                            onChange={(e) =>
-                              updateCustomValue(
-                                "createPropProfileSaleRentDirectory",
-                                e?.target?.value
-                              )
-                            }
-                            maxLength={10}
-                            className={`border p-2 rounded w-full ${errors.createPropProfileSaleRentDirectory ? 'border-red-500' : ''
-                              }`}
-                          />
-                          {errors.createPropProfileSaleRentDirectory && (
-                            <p className="text-red-500 text-xs mt-1">{errors.createPropProfileSaleRentDirectory}</p>
-                          )}
-                        </>
-                      )}
-                  </div>
-                </div>
+                <p className="text-[13px] text-green-700">
+                  ✓ Géré par le champ « No. of Property » ci-dessus. Une valeur
+                  0 / vide = illimité, sinon la limite indiquée s’applique.
+                </p>
               </div>
 
               <div className="mb-5 grid grid-cols-12">
@@ -1276,6 +1323,74 @@ const AddEdit = () => {
                   </Switch>
                 </div>
               </div>
+              {form?.marketplaceEnabled && (
+                <div className="mb-5 grid grid-cols-12">
+                  <div className="lg:col-span-6 col-span-full">
+                    <p className="text-[14px] font-normal text-[#333] me-10">
+                      Nombre de services
+                    </p>
+                    <p className="text-[12px] text-gray-500 mt-1">
+                      Nombre de services que le pro peut proposer sur la marketplace (Illimité ou Custom).
+                    </p>
+                  </div>
+                  <div className="lg:col-span-6 col-span-full">
+                    <div className="grid grid-cols-12">
+                      <div className="lg:col-span-6 col-span-full">
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={
+                              form?.otherDetails?.marketplaceServices?.key == "unlimited"
+                            }
+                            onChange={(e) =>
+                              changeOtherDetails(
+                                "marketplaceServices",
+                                e.target.checked,
+                                "unlimited"
+                              )
+                            }
+                            className="mr-2 h-4 w-4 cursor-pointer"
+                          />
+                          Illimité
+                        </label>
+                      </div>
+                      <div className="lg:col-span-6 col-span-full">
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={
+                              form?.otherDetails?.marketplaceServices?.key == "custom"
+                            }
+                            onChange={(e) =>
+                              changeOtherDetails(
+                                "marketplaceServices",
+                                e.target.checked,
+                                "custom"
+                              )
+                            }
+                            className="mr-2 h-4 w-4 cursor-pointer"
+                          />
+                          Custom
+                        </label>
+                      </div>
+                      <div className="col-span-full">
+                        {form?.otherDetails?.marketplaceServices?.key == "custom" && (
+                          <input
+                            type="number"
+                            placeholder="Nombre de services"
+                            value={form?.otherDetails?.marketplaceServices?.value}
+                            onChange={(e) =>
+                              updateCustomValue("marketplaceServices", e?.target?.value)
+                            }
+                            maxLength={10}
+                            className="border p-2 rounded w-full"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* ── Marque Blanche ─────────────────────────────────────────────*/}
@@ -1316,6 +1431,53 @@ const AddEdit = () => {
                       value={form?.whiteLabelMaxLeads}
                       onChange={(e) =>
                         setform({ ...form, whiteLabelMaxLeads: e.target.value })
+                      }
+                      className="border p-2 rounded w-full"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── Essai (Trial) ──────────────────────────────────────────────*/}
+            <div className="border-t pt-6 mt-6">
+              <h4 className="text-[16px] font-semibold text-[#976DD0] mb-4">Essai (Trial)</h4>
+              <div className="mb-5 grid grid-cols-12">
+                <div className="lg:col-span-6 col-span-full">
+                  <p className="text-[14px] font-normal text-[#333] me-10">
+                    Activer la période d'essai
+                  </p>
+                  <p className="text-[12px] text-gray-500 mt-1">
+                    Permet aux utilisateurs de tester ce plan pendant un nombre de jours avant l'abonnement.
+                  </p>
+                </div>
+                <div className="lg:col-span-6 col-span-full">
+                  <Switch
+                    checked={form?.hasTrial}
+                    onChange={(checked) =>
+                      setform({ ...form, hasTrial: checked })
+                    }
+                    className="group inline-flex h-4 w-8 items-center rounded-full bg-gray-400 transition data-[checked]:bg-blue-600"
+                  >
+                    <span className="size-2 translate-x-1 rounded-full bg-white transition group-data-[checked]:translate-x-5" />
+                  </Switch>
+                </div>
+              </div>
+              {form?.hasTrial && (
+                <div className="mb-5 grid grid-cols-12">
+                  <div className="lg:col-span-6 col-span-full">
+                    <p className="text-[14px] font-normal text-[#333] me-10">
+                      Nombre de jours d'essai
+                    </p>
+                  </div>
+                  <div className="lg:col-span-6 col-span-full">
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="14"
+                      value={form?.trialPeriod ?? 0}
+                      onChange={(e) =>
+                        setform({ ...form, trialPeriod: Number(e.target.value) })
                       }
                       className="border p-2 rounded w-full"
                     />

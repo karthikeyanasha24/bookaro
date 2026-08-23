@@ -4,6 +4,7 @@ const shared = {
   addTitle: "Plan",
   url: "plan",
   addApi: "plan/add",
+  duplicateApi: "plan/duplicate",
   editApi: "plan/update",
   detailApi: "plan/detail",
   listApi: "plan/listing",

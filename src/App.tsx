@@ -169,6 +169,7 @@ function App() {
     { url: "/plan/edit/:id", path: "Plans/AddEdit" },
     { url: "/plan/add", path: "Plans/AddEdit" },
     { url: "/plan/detail/:id", path: "Plans/View" },
+    { url: "/plan/tva", path: "Plans/Tva" },
     { url: "/plan-feature", path: "Features" },
     { url: "/plan-feature/detail/:id", path: "Features/View" },
     { url: "/enquiry", path: "Enquiry" },

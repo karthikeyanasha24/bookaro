@@ -675,6 +675,11 @@ const Layout = memo(function Layout({ children }) {
             icon: <LuCircleDotDashed className="me-2 text-[16px]" />,
             url: "/plan-feature",
           },
+          {
+            name: "TVA",
+            icon: <LuCircleDotDashed className="me-2 text-[16px]" />,
+            url: "/plan/tva",
+          },
         ]
       }
   ];

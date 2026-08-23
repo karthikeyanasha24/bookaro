@@ -163,6 +163,28 @@ const Plans = () => {
     history(url);
   };
 
+  const duplicateItem = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to duplicate this plan? The copy will be inactive.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#976DD0",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, duplicate",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        loader(true);
+        ApiClient.post(shared.duplicateApi, { id }).then((res) => {
+          if (res.success) {
+            getData();
+          }
+          loader(false);
+        });
+      }
+    });
+  };
+
   const user = useSelector((state) => state.user);
   const isAllow = (key = "") => {
 
@@ -178,6 +200,7 @@ const Plans = () => {
       <Html
         edit={edit}
         view={view}
+        duplicateItem={duplicateItem}
         clear={clear}
         sortClass={sortClass}
         sorting={sorting}
